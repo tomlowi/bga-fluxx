@@ -346,15 +346,14 @@ class fluxx extends Table
 
               self::notifyAllPlayers(
                 "win",
-                "",
                 clienttranslate(
-                  '${player_name} wins with ${nbr} keepers in play',
-                  [
-                    "player_id" => $winner_id,
-                    "player_name" => $players[$winner_id],
-                    "nbr" => $maxkeepers,
-                  ]
-                )
+                  '${player_name} wins with ${nbr} keepers in play'
+                ),
+                [
+                  "player_id" => $winner_id,
+                  "player_name" => $players[$winner_id],
+                  "nbr" => $maxkeepers,
+                ]
               );
               $this->gamestate->nextState("endGame");
               return true;
@@ -495,11 +494,12 @@ class fluxx extends Table
           self::notifyAllPlayers(
             "win",
             "",
-            clienttranslate('${player_name} wins with <b>${card_name}</b>', [
+            clienttranslate('${player_name} wins with <b>${card_name}</b>'),
+            [
               "player_id" => $winner_id,
               "player_name" => $players[$winner_id],
               "card_name" => $this->id_label[$winning_card]["name"],
-            ])
+            ]
           );
           $this->gamestate->nextState("endGame");
           return true;
@@ -612,8 +612,8 @@ class fluxx extends Table
       self::notifyPlayer(
         $player_id,
         "cardNotPresent",
-        "You do not have card <b>" . $card_name . "</b>",
-        []
+        clienttranslate('${you} do not have card <b>${card_name}</b>'),
+        ["i18n" => [card_name]]
       );
       return;
     }
@@ -967,7 +967,7 @@ class fluxx extends Table
     }
 
     throw new feException(
-      "Zombie mode not supported at this game state: " . $statename
+      "Zombie mode not supported at this game state: " . $statename // NOI18N
     );
   }
 

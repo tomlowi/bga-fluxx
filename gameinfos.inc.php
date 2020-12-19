@@ -19,7 +19,7 @@ $gameinfos = [
 
   // Game artist (or game artists, separated by commas)
   "artist" =>
-    "Raúl Castellanos, Michael Hays, Naomi Kageyama, Andrew Looney, Barbara Spelger",
+    "Raúl Castellanos, Michael Hays, Naomi Kageyama, Andrew Looney, Barbara Spelger", // NOI18N
 
   // Year of FIRST publication of this game. Can be negative.
   "year" => 1997,
