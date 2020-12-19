@@ -18,8 +18,8 @@ $gameinfos = [
   "designer" => "Andrew Looney, Kristin Looney",
 
   // Game artist (or game artists, separated by commas)
-  "artist" =>
-    "Raúl Castellanos, Michael Hays, Naomi Kageyama, Andrew Looney, Barbara Spelger", // NOI18N
+  // @TODO: Limited to 64 chars, check what should be put with Kristin
+  "artist" => "R. Castellanos, M. Hays, N. Kageyama, A. Looney, B. Spelger",
 
   // Year of FIRST publication of this game. Can be negative.
   "year" => 1997,
