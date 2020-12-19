@@ -19,7 +19,7 @@ Game state machine is a tool used to facilitate game developpement by doing comm
 in a very easy way from this configuration file.
 
 Please check the BGA Studio presentation about game state to understand this, and associated documentation.
-
+ 
 Summary:
 
 States types:
@@ -49,67 +49,66 @@ method).
 
 //    !! It is not a good idea to modify this file when a game is running !!
 
-$machinestates = array(
+$machinestates = [
+  // The initial state. Please do not modify.
+  1 => [
+    "name" => "gameSetup",
+    "description" => "",
+    "type" => "manager",
+    "action" => "stGameSetup",
+    "transitions" => ["" => 10],
+  ],
 
-    // The initial state. Please do not modify.
-    1 => array(
-        "name" => "gameSetup",
-        "description" => "",
-        "type" => "manager",
-        "action" => "stGameSetup",
-        "transitions" => array("" => 10),
-    ),
+  10 => [
+    "name" => "drawCards",
+    "description" => "",
+    "type" => "game",
+    "action" => "stDrawCards",
+    "args" => "argDrawCards",
+    "transitions" => ["drawnCards" => 11, "endGame" => 99],
+  ],
 
-    10 => array(
-        "name" => "drawCards",
-        "description" => '',
-        "type" => "game",
-        "action" => "stDrawCards",
-        "args" => "argDrawCards",
-        "transitions" => array("drawnCards" => 11, "endGame" => 99),
-    ),
+  11 => [
+    "name" => "playCards",
+    "description" => clienttranslate('${actplayer} must play ${nb} cards'),
+    "descriptionmyturn" => clienttranslate('${you} must play ${nb} cards'),
+    "type" => "activeplayer",
+    "args" => "argPlayCards",
+    "possibleactions" => ["playCard"],
+    "transitions" => ["playedCards" => 12, "endGame" => 99],
+  ],
 
-    11 => array(
-        "name" => "playCards",
-        "description" => clienttranslate('${actplayer} must play ${nb} cards'),
-        "descriptionmyturn" => clienttranslate('${you} must play ${nb} cards'),
-        "type" => "activeplayer",
-        "args" => "argPlayCards",
-        "possibleactions" => array("playCard"),
-        "transitions" => array("playedCards" => 12, "endGame" => 99),
-    ),
+  12 => [
+    "name" => "handLimit",
+    "description" => clienttranslate('${actplayer} must discard ${nb} cards'),
+    "descriptionmyturn" => clienttranslate('${you} must discard ${nb} cards'),
+    "type" => "activeplayer",
+    "args" => "argHandLimit",
+    "action" => "stHandLimit",
+    "possibleactions" => ["discardCard"],
+    "transitions" => ["" => 13],
+  ],
 
-    12 => array(
-        "name" => "handLimit",
-        "description" => clienttranslate('${actplayer} must discard ${nb} cards'),
-        "descriptionmyturn" => clienttranslate('${you} must discard ${nb} cards'),
-        "type" => "activeplayer",
-        "args" => "argHandLimit",
-        "action" => "stHandLimit",
-        "possibleactions" => array("discardCard"),
-        "transitions" => array("" => 13),
-    ),
+  13 => [
+    "name" => "keeperLimit",
+    "description" => clienttranslate('${actplayer} discard play ${nb} keepers'),
+    "descriptionmyturn" => clienttranslate('${you} discard play ${nb} keepers'),
+    "type" => "activeplayer",
+    "args" => "argKeeperLimit",
+    "action" => "stKeeperLimit",
+    "possibleactions" => ["discardKeeper"],
+    "transitions" => ["" => 14],
+  ],
 
-    13 => array(
-        "name" => "keeperLimit",
-        "description" => clienttranslate('${actplayer} discard play ${nb} keepers'),
-        "descriptionmyturn" => clienttranslate('${you} discard play ${nb} keepers'),
-        "type" => "activeplayer",
-        "args" => "argKeeperLimit",
-        "action" => "stKeeperLimit",
-        "possibleactions" => array("discardKeeper"),
-        "transitions" => array("" => 14),
-    ),
+  14 => [
+    "name" => "nextPlayer",
+    "description" => "",
+    "type" => "game",
+    "action" => "stNextPlayer",
+    "transitions" => ["nextPlayer" => 10],
+  ],
 
-    14 => array(
-        "name" => "nextPlayer",
-        "description" => "",
-        "type" => "game",
-        "action" => "stNextPlayer",
-        "transitions" => array("nextPlayer" => 10),
-    ),
-
-/*
+  /*
 Examples:
 
 2 => array(
@@ -132,14 +131,13 @@ Examples:
 
  */
 
-    // Final state.
-    // Please do not modify (and do not overload action/args methods).
-    99 => array(
-        "name" => "gameEnd",
-        "description" => clienttranslate("End of game"),
-        "type" => "manager",
-        "action" => "stGameEnd",
-        "args" => "argGameEnd",
-    ),
-
-);
+  // Final state.
+  // Please do not modify (and do not overload action/args methods).
+  99 => [
+    "name" => "gameEnd",
+    "description" => clienttranslate("End of game"),
+    "type" => "manager",
+    "action" => "stGameEnd",
+    "args" => "argGameEnd",
+  ],
+];

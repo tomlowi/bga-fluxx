@@ -17,7 +17,7 @@
 
 /*
 In this file, you are describing game statistics, that will be displayed at the end of the
-game.
+game. 
 
 !! After modifying this file, you must use "Reload  statistics configuration" in BGA Studio backoffice
 ("Control Panel" / "Manage Game" / "Your Game")
@@ -47,16 +47,16 @@ Notes:
 
  */
 
-$stats_type = array(
+$stats_type = [
+  // Statistics global to table
+  "table" => [
+    "turns_number" => [
+      "id" => 10,
+      "name" => totranslate("Number of turns"),
+      "type" => "int",
+    ],
 
-    // Statistics global to table
-    "table" => array(
-
-        "turns_number" => array("id" => 10,
-            "name" => totranslate("Number of turns"),
-            "type" => "int"),
-
-/*
+    /*
 Examples:
 
 "table_teststat1" => array(   "id"=> 10,
@@ -67,16 +67,17 @@ Examples:
 "name" => totranslate("table test stat 2"),
 "type" => "float" )
  */
-    ),
+  ],
 
-    // Statistics existing for each player
-    "player" => array(
+  // Statistics existing for each player
+  "player" => [
+    "turns_number" => [
+      "id" => 10,
+      "name" => totranslate("Number of turns"),
+      "type" => "int",
+    ],
 
-        "turns_number" => array("id" => 10,
-            "name" => totranslate("Number of turns"),
-            "type" => "int"),
-
-/*
+    /*
 Examples:
 
 "player_teststat1" => array(   "id"=> 10,
@@ -88,6 +89,5 @@ Examples:
 "type" => "float" )
 
  */
-    ),
-
-);
+  ],
+];

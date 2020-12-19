@@ -26,38 +26,31 @@
 -->
 
 <div id="myhand_wrap" class="whiteblock">
-    <h3>{MY_HAND}</h3>
-    <div id="myhand">
-    </div>
+  <h3>{MY_HAND}</h3>
+  <div id="myhand"></div>
 </div>
 
 <div id="rule_wrap" class="whiteblock">
-    <h3>Current rules & objectives</h3>
-    <div id="ruleSection">
-    </div>
+  <h3>Current rules & objectives</h3>
+  <div id="ruleSection"></div>
 </div>
 
 <div id="playertables">
-
-    <!-- BEGIN player -->
-    <div class="playertable whiteblock playertable">
-        <div class="playertablename" style="color:#{PLAYER_COLOR}">
-            {PLAYER_NAME}'s keepers
-        </div>
-        <div class="playertablecard" id="playertablecard_{PLAYER_ID}">
-        </div>
+  <!-- BEGIN player -->
+  <div class="playertable whiteblock playertable">
+    <div class="playertablename" style="color: #{PLAYER_COLOR}">
+      {PLAYER_NAME}'s keepers
     </div>
-    <!-- END player -->
+    <div class="playertablecard" id="playertablecard_{PLAYER_ID}"></div>
+  </div>
+  <!-- END player -->
 </div>
 
-
-
 <script type="text/javascript">
+  // Javascript HTML templates
 
-// Javascript HTML templates
-
-var jstpl_cardontable = '<div class="cardontable" id="cardontable_${player_id}_${card_id}" style="background-position: -${x}px -${y}px">\ </div>';
-
-</script>  
+  var jstpl_cardontable =
+    '<div class="cardontable" id="cardontable_${player_id}_${card_id}" style="background-position: -${x}px -${y}px">\ </div>';
+</script>
 
 {OVERALL_GAME_FOOTER}

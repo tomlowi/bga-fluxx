@@ -23,25 +23,24 @@
 
 class action_fluxx extends APP_GameAction
 {
-    // Constructor: please do not modify
-    public function __default()
-    {
-        if (self::isArg('notifwindow')) {
-            $this->view = "common_notifwindow";
-            $this->viewArgs['table'] = self::getArg("table", AT_posint, true);
-        } else {
-            $this->view = "fluxx_fluxx";
-            self::trace("Complete reinitialization of board game");
-        }
+  // Constructor: please do not modify
+  public function __default()
+  {
+    if (self::isArg("notifwindow")) {
+      $this->view = "common_notifwindow";
+      $this->viewArgs["table"] = self::getArg("table", AT_posint, true);
+    } else {
+      $this->view = "fluxx_fluxx";
+      self::trace("Complete reinitialization of board game");
     }
+  }
 
-    public function playCard()
-    {
-        self::setAjaxMode();
-        $card_id = self::getArg("card_id", AT_posint, true);
-        $card_unique_id = self::getArg("card_unique_id", AT_posint, true);
-        $this->game->playCard($card_id, $card_unique_id);
-        self::ajaxResponse();
-    }
-
+  public function playCard()
+  {
+    self::setAjaxMode();
+    $card_id = self::getArg("card_id", AT_posint, true);
+    $card_unique_id = self::getArg("card_unique_id", AT_posint, true);
+    $this->game->playCard($card_id, $card_unique_id);
+    self::ajaxResponse();
+  }
 }

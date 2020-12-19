@@ -28,34 +28,31 @@ require_once APP_BASE_PATH . "view/common/game.view.php";
 
 class view_fluxx_fluxx extends game_view
 {
-    public function getGameName()
-    {
-        return "fluxx";
+  public function getGameName()
+  {
+    return "fluxx";
+  }
+  public function build_page($viewArgs)
+  {
+    // Get players & players number
+    $players = $this->game->loadPlayersBasicInfos();
+    $players_nbr = count($players);
+
+    /*********** Place your code below:  ************/
+
+    $template = self::getGameName() . "_" . self::getGameName();
+
+    // This will inflate our player block with actual player data
+    $this->page->begin_block($template, "player");
+    foreach ($players as $player_id => $info) {
+      $this->page->insert_block("player", [
+        "PLAYER_ID" => $player_id,
+        "PLAYER_NAME" => $players[$player_id]["player_name"],
+        "PLAYER_COLOR" => $players[$player_id]["player_color"],
+      ]);
     }
-    public function build_page($viewArgs)
-    {
-        // Get players & players number
-        $players = $this->game->loadPlayersBasicInfos();
-        $players_nbr = count($players);
+    $this->tpl["MY_HAND"] = self::_("My hand");
 
-        /*********** Place your code below:  ************/
-
-        $template = self::getGameName() . "_" . self::getGameName();
-
-        // This will inflate our player block with actual player data
-        $this->page->begin_block($template, "player");
-        foreach ($players as $player_id => $info) {
-            $this->page->insert_block(
-                "player",
-                array(
-                    "PLAYER_ID" => $player_id,
-                    "PLAYER_NAME" => $players[$player_id]['player_name'],
-                    "PLAYER_COLOR" => $players[$player_id]['player_color'],
-                ));
-
-        }
-        $this->tpl["MY_HAND"] = self::_("My hand");
-
-        /*********** Do not change anything below this line  ************/
-    }
+    /*********** Do not change anything below this line  ************/
+  }
 }
