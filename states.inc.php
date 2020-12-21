@@ -74,10 +74,14 @@ $machinestates = [
     "descriptionmyturn" => clienttranslate('${you} must play a card'),
     "type" => "activeplayer",
     "possibleactions" => ["playCard"],
-    "transitions" => ["playedCards" => 12, "endGame" => 99],
+    "transitions" => [
+      "enforceLimits" => 13,
+      "playedCard" => 13,
+      "endGame" => 99,
+    ],
   ],
 
-  12 => [
+  13 => [
     "name" => "handLimit",
     "description" => clienttranslate('${actplayer} must discard ${nb} cards'),
     "descriptionmyturn" => clienttranslate('${you} must discard ${nb} cards'),
@@ -88,7 +92,7 @@ $machinestates = [
     "transitions" => ["" => 13],
   ],
 
-  13 => [
+  14 => [
     "name" => "keeperLimit",
     "description" => clienttranslate('${actplayer} discard play ${nb} keepers'),
     "descriptionmyturn" => clienttranslate('${you} discard play ${nb} keepers'),
@@ -99,7 +103,7 @@ $machinestates = [
     "transitions" => ["" => 14],
   ],
 
-  14 => [
+  15 => [
     "name" => "nextPlayer",
     "description" => "",
     "type" => "game",

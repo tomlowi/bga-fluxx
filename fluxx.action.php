@@ -39,8 +39,8 @@ class action_fluxx extends APP_GameAction
   {
     self::setAjaxMode();
     $card_id = self::getArg("card_id", AT_posint, true);
-    $card_unique_id = self::getArg("card_unique_id", AT_posint, true);
-    $this->game->playCard($card_id, $card_unique_id);
+    $card_definition_id = self::getArg("card_definition_id", AT_posint, true);
+    $this->game->action_playCard($card_id, $card_definition_id);
     self::ajaxResponse();
   }
 }

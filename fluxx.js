@@ -86,10 +86,17 @@ define([
         dojo.place(
           this.format_block("jstpl_player_board", {
             id: player_id,
-            handCount: this.gamedatas.handsCount[player_id],
-            keepersCount: this.gamedatas.keepers[player_id].length,
           }),
           player_board_div
+        );
+
+        this.setPlayerBoardHandCount(
+          player_id,
+          this.gamedatas.handsCount[player_id]
+        );
+        this.setPlayerBoardKeepersCount(
+          player_id,
+          this.gamedatas.keepers[player_id].length
         );
       }
 
@@ -97,79 +104,13 @@ define([
         this.handStock,
         "onChangeSelection",
         this,
-        "onPlayerHandSelectionChanged"
-      );
-      for (const player_id in this.keepersStock) {
-        dojo.connect(
-          this.keepersStock[player_id],
-          "onChangeSelection",
-          this,
-          "onKeeperSelectionChanged"
-        );
-      }
-
-      dojo.connect(
-        this.rulesSection,
-        "onChangeSelection",
-        this,
-        "onRuleSelectionChanged"
+        "onSelectHandCard"
       );
 
       // Setup game notifications to handle (see "setupNotifications" method below)
       this.setupNotifications();
-    },
 
-    createCardStock: function (elem, mode, types) {
-      var stock = new ebg.stock();
-      stock.create(this, $(elem), this.CARD_WIDTH, this.CARD_HEIGHT);
-      stock.image_items_per_row = this.CARDS_SPRITES_PER_ROW;
-
-      for (var type of types) {
-        var count = this.CARDS_TYPES[type].count;
-        var spriteOffset = this.CARDS_TYPES[type].spriteOffset;
-        var materialOffset = this.CARDS_TYPES[type].materialOffset;
-
-        for (var i = 0; i < count; i++) {
-          stock.addItemType(
-            materialOffset + i,
-            materialOffset + i,
-            this.CARDS_SPRITES_PATH,
-            spriteOffset + i
-          );
-        }
-      }
-
-      stock.setSelectionMode(mode);
-      return stock;
-    },
-
-    createKeepersStock: function (elem) {
-      var stock = new ebg.stock();
-      stock.create(this, $(elem), this.KEEPER_WIDTH, this.KEEPER_HEIGHT);
-      stock.image_items_per_row = this.KEEPERS_SPRITES_PER_ROW;
-
-      var count = this.CARDS_TYPES.keeper.count;
-      var spriteOffset = this.CARDS_TYPES.keeper.spriteOffset;
-      var materialOffset = this.CARDS_TYPES.keeper.materialOffset;
-
-      for (var i = 0; i < count; i++) {
-        stock.addItemType(
-          materialOffset + i,
-          materialOffset + i,
-          this.KEEPERS_SPRITES_PATH,
-          spriteOffset + i
-        );
-      }
-
-      stock.setSelectionMode(1);
-      return stock;
-    },
-
-    addCardsToStock: function (stock, cards) {
-      for (var card_id in cards) {
-        var card = cards[card_id];
-        stock.addToStockWithId(card.type_arg, card.id);
-      }
+      console.log("Setup completed!");
     },
 
     ///////////////////////////////////////////////////
@@ -179,6 +120,8 @@ define([
     //                  You can use this method to perform some user interface changes at this moment.
     //
     onEnteringState: function (stateName, args) {
+      this.currentState = stateName;
+
       console.log("Entering state: " + stateName);
 
       switch (stateName) {
@@ -248,7 +191,25 @@ define([
     ////
     // Utility methods
 
-    playCardOnTable: function (player_id, uniqueId, card_id) {
+    playKeeper: function (player_id, card) {
+      console.log("Player", player_id, "plays keeper", card);
+      if (this.isCurrentPlayerActive()) {
+        this.keepersStock[player_id].addToStockWithId(
+          card.type_arg,
+          card.id,
+          "handStock_item_" + card.id
+        );
+        this.handStock.removeFromStockById(card.id);
+      } else {
+        this.keepersStock[player_id].addToStockWithId(
+          card.type_arg,
+          card.id,
+          "player_board_" + player_id
+        );
+      }
+    },
+
+    playCard: function (player_id, card_id) {
       var type = Math.floor(uniqueId / 100);
       var number = uniqueId % 100;
       var card_origin;
@@ -280,58 +241,98 @@ define([
       this.handStock.removeFromStockById(card_id);
     },
 
+    createCardStock: function (elem, mode, types) {
+      var stock = new ebg.stock();
+      stock.create(this, $(elem), this.CARD_WIDTH, this.CARD_HEIGHT);
+      stock.image_items_per_row = this.CARDS_SPRITES_PER_ROW;
+
+      for (var type of types) {
+        var count = this.CARDS_TYPES[type].count;
+        var spriteOffset = this.CARDS_TYPES[type].spriteOffset;
+        var materialOffset = this.CARDS_TYPES[type].materialOffset;
+
+        for (var i = 0; i < count; i++) {
+          stock.addItemType(
+            materialOffset + i,
+            materialOffset + i,
+            this.CARDS_SPRITES_PATH,
+            spriteOffset + i
+          );
+        }
+      }
+
+      stock.setSelectionMode(mode);
+      return stock;
+    },
+
+    createKeepersStock: function (elem) {
+      var stock = new ebg.stock();
+      stock.create(this, $(elem), this.KEEPER_WIDTH, this.KEEPER_HEIGHT);
+      stock.image_items_per_row = this.KEEPERS_SPRITES_PER_ROW;
+
+      var count = this.CARDS_TYPES.keeper.count;
+      var spriteOffset = this.CARDS_TYPES.keeper.spriteOffset;
+      var materialOffset = this.CARDS_TYPES.keeper.materialOffset;
+
+      for (var i = 0; i < count; i++) {
+        stock.addItemType(
+          materialOffset + i,
+          materialOffset + i,
+          this.KEEPERS_SPRITES_PATH,
+          spriteOffset + i
+        );
+      }
+
+      stock.setSelectionMode(1);
+      return stock;
+    },
+
+    addCardsToStock: function (stock, cards) {
+      for (var card_id in cards) {
+        var card = cards[card_id];
+        stock.addToStockWithId(card.type_arg, card.id);
+      }
+    },
+
+    setPlayerBoardHandCount: function (player_id, count) {
+      $("handCount" + player_id).innerHTML = count;
+    },
+
+    setPlayerBoardKeepersCount: function (player_id, count) {
+      $("keepersCount" + player_id).innerHTML = count;
+    },
+
     ///////////////////////////////////////////////////
     //// Player's action
 
-    /*
-        
-            Here, you are defining methods to handle player's action (ex: results of mouse click on 
-            game objects).
-            
-            Most of the time, these methods:
-            _ check the action is possible at this game state.
-            _ make a call to the game server
-        
-        */
-
-    onPlayerHandSelectionChanged: function () {
+    onSelectHandCard: function () {
       var items = this.handStock.getSelectedItems();
-      var action = "playCard";
 
-      if (items.length > 0) {
-        if (this.checkAction(action, true)) {
-          // Can play a card
-          var card_id = items[0].id;
-          var uniqueId = items[0].type;
-          console.log("on playCard id: " + uniqueId);
+      console.log(items, this.currentState);
 
-          var ajax_id = card_id + "_" + uniqueId;
+      if (items.length == 0) {
+        return;
+      }
 
-          //(this.player_id, uniqueId, card_id)
-          this.ajaxcall(
-            "/" +
-              this.game_name +
-              "/" +
-              this.game_name +
-              "/" +
-              action +
-              ".html",
-            {
-              card_id: card_id,
-              card_unique_id: uniqueId,
-              lock: true,
-            },
-            this,
-            function (result) {},
-            function (is_error) {}
-          );
+      if (this.checkAction("playCard", true)) {
+        // Play a card
+        this.ajaxcall(
+          "/" + this.game_name + "/" + this.game_name + "/playCard.html",
+          {
+            card_id: items[0].id,
+            card_definition_id: items[0].type,
+            lock: true,
+          },
+          this,
+          function (result) {},
+          function (is_error) {}
+        );
 
-          this.handStock.unselectAll();
-        } else if (this.checkAction("discardCard")) {
-          // Can discard a card
-        } else {
-          this.handStock.unselectAll();
-        }
+        this.handStock.unselectAll();
+      } else if (this.checkAction("discardCard")) {
+        // Discard a card
+      } else {
+        this.handStock.unselectAll();
       }
     },
 
@@ -358,25 +359,33 @@ define([
         
         */
     setupNotifications: function () {
-      console.log("notifications subscriptions setup");
+      dojo.subscribe("cardDrawnCurrentPlayer", this, "notif_cardDrawn");
+      dojo.subscribe("cardDrawnOther", this, "notif_cardDrawnOther");
 
-      dojo.subscribe("cardPlayed", this, "notif_cardPlayed");
-      dojo.subscribe("cardDrawn", this, "notif_cardDrawn");
+      dojo.subscribe("keeperPlayed", this, "notif_keeperPlayed");
+
       dojo.subscribe("newScores", this, "notif_newScores");
-    },
-
-    notif_cardPlayed: function (notif) {
-      this.playCardOnTable(
-        notif.args.player_id,
-        notif.args.card_unique_id,
-        notif.args.card_id
-      );
     },
 
     notif_cardDrawn: function (notif) {
       for (var card of notif.args.cardsDrawn) {
         this.handStock.addToStockWithId(card.type_arg, card.id);
       }
+    },
+
+    notif_cardDrawnOther: function (notif) {
+      this.setPlayerBoardHandCount(notif.args.player_id, notif.args.handCount);
+    },
+
+    notif_keeperPlayed: function (notif) {
+      var player_id = notif.args.player_id;
+      console.log("notif_keeperPlayed", notif);
+      this.playKeeper(player_id, notif.args.card);
+      this.setPlayerBoardHandCount(player_id, notif.args.handCount);
+      this.setPlayerBoardKeepersCount(
+        player_id,
+        this.keepersStock[player_id].count()
+      );
     },
 
     notif_newScores: function (notif) {
