@@ -24,44 +24,24 @@ define([
 ], function (dojo, declare) {
   return declare("bgagame.fluxx", ebg.core.gamegui, {
     constructor: function () {
-      console.log("fluxx constructor");
+      this.CARD_WIDTH = 166;
+      this.CARD_HEIGHT = 258;
+      this.CARDS_PATH = g_gamethemeurl + "img/cards.png";
+      this.CARDS_SPRITES_PER_ROW = 17;
 
-      this.cardwidth = 166;
-      this.cardheight = 258;
-
-      this.image_items_per_row = 12;
-
-      this.cardsPath = "img/fluxx_cards.png";
-
-      this.cardtypes = {
-        baserule: {
-          id_type: 1,
-          nb_cards: 1,
-        },
-        keeper: {
-          id_type: 2,
-          nb_cards: 19,
-        },
-        goal: {
-          id_type: 3,
-          nb_cards: 30,
-        },
-        newrule: {
-          id_type: 4,
-          nb_cards: 27,
-        },
-        action: {
-          id_type: 5,
-          nb_cards: 23,
-        },
+      this.CARDS_TYPES = {
+        keeper: { count: 19, spriteOffset: 0, materialOffset: 1 },
+        goal: { count: 30, spriteOffset: 19, materialOffset: 101 },
+        rule: { count: 27, spriteOffset: 19 + 30, materialOffset: 201 },
+        action: { count: 23, spriteOffset: 19 + 30 + 27, materialOffset: 301 },
       };
     },
 
     /*
             setup:
             
-            This method must set up the game user interface according to current game situation specified
-            in parameters.
+            This method sets up the game user interface according to the current game 
+            situation specified in parameters.
             
             The method is called each time the game interface is displayed to a player, ie:
             _ when the game starts
@@ -69,140 +49,46 @@ define([
             
             "gamedatas" argument contains all datas retrieved by your "getAllDatas" PHP method.
         */
-
     setup: function (gamedatas) {
-      console.log("Starting game setup");
+      console.log("Starting game setup", gamedatas);
 
-      this.keeperSections = [];
+      // Setup all stocks and restore existing state
+      this.handStock = this.createCardStock("handStock", 0, [
+        "keeper",
+        "goal",
+        "rule",
+        "action",
+      ]);
+      this.addCardsToStock(this.handStock, this.gamedatas.hand);
 
-      // Setting up player boards
+      this.rulesStock = this.createCardStock("rulesStock", 0, ["rule"]);
+      this.addCardsToStock(this.rulesStock, this.gamedatas.rules);
+
+      this.goalsStock = this.createCardStock("goalsStock", 0, ["goal"]);
+      this.addCardsToStock(this.goalsStock, this.gamedatas.goals);
+
+      this.keepersStock = {};
       for (var player_id in gamedatas.players) {
-        var player = gamedatas.players[player_id];
-
-        // TODO: Setting up players boards if needed
-        this.keeperSections[player_id] = new ebg.stock();
-        this.keeperSections[player_id].create(
-          this,
-          $("playertablecard_" + player_id),
-          this.cardwidth,
-          this.cardheight
+        this.keepersStock[player_id] = this.createCardStock(
+          "keepersStock" + player_id,
+          0,
+          ["keeper"]
         );
-        this.keeperSections[
-          player_id
-        ].image_items_per_row = this.image_items_per_row;
-      }
-
-      // Player hand
-      this.playerHand = new ebg.stock();
-      this.playerHand.create(
-        this,
-        $("myhand"),
-        this.cardwidth,
-        this.cardheight
-      );
-
-      this.rulesSection = new ebg.stock();
-      this.rulesSection.create(
-        this,
-        $("ruleSection"),
-        this.cardwidth,
-        this.cardheight
-      );
-
-      this.playerHand.image_items_per_row = this.image_items_per_row;
-      this.rulesSection.image_items_per_row = this.image_items_per_row;
-
-      var cardPos = 0;
-      //// Create cards types:
-      for (var [name, cardtype] of Object.entries(this.cardtypes)) {
-        for (var cardNb = 1; cardNb <= cardtype.nb_cards; cardNb++) {
-          var card_type_id = this.getCardUniqueId(cardtype.id_type, cardNb);
-
-          var weight =
-            type == this.cardtypes.baserule.id_type ? -1 : card_type_id;
-
-          // Player Hand can contain all cards
-          this.playerHand.addItemType(
-            card_type_id,
-            weight,
-            g_gamethemeurl + this.cardsPath,
-            cardPos
-          );
-
-          // Rule section can contain Goals, New rules and the base rule
-          if (
-            [
-              this.cardtypes.baserule.id_type,
-              this.cardtypes.goal.id_type,
-              this.cardtypes.newrule.id_type,
-            ].includes(cardtype.id_type)
-          ) {
-            this.rulesSection.addItemType(
-              card_type_id,
-              weight,
-              g_gamethemeurl + this.cardsPath,
-              cardPos
-            );
-          }
-
-          // Keepers areas, only containing Keepers
-          if (cardtype.id_type == this.cardtypes.keeper.id_type) {
-            for (const player_id in this.keeperSections) {
-              this.keeperSections[player_id].addItemType(
-                card_type_id,
-                weight,
-                g_gamethemeurl + this.cardsPath,
-                cardPos
-              );
-            }
-          }
-
-          cardPos++;
-        }
-      }
-
-      for (var i in this.gamedatas.hand) {
-        var card = this.gamedatas.hand[i];
-        var type = card.type;
-        var number = card.type_arg;
-        this.playerHand.addToStockWithId(
-          this.getCardUniqueId(type, number),
-          card.id
-        );
-      }
-      //Cards played on table
-      for (i in this.gamedatas.keepers) {
-        var card = this.gamedatas.keepers[i];
-        var type = card.type;
-        var number = card.type_arg;
-        var player_id = card.location_arg;
-        this.keeperSections[player_id].addToStockWithId(
-          this.getCardUniqueId(type, number),
-          card.id
-        );
-      }
-
-      // New rules in effect
-      for (i in this.gamedatas.rules) {
-        console.log(this.gamedatas.rules[i]);
-        var card = this.gamedatas.rules[i];
-        var type = card.type;
-        var number = card.type_arg;
-        this.rulesSection.addToStockWithId(
-          this.getCardUniqueId(type, number),
-          card.id
+        this.addCardsToStock(
+          this.keepersStock[player_id],
+          this.gamedatas.keepers[player_id]
         );
       }
 
       dojo.connect(
-        this.playerHand,
+        this.handStock,
         "onChangeSelection",
         this,
         "onPlayerHandSelectionChanged"
       );
-      for (const player_id in this.keeperSections) {
+      for (const player_id in this.keepersStock) {
         dojo.connect(
-          this.keeperSections[player_id],
+          this.keepersStock[player_id],
           "onChangeSelection",
           this,
           "onKeeperSelectionChanged"
@@ -220,6 +106,40 @@ define([
       this.setupNotifications();
 
       console.log("Ending game setup");
+    },
+
+    createCardStock: function (elem, mode, types) {
+      var stock = new ebg.stock();
+      stock.create(this, $(elem), this.CARD_WIDTH, this.CARD_HEIGHT);
+      stock.image_items_per_row = this.CARDS_SPRITES_PER_ROW;
+
+      for (var type of types) {
+        var count = this.CARDS_TYPES[type].count;
+        var spriteOffset = this.CARDS_TYPES[type].spriteOffset;
+        var materialOffset = this.CARDS_TYPES[type].materialOffset;
+
+        // Only add cards with the right type
+        for (var i = 0; i < count; i++) {
+          stock.addItemType(
+            materialOffset + i,
+            materialOffset + i,
+            this.CARDS_PATH,
+            spriteOffset + i
+          );
+        }
+      }
+
+      stock.setSelectionMode(mode);
+      return stock;
+    },
+
+    addCardsToStock: function (stock, cards) {
+      console.log("Add Cards to Stock", stock.control_name, cards);
+
+      for (var card_id in cards) {
+        var card = cards[card_id];
+        stock.addToStockWithId(card.type_arg, card.id);
+      }
     },
 
     ///////////////////////////////////////////////////
@@ -295,38 +215,8 @@ define([
       }
     },
 
-    ///////////////////////////////////////////////////
-    //// Utility methods
-
-    /*
-        
-            Here, you can defines some utility methods that you can use everywhere in your javascript
-            script.
-        
-        */
-
-    // Get card unique identifier based on its type and number
-    getCardUniqueId: function (type, number) {
-      uniqueId = type * 100 + parseInt(number);
-
-      return uniqueId;
-    },
-
-    getCardSpritePosition: function (type, number) {
-      var typeOffset = 0;
-      for (
-        var idtype = 1;
-        idtype <= Object.keys(this.cardtypes).length;
-        idtype++
-      ) {
-        if (idtype < type) {
-          typeOffset += this.cardtypes[Object.keys(this.cardtypes)[idtype - 1]]
-            .nb_cards;
-        }
-      }
-
-      return typeOffset + number;
-    },
+    ////
+    // Utility methods
 
     playCardOnTable: function (player_id, uniqueId, card_id) {
       var type = Math.floor(uniqueId / 100);
@@ -342,7 +232,7 @@ define([
       }
 
       if (type == this.cardtypes.keeper.id_type) {
-        this.keeperSections[player_id].addToStockWithId(
+        this.keepersStock[player_id].addToStockWithId(
           uniqueId,
           card_id,
           card_origin
@@ -357,7 +247,7 @@ define([
       ) {
         this.rulesSection.addToStockWithId(uniqueId, card_id, card_origin);
       }
-      this.playerHand.removeFromStockById(card_id);
+      this.handStock.removeFromStockById(card_id);
     },
 
     ///////////////////////////////////////////////////
@@ -375,7 +265,7 @@ define([
         */
 
     onPlayerHandSelectionChanged: function () {
-      var items = this.playerHand.getSelectedItems();
+      var items = this.handStock.getSelectedItems();
       var action = "playCard";
 
       if (items.length > 0) {
@@ -406,11 +296,11 @@ define([
             function (is_error) {}
           );
 
-          this.playerHand.unselectAll();
+          this.handStock.unselectAll();
         } else if (this.checkAction("discardCard")) {
           // Can discard a card
         } else {
-          this.playerHand.unselectAll();
+          this.handStock.unselectAll();
         }
       }
     },
@@ -420,8 +310,8 @@ define([
     },
 
     onKeeperSelectionChanged: function () {
-      for (const player_id in this.keeperSections) {
-        this.keeperSections[player_id].unselectAll();
+      for (const player_id in this.keepersStock) {
+        this.keepersStock[player_id].unselectAll();
       }
     },
 
@@ -455,10 +345,7 @@ define([
 
     notif_cardDrawn: function (notif) {
       for (var card of notif.args.cardsDrawn) {
-        this.playerHand.addToStockWithId(
-          this.getCardUniqueId(card.type, card.type_arg),
-          card.id
-        );
+        this.handStock.addToStockWithId(card.type_arg, card.id);
       }
     },
 

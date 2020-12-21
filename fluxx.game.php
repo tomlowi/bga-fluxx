@@ -102,12 +102,10 @@ class fluxx extends Table
     // Create cards
     $cards = [];
 
-    foreach ($this->typesDefinitions as $type) {
+    foreach ($this->cardsDefinitions as $cardId => $card) {
       // keeper, goal, rule, action
 
-      for ($i = 0; $i < $type["nbCards"]; $i++) {
-        $cards[] = ["type" => $type["label"], "type_arg" => $i, "nbr" => 1];
-      }
+      $cards[] = ["type" => $card["type"], "type_arg" => $cardId, "nbr" => 1];
     }
 
     $this->cards->createCards($cards, "deck");
