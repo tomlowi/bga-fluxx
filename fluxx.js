@@ -78,6 +78,17 @@ define([
           this.keepersStock[player_id],
           this.gamedatas.keepers[player_id]
         );
+
+        // Setting up player boards
+        var player_board_div = $("player_board_" + player_id);
+        dojo.place(
+          this.format_block("jstpl_player_board", {
+            id: player_id,
+            handCount: this.gamedatas.handsCount[player_id],
+            keepersCount: this.gamedatas.keepers[player_id].length,
+          }),
+          player_board_div
+        );
       }
 
       dojo.connect(

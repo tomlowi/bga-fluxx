@@ -43,4 +43,15 @@
 </div>
 <!-- END keepers -->
 
+<script>
+  var jstpl_player_board =
+    '\
+<div class="flx_board">\
+  <div id="handIcon${id}" class="flx_hand_icon">Hand count: </div>\
+  <span id="handCount${id}">${handCount}</span>\
+  <div id="keepersIcon${id}" class="flx_keepers_icon">Keepers count: </div>\
+  <span id="keepersCount${id}">${keepersCount}</span>\
+</div>';
+</script>
+
 {OVERALL_GAME_FOOTER}

@@ -164,6 +164,7 @@ class fluxx extends Table
       "rules" => $this->cards->getCardsInLocation("rules"),
       "goals" => $this->cards->getCardsInLocation("goals"),
       "keepers" => [],
+      "handsCount" => [],
       "discard" => $this->cards->getCardOnTop("discard"),
       "deckCount" => $this->cards->countCardInLocation("deck"),
       "discardCount" => $this->cards->countCardInLocation("discard"),
@@ -172,6 +173,10 @@ class fluxx extends Table
     foreach ($players as $player_id => $player) {
       $result["keepers"][$player_id] = $this->cards->getCardsInLocation(
         "keepers",
+        $player_id
+      );
+      $result["handsCount"][$player_id] = $this->cards->countCardInLocation(
+        "hand",
         $player_id
       );
     }
