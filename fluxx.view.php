@@ -34,25 +34,31 @@ class view_fluxx_fluxx extends game_view
   }
   public function build_page($viewArgs)
   {
-    // Get players & players number
-    $players = $this->game->loadPlayersBasicInfos();
-    $players_nbr = count($players);
-
-    /*********** Place your code below:  ************/
-
     $template = self::getGameName() . "_" . self::getGameName();
 
-    // This will inflate our player block with actual player data
-    $this->page->begin_block($template, "player");
-    foreach ($players as $player_id => $info) {
-      $this->page->insert_block("player", [
-        "PLAYER_ID" => $player_id,
-        "PLAYER_NAME" => $players[$player_id]["player_name"],
-        "PLAYER_COLOR" => $players[$player_id]["player_color"],
-      ]);
-    }
-    $this->tpl["MY_HAND"] = self::_("My hand");
+    // Get current player ID & all players info
+    global $g_user;
+    $current_player_id = $g_user->get_id();
+    $players = $this->game->loadPlayersBasicInfos();
 
-    /*********** Do not change anything below this line  ************/
+    // Translations
+    $this->tpl["MY_HAND"] = self::_("My hand");
+    $this->tpl["MY_KEEPERS"] = self::_("My keepers");
+
+    // This will inflate players keepers block
+    $player_info = $players[$current_player_id];
+    $this->tpl["CURRENT_PLAYER_ID"] = $current_player_id;
+    $this->tpl["CURRENT_PLAYER_COLOR"] = $player_info["player_color"];
+
+    $this->page->begin_block($template, "keepers");
+    foreach ($players as $player_id => $player_info) {
+      if ($player_id != $current_player_id) {
+        $this->page->insert_block("keepers", [
+          "PLAYER_ID" => $player_id,
+          "PLAYER_NAME" => $player_info["player_name"],
+          "PLAYER_COLOR" => $player_info["player_color"],
+        ]);
+      }
+    }
   }
 }

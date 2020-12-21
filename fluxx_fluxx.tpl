@@ -10,47 +10,37 @@
 -------
 
     fluxx_fluxx.tpl
-    
-    This is the HTML template of your game.
-    
-    Everything you are writing in this file will be displayed in the HTML page of your game user interface,
-    in the "main game zone" of the screen.
-    
-    You can use in this template:
-    _ variables, with the format {MY_VARIABLE_ELEMENT}.
-    _ HTML block, with the BEGIN/END format
-    
-    See your "view" PHP file to check how to set variables and control blocks
-    
-    Please REMOVE this comment before publishing your game on BGA
 -->
 
-<div id="myhand_wrap" class="whiteblock">
+<div class="whiteblock hand">
   <h3>{MY_HAND}</h3>
-  <div id="myhand"></div>
+  <div id="handStock"></div>
 </div>
 
-<div id="rule_wrap" class="whiteblock">
-  <h3>Current rules & objectives</h3>
-  <div id="ruleSection"></div>
+<div class="whiteblock keepers">
+  <h3 style="color: #{CURRENT_PLAYER_COLOR}">{MY_KEEPERS}</h3>
+  <div id="keepersStock{CURRENT_PLAYER_ID}"></div>
 </div>
 
-<div id="playertables">
-  <!-- BEGIN player -->
-  <div class="playertable whiteblock playertable">
-    <div class="playertablename" style="color: #{PLAYER_COLOR}">
-      {PLAYER_NAME}'s keepers
-    </div>
-    <div class="playertablecard" id="playertablecard_{PLAYER_ID}"></div>
-  </div>
-  <!-- END player -->
+<div class="whiteblock rules">
+  <h3>Current rules</h3>
+  <div id="baseRuleCard"></div>
+  <div id="drawRuleCard"></div>
+  <div id="playRuleCard"></div>
+  <div id="keeperRuleCard"></div>
+  <div id="rulesStock"></div>
 </div>
 
-<script type="text/javascript">
-  // Javascript HTML templates
+<div class="whiteblock goal">
+  <h3>Goal</h3>
+  <div id="goalsStock"></div>
+</div>
 
-  var jstpl_cardontable =
-    '<div class="cardontable" id="cardontable_${player_id}_${card_id}" style="background-position: -${x}px -${y}px">\ </div>';
-</script>
+<!-- BEGIN keepers -->
+<div class="whiteblock keepers">
+  <h3 style="color: #{PLAYER_COLOR}">{PLAYER_NAME}</h3>
+  <div id="keepersStock{PLAYER_ID}"></div>
+</div>
+<!-- END keepers -->
 
 {OVERALL_GAME_FOOTER}
