@@ -19,486 +19,670 @@
  *
  */
 
-$this->types = [
-  1 => [
-    "name" => clienttranslate("baserule"),
-    "nametr" => self::_("baserule"),
-    "nbcards" => 1,
+$this->typesDefinitions = [
+  [
+    "label" => "keeper",
+    "name" => self::_("keeper"),
+    "nbCards" => 19,
   ],
-  2 => [
-    "name" => clienttranslate("keeper"),
-    "nametr" => self::_("keeper"),
-    "nbcards" => 19,
+  [
+    "label" => "goal",
+    "name" => self::_("goal"),
+    "nbCards" => 30,
   ],
-  3 => [
-    "name" => clienttranslate("goal"),
-    "nametr" => self::_("goal"),
-    "nbcards" => 30,
+  [
+    "label" => "rule",
+    "name" => self::_("rule"),
+    "nbCards" => 27,
   ],
-  4 => [
-    "name" => clienttranslate("newrule"),
-    "nametr" => self::_("newrule"),
-    "nbcards" => 27,
-  ],
-  5 => [
-    "name" => clienttranslate("action"),
-    "nametr" => self::_("action"),
-    "nbcards" => 23,
+  [
+    "label" => "action",
+    "name" => self::_("action"),
+    "nbCards" => 23,
   ],
 ];
 
-$this->id_label = [
+$this->cardsDefinitions = [
   ////// Basic Rules
-  101 => [
+  1 => [
     "name" => clienttranslate("Basic Rules"),
     "description" => clienttranslate("Draw 1, Play 1"),
   ],
 
   ////// Keepers
-  201 => ["name" => clienttranslate("Sleep"), "description" => ""],
-  202 => ["name" => clienttranslate("The Brain"), "description" => ""],
-  203 => ["name" => clienttranslate("Bread"), "description" => ""],
-  204 => ["name" => clienttranslate("Chocolate"), "description" => ""],
-  205 => ["name" => clienttranslate("Cookies"), "description" => ""],
-  206 => ["name" => clienttranslate("Milk"), "description" => ""],
-  207 => ["name" => clienttranslate("Money"), "description" => ""],
-  208 => ["name" => clienttranslate("The Eye"), "description" => ""],
-  209 => ["name" => clienttranslate("The Moon"), "description" => ""],
-  210 => ["name" => clienttranslate("The Rocket"), "description" => ""],
-  211 => ["name" => clienttranslate("The Toaster"), "description" => ""],
-  212 => ["name" => clienttranslate("Television"), "description" => ""],
-  213 => ["name" => clienttranslate("Time"), "description" => ""],
-  214 => ["name" => clienttranslate("Dreams"), "description" => ""],
-  215 => ["name" => clienttranslate("Music"), "description" => ""],
-  216 => ["name" => clienttranslate("The Party"), "description" => ""],
-  217 => ["name" => clienttranslate("The Sun"), "description" => ""],
-  218 => ["name" => clienttranslate("Love"), "description" => ""],
-  219 => ["name" => clienttranslate("Peace"), "description" => ""],
+  101 => [
+    "type" => "keeper",
+    "name" => clienttranslate("Sleep"),
+  ],
+  102 => [
+    "type" => "keeper",
+    "name" => clienttranslate("The Brain"),
+  ],
+  103 => [
+    "type" => "keeper",
+    "name" => clienttranslate("Bread"),
+  ],
+  104 => [
+    "type" => "keeper",
+    "name" => clienttranslate("Chocolate"),
+  ],
+  105 => [
+    "type" => "keeper",
+    "name" => clienttranslate("Cookies"),
+  ],
+  106 => [
+    "type" => "keeper",
+    "name" => clienttranslate("Milk"),
+  ],
+  107 => [
+    "type" => "keeper",
+    "name" => clienttranslate("Money"),
+  ],
+  108 => [
+    "type" => "keeper",
+    "name" => clienttranslate("The Eye"),
+  ],
+  109 => [
+    "type" => "keeper",
+    "name" => clienttranslate("The Moon"),
+  ],
+  110 => [
+    "type" => "keeper",
+    "name" => clienttranslate("The Rocket"),
+  ],
+  111 => [
+    "type" => "keeper",
+    "name" => clienttranslate("The Toaster"),
+  ],
+  112 => [
+    "type" => "keeper",
+    "name" => clienttranslate("Television"),
+  ],
+  113 => [
+    "type" => "keeper",
+    "name" => clienttranslate("Time"),
+  ],
+  114 => [
+    "type" => "keeper",
+    "name" => clienttranslate("Dreams"),
+  ],
+  115 => [
+    "type" => "keeper",
+    "name" => clienttranslate("Music"),
+  ],
+  116 => [
+    "type" => "keeper",
+    "name" => clienttranslate("The Party"),
+  ],
+  117 => [
+    "type" => "keeper",
+    "name" => clienttranslate("The Sun"),
+  ],
+  118 => [
+    "type" => "keeper",
+    "name" => clienttranslate("Love"),
+  ],
+  119 => [
+    "type" => "keeper",
+    "name" => clienttranslate("Peace"),
+  ],
 
   ////// Goals
-  301 => [
+  201 => [
+    "type" => "goal",
     "name" => clienttranslate("10 Cards in Hand"),
     "description" => clienttranslate(
-      "If someone has 10 or more cards in his or her hand, then the player with the most cards in hand wins. <br/> In the event of a tie, continue playing until a clear winner emerges."
+      "If someone has 10 or more cards in his or her hand, then the player with the most cards in hand wins. In the event of a tie, continue playing until a clear winner emerges."
     ),
   ],
-  302 => [
+  202 => [
+    "type" => "goal",
     "name" => clienttranslate("5 Keepers"),
     "description" => clienttranslate(
-      "If someone has 5 or more Keepers on the table, then the player with the most Keepers in play wins. <br/> In the event of a tie, continue playing until a clear winner emerges."
+      "If someone has 5 or more Keepers on the table, then the player with the most Keepers in play wins. In the event of a tie, continue playing until a clear winner emerges."
     ),
   ],
-  303 => [
+  203 => [
+    "type" => "goal",
     "name" => clienttranslate("The Appliances"),
-    "description" => clienttranslate("The Toaster + Television"),
+    "subtitle" => clienttranslate("The Toaster + Television"),
   ],
-  304 => [
+  204 => [
+    "type" => "goal",
     "name" => clienttranslate("Baked Goods"),
-    "description" => clienttranslate("Bread + Cookies"),
+    "subtitle" => clienttranslate("Bread + Cookies"),
   ],
-  305 => [
+  205 => [
+    "type" => "goal",
     "name" => clienttranslate("Bed Time"),
-    "description" => clienttranslate("Sleep + Time"),
+    "subtitle" => clienttranslate("Sleep + Time"),
   ],
-  306 => [
+  206 => [
+    "type" => "goal",
     "name" => clienttranslate("The Brain (No TV)"),
     "description" => clienttranslate(
       "If no one has Television on the table, the player with The Brain on the table wins."
     ),
   ],
-  307 => [
+  207 => [
+    "type" => "goal",
     "name" => clienttranslate("Bread & Chocolate"),
-    "description" => clienttranslate("Bread + Chocolate"),
+    "subtitle" => clienttranslate("Bread + Chocolate"),
   ],
-  308 => [
+  208 => [
+    "type" => "goal",
     "name" => clienttranslate("Can’t Buy Me Love"),
-    "description" => clienttranslate("Money + Love"),
+    "subtitle" => clienttranslate("Money + Love"),
   ],
-  309 => [
+  209 => [
+    "type" => "goal",
     "name" => clienttranslate("Chocolate Cookies"),
-    "description" => clienttranslate("Chocolate + Cookies"),
+    "subtitle" => clienttranslate("Chocolate + Cookies"),
   ],
-  310 => [
+  210 => [
+    "type" => "goal",
     "name" => clienttranslate("Chocolate Milk"),
-    "description" => clienttranslate("Chocolate + Milk"),
+    "subtitle" => clienttranslate("Chocolate + Milk"),
   ],
-  311 => [
+  211 => [
+    "type" => "goal",
     "name" => clienttranslate("Day Dreams"),
-    "description" => clienttranslate("The Sun + Dreams"),
+    "subtitle" => clienttranslate("The Sun + Dreams"),
   ],
-  312 => [
+  212 => [
+    "type" => "goal",
     "name" => clienttranslate("Dreamland"),
-    "description" => clienttranslate("Sleep + Dreams"),
+    "subtitle" => clienttranslate("Sleep + Dreams"),
   ],
-  313 => [
+  213 => [
+    "type" => "goal",
     "name" => clienttranslate("The Eye of the Beholder"),
-    "description" => clienttranslate("The Eye + Love"),
+    "subtitle" => clienttranslate("The Eye + Love"),
   ],
-  314 => [
+  214 => [
+    "type" => "goal",
     "name" => clienttranslate("Great Theme Song"),
-    "description" => clienttranslate("Music + Television"),
+    "subtitle" => clienttranslate("Music + Television"),
   ],
-  315 => [
+  215 => [
+    "type" => "goal",
     "name" => clienttranslate("Hearts & Minds"),
-    "description" => clienttranslate("Love + The Brain"),
+    "subtitle" => clienttranslate("Love + The Brain"),
   ],
-  316 => [
+  216 => [
+    "type" => "goal",
     "name" => clienttranslate("Hippyism"),
-    "description" => clienttranslate("Peace + Love"),
+    "subtitle" => clienttranslate("Peace + Love"),
   ],
-  317 => [
+  217 => [
+    "type" => "goal",
     "name" => clienttranslate("Lullaby"),
-    "description" => clienttranslate("Sleep + Music"),
+    "subtitle" => clienttranslate("Sleep + Music"),
   ],
-  318 => [
+  218 => [
+    "type" => "goal",
     "name" => clienttranslate("Milk & Cookies"),
-    "description" => clienttranslate("Milk + Cookies"),
+    "subtitle" => clienttranslate("Milk + Cookies"),
   ],
-  319 => [
+  219 => [
+    "type" => "goal",
     "name" => clienttranslate("The Mind’s Eye"),
-    "description" => clienttranslate("The Brain + The Eye"),
+    "subtitle" => clienttranslate("The Brain + The Eye"),
   ],
-  320 => [
+  220 => [
+    "type" => "goal",
     "name" => clienttranslate("Night & Day"),
-    "description" => clienttranslate("The Sun + The Moon"),
+    "subtitle" => clienttranslate("The Sun + The Moon"),
   ],
-  321 => [
+  221 => [
+    "type" => "goal",
     "name" => clienttranslate("Party Snacks"),
-    "description" => clienttranslate("The Party + at least 1 food Keeper"),
+    "subtitle" => clienttranslate("The Party + at least 1 food Keeper"),
   ],
-  322 => [
+  222 => [
+    "type" => "goal",
     "name" => clienttranslate("Party Time!"),
-    "description" => clienttranslate("The Party + Time"),
+    "subtitle" => clienttranslate("The Party + Time"),
   ],
-  323 => [
+  223 => [
+    "type" => "goal",
     "name" => clienttranslate("Rocket Science"),
-    "description" => clienttranslate("The Rocket + The Brain"),
+    "subtitle" => clienttranslate("The Rocket + The Brain"),
   ],
-  324 => [
+  224 => [
+    "type" => "goal",
     "name" => clienttranslate("Rocket to the Moon"),
-    "description" => clienttranslate("The Rocket + The Moon"),
+    "subtitle" => clienttranslate("The Rocket + The Moon"),
   ],
-  325 => [
+  225 => [
+    "type" => "goal",
     "name" => clienttranslate("Squishy Chocolate"),
-    "description" => clienttranslate("Chocolate + The Sun"),
+    "subtitle" => clienttranslate("Chocolate + The Sun"),
   ],
-  326 => [
+  226 => [
+    "type" => "goal",
     "name" => clienttranslate("Time is Money"),
-    "description" => clienttranslate("Time + Money"),
+    "subtitle" => clienttranslate("Time + Money"),
   ],
-  327 => [
+  227 => [
+    "type" => "goal",
     "name" => clienttranslate("Toast"),
-    "description" => clienttranslate("Bread + The Toaster"),
+    "subtitle" => clienttranslate("Bread + The Toaster"),
   ],
-  328 => [
+  228 => [
+    "type" => "goal",
     "name" => clienttranslate("Turn it Up!"),
-    "description" => clienttranslate("Music + The Party"),
+    "subtitle" => clienttranslate("Music + The Party"),
   ],
-  329 => [
+  229 => [
+    "type" => "goal",
     "name" => clienttranslate("Winning the Lottery"),
-    "description" => clienttranslate("Dreams + Money"),
+    "subtitle" => clienttranslate("Dreams + Money"),
   ],
-  330 => [
+  230 => [
+    "type" => "goal",
     "name" => clienttranslate("World Peace"),
-    "description" => clienttranslate("Dreams + Peace"),
+    "subtitle" => clienttranslate("Dreams + Peace"),
   ],
 
   ////// New Rules
-  401 => [
+  301 => [
+    "type" => "rule",
+    "ruleType" => "playRule",
     "name" => clienttranslate("Play 2"),
+    "subtitle" => clienttranslate("Replaces Play Rule"),
     "description" => clienttranslate(
-      "Replaces Play Rule <br/> Play 2 cards per turn. <br/> If you have fewer than that, play all your cards."
+      "Play 2 cards per turn. If you have fewer than that, play all your cards."
     ),
   ],
-  402 => [
+  302 => [
+    "type" => "rule",
+    "ruleType" => "playRule",
     "name" => clienttranslate("Play 3"),
+    "subtitle" => clienttranslate("Replaces Play Rule"),
     "description" => clienttranslate(
-      "Replaces Play Rule <br/> Play 3 cards per turn. <br/> If you have fewer than that, play all your cards."
+      "Play 3 cards per turn. If you have fewer than that, play all your cards."
     ),
   ],
-  403 => [
+  303 => [
+    "type" => "rule",
+    "ruleType" => "playRule",
     "name" => clienttranslate("Play 4"),
+    "subtitle" => clienttranslate("Replaces Play Rule"),
     "description" => clienttranslate(
-      "Replaces Play Rule <br/> Play 4 cards per turn. <br/> If you have fewer than that, play all your cards."
+      "Play 4 cards per turn. If you have fewer than that, play all your cards."
     ),
   ],
-  404 => [
+  304 => [
+    "type" => "rule",
+    "ruleType" => "playRule",
     "name" => clienttranslate("Play All"),
-    "description" => clienttranslate(
-      "Replaces Play Rule <br/> Play all your cards per turn."
-    ),
+    "subtitle" => clienttranslate("Replaces Play Rule"),
+    "description" => clienttranslate("Play all your cards per turn."),
   ],
-  405 => [
+  305 => [
+    "type" => "rule",
+    "ruleType" => "playRule",
     "name" => clienttranslate("Play All But 1"),
+    "subtitle" => clienttranslate("Replaces Play Rule"),
     "description" => clienttranslate(
-      "Replaces Play Rule <br/> Play all but 1 of your cards.<br/> If you started with no cards in your hand and only drew 1, draw an extra card."
+      "Play all but 1 of your cards. If you started with no cards in your hand and only drew 1, draw an extra card."
     ),
   ],
-  406 => [
+  306 => [
+    "type" => "rule",
+    "ruleType" => "drawRule",
     "name" => clienttranslate("Draw 2"),
+    "subtitle" => clienttranslate("Replaces Draw Rule"),
     "description" => clienttranslate(
-      "Replaces Draw Rule <br/> Draw 2 cards per turn. <br/> If you just played this card, draw extra cards as needed to reach 2 cards drawn."
+      "Draw 2 cards per turn. If you just played this card, draw extra cards as needed to reach 2 cards drawn."
     ),
   ],
-  407 => [
+  307 => [
+    "type" => "rule",
+    "ruleType" => "drawRule",
     "name" => clienttranslate("Draw 3"),
+    "subtitle" => clienttranslate("Replaces Draw Rule"),
     "description" => clienttranslate(
-      "Replaces Draw Rule <br/> Draw 3 cards per turn. <br/> If you just played this card, draw extra cards as needed to reach 3 cards drawn."
+      "Draw 3 cards per turn. If you just played this card, draw extra cards as needed to reach 3 cards drawn."
     ),
   ],
-  408 => [
+  308 => [
+    "type" => "rule",
+    "ruleType" => "drawRule",
     "name" => clienttranslate("Draw 4"),
+    "subtitle" => clienttranslate("Replaces Draw Rule"),
     "description" => clienttranslate(
-      "Replaces Draw Rule <br/> Draw 4 cards per turn. <br/> If you just played this card, draw extra cards as needed to reach 4 cards drawn."
+      "Draw 4 cards per turn. If you just played this card, draw extra cards as needed to reach 4 cards drawn."
     ),
   ],
-  409 => [
+  309 => [
+    "type" => "rule",
+    "ruleType" => "drawRule",
     "name" => clienttranslate("Draw 5"),
+    "subtitle" => clienttranslate("Replaces Draw Rule"),
     "description" => clienttranslate(
-      "Replaces Draw Rule <br/> Draw 5 cards per turn. <br/> If you just played this card, draw extra cards as needed to reach 5 cards drawn."
+      "Draw 5 cards per turn. If you just played this card, draw extra cards as needed to reach 5 cards drawn."
     ),
   ],
-  410 => [
+  310 => [
+    "type" => "rule",
+    "ruleType" => "keepersLimit",
     "name" => clienttranslate("Keeper Limit 2"),
+    "subtitle" => clienttranslate("Replaces Keeper Limit"),
     "description" => clienttranslate(
-      'Replaces Keeper Limit <br/> If it isn\'t your turn, you can only have 2 Keepers in play. Discard extras immediately. You may acquire new Keepers during your turn as long as you discard down to 2 when your turn ends.'
+      'If it isn\'t your turn, you can only have 2 Keepers in play. Discard extras immediately. You may acquire new Keepers during your turn as long as you discard down to 2 when your turn ends.'
     ),
   ],
-  411 => [
+  311 => [
+    "type" => "rule",
+    "ruleType" => "keepersLimit",
     "name" => clienttranslate("Keeper Limit 3"),
+    "subtitle" => clienttranslate("Replaces Keeper Limit"),
     "description" => clienttranslate(
-      'Replaces Keeper Limit <br/> If it isn\'t your turn, you can only have 3 Keepers in play. Discard extras immediately. You may acquire new Keepers during your turn as long as you discard down to 3 when your turn ends.'
+      'If it isn\'t your turn, you can only have 3 Keepers in play. Discard extras immediately. You may acquire new Keepers during your turn as long as you discard down to 3 when your turn ends.'
     ),
   ],
-  412 => [
+  312 => [
+    "type" => "rule",
+    "ruleType" => "keepersLimit",
     "name" => clienttranslate("Keeper Limit 4"),
+    "subtitle" => clienttranslate("Replaces Keeper Limit"),
     "description" => clienttranslate(
-      'Replaces Keeper Limit <br/> If it isn\'t your turn, you can only have 4 Keepers in play. Discard extras immediately. You may acquire new Keepers during your turn as long as you discard down to 4 when your turn ends.'
+      'If it isn\'t your turn, you can only have 4 Keepers in play. Discard extras immediately. You may acquire new Keepers during your turn as long as you discard down to 4 when your turn ends.'
     ),
   ],
-  413 => [
+  313 => [
+    "type" => "rule",
+    "ruleType" => "handLimit",
     "name" => clienttranslate("Hand Limit 0"),
+    "subtitle" => clienttranslate("Replaces Hand Limit"),
     "description" => clienttranslate(
-      'Replaces Hand Limit <br/> If it isn\'t your turn, you can only have 0 cards in your hand. Discard extras immediately. During your turn, this rule does not apply to you, after your turn ends, discard down to 0 cards'
+      'If it isn\'t your turn, you can only have 0 cards in your hand. Discard extras immediately. During your turn, this rule does not apply to you, after your turn ends, discard down to 0 cards'
     ),
   ],
-  414 => [
+  314 => [
+    "type" => "rule",
+    "ruleType" => "handLimit",
     "name" => clienttranslate("Hand Limit 1"),
+    "subtitle" => clienttranslate("Replaces Hand Limit"),
     "description" => clienttranslate(
-      'Replaces Hand Limit <br/> If it isn\'t your turn, you can only have 1 card in your hand. Discard extras immediately. During your turn, this rule does not apply to you, after your turn ends, discard down to 1 card'
+      'If it isn\'t your turn, you can only have 1 card in your hand. Discard extras immediately. During your turn, this rule does not apply to you, after your turn ends, discard down to 1 card'
     ),
   ],
-  415 => [
+  315 => [
+    "type" => "rule",
+    "ruleType" => "handLimit",
     "name" => clienttranslate("Hand Limit 2"),
+    "subtitle" => clienttranslate("Replaces Hand Limit"),
     "description" => clienttranslate(
-      'Replaces Hand Limit <br/> If it isn\'t your turn, you can only have 2 cards in your hand. Discard extras immediately. During your turn, this rule does not apply to you, after your turn ends, discard down to 2 cards'
+      'If it isn\'t your turn, you can only have 2 cards in your hand. Discard extras immediately. During your turn, this rule does not apply to you, after your turn ends, discard down to 2 cards'
     ),
   ],
-  416 => [
+  316 => [
+    "type" => "rule",
+    "ruleType" => "startOfTurnEvent",
     "name" => clienttranslate("No-Hand Bonus"),
+    "subtitle" => clienttranslate("Start-of-Turn Event"),
     "description" => clienttranslate(
-      "Start-of-Turn Event <br/> If empty handed, draw 3 cards before observing the current draw rule."
+      "If empty handed, draw 3 cards before observing the current draw rule."
     ),
   ],
-  417 => [
+  317 => [
+    "type" => "rule",
+    "ruleType" => "instantEffect",
     "name" => clienttranslate("Party Bonus"),
+    "subtitle" => clienttranslate("Takes Instant Effect"),
     "description" => clienttranslate(
-      "Takes Instant Effect <br/> If one player has the Party on the table, all players draw 1 extra card and play 1 extra card during their turn."
+      "If one player has the Party on the table, all players draw 1 extra card and play 1 extra card during their turn."
     ),
   ],
-  418 => [
+  318 => [
+    "type" => "rule",
+    "ruleType" => "instantEffect",
     "name" => clienttranslate("Poor Bonus"),
+    "subtitle" => clienttranslate("Takes Instant Effect"),
     "description" => clienttranslate(
-      "Takes Instant Effect <br/> If one player has fewer Keepers in play than anyone else, the number of cards drawn by this player is increased by 1. <br/> In the event of a tie, no player receives the bonus."
+      "If one player has fewer Keepers in play than anyone else, the number of cards drawn by this player is increased by 1. In the event of a tie, no player receives the bonus."
     ),
   ],
-  419 => [
+  319 => [
+    "type" => "rule",
+    "ruleType" => "instantEffect",
     "name" => clienttranslate("Rich Bonus"),
+    "subtitle" => clienttranslate("Takes Instant Effect"),
     "description" => clienttranslate(
-      "Takes Instant Effect <br/> If one player has more Keepers in play than anyone else, the number of cards drawn by this player is increased by 1. <br/> In the event of a tie, no player receives the bonus."
+      "If one player has more Keepers in play than anyone else, the number of cards drawn by this player is increased by 1. In the event of a tie, no player receives the bonus."
     ),
   ],
-  420 => [
+  320 => [
+    "type" => "rule",
+    "ruleType" => "instantEffect",
     "name" => clienttranslate("Double Agenda"),
+    "subtitle" => clienttranslate("Takes Instant Effect"),
     "description" => clienttranslate(
-      "Takes Instant Effect <br/> A second Goal can now be played. After this, whoever plays a new Goal must choose which of the current Goal to discard. You win if you satisfy either Goal."
+      "A second Goal can now be played. After this, whoever plays a new Goal must choose which of the current Goal to discard. You win if you satisfy either Goal."
     ),
   ],
-  421 => [
+  321 => [
+    "type" => "rule",
+    "ruleType" => "instantEffect",
     "name" => clienttranslate("First Play Random"),
+    "subtitle" => clienttranslate("Takes Instant Effect"),
     "description" => clienttranslate(
-      "Takes Instant Effect <br/> The first card you play must be chosen at random from your hand by the player on your left. Ignore this rule if the current Rule card allow you to play only one card."
+      "The first card you play must be chosen at random from your hand by the player on your left. Ignore this rule if the current Rule card allow you to play only one card."
     ),
   ],
-  422 => [
+  322 => [
+    "type" => "rule",
+    "ruleType" => "freeAction",
     "name" => clienttranslate("Get On With It!"),
+    "subtitle" => clienttranslate("Free action"),
     "description" => clienttranslate(
-      "Free action <br/> Before your final play, if you are not empty handed, you may discard your entire hand and draw 3 cards. Your turn then ends immediately."
+      "Before your final play, if you are not empty handed, you may discard your entire hand and draw 3 cards. Your turn then ends immediately."
     ),
   ],
-  423 => [
+  323 => [
+    "type" => "rule",
+    "ruleType" => "freeAction",
     "name" => clienttranslate("Goal Mill"),
+    "subtitle" => clienttranslate("Free action"),
     "description" => clienttranslate(
-      "Free action <br/> Once during your turn, discard as many of your Goal cards as you choose, then draw that many cards."
+      "Once during your turn, discard as many of your Goal cards as you choose, then draw that many cards."
     ),
   ],
-  424 => [
+  324 => [
+    "type" => "rule",
+    "ruleType" => "instantEffect",
     "name" => clienttranslate("Inflation"),
+    "subtitle" => clienttranslate("Takes Instant Effect"),
     "description" => clienttranslate(
-      "Takes Instant Effect <br/> Any time a numeral is seen on another card,  add one to that numeral. For example, 1 becomes 2, while one remains one. Yes, this affects the Basic Rules."
+      "Any time a numeral is seen on another card, add one to that numeral. For example, 1 becomes 2, while one remains one. Yes, this affects the Basic Rules."
     ),
   ],
-  425 => [
+  325 => [
+    "type" => "rule",
+    "ruleType" => "freeAction",
     "name" => clienttranslate("Mystery Play"),
+    "subtitle" => clienttranslate("Free action"),
     "description" => clienttranslate(
-      "Free action <br/> Once durung your turn you may take the top card from the draw pile and play it immediately."
+      "Once during your turn you may take the top card from the draw pile and play it immediately."
     ),
   ],
-  426 => [
+  326 => [
+    "type" => "rule",
+    "ruleType" => "freeAction",
     "name" => clienttranslate("Recycling"),
+    "subtitle" => clienttranslate("Free action"),
     "description" => clienttranslate(
-      "Free action <br/> Once during your turn, you may discard one of your Keepers from the table and draw 3 extra cards."
+      "Once during your turn, you may discard one of your Keepers from the table and draw 3 extra cards."
     ),
   ],
-  427 => [
+  327 => [
+    "type" => "rule",
+    "ruleType" => "instantEffect",
     "name" => clienttranslate("Swap Plays for Draws"),
+    "subtitle" => clienttranslate("Takes Instant Effect"),
     "description" => clienttranslate(
-      "Takes Instant Effect <br/> During yout yurn, you may decide to play no more cards and instead draw as many cards as you have plays remaining. If Play All, draw as many cards as you hold."
+      "During yout yurn, you may decide to play no more cards and instead draw as many cards as you have plays remaining. If Play All, draw as many cards as you hold."
     ),
   ],
 
   ////// Actions
-  501 => [
+  401 => [
+    "type" => "action",
     "name" => clienttranslate("Trash a Keeper"),
     "description" => clienttranslate(
-      "Take a Keeper from in front of any player and put it on the discard pile. <br/> If no one has any Keepers in play, nothing happends when you play this card."
+      "Take a Keeper from in front of any player and put it on the discard pile. If no one has any Keepers in play, nothing happends when you play this card."
     ),
   ],
-  502 => [
+  402 => [
+    "type" => "action",
     "name" => clienttranslate("Rotate Hands"),
     "description" => clienttranslate(
-      "All players pass their hands to the player next to them. <br/> You decide which direction."
+      "All players pass their hands to the player next to them. You decide which direction."
     ),
   ],
-  503 => [
+  403 => [
+    "type" => "action",
     "name" => clienttranslate("Rules Reset"),
     "description" => clienttranslate(
-      "Reset to the Basic Rules. <br/> Discard all New Rule cards, and leave only the Basic Rules in play. <br/> Do not discard the current Goal."
+      "Reset to the Basic Rules. Discard all New Rule cards, and leave only the Basic Rules in play. Do not discard the current Goal."
     ),
   ],
-  504 => [
+  404 => [
+    "type" => "action",
     "name" => clienttranslate("Random Tax"),
     "description" => clienttranslate(
       "Take 1 card at random from the hand of each other player and add these cardsto your own hand."
     ),
   ],
-  505 => [
+  405 => [
+    "type" => "action",
     "name" => clienttranslate("Rock-Paper-Scissors Showdown"),
     "description" => clienttranslate(
-      'Challenge another player to a 3-round Rock-Paper-Scissors tournament. <br/> Winner takes loser\'s entire hand of cards.'
+      'Challenge another player to a 3-round Rock-Paper-Scissors tournament. Winner takes loser\'s entire hand of cards.'
     ),
   ],
-  506 => [
+  406 => [
+    "type" => "action",
     "name" => clienttranslate("Trash A New Rule"),
     "description" => clienttranslate(
       "Select one of the New Rule cards in play and place it in the discard pile."
     ),
   ],
-  507 => [
+  407 => [
+    "type" => "action",
     "name" => clienttranslate("Use What You Take"),
     "description" => clienttranslate(
       'Take a card at random form another player\'s hand, and play it.'
     ),
   ],
-  508 => [
+  408 => [
+    "type" => "action",
     "name" => clienttranslate("Zap a Card!"),
     "description" => clienttranslate(
       "Choose any card in play, anywhere on the table (except for the Basic Rules) and add it to your hand."
     ),
   ],
-  509 => [
+  409 => [
+    "type" => "action",
     "name" => clienttranslate("Discard and Draw"),
     "description" => clienttranslate(
-      "Discard your entire hand, then draw as many cards as you discarded. <br/> Do not count this card when determining how many cards to draw."
+      "Discard your entire hand, then draw as many cards as you discarded. Do not count this card when determining how many cards to draw."
     ),
   ],
-  510 => [
+  410 => [
+    "type" => "action",
     "name" => clienttranslate("Draw 2 and Use ‘Em"),
     "description" => clienttranslate(
-      "Set your hand aside. <br/> Draw 2 cards, play them in any order you choose, then pick up your hand and continue with your turn. <br/> This card, and all cards played because of it, are counted as a single play."
+      "Set your hand aside. Draw 2 cards, play them in any order you choose, then pick up your hand and continue with your turn. This card, and all cards played because of it, are counted as a single play."
     ),
   ],
-  511 => [
+  411 => [
+    "type" => "action",
     "name" => clienttranslate("Draw 3, Play 2 of Them"),
     "description" => clienttranslate(
-      "Set your hand aside. <br/> Draw 3 cards and play 2 them. Discard the last card, then pick up your hand and continue with your turn. <br/> This card, and all cards played because of it, are counted as a single play."
+      "Set your hand aside. Draw 3 cards and play 2 them. Discard the last card, then pick up your hand and continue with your turn. This card, and all cards played because of it, are counted as a single play."
     ),
   ],
-  512 => [
+  412 => [
+    "type" => "action",
     "name" => clienttranslate("Empty the Trash"),
     "description" => clienttranslate(
       "Start a new discard pile with this card and shuffle the rest of the discard pile back into the draw pile."
     ),
   ],
-  513 => [
+  413 => [
+    "type" => "action",
     "name" => clienttranslate("Everybody gets 1"),
     "description" => clienttranslate(
-      "Set your hand aside. <br/> Count the number of players in the game (including yourself). Draw enough cards to give 1 to each player, and then distribute them evenly amongst all the players. <br/> You decide who gets what."
+      "Set your hand aside. Count the number of players in the game (including yourself). Draw enough cards to give 1 to each player, and then distribute them evenly amongst all the players. You decide who gets what."
     ),
   ],
-  514 => [
+  414 => [
+    "type" => "action",
     "name" => clienttranslate("Exchange Keepers"),
     "description" => clienttranslate(
       "Pick any Keeper another player has on the table and exchange it for one you have on the table. <be/> If you have no Keepers in play, or if no one else has a Keeper, nothing happens."
     ),
   ],
-  515 => [
+  415 => [
+    "type" => "action",
     "name" => clienttranslate("Jackpot!"),
     "description" => clienttranslate("Draw 3 extra cards!"),
   ],
-  516 => [
+  416 => [
+    "type" => "action",
     "name" => clienttranslate("Let’s Do That Again!"),
     "description" => clienttranslate(
-      'Seatch through the discard pile. Take any Action or New Rule card you wish and immediately play it. <br/> Anyone may look through the discard pile at any time, but the order of what\'s in the pile should never be changed.'
+      'Seatch through the discard pile. Take any Action or New Rule card you wish and immediately play it. Anyone may look through the discard pile at any time, but the order of what\'s in the pile should never be changed.'
     ),
   ],
-  517 => [
+  417 => [
+    "type" => "action",
     "name" => clienttranslate("Let’s Simplify"),
     "description" => clienttranslate(
       "Discard your choice of up to half (rounded up) of the New Rule cards in play."
     ),
   ],
-  518 => [
+  418 => [
+    "type" => "action",
     "name" => clienttranslate("No Limits"),
     "description" => clienttranslate(
       "Discard all Hand and Keeper Limits currently in play."
     ),
   ],
-  519 => [
+  419 => [
+    "type" => "action",
     "name" => clienttranslate("Trade Hands"),
     "description" => clienttranslate(
-      "Trade your hand for the hand of one of your opponents. <br/> This is one of those times when you can get something for nothing!"
+      "Trade your hand for the hand of one of your opponents. This is one of those times when you can get something for nothing!"
     ),
   ],
-  520 => [
+  420 => [
+    "type" => "action",
     "name" => clienttranslate("Share the Wealth"),
     "description" => clienttranslate(
-      "Gather up all the Keepers on the table, shuffle them together, and deal them back out to all players, starting with yourself. These go immediately into play in front of their new owners. <br/> Everyone will probably end up with a different number of Keepers in play than they started with."
+      "Gather up all the Keepers on the table, shuffle them together, and deal them back out to all players, starting with yourself. These go immediately into play in front of their new owners. Everyone will probably end up with a different number of Keepers in play than they started with."
     ),
   ],
-  521 => [
+  421 => [
+    "type" => "action",
     "name" => clienttranslate("Steal a Keeper"),
     "description" => clienttranslate(
       "Steal a Keeper from in front of another player, and add it to your collenction of Keepers on the table."
     ),
   ],
-  522 => [
+  422 => [
+    "type" => "action",
     "name" => clienttranslate("Take Another Turn"),
     "description" => clienttranslate(
-      "Take another tuen as soon as you finish this one. <br/> The maximum number of turns you can take in a row using this card is two."
+      "Take another tuen as soon as you finish this one. The maximum number of turns you can take in a row using this card is two."
     ),
   ],
-  523 => [
+  423 => [
+    "type" => "action",
     "name" => clienttranslate("Today’s Special!"),
     "description" => clienttranslate(
       'Set your hand aside and draw 3 cards. If today is your birthday, play all 3 cards. If today is a holiday or special anniversary, play 2 of the cards. If it\'s just another day, play only 1 card. Discard the remainder.'

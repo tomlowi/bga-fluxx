@@ -31,12 +31,12 @@ class fluxx extends Table
     parent::__construct();
 
     self::initGameStateLabels([
-      "cardDrawn" => 10,
-      "cardPlayed" => 11,
-      "cardToDraw" => 20,
-      "cardToPlay" => 21,
-      "handLimit" => 22,
-      "keeperLimit" => 23,
+      "drawRule" => 10,
+      "playRule" => 11,
+      "handLimit" => 12,
+      "keepersLimit" => 13,
+      "drawnCards" => 20,
+      "playedCards" => 21,
     ]);
     $this->cards = self::getNew("module.common.deck");
     $this->cards->init("card");
@@ -92,56 +92,50 @@ class fluxx extends Table
     /************ Start the game initialization *****/
 
     // Init global values with their initial values
-    self::setGameStateInitialValue("cardDrawn", 0);
-    self::setGameStateInitialValue("cardPlayed", 0);
-    self::setGameStateInitialValue("cardToPlay", 1);
-    self::setGameStateInitialValue("cardToDraw", 1);
+    self::setGameStateInitialValue("drawRule", 1);
+    self::setGameStateInitialValue("playRule", 1);
     self::setGameStateInitialValue("handLimit", -1);
-    self::setGameStateInitialValue("keeperLimit", -1);
+    self::setGameStateInitialValue("keepersLimit", -1);
+    self::setGameStateInitialValue("drawnCards", 0);
+    self::setGameStateInitialValue("playedCards", 0);
 
     // Create cards
     $cards = [];
-    foreach ($this->types as $type_id => $type) {
-      // action, keeper, objective, newrule, baserule
-      for (
-        $number = 1;
-        $number <= $this->types[$type_id]["nbcards"];
-        $number++
-      ) {
-        $cards[] = ["type" => $type_id, "type_arg" => $number, "nbr" => 1];
+
+    foreach ($this->typesDefinitions as $type) {
+      // keeper, goal, rule, action
+
+      for ($i = 0; $i < $type["nbCards"]; $i++) {
+        $cards[] = ["type" => $type["label"], "type_arg" => $i, "nbr" => 1];
       }
     }
 
     $this->cards->createCards($cards, "deck");
-    $this->cards->autoreshuffle = true;
-    $this->cards->autoreshuffle_trigger = [
-      "obj" => $this,
-      "method" => "deckAutoReshuffle",
-    ];
-    $sql = "SELECT card_id FROM card WHERE card_type = 1 AND card_type_arg = 1";
-    $result = self::DbQuery($sql);
-    $row = mysql_fetch_assoc($result);
-    $this->cards->moveCard($row["card_id"], "rules");
 
-    // Shuffle deck
+    // Shuffle deck to start
     $this->cards->shuffle("deck");
-    // Deal 3 cards to each players
-    $players = self::loadPlayersBasicInfos();
+
+    // We want to re-schuffle the discard pile in the deck automatically
+    $this->cards->autoreshuffle = true;
+
+    // @TODO: is this interesting?
+    // $this->cards->autoreshuffle_trigger = [
+    //   "obj" => $this,
+    //   "method" => "deckAutoReshuffle",
+    // ];
+
+    // Each player starts the game with 3 cards
     foreach ($players as $player_id => $player) {
       $cards = $this->cards->pickCards(3, "deck", $player_id);
     }
 
-    // Init game statistics
+    // @TODO: Init game statistics
     // (note: statistics used in this file must be defined in your stats.inc.php file)
     //self::initStat( 'table', 'table_teststat1', 0 );    // Init a table statistics
     //self::initStat( 'player', 'player_teststat1', 0 );  // Init a player statistics (for all players)
 
-    // TODO: setup the initial game situation here
-
-    // Activate first player (which is in general a good idea :) )
+    // Activate first player
     $this->activeNextPlayer();
-
-    /************ End of the game initialization *****/
   }
 
   /*
@@ -155,26 +149,34 @@ class fluxx extends Table
      */
   protected function getAllDatas()
   {
-    $result = [];
-
-    $current_player_id = self::getCurrentPlayerId(); // !! We must only return informations visible by this player !!
+    // We must only return informations visible by this player !!
+    $current_player_id = self::getCurrentPlayerId();
 
     // Get information about players
-    // Note: you can retrieve some extra field you added for "player" table in "dbmodel.sql" if you need it.
-    $sql = "SELECT player_id id, player_score score FROM player ";
-    $result["players"] = self::getCollectionFromDb($sql);
+    $sql = "SELECT player_id id, player_score score FROM player";
+    $players = self::getCollectionFromDb($sql);
 
-    // Cards in player hand
-    $result["hand"] = $this->cards->getCardsInLocation(
-      "hand",
-      $current_player_id
-    );
+    $result = [
+      "players" => $players,
+      "hand" => $this->cards->getCardsInLocation("hand", $current_player_id),
+      "temporaryHand" => $this->cards->getCardsInLocation(
+        "temporaryHand",
+        $current_player_id
+      ),
+      "rules" => $this->cards->getCardsInLocation("rules"),
+      "goals" => $this->cards->getCardsInLocation("goals"),
+      "keepers" => [],
+      "discard" => $this->cards->getCardOnTop("discard"),
+      "deckCount" => $this->cards->countCardInLocation("deck"),
+      "discardCount" => $this->cards->countCardInLocation("discard"),
+    ];
 
-    // Cards in the players keeper section
-    $result["keepers"] = $this->cards->getCardsInLocation("keepers");
-
-    // Cards in the rules & goal section
-    $result["rules"] = $this->cards->getCardsInLocation("rules");
+    foreach ($players as $player_id => $player) {
+      $result["keepers"][$player_id] = $this->cards->getCardsInLocation(
+        "keepers",
+        $player_id
+      );
+    }
 
     return $result;
   }
@@ -191,7 +193,7 @@ class fluxx extends Table
      */
   public function getGameProgression()
   {
-    // TODO: compute and return the game progression
+    // @TODO: compute and return the game progression
 
     return 0;
   }
@@ -204,23 +206,22 @@ class fluxx extends Table
     In this space, you can put any utility methods useful for your game logic
      */
 
-  public function drawCards($draw)
+  public function drawCards($player_id, $drawCount)
   {
-    $cardsDrawn = $this->cards->pickCards($draw, "deck", $player_id);
-    $previouslyDrawn = self::getGameStateValue("cardDrawn");
-    self::setGameStateValue("cardDrawn", $previouslyDrawn + $draw);
+    $cardsDrawn = $this->cards->pickCards($drawCount, "deck", $player_id);
+    self::incGameStateValue("drawnCards", $drawCount);
 
     self::notifyPlayer($player_id, "cardDrawn", "", [
-      "cardsDrawn" => $cardsDrawn,
+      "cards" => $cardsDrawn,
     ]);
 
     self::notifyAllPlayers(
       "numberCardsDrawn",
-      clienttranslate('${player_name} draws <b>${nb}</b> card(s)'),
+      clienttranslate('${player_name} draws <b>${drawCount}</b> card(s)'),
       [
-        "player_id" => $player_id,
         "player_name" => self::getActivePlayerName(),
-        "nb" => $draw,
+        "drawCount" => $drawCount,
+        "handCount" => $this->cards->countCardInLocation("hand", $player_id),
       ]
     );
   }
@@ -672,9 +673,9 @@ class fluxx extends Table
             // Replaces Draw Rule
             $this->discardRule(2);
 
-            $drawn = $self::getGameStateValue("cardDrawn");
+            $drawn = self::getGameStateValue("cardDrawn");
             if ($drawn < 2) {
-              $this->drawCards(2 - $drawn);
+              $this->drawCards($player_id, 2 - $drawn);
             }
 
             // Play all cards per turn.
@@ -686,9 +687,9 @@ class fluxx extends Table
             // Replaces Draw Rule
             $this->discardRule(2);
 
-            $drawn = $self::getGameStateValue("cardDrawn");
+            $drawn = self::getGameStateValue("cardDrawn");
             if ($drawn < 3) {
-              $this->drawCards(3 - $drawn);
+              $this->drawCards($player_id, 3 - $drawn);
             }
 
             // Play all cards per turn.
@@ -700,9 +701,9 @@ class fluxx extends Table
             // Replaces Draw Rule
             $this->discardRule(2);
 
-            $drawn = $self::getGameStateValue("cardDrawn");
+            $drawn = self::getGameStateValue("cardDrawn");
             if ($drawn < 4) {
-              $this->drawCards(4 - $drawn);
+              $this->drawCards($player_id, 4 - $drawn);
             }
 
             // Play all cards per turn.
@@ -714,9 +715,9 @@ class fluxx extends Table
             // Replaces Draw Rule
             $this->discardRule(2);
 
-            $drawn = $self::getGameStateValue("cardDrawn");
+            $drawn = self::getGameStateValue("cardDrawn");
             if ($drawn <= 5) {
-              $this->drawCards(5 - $drawn);
+              $this->drawCards($player_id, 5 - $drawn);
             }
 
             // Play all cards per turn.
@@ -836,22 +837,10 @@ class fluxx extends Table
     game state.
      */
 
-  public function argDrawCards()
+  public function argsCardsDraw()
   {
     $draw = self::getGameStateValue("cardToDraw");
     return ["nb" => $draw];
-  }
-  public function argPlayCards()
-  {
-    $max = self::getGameStateValue("cardToPlay");
-    $played = self::getGameStateValue("cardPlayed");
-    if ($max == 200) {
-      return ["nb" => "All your"];
-    }
-    if ($max == -1) {
-      return ["nb" => "All but 1 of your"];
-    }
-    return ["nb" => $max - $played];
   }
   public function argHandLimit()
   {
@@ -868,21 +857,18 @@ class fluxx extends Table
   //////////// Game state actions
   ////////////
 
-  /*
-    Here, you can create methods defined as "game state actions" (see "action" property in states.inc.php).
-    The action method of state X is called everytime the current game state is set to X.
-     */
-
-  public function stDrawCards()
+  public function stCardsDraw()
   {
     $player_id = self::getActivePlayerId();
 
-    self::setGameStateValue("cardDrawn", 0);
-    $draw = self::getGameStateValue("cardToDraw");
+    $drawRule = self::getGameStateValue("drawRule");
+    $drawnCards = self::getGameStateValue("drawnCards");
 
-    $this->drawCards($draw);
+    if ($drawnCards < $drawRule) {
+      $this->drawCards($player_id, $drawRule - $drawnCards);
+    }
 
-    $this->gamestate->nextstate("drawnCards");
+    $this->gamestate->nextstate("playCards");
   }
 
   public function stHandLimit()

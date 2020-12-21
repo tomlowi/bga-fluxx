@@ -60,20 +60,19 @@ $machinestates = [
   ],
 
   10 => [
-    "name" => "drawCards",
+    "name" => "cardsDraw",
     "description" => "",
     "type" => "game",
-    "action" => "stDrawCards",
-    "args" => "argDrawCards",
-    "transitions" => ["drawnCards" => 11, "endGame" => 99],
+    "action" => "stCardsDraw",
+    // "args" => "argsCardsDraw",
+    "transitions" => ["playCards" => 11, "endGame" => 99],
   ],
 
   11 => [
-    "name" => "playCards",
-    "description" => clienttranslate('${actplayer} must play ${nb} cards'),
-    "descriptionmyturn" => clienttranslate('${you} must play ${nb} cards'),
+    "name" => "cardsPlay",
+    "description" => clienttranslate('${actplayer} must play a card'),
+    "descriptionmyturn" => clienttranslate('${you} must play a card'),
     "type" => "activeplayer",
-    "args" => "argPlayCards",
     "possibleactions" => ["playCard"],
     "transitions" => ["playedCards" => 12, "endGame" => 99],
   ],
@@ -105,6 +104,7 @@ $machinestates = [
     "description" => "",
     "type" => "game",
     "action" => "stNextPlayer",
+    "updateGameProgression" => true,
     "transitions" => ["nextPlayer" => 10],
   ],
 
