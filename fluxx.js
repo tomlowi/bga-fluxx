@@ -26,8 +26,13 @@ define([
     constructor: function () {
       this.CARD_WIDTH = 166;
       this.CARD_HEIGHT = 258;
-      this.CARDS_PATH = g_gamethemeurl + "img/cards.png";
+      this.CARDS_SPRITES_PATH = g_gamethemeurl + "img/cards.png";
       this.CARDS_SPRITES_PER_ROW = 17;
+
+      this.KEEPER_WIDTH = 83;
+      this.KEEPER_HEIGHT = 129;
+      this.KEEPERS_SPRITES_PATH = g_gamethemeurl + "img/keepers.png";
+      this.KEEPERS_SPRITES_PER_ROW = 10;
 
       this.CARDS_TYPES = {
         keeper: { count: 19, spriteOffset: 0, materialOffset: 1 },
@@ -50,10 +55,8 @@ define([
             "gamedatas" argument contains all datas retrieved by your "getAllDatas" PHP method.
         */
     setup: function (gamedatas) {
-      console.log("Starting game setup", gamedatas);
-
       // Setup all stocks and restore existing state
-      this.handStock = this.createCardStock("handStock", 0, [
+      this.handStock = this.createCardStock("handStock", 1, [
         "keeper",
         "goal",
         "rule",
@@ -69,10 +72,9 @@ define([
 
       this.keepersStock = {};
       for (var player_id in gamedatas.players) {
-        this.keepersStock[player_id] = this.createCardStock(
-          "keepersStock" + player_id,
-          0,
-          ["keeper"]
+        // Setting up player keepers stocls
+        this.keepersStock[player_id] = this.createKeepersStock(
+          "keepersStock" + player_id
         );
         this.addCardsToStock(
           this.keepersStock[player_id],
@@ -115,8 +117,6 @@ define([
 
       // Setup game notifications to handle (see "setupNotifications" method below)
       this.setupNotifications();
-
-      console.log("Ending game setup");
     },
 
     createCardStock: function (elem, mode, types) {
@@ -129,12 +129,11 @@ define([
         var spriteOffset = this.CARDS_TYPES[type].spriteOffset;
         var materialOffset = this.CARDS_TYPES[type].materialOffset;
 
-        // Only add cards with the right type
         for (var i = 0; i < count; i++) {
           stock.addItemType(
             materialOffset + i,
             materialOffset + i,
-            this.CARDS_PATH,
+            this.CARDS_SPRITES_PATH,
             spriteOffset + i
           );
         }
@@ -144,9 +143,29 @@ define([
       return stock;
     },
 
-    addCardsToStock: function (stock, cards) {
-      console.log("Add Cards to Stock", stock.control_name, cards);
+    createKeepersStock: function (elem) {
+      var stock = new ebg.stock();
+      stock.create(this, $(elem), this.KEEPER_WIDTH, this.KEEPER_HEIGHT);
+      stock.image_items_per_row = this.KEEPERS_SPRITES_PER_ROW;
 
+      var count = this.CARDS_TYPES.keeper.count;
+      var spriteOffset = this.CARDS_TYPES.keeper.spriteOffset;
+      var materialOffset = this.CARDS_TYPES.keeper.materialOffset;
+
+      for (var i = 0; i < count; i++) {
+        stock.addItemType(
+          materialOffset + i,
+          materialOffset + i,
+          this.KEEPERS_SPRITES_PATH,
+          spriteOffset + i
+        );
+      }
+
+      stock.setSelectionMode(1);
+      return stock;
+    },
+
+    addCardsToStock: function (stock, cards) {
       for (var card_id in cards) {
         var card = cards[card_id];
         stock.addToStockWithId(card.type_arg, card.id);
