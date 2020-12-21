@@ -42,8 +42,10 @@ class view_fluxx_fluxx extends game_view
     $players = $this->game->loadPlayersBasicInfos();
 
     // Translations
-    $this->tpl["MY_HAND"] = self::_("My hand");
-    $this->tpl["MY_KEEPERS"] = self::_("My keepers");
+    $this->tpl["MY_HAND"] = clienttranslate("My hand");
+    $this->tpl["MY_KEEPERS"] = clienttranslate("My keepers");
+    $this->tpl["HAND_COUNT"] = clienttranslate("# cards in hand");
+    $this->tpl["KEEPERS_COUNT"] = clienttranslate("# keepers on table");
 
     // This will inflate players keepers block
     $player_info = $players[$current_player_id];

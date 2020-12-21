@@ -53,10 +53,14 @@
   var jstpl_player_board =
     '\
 <div class="flx_board">\
-  <div id="handIcon${id}" class="flx_hand_icon">Hand count: </div>\
-  <span id="handCount${id}"></span>\
-  <div id="keepersIcon${id}" class="flx_keepers_icon">Keepers count: </div>\
-  <span id="keepersCount${id}"></span>\
+  <div class="flx_board_hand">\
+    <span id="handIcon${id}" class="flx_icons flx_icons_hand" aria-label="{HAND_COUNT}"></span>\
+    <span id="handCount${id}"></span>\
+  </div>\
+  <div class="flx_board_keeper">\
+    <span id="handIcon${id}" class="flx_icons flx_icons_keeper" aria-label="{KEEPERS_COUNT}"></span>\
+    <span id="keepersCount${id}"></span>\
+  </div>\
 </div>';
 </script>
 
