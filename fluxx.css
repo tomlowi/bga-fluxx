@@ -1,16 +1,30 @@
 @charset "UTF-8";
-.keepers {
+.flx_player {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-start;
-  flex-direction: row;
-  margin-top: 5px;
-  /* .stockitem {
-      display: inline-block;
-      position: relative;
-      width: 140px;
-      height: 217px;
-    } */
+  justify-content: center;
+}
+.flx_player .flx_hand {
+  flex: 3 0;
+}
+.flx_player .flx_keepers {
+  flex: 1 0;
+}
+.flx_player .flx_hand {
+  margin-right: 10px;
+}
+
+.flx_other_players {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.flx_other_players .flx_keepers {
+  flex: 1 0;
+  margin-right: 10px;
+}
+.flx_other_players .flx_keepers:last-child {
+  margin-right: 0px;
 }
 
 /**

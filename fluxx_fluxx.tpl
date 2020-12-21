@@ -12,45 +12,51 @@
     fluxx_fluxx.tpl
 -->
 
-<div class="whiteblock hand">
-  <h3>{MY_HAND}</h3>
-  <div id="handStock"></div>
+<div class="flx_player">
+  <div class="whiteblock flx_hand">
+    <h3>{MY_HAND}</h3>
+    <div id="handStock"></div>
+  </div>
+
+  <div class="whiteblock flx_keepers">
+    <h3 style="color: #{CURRENT_PLAYER_COLOR}">{MY_KEEPERS}</h3>
+    <div id="keepersStock{CURRENT_PLAYER_ID}"></div>
+  </div>
 </div>
 
-<div class="whiteblock keepers">
-  <h3 style="color: #{CURRENT_PLAYER_COLOR}">{MY_KEEPERS}</h3>
-  <div id="keepersStock{CURRENT_PLAYER_ID}"></div>
+<div class="flx_table">
+  <div class="whiteblock flx_rules">
+    <h3>Current rules</h3>
+    <div id="baseRuleCard"></div>
+    <div id="drawRuleCard"></div>
+    <div id="playRuleCard"></div>
+    <div id="keeperRuleCard"></div>
+    <div id="rulesStock"></div>
+  </div>
+
+  <div class="whiteblock flx_goal">
+    <h3>Goal</h3>
+    <div id="goalsStock"></div>
+  </div>
 </div>
 
-<div class="whiteblock rules">
-  <h3>Current rules</h3>
-  <div id="baseRuleCard"></div>
-  <div id="drawRuleCard"></div>
-  <div id="playRuleCard"></div>
-  <div id="keeperRuleCard"></div>
-  <div id="rulesStock"></div>
+<div class="flx_other_players">
+  <!-- BEGIN keepers -->
+  <div class="whiteblock flx_keepers">
+    <h3 style="color: #{PLAYER_COLOR}">{PLAYER_NAME}</h3>
+    <div id="keepersStock{PLAYER_ID}"></div>
+  </div>
+  <!-- END keepers -->
 </div>
-
-<div class="whiteblock goal">
-  <h3>Goal</h3>
-  <div id="goalsStock"></div>
-</div>
-
-<!-- BEGIN keepers -->
-<div class="whiteblock keepers">
-  <h3 style="color: #{PLAYER_COLOR}">{PLAYER_NAME}</h3>
-  <div id="keepersStock{PLAYER_ID}"></div>
-</div>
-<!-- END keepers -->
 
 <script>
   var jstpl_player_board =
     '\
 <div class="flx_board">\
   <div id="handIcon${id}" class="flx_hand_icon">Hand count: </div>\
-  <span id="handCount${id}">${handCount}</span>\
+  <span id="handCount${id}"></span>\
   <div id="keepersIcon${id}" class="flx_keepers_icon">Keepers count: </div>\
-  <span id="keepersCount${id}">${keepersCount}</span>\
+  <span id="keepersCount${id}"></span>\
 </div>';
 </script>
 

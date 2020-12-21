@@ -1,0 +1,17 @@
+.flx_player {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+
+  .flx_hand {
+    flex: 3 0;
+  }
+
+  .flx_keepers {
+    flex: 1 0;
+  }
+
+  .flx_hand {
+    margin-right: 10px;
+  }
+}
