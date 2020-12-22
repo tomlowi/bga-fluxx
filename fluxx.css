@@ -24,7 +24,7 @@
   padding-top: 42px;
   margin-right: 10px;
 }
-.flx_table .flx_deck .flx_cardCount {
+.flx_table .flx_deck .flx_card-count {
   padding: 5px;
 }
 .flx_table .flx_goal {
@@ -34,11 +34,31 @@
 .flx_table .flx_rules {
   flex: 1 0;
 }
+.flx_table .flx_rules .flx_card-stack {
+  position: relative;
+  margin: auto;
+  width: 350px;
+  height: 415px;
+}
+.flx_table .flx_rules .flx_card-stack .flx_card-stack-center {
+  position: absolute;
+  left: 97px;
+}
+.flx_table .flx_rules .flx_card-stack .flx_card-stack-left {
+  position: absolute;
+  top: 153px;
+  left: 0px;
+}
+.flx_table .flx_rules .flx_card-stack .flx_card-stack-right {
+  position: absolute;
+  top: 153px;
+  left: 187px;
+}
 .flx_table .flx_card {
   width: 166px;
   height: 258px;
 }
-.flx_table .flx_deckCard {
+.flx_table .flx_deck-card {
   background-image: url("img/cards.png");
   background-position: -1500% -500%;
 }

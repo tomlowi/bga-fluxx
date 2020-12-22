@@ -26,22 +26,27 @@
 
 <div class="flx_table">
   <div class="whiteblock flx_deck">
-    <div id="deckCard" class="flx_card flx_deckCard"></div>
-    <div id="deckCount" class="flx_cardCount"></div>
+    <div id="deckCard" class="flx_card flx_deck-card"></div>
+    <div id="deckCount" class="flx_card-count"></div>
     <div id="discardStock"></div>
-    <div id="discardCount" class="flx_cardCount"></div>
+    <div id="discardCount" class="flx_card-count"></div>
   </div>
+
   <div class="whiteblock flx_goal">
     <h3>{GOAL}</h3>
     <div id="goalsStock"></div>
   </div>
+
   <div class="whiteblock flx_rules">
     <h3>{RULES}</h3>
-    <div id="baseRuleCard"></div>
-    <div id="drawRuleCard"></div>
-    <div id="playRuleCard"></div>
-    <div id="keeperRuleCard"></div>
-    <div id="rulesStock"></div>
+    <div class="flx_card-stack">
+      <div id="baseRuleCard" class="flx_card-stack-center"></div>
+      <div id="drawRuleStock" class="flx_card-stack-left"></div>
+      <div id="playRuleStock" class="flx_card-stack-right"></div>
+    </div>
+    <div id="keepersLimitStock"></div>
+    <div id="handLimitStock"></div>
+    <div id="othersStock"></div>
   </div>
 </div>
 

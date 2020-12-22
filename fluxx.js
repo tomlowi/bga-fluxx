@@ -76,17 +76,51 @@ define([
       this.discardStock.setOverlap(0.00001, 0);
       this.discardStock.item_margin = 0;
 
-      this.rulesStock = this.createCardStock("rulesStock", 0, ["rule"]);
-      this.addCardsToStock(this.rulesStock, this.gamedatas.rules);
+      this.rulesStock = {};
+
+      this.rulesStock.drawRule = this.createCardStock("drawRuleStock", 0, [
+        "rule",
+      ]);
+      this.rulesStock.playRule = this.createCardStock("playRuleStock", 0, [
+        "rule",
+      ]);
+      this.rulesStock.keepersLimit = this.createCardStock(
+        "keepersLimitStock",
+        0,
+        ["rule"]
+      );
+      this.rulesStock.handLimit = this.createCardStock("handLimitStock", 0, [
+        "rule",
+      ]);
+      this.rulesStock.others = this.createCardStock("othersStock", 0, ["rule"]);
+      this.addCardsToStock(
+        this.rulesStock.drawRule,
+        this.gamedatas.rules.drawRule
+      );
+      this.addCardsToStock(
+        this.rulesStock.playRule,
+        this.gamedatas.rules.playRule
+      );
+      this.addCardsToStock(
+        this.rulesStock.handLimit,
+        this.gamedatas.rules.handLimit
+      );
+      this.addCardsToStock(
+        this.rulesStock.keepersLimit,
+        this.gamedatas.rules.keepersLimit
+      );
+      this.addCardsToStock(this.rulesStock.others, this.gamedatas.rules.others);
 
       this.goalsStock = this.createCardStock("goalsStock", 0, ["goal"]);
       this.addCardsToStock(this.goalsStock, this.gamedatas.goals);
+      this.goalsStock.setOverlap(50, 0);
 
       this.keepersStock = {};
       for (var player_id in gamedatas.players) {
         // Setting up player keepers stocls
         this.keepersStock[player_id] = this.createKeepersStock(
-          "keepersStock" + player_id
+          "keepersStock" + player_id,
+          0
         );
         this.addCardsToStock(
           this.keepersStock[player_id],
@@ -352,7 +386,7 @@ define([
     onSelectHandCard: function () {
       var items = this.handStock.getSelectedItems();
 
-      console.log(items, this.currentState);
+      console.log("onSelectHandCard", items, this.currentState);
 
       if (items.length == 0) {
         return;
@@ -403,32 +437,31 @@ define([
         
         */
     setupNotifications: function () {
-      dojo.subscribe("cardDrawn", this, "notif_cardDrawn");
-      dojo.subscribe("cardDrawnOther", this, "notif_cardDrawnOther");
+      dojo.subscribe("cardsDrawn", this, "notif_cardsDrawn");
+      dojo.subscribe("cardsDrawnOther", this, "notif_cardsDrawnOther");
 
       dojo.subscribe("keeperPlayed", this, "notif_keeperPlayed");
       dojo.subscribe("goalsDiscarded", this, "notif_goalsDiscarded");
       dojo.subscribe("goalPlayed", this, "notif_goalPlayed");
+      dojo.subscribe("rulesDiscarded", this, "notif_rulesDiscarded");
+      dojo.subscribe("rulePlayed", this, "notif_rulePlayed");
 
       dojo.subscribe("newScores", this, "notif_newScores");
     },
 
-    notif_cardDrawn: function (notif) {
-      console.log(notif);
+    notif_cardsDrawn: function (notif) {
       for (var card of notif.args.cards) {
-        this.handStock.addToStockWithId(card.type_arg, card.id); //, "deckCard");
+        this.handStock.addToStockWithId(card.type_arg, card.id, "deckCard");
       }
-      this.setDeckCount(deckCount);
     },
 
-    notif_cardDrawnOther: function (notif) {
-      var drawCount = notif.args.drawCount;
+    notif_cardsDrawnOther: function (notif) {
       this.setPlayerBoardHandCount(notif.args.player_id, notif.args.handCount);
+      this.setDeckCount(notif.args.deckCount);
     },
 
     notif_keeperPlayed: function (notif) {
       var player_id = notif.args.player_id;
-      console.log("notif_keeperPlayed", notif);
       this.playCard(player_id, notif.args.card, this.keepersStock[player_id]);
       this.setPlayerBoardHandCount(player_id, notif.args.handCount);
       this.setPlayerBoardKeepersCount(
@@ -445,6 +478,21 @@ define([
     notif_goalPlayed: function (notif) {
       var player_id = notif.args.player_id;
       this.playCard(player_id, notif.args.card, this.goalsStock);
+      this.setPlayerBoardHandCount(player_id, notif.args.handCount);
+    },
+
+    notif_rulesDiscarded: function (notif) {
+      this.setDiscardCount(notif.args.discardCount);
+      this.discardCards(notif.args.cards, this.rulesStock);
+    },
+
+    notif_rulePlayed: function (notif) {
+      var player_id = notif.args.player_id;
+      this.playCard(
+        player_id,
+        notif.args.card,
+        this.rulesStock[notif.args.ruleType]
+      );
       this.setPlayerBoardHandCount(player_id, notif.args.handCount);
     },
 

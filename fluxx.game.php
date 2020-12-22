@@ -17,6 +17,7 @@
  */
 
 require_once APP_GAMEMODULE_PATH . "module/table/table.game.php";
+require_once "modules/php/constants.inc.php";
 
 class fluxx extends Table
 {
@@ -92,10 +93,10 @@ class fluxx extends Table
     /************ Start the game initialization *****/
 
     // Init global values with their initial values
-    self::setGameStateInitialValue("drawRule", 1);
-    self::setGameStateInitialValue("playRule", 1);
-    self::setGameStateInitialValue("handLimit", -1);
-    self::setGameStateInitialValue("keepersLimit", -1);
+    self::setGameStateInitialValue("drawRule", 1); // TODO: compute from table
+    self::setGameStateInitialValue("playRule", 1); // TODO: compute from table
+    self::setGameStateInitialValue("handLimit", -1); // TODO: compute from table
+    self::setGameStateInitialValue("keepersLimit", -1); // TODO: compute from table
     self::setGameStateInitialValue("drawnCards", 0);
     self::setGameStateInitialValue("playedCards", 0);
 
@@ -157,11 +158,19 @@ class fluxx extends Table
     $result = [
       "players" => $players,
       "hand" => $this->cards->getCardsInLocation("hand", $current_player_id),
-      "tmpHand" => $this->cards->getCardsInLocation(
-        "tmpHand",
-        $current_player_id
-      ),
-      "rules" => $this->cards->getCardsInLocation("rules"),
+      "rules" => [
+        "drawRule" => $this->cards->getCardsInLocation("rules", RULE_DRAW_RULE),
+        "playRule" => $this->cards->getCardsInLocation("rules", RULE_PLAY_RULE),
+        "handLimit" => $this->cards->getCardsInLocation(
+          "rules",
+          RULE_HAND_LIMIT
+        ),
+        "keepersLimit" => $this->cards->getCardsInLocation(
+          "rules",
+          RULE_KEEPERS_LIMIT
+        ),
+        "others" => $this->cards->getCardsInLocation("rules", RULE_OTHERS),
+      ],
       "goals" => $this->cards->getCardsInLocation("goals"),
       "keepers" => [],
       "handsCount" => [],
@@ -214,12 +223,12 @@ class fluxx extends Table
     $cardsDrawn = $this->cards->pickCards($drawCount, "deck", $player_id);
     self::incGameStateValue("drawnCards", $drawCount);
 
-    self::notifyPlayer($player_id, "cardDrawn", "", [
+    self::notifyPlayer($player_id, "cardsDrawn", "", [
       "cards" => $cardsDrawn,
     ]);
 
     self::notifyAllPlayers(
-      "cardDrawnOther",
+      "cardsDrawnOther",
       clienttranslate('${player_name} draws <b>${drawCount}</b> card(s)'),
       [
         "player_name" => self::getActivePlayerName(),
@@ -231,7 +240,7 @@ class fluxx extends Table
     );
   }
 
-  public function playKeeper($player_id, $card, $card_definition)
+  public function playKeeperCard($player_id, $card, $card_definition)
   {
     $this->cards->moveCard($card["id"], "keepers", $player_id);
 
@@ -250,7 +259,7 @@ class fluxx extends Table
     );
   }
 
-  public function playGoal($player_id, $card, $card_definition)
+  public function playGoalCard($player_id, $card, $card_definition)
   {
     $currentGoalCount = $this->cards->countCardInLocation("goals");
     $hasDoubleAgenda = count(
@@ -260,18 +269,20 @@ class fluxx extends Table
     if (!$hasDoubleAgenda) {
       // We discard existing goals
       $cards = $this->cards->getCardsInLocation("goals");
-      $this->cards->moveAllCardsInLocation("goals", "discard");
-      self::notifyAllPlayers("goalsDiscarded", "", [
-        "cards" => $cards,
-        "discardCount" => $this->cards->countCardInLocation("discard"),
-      ]);
+      if ($cards) {
+        $this->cards->moveAllCardsInLocation("goals", "discard");
+        self::notifyAllPlayers("goalsDiscarded", "", [
+          "cards" => $cards,
+          "discardCount" => $this->cards->countCardInLocation("discard"),
+        ]);
+      }
     } else {
       // @TODO: handle double agenda rule
       die("Double agenda not implemented");
     }
 
     // We play the new goal
-    $this->cards->moveCard($card["id"], "goals", $player_id);
+    $this->cards->moveCard($card["id"], "goals");
 
     // Notify all players about the goal played
     self::notifyAllPlayers(
@@ -286,6 +297,66 @@ class fluxx extends Table
         "handCount" => $this->cards->countCardInLocation("hand", $player_id),
       ]
     );
+  }
+
+  public function playRuleCard($player_id, $card, $card_definition)
+  {
+    $ruleType = $card_definition["ruleType"];
+
+    switch ($ruleType) {
+      case "playRule":
+        // We discard the previous play rule card
+        $cards = $this->cards->getCardsInLocation("rules", RULE_PLAY_RULE);
+        if ($cards) {
+          $this->cards->moveAllCardsInLocation(
+            "rules",
+            "discard",
+            RULE_PLAY_RULE
+          );
+          self::notifyAllPlayers("rulesDiscarded", "", [
+            "cards" => $cards,
+            "ruleType" => "playRule",
+            "discardCount" => $this->cards->countCardInLocation("discard"),
+          ]);
+        }
+
+        // We play the new play rule
+        $this->cards->moveCard($card["id"], "rules", RULE_PLAY_RULE);
+        self::notifyAllPlayers(
+          "rulePlayed",
+          clienttranslate(
+            '${player_name} sets a new play rule: <b>${card_name}</b>'
+          ),
+          [
+            "i18n" => ["card_name"],
+            "player_name" => self::getActivePlayerName(),
+            "card_name" => $card_definition["name"],
+            "player_id" => $player_id,
+            "ruleType" => "playRule",
+            "card" => $card,
+            "handCount" => $this->cards->countCardInLocation(
+              "hand",
+              $player_id
+            ),
+          ]
+        );
+        break;
+      case "drawRule":
+      // break;
+      case "keepersLimit":
+      // break;
+      case "handLimit":
+      // break;
+      case "startOfTurnEvent":
+      // break;
+      case "instantEffect":
+      // break;
+      case "freeAction":
+      // break;
+      default:
+        var_dump($player_id, $card, $card_definition);
+        die("Not implemented: Rule type $ruleType does not exist");
+    }
   }
 
   public function deckAutoReshuffle()
@@ -678,13 +749,14 @@ class fluxx extends Table
 
     switch ($card_type) {
       case "keeper":
-        $this->playKeeper($player_id, $card, $card_definition);
+        $this->playKeeperCard($player_id, $card, $card_definition);
         break;
       case "goal":
-        $this->playGoal($player_id, $card, $card_definition);
+        $this->playGoalCard($player_id, $card, $card_definition);
         break;
       case "rule":
-      //   break;
+        $this->playRuleCard($player_id, $card, $card_definition);
+        break;
       case "action":
       //   break;
       default:

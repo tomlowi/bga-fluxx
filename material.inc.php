@@ -518,7 +518,7 @@ $this->cardsDefinitions = [
     "name" => clienttranslate("Swap Plays for Draws"),
     "subtitle" => clienttranslate("Takes Instant Effect"),
     "description" => clienttranslate(
-      "During yout yurn, you may decide to play no more cards and instead draw as many cards as you have plays remaining. If Play All, draw as many cards as you hold."
+      "During your turn, you may decide to play no more cards and instead draw as many cards as you have plays remaining. If Play All, draw as many cards as you hold."
     ),
   ],
 
