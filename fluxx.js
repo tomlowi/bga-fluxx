@@ -56,13 +56,25 @@ define([
         */
     setup: function (gamedatas) {
       // Setup all stocks and restore existing state
-      this.handStock = this.createCardStock("handStock", 1, [
+      this.handStock = this.createCardStock("handStock", 2, [
         "keeper",
         "goal",
         "rule",
         "action",
       ]);
       this.addCardsToStock(this.handStock, this.gamedatas.hand);
+
+      this.discardStock = this.createCardStock("discardStock", 0, [
+        "keeper",
+        "goal",
+        "rule",
+        "action",
+      ]);
+      if (this.gamedatas.discard) {
+        this.addCardsToStock(this.discardStock, [this.gamedatas.discard]);
+      }
+      this.discardStock.setOverlap(0.00001, 0);
+      this.discardStock.item_margin = 0;
 
       this.rulesStock = this.createCardStock("rulesStock", 0, ["rule"]);
       this.addCardsToStock(this.rulesStock, this.gamedatas.rules);
@@ -90,13 +102,15 @@ define([
           player_board_div
         );
 
+        this.setDeckCount(this.gamedatas.deckCount);
+        this.setDiscardCount(this.gamedatas.discardCount);
         this.setPlayerBoardHandCount(
           player_id,
           this.gamedatas.handsCount[player_id]
         );
         this.setPlayerBoardKeepersCount(
           player_id,
-          this.gamedatas.keepers[player_id].length
+          this.keepersStock[player_id].count()
         );
       }
 
@@ -191,17 +205,16 @@ define([
     ////
     // Utility methods
 
-    playKeeper: function (player_id, card) {
-      console.log("Player", player_id, "plays keeper", card);
+    playCard: function (player_id, card, destinationStock) {
       if (this.isCurrentPlayerActive()) {
-        this.keepersStock[player_id].addToStockWithId(
+        destinationStock.addToStockWithId(
           card.type_arg,
           card.id,
-          "handStock_item_" + card.id
+          this.handStock.getItemDivId(card.id)
         );
         this.handStock.removeFromStockById(card.id);
       } else {
-        this.keepersStock[player_id].addToStockWithId(
+        destinationStock.addToStockWithId(
           card.type_arg,
           card.id,
           "player_board_" + player_id
@@ -209,7 +222,30 @@ define([
       }
     },
 
-    playCard: function (player_id, card_id) {
+    discardCards: function (cards, stock) {
+      for (var card_id in cards) {
+        var card = cards[card_id];
+        var previousDiscardIds = [];
+        var that = this;
+        for (var discard of this.discardStock.getAllItems()) {
+          setTimeout(function () {
+            that.discardStock.removeFromStock(discard.type);
+          }, 1000);
+        }
+        this.discardStock.changeItemsWeight({ [card.type_arg]: 1000 });
+        this.discardStock.addToStockWithId(
+          card.type_arg,
+          card.id,
+          stock.getItemDivId(card.id)
+        );
+        stock.removeFromStockById(card.id);
+        setTimeout(function () {
+          that.discardStock.changeItemsWeight({ [card.type_arg]: 1 });
+        }, 1000);
+      }
+    },
+
+    _playCard: function (player_id, card_id) {
       var type = Math.floor(uniqueId / 100);
       var number = uniqueId % 100;
       var card_origin;
@@ -294,6 +330,14 @@ define([
       }
     },
 
+    setDeckCount: function (count) {
+      $("deckCount").innerHTML = count;
+    },
+
+    setDiscardCount: function (count) {
+      $("discardCount").innerHTML = count;
+    },
+
     setPlayerBoardHandCount: function (player_id, count) {
       $("handCount" + player_id).innerHTML = count;
     },
@@ -329,8 +373,8 @@ define([
         );
 
         this.handStock.unselectAll();
-      } else if (this.checkAction("discardCard")) {
-        // Discard a card
+      } else if (this.checkAction("discardCards")) {
+        // Discards cards
       } else {
         this.handStock.unselectAll();
       }
@@ -359,33 +403,49 @@ define([
         
         */
     setupNotifications: function () {
-      dojo.subscribe("cardDrawnCurrentPlayer", this, "notif_cardDrawn");
+      dojo.subscribe("cardDrawn", this, "notif_cardDrawn");
       dojo.subscribe("cardDrawnOther", this, "notif_cardDrawnOther");
 
       dojo.subscribe("keeperPlayed", this, "notif_keeperPlayed");
+      dojo.subscribe("goalsDiscarded", this, "notif_goalsDiscarded");
+      dojo.subscribe("goalPlayed", this, "notif_goalPlayed");
 
       dojo.subscribe("newScores", this, "notif_newScores");
     },
 
     notif_cardDrawn: function (notif) {
-      for (var card of notif.args.cardsDrawn) {
-        this.handStock.addToStockWithId(card.type_arg, card.id);
+      console.log(notif);
+      for (var card of notif.args.cards) {
+        this.handStock.addToStockWithId(card.type_arg, card.id); //, "deckCard");
       }
+      this.setDeckCount(deckCount);
     },
 
     notif_cardDrawnOther: function (notif) {
+      var drawCount = notif.args.drawCount;
       this.setPlayerBoardHandCount(notif.args.player_id, notif.args.handCount);
     },
 
     notif_keeperPlayed: function (notif) {
       var player_id = notif.args.player_id;
       console.log("notif_keeperPlayed", notif);
-      this.playKeeper(player_id, notif.args.card);
+      this.playCard(player_id, notif.args.card, this.keepersStock[player_id]);
       this.setPlayerBoardHandCount(player_id, notif.args.handCount);
       this.setPlayerBoardKeepersCount(
         player_id,
         this.keepersStock[player_id].count()
       );
+    },
+
+    notif_goalsDiscarded: function (notif) {
+      this.setDiscardCount(notif.args.discardCount);
+      this.discardCards(notif.args.cards, this.goalsStock);
+    },
+
+    notif_goalPlayed: function (notif) {
+      var player_id = notif.args.player_id;
+      this.playCard(player_id, notif.args.card, this.goalsStock);
+      this.setPlayerBoardHandCount(player_id, notif.args.handCount);
     },
 
     notif_newScores: function (notif) {

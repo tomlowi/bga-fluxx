@@ -1,4 +1,42 @@
 .flx_table {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+
+  .flx_deck {
+    flex: 1 0;
+    padding-top: 42px;
+    margin-right: 10px;
+
+    .flx_cardCount {
+      padding: 5px;
+    }
+  }
+
+  .flx_goal {
+    flex: 1 0;
+    margin-right: 10px;
+  }
+
   .flx_rules {
+    flex: 1 0;
+  }
+
+  .flx_card {
+    width: 166px;
+    height: 258px;
+  }
+  .flx_deckCard {
+    background-image: url("img/cards.png");
+    background-position: -1500% -500%;
+  }
+  #discardStock {
+    border: 1px;
+  }
+  #baseRuleCard {
+    width: 166px;
+    height: 258px;
+    background-image: url("img/cards.png");
+    background-position: -1400% -500%;
   }
 }

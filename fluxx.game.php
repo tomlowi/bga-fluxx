@@ -226,6 +226,7 @@ class fluxx extends Table
         "drawCount" => $drawCount,
         "player_id" => $player_id,
         "handCount" => $this->cards->countCardInLocation("hand", $player_id),
+        "deckCount" => $this->cards->countCardInLocation("deck"),
       ]
     );
   }
@@ -249,7 +250,7 @@ class fluxx extends Table
     );
   }
 
-  public function playGoal($player_id, $card_id)
+  public function playGoal($player_id, $card, $card_definition)
   {
     $currentGoalCount = $this->cards->countCardInLocation("goals");
     $hasDoubleAgenda = count(
@@ -258,13 +259,33 @@ class fluxx extends Table
 
     if (!$hasDoubleAgenda) {
       // We discard existing goals
+      $cards = $this->cards->getCardsInLocation("goals");
       $this->cards->moveAllCardsInLocation("goals", "discard");
-
-      // And we play the new goal
-      $this->cards->moveCard($card_id, "goals", $player_id);
+      self::notifyAllPlayers("goalsDiscarded", "", [
+        "cards" => $cards,
+        "discardCount" => $this->cards->countCardInLocation("discard"),
+      ]);
     } else {
       // @TODO: handle double agenda rule
+      die("Double agenda not implemented");
     }
+
+    // We play the new goal
+    $this->cards->moveCard($card["id"], "goals", $player_id);
+
+    // Notify all players about the goal played
+    self::notifyAllPlayers(
+      "goalPlayed",
+      clienttranslate('${player_name} sets a new goal <b>${card_name}<b>'),
+      [
+        "i18n" => ["card_name"],
+        "player_name" => self::getActivePlayerName(),
+        "player_id" => $player_id,
+        "card_name" => $card_definition["name"],
+        "card" => $card,
+        "handCount" => $this->cards->countCardInLocation("hand", $player_id),
+      ]
+    );
   }
 
   public function deckAutoReshuffle()
@@ -660,7 +681,7 @@ class fluxx extends Table
         $this->playKeeper($player_id, $card, $card_definition);
         break;
       case "goal":
-        $this->playGoal($player_id, $card);
+        $this->playGoal($player_id, $card, $card_definition);
         break;
       case "rule":
       //   break;
@@ -673,6 +694,9 @@ class fluxx extends Table
 
     self::incGameStateValue("playedCards", 1);
 
+    // TODO: properly handle states
+    $this->drawCards($player_id, 1);
+    //---
     // @TODO: remove return
     return;
 

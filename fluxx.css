@@ -14,6 +14,44 @@
   margin-right: 10px;
 }
 
+.flx_table {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.flx_table .flx_deck {
+  flex: 1 0;
+  padding-top: 42px;
+  margin-right: 10px;
+}
+.flx_table .flx_deck .flx_cardCount {
+  padding: 5px;
+}
+.flx_table .flx_goal {
+  flex: 1 0;
+  margin-right: 10px;
+}
+.flx_table .flx_rules {
+  flex: 1 0;
+}
+.flx_table .flx_card {
+  width: 166px;
+  height: 258px;
+}
+.flx_table .flx_deckCard {
+  background-image: url("img/cards.png");
+  background-position: -1500% -500%;
+}
+.flx_table #discardStock {
+  border: 1px;
+}
+.flx_table #baseRuleCard {
+  width: 166px;
+  height: 258px;
+  background-image: url("img/cards.png");
+  background-position: -1400% -500%;
+}
+
 .flx_other_players {
   display: flex;
   flex-wrap: wrap;
@@ -31,7 +69,7 @@
   display: inline-block;
   overflow: hidden;
   background-repeat: no-repeat;
-  background-image: url("img/icons.png");
+  background-image: url(img/icons.png);
 }
 
 .flx_icons_hand {
