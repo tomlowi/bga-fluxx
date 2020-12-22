@@ -247,7 +247,7 @@ class fluxx extends Table
     // Notify all players about the keeper played
     self::notifyAllPlayers(
       "keeperPlayed",
-      clienttranslate('${player_name} plays keeper <b>${card_name}<b>'),
+      clienttranslate('${player_name} plays keeper <b>${card_name}</b>'),
       [
         "i18n" => ["card_name"],
         "player_name" => self::getActivePlayerName(),
@@ -287,7 +287,7 @@ class fluxx extends Table
     // Notify all players about the goal played
     self::notifyAllPlayers(
       "goalPlayed",
-      clienttranslate('${player_name} sets a new goal <b>${card_name}<b>'),
+      clienttranslate('${player_name} sets a new goal <b>${card_name}</b>'),
       [
         "i18n" => ["card_name"],
         "player_name" => self::getActivePlayerName(),
@@ -305,60 +305,60 @@ class fluxx extends Table
 
     switch ($ruleType) {
       case "playRule":
-        // We discard the previous play rule card
-        $cards = $this->cards->getCardsInLocation("rules", RULE_PLAY_RULE);
-        if ($cards) {
-          $this->cards->moveAllCardsInLocation(
-            "rules",
-            "discard",
-            RULE_PLAY_RULE
-          );
-          self::notifyAllPlayers("rulesDiscarded", "", [
-            "cards" => $cards,
-            "ruleType" => "playRule",
-            "discardCount" => $this->cards->countCardInLocation("discard"),
-          ]);
-        }
-
-        // We play the new play rule
-        $this->cards->moveCard($card["id"], "rules", RULE_PLAY_RULE);
-        self::notifyAllPlayers(
-          "rulePlayed",
-          clienttranslate(
-            '${player_name} sets a new play rule: <b>${card_name}</b>'
-          ),
-          [
-            "i18n" => ["card_name"],
-            "player_name" => self::getActivePlayerName(),
-            "card_name" => $card_definition["name"],
-            "player_id" => $player_id,
-            "ruleType" => "playRule",
-            "card" => $card,
-            "handCount" => $this->cards->countCardInLocation(
-              "hand",
-              $player_id
-            ),
-          ]
-        );
+        $location_arg = RULE_PLAY_RULE;
+        $discardExisting = true;
         break;
       case "drawRule":
-      // break;
+        $location_arg = RULE_DRAW_RULE;
+        $discardExisting = true;
+        break;
       case "keepersLimit":
-      // break;
+        $location_arg = RULE_KEEPERS_LIMIT;
+        $discardExisting = true;
+        break;
       case "handLimit":
-      // break;
-      case "startOfTurnEvent":
-      // break;
-      case "instantEffect":
-      // break;
-      case "freeAction":
-      // break;
+        $location_arg = RULE_HAND_LIMIT;
+        $discardExisting = true;
+        break;
       default:
-        var_dump($player_id, $card, $card_definition);
-        die("Not implemented: Rule type $ruleType does not exist");
+        $location_arg = RULE_OTHERS;
+        $discardExisting = false;
     }
+
+    if ($discardExisting) {
+      // We discard the conflicting rule cards
+      $cards = $this->cards->getCardsInLocation("rules", $location_arg);
+      if ($cards) {
+        $this->cards->moveAllCardsInLocation("rules", "discard", $location_arg);
+        self::notifyAllPlayers("rulesDiscarded", "", [
+          "cards" => $cards,
+          "ruleType" => $ruleType,
+          "discardCount" => $this->cards->countCardInLocation("discard"),
+        ]);
+      }
+    }
+
+    // We play the new play rule
+    $this->cards->moveCard($card["id"], "rules", $location_arg);
+    self::notifyAllPlayers(
+      "rulePlayed",
+      clienttranslate('${player_name} plays a new rule: <b>${card_name}</b>'),
+      [
+        "i18n" => ["card_name"],
+        "player_name" => self::getActivePlayerName(),
+        "card_name" => $card_definition["name"],
+        "player_id" => $player_id,
+        "ruleType" => $ruleType,
+        "card" => $card,
+        "handCount" => $this->cards->countCardInLocation("hand", $player_id),
+      ]
+    );
   }
 
+  public function deckReshuffle()
+  {
+    $this->cards->shuffle("deck");
+  }
   public function deckAutoReshuffle()
   {
     // @TODO: get current player

@@ -483,7 +483,7 @@ define([
 
     notif_rulesDiscarded: function (notif) {
       this.setDiscardCount(notif.args.discardCount);
-      this.discardCards(notif.args.cards, this.rulesStock);
+      this.discardCards(notif.args.cards, this.rulesStock[notif.args.ruleType]);
     },
 
     notif_rulePlayed: function (notif) {

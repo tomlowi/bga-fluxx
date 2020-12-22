@@ -415,7 +415,7 @@ $this->cardsDefinitions = [
   ],
   216 => [
     "type" => "rule",
-    "ruleType" => "startOfTurnEvent",
+    "ruleType" => "others",
     "name" => clienttranslate("No-Hand Bonus"),
     "subtitle" => clienttranslate("Start-of-Turn Event"),
     "description" => clienttranslate(
@@ -424,7 +424,7 @@ $this->cardsDefinitions = [
   ],
   217 => [
     "type" => "rule",
-    "ruleType" => "instantEffect",
+    "ruleType" => "others",
     "name" => clienttranslate("Party Bonus"),
     "subtitle" => clienttranslate("Takes Instant Effect"),
     "description" => clienttranslate(
@@ -433,7 +433,7 @@ $this->cardsDefinitions = [
   ],
   218 => [
     "type" => "rule",
-    "ruleType" => "instantEffect",
+    "ruleType" => "others",
     "name" => clienttranslate("Poor Bonus"),
     "subtitle" => clienttranslate("Takes Instant Effect"),
     "description" => clienttranslate(
@@ -442,7 +442,7 @@ $this->cardsDefinitions = [
   ],
   219 => [
     "type" => "rule",
-    "ruleType" => "instantEffect",
+    "ruleType" => "others",
     "name" => clienttranslate("Rich Bonus"),
     "subtitle" => clienttranslate("Takes Instant Effect"),
     "description" => clienttranslate(
@@ -451,7 +451,7 @@ $this->cardsDefinitions = [
   ],
   220 => [
     "type" => "rule",
-    "ruleType" => "instantEffect",
+    "ruleType" => "others",
     "name" => clienttranslate("Double Agenda"),
     "subtitle" => clienttranslate("Takes Instant Effect"),
     "description" => clienttranslate(
@@ -460,7 +460,7 @@ $this->cardsDefinitions = [
   ],
   221 => [
     "type" => "rule",
-    "ruleType" => "instantEffect",
+    "ruleType" => "others",
     "name" => clienttranslate("First Play Random"),
     "subtitle" => clienttranslate("Takes Instant Effect"),
     "description" => clienttranslate(
@@ -469,7 +469,7 @@ $this->cardsDefinitions = [
   ],
   222 => [
     "type" => "rule",
-    "ruleType" => "freeAction",
+    "ruleType" => "others",
     "name" => clienttranslate("Get On With It!"),
     "subtitle" => clienttranslate("Free action"),
     "description" => clienttranslate(
@@ -478,7 +478,7 @@ $this->cardsDefinitions = [
   ],
   223 => [
     "type" => "rule",
-    "ruleType" => "freeAction",
+    "ruleType" => "others",
     "name" => clienttranslate("Goal Mill"),
     "subtitle" => clienttranslate("Free action"),
     "description" => clienttranslate(
@@ -487,7 +487,7 @@ $this->cardsDefinitions = [
   ],
   224 => [
     "type" => "rule",
-    "ruleType" => "instantEffect",
+    "ruleType" => "others",
     "name" => clienttranslate("Inflation"),
     "subtitle" => clienttranslate("Takes Instant Effect"),
     "description" => clienttranslate(
@@ -496,7 +496,7 @@ $this->cardsDefinitions = [
   ],
   225 => [
     "type" => "rule",
-    "ruleType" => "freeAction",
+    "ruleType" => "others",
     "name" => clienttranslate("Mystery Play"),
     "subtitle" => clienttranslate("Free action"),
     "description" => clienttranslate(
@@ -505,7 +505,7 @@ $this->cardsDefinitions = [
   ],
   226 => [
     "type" => "rule",
-    "ruleType" => "freeAction",
+    "ruleType" => "others",
     "name" => clienttranslate("Recycling"),
     "subtitle" => clienttranslate("Free action"),
     "description" => clienttranslate(
@@ -514,7 +514,7 @@ $this->cardsDefinitions = [
   ],
   227 => [
     "type" => "rule",
-    "ruleType" => "instantEffect",
+    "ruleType" => "others",
     "name" => clienttranslate("Swap Plays for Draws"),
     "subtitle" => clienttranslate("Takes Instant Effect"),
     "description" => clienttranslate(
