@@ -256,27 +256,34 @@ define([
       }
     },
 
-    discardCards: function (cards, stock) {
-      for (var card_id in cards) {
-        var card = cards[card_id];
-        var previousDiscardIds = [];
-        var that = this;
-        for (var discard of this.discardStock.getAllItems()) {
-          setTimeout(function () {
-            that.discardStock.removeFromStock(discard.type);
-          }, 1000);
-        }
-        this.discardStock.changeItemsWeight({ [card.type_arg]: 1000 });
+    discardCard: function (card, stock, player_id) {
+      var that = this;
+      for (var discard of this.discardStock.getAllItems()) {
+        setTimeout(function () {
+          that.discardStock.removeFromStock(discard.type);
+        }, 1000);
+      }
+      this.discardStock.changeItemsWeight({ [card.type_arg]: 1000 });
+
+      if (typeof stock !== "undefined") {
         this.discardStock.addToStockWithId(
           card.type_arg,
           card.id,
           stock.getItemDivId(card.id)
         );
         stock.removeFromStockById(card.id);
-        setTimeout(function () {
-          that.discardStock.changeItemsWeight({ [card.type_arg]: 1 });
-        }, 1000);
+      } else if (typeof player_id !== "undefined") {
+        this.discardStock.addToStockWithId(
+          card.type_arg,
+          card.id,
+          "player_board_" + player_id
+        );
+      } else {
+        this.discardStock.addToStockWithId(card.type_arg, card.id);
       }
+      setTimeout(function () {
+        that.discardStock.changeItemsWeight({ [card.type_arg]: 1 });
+      }, 1000);
     },
 
     _playCard: function (player_id, card_id) {
@@ -445,6 +452,7 @@ define([
       dojo.subscribe("goalPlayed", this, "notif_goalPlayed");
       dojo.subscribe("rulesDiscarded", this, "notif_rulesDiscarded");
       dojo.subscribe("rulePlayed", this, "notif_rulePlayed");
+      dojo.subscribe("actionPlayed", this, "notif_actionPlayed");
 
       dojo.subscribe("newScores", this, "notif_newScores");
     },
@@ -471,8 +479,11 @@ define([
     },
 
     notif_goalsDiscarded: function (notif) {
+      for (var card_id in notif.args.cards) {
+        var card = notif.args.cards[card_id];
+        this.discardCard(card, this.goalsStock);
+      }
       this.setDiscardCount(notif.args.discardCount);
-      this.discardCards(notif.args.cards, this.goalsStock);
     },
 
     notif_goalPlayed: function (notif) {
@@ -482,8 +493,12 @@ define([
     },
 
     notif_rulesDiscarded: function (notif) {
+      for (var card_id in notif.args.cards) {
+        var card = notif.args.cards[card_id];
+        this.discardCard(card, this.rulesStock[notif.args.ruleType]);
+      }
+
       this.setDiscardCount(notif.args.discardCount);
-      this.discardCards(notif.args.cards, this.rulesStock[notif.args.ruleType]);
     },
 
     notif_rulePlayed: function (notif) {
@@ -494,6 +509,17 @@ define([
         this.rulesStock[notif.args.ruleType]
       );
       this.setPlayerBoardHandCount(player_id, notif.args.handCount);
+    },
+
+    notif_actionPlayed: function (notif) {
+      var player_id = notif.args.player_id;
+      if (this.isCurrentPlayerActive()) {
+        this.discardCard(notif.args.card, this.handStock);
+      } else {
+        this.discardCard(notif.args.card, undefined, player_id);
+      }
+      this.setPlayerBoardHandCount(player_id, notif.args.handCount);
+      this.setDiscardCount(notif.args.discardCount);
     },
 
     notif_newScores: function (notif) {

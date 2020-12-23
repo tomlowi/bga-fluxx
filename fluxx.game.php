@@ -355,6 +355,29 @@ class fluxx extends Table
     );
   }
 
+  public function playActionCard($player_id, $card, $card_definition)
+  {
+    // We play the new action card
+    $this->cards->playCard($card["id"]);
+
+    // Notify all players about the action played
+    self::notifyAllPlayers(
+      "actionPlayed",
+      clienttranslate('${player_name} plays an action: <b>${card_name}</b>'),
+      [
+        "i18n" => ["card_name"],
+        "player_name" => self::getActivePlayerName(),
+        "player_id" => $player_id,
+        "card_name" => $card_definition["name"],
+        "card" => $card,
+        "handCount" => $this->cards->countCardInLocation("hand", $player_id),
+        "discardCount" => $this->cards->countCardInLocation("discard"),
+      ]
+    );
+
+    //@TODO: we apply the action card rule
+  }
+
   public function deckReshuffle()
   {
     $this->cards->shuffle("deck");
@@ -758,7 +781,8 @@ class fluxx extends Table
         $this->playRuleCard($player_id, $card, $card_definition);
         break;
       case "action":
-      //   break;
+        $this->playActionCard($player_id, $card, $card_definition);
+        break;
       default:
         die("Not implemented: Card type $card_type does not exist");
         break;
