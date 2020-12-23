@@ -14,12 +14,20 @@ class ActionDummy extends ActionCard
 
     public function needsInteraction()	 { return false; }
 
+    public function playFromHand($player) {
+        parent::playFromHand($player);
+    }
+
 	public function immediateEffectOnPlay($player) { 
         
-        Utils::getGame()::notifyAllPlayers( "actionNotImplemented", 
-            clienttranslate( 'Action <b>${unique_id}<b> not yet implemented' ), [
-            'unique_id' => $this->getUniqueId()
-        ]) );
+        
+        $cardUniqueId = $this->uniqueId;
+        // TODO: "Using $this when not in object context"
+        // why? what am I missing
+        // Utils::getGame()::notifyAllPlayers( "actionNotImplemented", 
+        //     clienttranslate( 'Action <b>${unique_id}<b> not yet implemented' ), [
+        //     'unique_id' => $cardUniqueId
+        // ]);
 
         return parent::immediateEffectOnPlay($player);
     }

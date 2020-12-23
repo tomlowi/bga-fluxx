@@ -1,6 +1,7 @@
 <?php
 namespace Fluxx\Cards\ActionCards;
 
+use Fluxx\Cards\Card;
 use Fluxx\Game\Utils;
 /*
  * ActionCard: base class to handle actions cards
@@ -26,7 +27,7 @@ class ActionCard extends Card
 	public function playFromHand($player) {
 
         // Execute the immediate effect
-        $this->immediateEffectOnPlay();
+        $this->immediateEffectOnPlay($player);
 
         if ($this->needsInteraction()) {
             Utils::getGame()::setGameStateValue("actionToResolve", $this->getUniqueId());

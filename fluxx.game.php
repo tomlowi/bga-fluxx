@@ -21,7 +21,7 @@ $swdNamespaceAutoload = function ($class)
   $classParts = explode('\\', $class);
   if ($classParts[0] == 'Fluxx') {
     array_shift($classParts);
-    $file = dirname(__FILE__) . "/modules/php/" . implode(DIRECTORY_SEPARATOR, $classParts) . ".php";
+    $file = dirname(__FILE__) . "/modules/phps/" . implode(DIRECTORY_SEPARATOR, $classParts) . ".php";
     if (file_exists($file)) {
       require_once($file);
     } else {
@@ -32,11 +32,9 @@ $swdNamespaceAutoload = function ($class)
 spl_autoload_register($swdNamespaceAutoload, true, true);
 
 require_once APP_GAMEMODULE_PATH . "module/table/table.game.php";
-require_once "modules/php/constants.inc.php";
+require_once "modules/phps/constants.inc.php";
 
-use Fluxx\Cards\ActionCards\ActionCards;
-use Fluxx\Cards\NewRules\NewRules;
-use Fluxx\Cards\Goals\Goals;
+use Fluxx\Cards\ActionCards\ActionCardFactory;
 
 class fluxx extends Table
 {
@@ -59,6 +57,7 @@ class fluxx extends Table
       "keepersLimit" => 13,
       "drawnCards" => 20,
       "playedCards" => 21,
+      "actionToResolve" => 22,
     ]);
     $this->cards = self::getNew("module.common.deck");
     $this->cards->init("card");
@@ -386,8 +385,8 @@ class fluxx extends Table
 
   public function playActionCard($player_id, $card, $card_definition)
   {
-    self::setGameStateValue('actionToResolve', -1);
-    $actionCard = ActionCards::getCard($card);
+    self::setGameStateValue('actionToResolve', -1);    
+    $actionCard = ActionCardFactory::getCard($card["id"], $card["type_arg"]);
     $stateTransition = $actionCard->playFromHand($player_id);
     if ($stateTransition != null) {
       // player must resolve the action before continuing to play more cards
@@ -909,7 +908,7 @@ class fluxx extends Table
     $drawRule = self::getGameStateValue("drawRule");
     // entering this state, so this player can always draw for current draw rule
     $this->drawExtraCards($player_id, $drawRule);
-    self::setGameStateValue('cardDrawn', $drawRule);
+    self::setGameStateValue('drawnCards', $drawRule);
 
     $this->gamestate->nextstate("playCards");
   }
@@ -923,7 +922,7 @@ class fluxx extends Table
     // depending on the special action card that was played
     $actionCardId = self::getGameStateValue('actionToResolve');
     $actionCardRow = $this->cards->getCard( $action );
-    $actionCard = ActionCardFactory::getCard($actionCardRow);
+    $actionCard = ActionCardFactory::getCard($actionCardId, $actionCardRow["type_arg"]);
     $actionName = $actionCard->getName();
     
     self::notifyAllPlayers("actionDone", 
