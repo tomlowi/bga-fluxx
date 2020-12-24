@@ -257,57 +257,21 @@ define([
       }
       this.discardStock.changeItemsWeight({ [card.type_arg]: 1000 });
 
+      var origin;
       if (typeof stock !== "undefined") {
-        this.discardStock.addToStockWithId(
-          card.type_arg,
-          card.id,
-          stock.getItemDivId(card.id)
-        );
-        stock.removeFromStockById(card.id);
+        origin = stock.getItemDivId(card.id);
       } else if (typeof player_id !== "undefined") {
-        this.discardStock.addToStockWithId(
-          card.type_arg,
-          card.id,
-          "player_board_" + player_id
-        );
-      } else {
-        this.discardStock.addToStockWithId(card.type_arg, card.id);
+        origin = "player_board_" + player_id;
+      }
+
+      this.discardStock.addToStockWithId(card.type_arg, card.id, origin);
+
+      if (typeof stock !== "undefined") {
+        stock.removeFromStockById(card.id);
       }
       setTimeout(function () {
         that.discardStock.changeItemsWeight({ [card.type_arg]: 1 });
       }, 1000);
-    },
-
-    _playCard: function (player_id, card_id) {
-      var type = Math.floor(uniqueId / 100);
-      var number = uniqueId % 100;
-      var card_origin;
-
-      if (player_id != this.player_id) {
-        card_origin = "overall_player_board_" + player_id;
-      } else {
-        if ($("myhand_item_" + card_id)) {
-          card_origin = $("myhand_item_" + card_id);
-        }
-      }
-
-      if (type == this.cardtypes.keeper.id_type) {
-        this.keepersStock[player_id].addToStockWithId(
-          uniqueId,
-          card_id,
-          card_origin
-        );
-      }
-      if (
-        [
-          this.cardtypes.baserule.id_type,
-          this.cardtypes.goal.id_type,
-          this.cardtypes.newrule.id_type,
-        ].includes(type)
-      ) {
-        this.rulesSection.addToStockWithId(uniqueId, card_id, card_origin);
-      }
-      this.handStock.removeFromStockById(card_id);
     },
 
     createCardStock: function (elem, mode, types) {
@@ -490,7 +454,7 @@ define([
         var ruleType = notif.args.ruleType;
 
         if (ruleType == "drawRule" || ruleType == "playRule") {
-        this.discardCard(card, this.rulesStock[notif.args.ruleType]);
+          this.discardCard(card, this.rulesStock[notif.args.ruleType]);
         } else {
           this.discardCard(card, this.rulesStock);
         }
