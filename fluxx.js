@@ -84,14 +84,6 @@ define([
       this.rulesStock.playRule = this.createCardStock("playRuleStock", 0, [
         "rule",
       ]);
-      this.rulesStock.keepersLimit = this.createCardStock(
-        "keepersLimitStock",
-        0,
-        ["rule"]
-      );
-      this.rulesStock.handLimit = this.createCardStock("handLimitStock", 0, [
-        "rule",
-      ]);
       this.rulesStock.others = this.createCardStock("othersStock", 0, ["rule"]);
       this.addCardsToStock(
         this.rulesStock.drawRule,
@@ -102,11 +94,11 @@ define([
         this.gamedatas.rules.playRule
       );
       this.addCardsToStock(
-        this.rulesStock.handLimit,
+        this.rulesStock.others,
         this.gamedatas.rules.handLimit
       );
       this.addCardsToStock(
-        this.rulesStock.keepersLimit,
+        this.rulesStock.others,
         this.gamedatas.rules.keepersLimit
       );
       this.addCardsToStock(this.rulesStock.others, this.gamedatas.rules.others);
@@ -495,7 +487,13 @@ define([
     notif_rulesDiscarded: function (notif) {
       for (var card_id in notif.args.cards) {
         var card = notif.args.cards[card_id];
+        var ruleType = notif.args.ruleType;
+
+        if (ruleType == "drawRule" || ruleType == "playRule") {
         this.discardCard(card, this.rulesStock[notif.args.ruleType]);
+        } else {
+          this.discardCard(card, this.rulesStock);
+        }
       }
 
       this.setDiscardCount(notif.args.discardCount);
