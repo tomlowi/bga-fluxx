@@ -250,12 +250,11 @@ define([
 
     discardCard: function (card, stock, player_id) {
       var that = this;
-      for (var discard of this.discardStock.getAllItems()) {
-        setTimeout(function () {
-          that.discardStock.removeFromStock(discard.type);
-        }, 1000);
-      }
-      this.discardStock.changeItemsWeight({ [card.type_arg]: 1000 });
+
+      // The new card should be on top (=first) in the discard pile
+      this.discardStock.changeItemsWeight({
+        [card.type_arg]: 1000 - this.discardStock.count(),
+      });
 
       var origin;
       if (typeof stock !== "undefined") {
@@ -269,9 +268,6 @@ define([
       if (typeof stock !== "undefined") {
         stock.removeFromStockById(card.id);
       }
-      setTimeout(function () {
-        that.discardStock.changeItemsWeight({ [card.type_arg]: 1 });
-      }, 1000);
     },
 
     createCardStock: function (elem, mode, types) {
@@ -449,27 +445,25 @@ define([
     },
 
     notif_rulesDiscarded: function (notif) {
-      for (var card_id in notif.args.cards) {
-        var card = notif.args.cards[card_id];
-        var ruleType = notif.args.ruleType;
-
-        if (ruleType == "drawRule" || ruleType == "playRule") {
-          this.discardCard(card, this.rulesStock[notif.args.ruleType]);
-        } else {
-          this.discardCard(card, this.rulesStock);
-        }
+      var ruleType = notif.args.ruleType;
+      if (ruleType != "drawRule" && ruleType != "playRule") {
+        ruleType = "others";
       }
-
+      for (var card_id in notif.args.cards) {
+        this.discardCard(notif.args.cards[card_id], this.rulesStock[ruleType]);
+      }
       this.setDiscardCount(notif.args.discardCount);
     },
 
     notif_rulePlayed: function (notif) {
       var player_id = notif.args.player_id;
-      this.playCard(
-        player_id,
-        notif.args.card,
-        this.rulesStock[notif.args.ruleType]
-      );
+
+      var ruleType = notif.args.ruleType;
+      if (ruleType != "drawRule" && ruleType != "playRule") {
+        ruleType = "others";
+      }
+
+      this.playCard(player_id, notif.args.card, this.rulesStock[ruleType]);
       this.setPlayerBoardHandCount(player_id, notif.args.handCount);
     },
 
