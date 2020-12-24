@@ -17,7 +17,17 @@
  */
 
 require_once APP_GAMEMODULE_PATH . "module/table/table.game.php";
-require_once "modules/php/constants.inc.php";
+
+//@TODO: temporary: this file wouldn't upload to the SFTP
+// require_once "modules/php/constants.inc.php";
+
+define("RULE_PLAY_RULE", 0);
+define("RULE_DRAW_RULE", 1);
+define("RULE_KEEPERS_LIMIT", 2);
+define("RULE_HAND_LIMIT", 3);
+define("RULE_OTHERS", 4);
+
+// @End of TODO
 
 class fluxx extends Table
 {
@@ -117,11 +127,10 @@ class fluxx extends Table
     // We want to re-schuffle the discard pile in the deck automatically
     $this->cards->autoreshuffle = true;
 
-    // @TODO: is this interesting?
-    // $this->cards->autoreshuffle_trigger = [
-    //   "obj" => $this,
-    //   "method" => "deckAutoReshuffle",
-    // ];
+    $this->cards->autoreshuffle_trigger = [
+      "obj" => $this,
+      "method" => "deckAutoReshuffle",
+    ];
 
     // Each player starts the game with 3 cards
     foreach ($players as $player_id => $player) {
@@ -378,12 +387,9 @@ class fluxx extends Table
     //@TODO: we apply the action card rule
   }
 
-  public function deckReshuffle()
-  {
-    $this->cards->shuffle("deck");
-  }
   public function deckAutoReshuffle()
   {
+    $this->cards->shuffle("deck");
     // @TODO: get current player
     // self::notifyAllPlayers(
     //   "reshuffle",
