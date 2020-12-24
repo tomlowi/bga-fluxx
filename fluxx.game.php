@@ -385,6 +385,20 @@ class fluxx extends Table
 
   public function playActionCard($player_id, $card, $card_definition)
   {
+    // Notify all players about the action played
+    self::notifyAllPlayers(
+      "actionPlayed",
+      clienttranslate('${player_name} plays action <b>${card_name}</b>'),
+      [
+        "i18n" => ["card_name"],
+        "player_name" => self::getActivePlayerName(),
+        "player_id" => $player_id,
+        "card_name" => $card_definition["name"],
+        "card" => $card,
+        "handCount" => $this->cards->countCardInLocation("hand", $player_id),
+      ]
+    );
+
     self::setGameStateValue('actionToResolve', -1);    
     $actionCard = ActionCardFactory::getCard($card["id"], $card["type_arg"]);
     $stateTransition = $actionCard->playFromHand($player_id);
@@ -880,6 +894,10 @@ class fluxx extends Table
     $draw = self::getGameStateValue("drawRule");
     return ["nb" => $draw];
   }
+  public function argResolveAction () {
+    $actionCard = self::getGameStateValue('actionToResolve');
+    return ['action'=> $actionCard];
+  }
   public function argHandLimit()
   {
     $handLimit = self::getGameStateValue("handLimit");
@@ -915,7 +933,7 @@ class fluxx extends Table
     // this should actually be done as response to specific client actions
     // depending on the special action card that was played
     $actionCardId = self::getGameStateValue('actionToResolve');
-    $actionCardRow = $this->cards->getCard( $action );
+    $actionCardRow = $this->cards->getCard( $actionCardId );
     $actionCard = ActionCardFactory::getCard($actionCardId, $actionCardRow["type_arg"]);
     $actionName = $actionCard->getName();
     

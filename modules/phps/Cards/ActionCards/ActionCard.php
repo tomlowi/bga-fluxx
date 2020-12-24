@@ -30,7 +30,7 @@ class ActionCard extends Card
         $this->immediateEffectOnPlay($player);
 
         if ($this->needsInteraction()) {
-            Utils::getGame()::setGameStateValue("actionToResolve", $this->getUniqueId());
+            Utils::getGame()->setGameStateValue("actionToResolve", $this->getCardId());
             return "resolveActionCard";
         }            
         return null;

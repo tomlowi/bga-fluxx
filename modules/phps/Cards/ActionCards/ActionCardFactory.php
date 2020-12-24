@@ -16,7 +16,7 @@ class ActionCardFactory extends CardFactory
 	 * cardClasses : for each card Id, the corresponding class name
 	 */
 	public static $classes = [
-        301 => 'ActionTrashKeeper',
+        301 => 'ActionTrashAKeeper',
         302 => 'ActionDummy',
         303 => 'ActionDummy',
         304 => 'ActionDummy',
