@@ -431,7 +431,7 @@ class fluxx extends Table
 
     // reset everything for turn of next player
     self::setGameStateValue('playedCards', 0);
-    $this->gamestate->nextstate("playedCards");        
+    $this->gamestate->nextstate("donePlayingCards");        
   }
 
   public function deckReshuffle()
@@ -846,12 +846,6 @@ class fluxx extends Table
 
     self::incGameStateValue("playedCards", 1);
 
-    // TODO: properly handle states
-    $this->drawExtraCards($player_id, 1);
-    //---
-    // @TODO: remove return
-    return;
-
     // A card has been played: do we have a new winner?
     if ($this->checkWin()) {
       $this->setFinalScore();
@@ -893,7 +887,7 @@ class fluxx extends Table
   }
   public function argKeeperLimit()
   {
-    $keeperLimit = self::getGameStateValue("keeperLimit");
+    $keeperLimit = self::getGameStateValue("keepersLimit");
     return ["nb" => $keeperLimit];
   }
 
@@ -910,7 +904,7 @@ class fluxx extends Table
     $this->drawExtraCards($player_id, $drawRule);
     self::setGameStateValue('drawnCards', $drawRule);
 
-    $this->gamestate->nextstate("playCards");
+    $this->gamestate->nextstate("goPlayCards");
   }
 
   function stResolveAction() {
@@ -963,7 +957,7 @@ class fluxx extends Table
 
   public function stKeeperLimit()
   {
-    $keeperLimit = self::getGameStateValue("keeperLimit");
+    $keeperLimit = self::getGameStateValue("keepersLimit");
     $current_player_id = self::getCurrentPlayerId();
     $keeperPlaced = $this->cards->countCardsInLocation(
       "keepers",

@@ -22,12 +22,11 @@ class ActionDummy extends ActionCard
         
         
         $cardUniqueId = $this->uniqueId;
-        // TODO: "Using $this when not in object context"
-        // why? what am I missing
-        // Utils::getGame()::notifyAllPlayers( "actionNotImplemented", 
-        //     clienttranslate( 'Action <b>${unique_id}<b> not yet implemented' ), [
-        //     'unique_id' => $cardUniqueId
-        // ]);
+
+        Utils::getGame()->notifyAllPlayers( "actionNotImplemented", 
+            clienttranslate( 'Action <b>${unique_id}<b> not yet implemented' ), [
+            'unique_id' => $cardUniqueId
+        ]);
 
         return parent::immediateEffectOnPlay($player);
     }

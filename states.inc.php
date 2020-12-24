@@ -77,7 +77,7 @@ $machinestates = [
     "type" => "game",
     "action" => "stCardsDraw",
     // "args" => "argsCardsDraw",
-    "transitions" => ["playCards" => STATE_PLAYCARDS, "endGame" => GAME_END],
+    "transitions" => ["goPlayCards" => STATE_PLAYCARDS, "endGame" => GAME_END],
   ],
 
   STATE_PLAYCARDS => [
@@ -88,7 +88,7 @@ $machinestates = [
     "possibleactions" => ["playCard"],
     "transitions" => [
       "enforceLimits" => STATE_HANDLIMIT,
-      "playedCard" => STATE_HANDLIMIT,
+      "donePlayingCards" => STATE_HANDLIMIT,
       "resolveActionCard" => STATE_RESOLVEACTION,
       "endGame" => GAME_END,
     ],
@@ -104,7 +104,7 @@ $machinestates = [
     "possibleactions" => ["resolveAction"],
     "transitions" => [
         "resolvedAction" => STATE_PLAYCARDS,
-        "playedCard" => STATE_HANDLIMIT,
+        "donePlayingCards" => STATE_HANDLIMIT,
         "endGame" => GAME_END
     ],
   ),
