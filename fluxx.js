@@ -407,6 +407,7 @@ define([
       dojo.subscribe("actionPlayed", this, "notif_actionPlayed");
 
       dojo.subscribe("newScores", this, "notif_newScores");
+      dojo.subscribe("reshuffle", this, "notif_reshuffle");
     },
 
     notif_cardsDrawn: function (notif) {
@@ -483,6 +484,14 @@ define([
       for (var player_id in notif.args.newScores) {
         this.scoreCtrl[player_id].toValue(notif.args.newScores[player_id]);
       }
+    },
+
+    notif_reshuffle: function (notif) {
+      // @TODO: hide deck when there is no card in it anymore
+      console.log("RESHUFFLE", notif);
+      this.setDeckCount(notif.args.deckCount);
+      this.setDiscardCount(notif.args.discardCount);
+      this.discardStock.removeAll();
     },
   });
 });

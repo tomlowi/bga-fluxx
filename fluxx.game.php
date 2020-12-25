@@ -51,6 +51,13 @@ class fluxx extends Table
     ]);
     $this->cards = self::getNew("module.common.deck");
     $this->cards->init("card");
+    // We want to re-schuffle the discard pile in the deck automatically
+    $this->cards->autoreshuffle = true;
+
+    $this->cards->autoreshuffle_trigger = [
+      "obj" => $this,
+      "method" => "deckAutoReshuffle",
+    ];
   }
 
   protected function getGameName()
@@ -123,14 +130,6 @@ class fluxx extends Table
 
     // Shuffle deck to start
     $this->cards->shuffle("deck");
-
-    // We want to re-schuffle the discard pile in the deck automatically
-    $this->cards->autoreshuffle = true;
-
-    $this->cards->autoreshuffle_trigger = [
-      "obj" => $this,
-      "method" => "deckAutoReshuffle",
-    ];
 
     // Each player starts the game with 3 cards
     foreach ($players as $player_id => $player) {
@@ -389,17 +388,10 @@ class fluxx extends Table
 
   public function deckAutoReshuffle()
   {
-    $this->cards->shuffle("deck");
-    // @TODO: get current player
-    // self::notifyAllPlayers(
-    //   "reshuffle",
-    //   clienttranslate(
-    //     '${player_name} reshuffles the discard pile into the deck to draw'
-    //   ),
-    //   [
-    //     "player_id" => $player_id,
-    //   ]
-    // );
+    self::notifyAllPlayers("reshuffle", "", [
+      "deckCount" => $this->cards->countCardInLocation("deck"),
+      "discardCount" => $this->cards->countCardInLocation("discard"),
+    ]);
   }
 
   public function checkWin()
