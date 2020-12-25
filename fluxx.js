@@ -253,7 +253,7 @@ define([
 
       // The new card should be on top (=first) in the discard pile
       this.discardStock.changeItemsWeight({
-        [card.type_arg]: 1000 - this.discardStock.count(),
+        [card.type_arg]: this.discardStock.count() + 1000,
       });
 
       var origin;
