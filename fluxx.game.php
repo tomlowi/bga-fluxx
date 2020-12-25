@@ -16,11 +16,29 @@
  *
  */
 
+$swdNamespaceAutoload = function ($class)
+{
+  $classParts = explode('\\', $class);
+  if ($classParts[0] == 'Fluxx') {
+    array_shift($classParts);
+    $file = dirname(__FILE__) . "/modules/phps/" . implode(DIRECTORY_SEPARATOR, $classParts) . ".php";
+    if (file_exists($file)) {
+      require_once($file);
+    } else {
+      var_dump("Impossible to load fluxx class : $class");
+    }
+  }
+};
+spl_autoload_register($swdNamespaceAutoload, true, true);
+
 require_once APP_GAMEMODULE_PATH . "module/table/table.game.php";
-require_once "modules/php/constants.inc.php";
+require_once "modules/phps/constants.inc.php";
+
+use Fluxx\Cards\ActionCards\ActionCardFactory;
 
 class fluxx extends Table
 {
+  public static $instance = null;
   public function __construct()
   {
     // Your global variables labels:
@@ -30,6 +48,7 @@ class fluxx extends Table
     //  the corresponding ID in gameoptions.inc.php.
     // Note: afterwards, you can get/set the global variables with getGameStateValue/setGameStateInitialValue/setGameStateValue
     parent::__construct();
+    self::$instance = $this;
 
     self::initGameStateLabels([
       "drawRule" => 10,
@@ -38,9 +57,15 @@ class fluxx extends Table
       "keepersLimit" => 13,
       "drawnCards" => 20,
       "playedCards" => 21,
+      "actionToResolve" => 22,
     ]);
     $this->cards = self::getNew("module.common.deck");
     $this->cards->init("card");
+  }
+
+  public static function get()
+  {
+      return self::$instance;
   }
 
   protected function getGameName()
@@ -218,10 +243,13 @@ class fluxx extends Table
     In this space, you can put any utility methods useful for your game logic
      */
 
-  public function drawCards($player_id, $drawCount)
+  public function drawExtraCards($player_id, $drawCount)
   {
     $cardsDrawn = $this->cards->pickCards($drawCount, "deck", $player_id);
-    self::incGameStateValue("drawnCards", $drawCount);
+    
+    // don't increment drawn counter here, extra cards drawn from actions etc
+    // do not count
+    //self::incGameStateValue("drawnCards", $drawCount);
 
     self::notifyPlayer($player_id, "cardsDrawn", "", [
       "cards" => $cardsDrawn,
@@ -353,6 +381,71 @@ class fluxx extends Table
         "handCount" => $this->cards->countCardInLocation("hand", $player_id),
       ]
     );
+  }
+
+  public function playActionCard($player_id, $card, $card_definition)
+  {
+    // Notify all players about the action played
+    self::notifyAllPlayers(
+      "actionPlayed",
+      clienttranslate('${player_name} plays action <b>${card_name}</b>'),
+      [
+        "i18n" => ["card_name"],
+        "player_name" => self::getActivePlayerName(),
+        "player_id" => $player_id,
+        "card_name" => $card_definition["name"],
+        "card" => $card,
+        "handCount" => $this->cards->countCardInLocation("hand", $player_id),
+      ]
+    );
+
+    self::setGameStateValue('actionToResolve', -1);    
+    $actionCard = ActionCardFactory::getCard($card["id"], $card["type_arg"]);
+    $stateTransition = $actionCard->playFromHand($player_id);
+    if ($stateTransition != null) {
+      // player must resolve the action before continuing to play more cards
+      // action card that needs to be resolved has been set in GameStateValue "actionToResolve"
+      $this->gamestate->nextstate($stateTransition);
+    }
+  }
+
+  function checkPlayerShouldPlayMoreCards($player_id){
+
+    // current rule and nr of cards already played
+    $cardsToPlay = self::getGameStateValue('playRule');
+    $cardsPlayed = self::getGameStateValue('playedCards');
+
+    // still cards in hand?
+    $cards_in_hand = $this->cards->countCardsInLocation('hand', $player_id);
+
+    // is Play All But 1 in play ?
+    // If not, did the player play enough cards already (or hand empty) ?
+    if( ($cardsToPlay == -1 && $cards_in_hand == 1)             
+        || ($cardsToPlay != -1 && $cardsPlayed >= $cardsToPlay)
+        || ($cards_in_hand == 0) 
+    ){
+        return false;
+    }
+
+    return true;
+  }
+
+  function prepareForNextPlayerTurn(){
+    $player_id = self::getActivePlayerId();
+    $players = self::loadPlayersBasicInfos();
+    
+    // active player has played all cards they can/must play
+    self::notifyAllPlayers("turnFinished", 
+        clienttranslate('${player_name} finished their turn'), 
+        array(
+        'player_id' => $player_id,
+        'player_name' => $players[$player_id]['player_name']
+        )
+    );
+
+    // reset everything for turn of next player
+    self::setGameStateValue('playedCards', 0);
+    $this->gamestate->nextstate("donePlayingCards");        
   }
 
   public function deckReshuffle()
@@ -758,19 +851,14 @@ class fluxx extends Table
         $this->playRuleCard($player_id, $card, $card_definition);
         break;
       case "action":
-      //   break;
+        $this->playActionCard($player_id, $card, $card_definition);
+        break;
       default:
         die("Not implemented: Card type $card_type does not exist");
         break;
     }
 
     self::incGameStateValue("playedCards", 1);
-
-    // TODO: properly handle states
-    $this->drawCards($player_id, 1);
-    //---
-    // @TODO: remove return
-    return;
 
     // A card has been played: do we have a new winner?
     if ($this->checkWin()) {
@@ -784,28 +872,11 @@ class fluxx extends Table
       return;
     }
 
-    $cardsCount = $this->cards->countCardsInLocation("hand", $player_id);
-
-    // If this user cannot play anymore, move to the next state
-    if ($cardsCount == 0) {
-      $this->gamestate->nextstate("playedCard");
-      return;
+    // check if the active player should continue to play more cards
+    if (!$this->checkPlayerShouldPlayMoreCards($player_id)) {
+        $this->prepareForNextPlayerTurn();
     }
-
-    $playedCount = self::getGameStateValue("playedCards");
-    $playRule = self::getGameStateValue("playRule");
-
-    // Regular play rule
-    if ($playRule > 0 and $playedCount >= $playRule) {
-      $this->gamestate->nextstate("playedCard");
-      return;
-    }
-
-    // All but one (or one and inflation)
-    if ($playRule < 0 and $cardsCount <= -$playRule) {
-      $this->gamestate->nextstate("playedCard");
-      return;
-    }
+    // else: just let player continue playing cards
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -823,6 +894,10 @@ class fluxx extends Table
     $draw = self::getGameStateValue("drawRule");
     return ["nb" => $draw];
   }
+  public function argResolveAction () {
+    $actionCard = self::getGameStateValue('actionToResolve');
+    return ['action'=> $actionCard];
+  }
   public function argHandLimit()
   {
     $handLimit = self::getGameStateValue("handLimit");
@@ -830,7 +905,7 @@ class fluxx extends Table
   }
   public function argKeeperLimit()
   {
-    $keeperLimit = self::getGameStateValue("keeperLimit");
+    $keeperLimit = self::getGameStateValue("keepersLimit");
     return ["nb" => $keeperLimit];
   }
 
@@ -843,13 +918,41 @@ class fluxx extends Table
     $player_id = self::getActivePlayerId();
 
     $drawRule = self::getGameStateValue("drawRule");
-    $drawnCards = self::getGameStateValue("drawnCards");
+    // entering this state, so this player can always draw for current draw rule
+    $this->drawExtraCards($player_id, $drawRule);
+    self::setGameStateValue('drawnCards', $drawRule);
 
-    if ($drawnCards < $drawRule) {
-      $this->drawCards($player_id, $drawRule - $drawnCards);
+    $this->gamestate->nextstate("goPlayCards");
+  }
+
+  function stResolveAction() {
+    $player_id = self::getActivePlayerId();
+    $players = self::loadPlayersBasicInfos();
+
+    // TODO: for now, just mark action as finished and continue play
+    // this should actually be done as response to specific client actions
+    // depending on the special action card that was played
+    $actionCardId = self::getGameStateValue('actionToResolve');
+    $actionCardRow = $this->cards->getCard( $actionCardId );
+    $actionCard = ActionCardFactory::getCard($actionCardId, $actionCardRow["type_arg"]);
+    $actionName = $actionCard->getName();
+    
+    self::notifyAllPlayers("actionDone", 
+        clienttranslate('${player_name} finished action ${action_name}'), 
+        array(
+        'player_id' => $player_id,
+        'player_name' => $players[$player_id]['player_name'],
+        'action_name' => $actionName
+        )
+    );
+
+    self::setGameStateValue('actionToResolve', -1);
+
+    if (!$this->checkPlayerShouldPlayMoreCards($player_id)) {
+        $this->prepareForNextPlayerTurn();            
+    } else {
+        $this->gamestate->nextstate("resolvedAction");
     }
-
-    $this->gamestate->nextstate("playCards");
   }
 
   public function stHandLimit()
@@ -872,7 +975,7 @@ class fluxx extends Table
 
   public function stKeeperLimit()
   {
-    $keeperLimit = self::getGameStateValue("keeperLimit");
+    $keeperLimit = self::getGameStateValue("keepersLimit");
     $current_player_id = self::getCurrentPlayerId();
     $keeperPlaced = $this->cards->countCardsInLocation(
       "keepers",
