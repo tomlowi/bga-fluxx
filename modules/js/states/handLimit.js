@@ -8,7 +8,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       if (this.isCurrentPlayerActive()) {
         this.handStock.setSelectionMode(2);
 
-        dojo.connect(
+        this._event = dojo.connect(
           this.handStock,
           "onChangeSelection",
           this,
@@ -21,8 +21,9 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       console.log("Leaving state: HandLimit");
 
       if (this.isCurrentPlayerActive()) {
+        dojo.disconnect(this._event);
+        delete this._event;
         this.handStock.setSelectionMode(0);
-        dojo.disconnect(this.handStock, "onChangeSelection");
       }
     },
 

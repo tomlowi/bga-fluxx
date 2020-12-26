@@ -32,7 +32,13 @@ define([
 ], function (dojo, declare) {
   return declare(
     "bgagame.fluxx",
-    [customgame.game, fluxx.cardTrait, fluxx.states.playCards],
+    [
+      customgame.game,
+      fluxx.cardTrait,
+      fluxx.states.playCards,
+      fluxx.states.handLimit,
+      fluxx.states.keepersLimit,
+    ],
     {
       constructor: function () {
         this.CARD_WIDTH = 166;

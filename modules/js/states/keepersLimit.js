@@ -8,7 +8,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
 
       if (this.isCurrentPlayerActive()) {
         stock[this.player_id].setSelectionMode(2);
-        dojo.connect(
+        this._event = dojo.connect(
           stock[this.player_id],
           "onChangeSelection",
           this,
@@ -21,8 +21,9 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       console.log("Leaving state: KeepersLimit");
 
       if (this.isCurrentPlayerActive()) {
+        dojo.disconnect(this._event);
+        delete this._event;
         stock.setSelectionMode(0);
-        dojo.disconnect(stock, "onChangeSelection");
       }
     },
 
