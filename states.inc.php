@@ -49,67 +49,97 @@ method).
 
 //    !! It is not a good idea to modify this file when a game is running !!
 
+// Define Constants
+if (!defined("STATE_DRAWCARDS")) {
+  define("GAME_SETUP", 1);
+  define("GAME_END", 99);
+  define("STATE_DRAWCARDS", 10);
+  define("STATE_PLAYCARDS", 20);
+  define("STATE_RESOLVEACTION", 30);
+  define("STATE_HANDLIMIT", 40);
+  define("STATE_KEEPERLIMIT", 50);
+  define("STATE_NEXTPLAYER", 60);    
+}
+
 $machinestates = [
   // The initial state. Please do not modify.
-  1 => [
+  GAME_SETUP => [
     "name" => "gameSetup",
     "description" => "",
     "type" => "manager",
     "action" => "stGameSetup",
-    "transitions" => ["" => 10],
+    "transitions" => ["" => STATE_DRAWCARDS],
   ],
 
-  10 => [
+  STATE_DRAWCARDS => [
     "name" => "cardsDraw",
     "description" => "",
     "type" => "game",
     "action" => "stCardsDraw",
     // "args" => "argsCardsDraw",
-    "transitions" => ["playCards" => 11, "endGame" => 99],
+    "transitions" => ["goPlayCards" => STATE_PLAYCARDS, "endGame" => GAME_END],
   ],
 
-  11 => [
+  STATE_PLAYCARDS => [
     "name" => "cardsPlay",
-    "description" => clienttranslate('${actplayer} must play a card'),
-    "descriptionmyturn" => clienttranslate('${you} must play a card'),
+    "description" => clienttranslate('${actplayer} must play ${nb} card(s)'),
+    "descriptionmyturn" => clienttranslate('${you} must play ${nb} card(s)'),
     "type" => "activeplayer",
+    "args" => "argsCardsPlay",
     "possibleactions" => ["playCard"],
     "transitions" => [
-      "enforceLimits" => 13,
-      "playedCard" => 13,
-      "endGame" => 99,
+      "enforceLimits" => STATE_HANDLIMIT,
+      "donePlayingCards" => STATE_HANDLIMIT,
+      "resolveActionCard" => STATE_RESOLVEACTION,
+      "continuePlay" => STATE_PLAYCARDS,
+      "endGame" => GAME_END,
     ],
   ],
 
-  13 => [
-    "name" => "handLimit",
-    "description" => clienttranslate('${actplayer} must discard ${nb} cards'),
-    "descriptionmyturn" => clienttranslate('${you} must discard ${nb} cards'),
+  STATE_RESOLVEACTION => array(
+    "name" => "actionResolve",
+    "description" => clienttranslate('${actplayer} must resolve their action'),
+    "descriptionmyturn" => clienttranslate('${you} must resolve your action'),
     "type" => "activeplayer",
+    "args" => "argResolveAction",
+    "action" => "stResolveAction",
+    "possibleactions" => ["resolveAction"],
+    "transitions" => [
+        "resolvedAction" => STATE_PLAYCARDS,
+        "donePlayingCards" => STATE_HANDLIMIT,
+        "endGame" => GAME_END
+    ],
+  ),
+
+  STATE_HANDLIMIT => [
+    "name" => "handLimit",
+    "description" => clienttranslate('Other players must discard cards for Hand Limit ${limit}'),
+    "descriptionmyturn" => clienttranslate('${you} must discard ${nb} cards for Hand Limit ${limit}'),
+    "type" => "multipleactiveplayer",
     "args" => "argHandLimit",
     "action" => "stHandLimit",
-    "possibleactions" => ["discardCard"],
-    "transitions" => ["" => 13],
+    "possibleactions" => ["discardCards"],
+    "transitions" => ["" => STATE_KEEPERLIMIT],
   ],
 
-  14 => [
+  STATE_KEEPERLIMIT => [
     "name" => "keeperLimit",
-    "description" => clienttranslate('${actplayer} discard play ${nb} keepers'),
-    "descriptionmyturn" => clienttranslate('${you} discard play ${nb} keepers'),
-    "type" => "activeplayer",
+    "description" => clienttranslate('Other players must remove keepers for Keeper Limit ${limit}'),
+    "descriptionmyturn" => clienttranslate('${you} must remove ${nb} keepers for Keeper Limit ${limit}'),
+    "type" => "multipleactiveplayer",
     "args" => "argKeeperLimit",
     "action" => "stKeeperLimit",
-    "possibleactions" => ["discardKeeper"],
-    "transitions" => ["" => 14],
+    "possibleactions" => ["discardKeepers"],
+    "transitions" => ["" => STATE_NEXTPLAYER],
   ],
 
-  15 => [
+  STATE_NEXTPLAYER => [
     "name" => "nextPlayer",
     "description" => "",
     "type" => "game",
     "action" => "stNextPlayer",
     "updateGameProgression" => true,
-    "transitions" => ["nextPlayer" => 10],
+    "transitions" => ["nextPlayer" => STATE_DRAWCARDS],
   ],
 
   /*

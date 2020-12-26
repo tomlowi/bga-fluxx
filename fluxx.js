@@ -208,8 +208,7 @@ define([
       console.log("onUpdateActionButtons: " + stateName);
 
       if (this.isCurrentPlayerActive()) {
-        switch (
-          stateName
+        switch (stateName) {
           /*               
                  Example:
  
@@ -222,7 +221,22 @@ define([
                     this.addActionButton( 'button_3_id', _('Button 3 label'), 'onMyMethodToCall3' ); 
                     break;
 */
-        ) {
+          case "handLimit":
+            // Discard selected cards from hand
+            this.addActionButton(
+              "button_1",
+              _("Discard selected"),
+              "onRemoveCardsFromHand"
+            );
+            break;
+          case "keeperLimit":
+            // Remove keepers from play
+            this.addActionButton(
+              "button_1",
+              _("Remove selected"),
+              "onRemoveKeepersFromPlay"
+            );
+            break;
         }
       }
     },
@@ -311,7 +325,7 @@ define([
         );
       }
 
-      stock.setSelectionMode(1);
+      stock.setSelectionMode(2);
       return stock;
     },
 
@@ -341,8 +355,31 @@ define([
     ///////////////////////////////////////////////////
     //// Player's action
 
+    /*
+     * Convenience method for executing ajax actions
+     * Ensures lock is always set
+     */
+    ajaxAction: function (action, args) {
+      if (!args) {
+        args = [];
+      }
+      if (!args.hasOwnProperty("lock")) {
+        args.lock = true;
+      }
+      var name = this.game_name;
+      this.ajaxcall(
+        "/" + name + "/" + name + "/" + action + ".html",
+        args,
+        this,
+        function (result) {},
+        function (is_error) {}
+      );
+    },
+
     onSelectHandCard: function () {
       var items = this.handStock.getSelectedItems();
+      var actionPlay = "playCard";
+      var actionDiscard = "discardCards";
 
       console.log("onSelectHandCard", items, this.currentState);
 
@@ -350,24 +387,18 @@ define([
         return;
       }
 
-      if (this.checkAction("playCard", true)) {
+      if (this.checkAction(actionPlay, true)) {
         // Play a card
-        this.ajaxcall(
-          "/" + this.game_name + "/" + this.game_name + "/playCard.html",
-          {
-            card_id: items[0].id,
-            card_definition_id: items[0].type,
-            lock: true,
-          },
-          this,
-          function (result) {},
-          function (is_error) {}
-        );
+        this.ajaxAction(actionPlay, {
+          card_id: items[0].id,
+          card_definition_id: items[0].type,
+        });
 
         this.handStock.unselectAll();
-      } else if (this.checkAction("discardCards")) {
-        // Discards cards
+      } else if (this.checkAction(actionDiscard, true)) {
+        // selecting cards to be discarded
       } else {
+        // nothing can be done now, ignore selection
         this.handStock.unselectAll();
       }
     },
@@ -377,9 +408,45 @@ define([
     },
 
     onKeeperSelectionChanged: function () {
-      for (const player_id in this.keepersStock) {
-        this.keepersStock[player_id].unselectAll();
+      var actionDiscard = "discardKeepers";
+      if (this.checkAction(actionDiscard, true)) {
+        // selecting cards to be discarded
+      } else {
+        // nothing can be done now, ignore selections
+        for (const player_id in this.keepersStock) {
+          this.keepersStock[player_id].unselectAll();
+        }
       }
+    },
+
+    onRemoveCardsFromHand: function () {
+      var items = this.handStock.getSelectedItems();
+      var arg_card_ids = "";
+      for (var i in items) {
+        console.log(
+          "discard from hand: " + items[i].id + ", type: " + items[i].type
+        );
+        arg_card_ids += items[i].id + ";";
+      }
+      var actionDiscard = "discardCards";
+      this.ajaxAction(actionDiscard, {
+        card_ids: arg_card_ids,
+      });
+    },
+
+    onRemoveKeepersFromPlay: function () {
+      var items = this.keepersStock[this.player_id].getSelectedItems();
+      var arg_card_ids = "";
+      for (var i in items) {
+        console.log(
+          "discard from keepers: " + items[i].id + ", type: " + items[i].type
+        );
+        arg_card_ids += items[i].id + ";";
+      }
+      var actionDiscard = "discardKeepers";
+      this.ajaxAction(actionDiscard, {
+        card_ids: arg_card_ids,
+      });
     },
 
     ///////////////////////////////////////////////////
@@ -404,6 +471,10 @@ define([
       dojo.subscribe("rulesDiscarded", this, "notif_rulesDiscarded");
       dojo.subscribe("rulePlayed", this, "notif_rulePlayed");
       dojo.subscribe("actionPlayed", this, "notif_actionPlayed");
+
+      dojo.subscribe("actionPlayed", this, "notif_actionPlayed");
+      dojo.subscribe("handDiscarded", this, "notif_handDiscarded");
+      dojo.subscribe("keeperDiscarded", this, "notif_keeperDiscarded");
 
       dojo.subscribe("newScores", this, "notif_newScores");
       dojo.subscribe("reshuffle", this, "notif_reshuffle");
@@ -469,13 +540,32 @@ define([
 
     notif_actionPlayed: function (notif) {
       var player_id = notif.args.player_id;
+      var card = notif.args.card;
+      var handCount = notif.args.handCount;
+      var discardCount = notif.args.discardCount;
+
       if (this.isCurrentPlayerActive()) {
-        this.discardCard(notif.args.card, this.handStock);
+        this.discardCard(card, this.handStock);
       } else {
-        this.discardCard(notif.args.card, undefined, player_id);
+        this.discardCard(card, undefined, player_id);
       }
-      this.setPlayerBoardHandCount(player_id, notif.args.handCount);
-      this.setDiscardCount(notif.args.discardCount);
+      this.setPlayerBoardHandCount(player_id, handCount);
+      this.setDiscardCount(discardCount);
+    },
+
+    notif_handDiscarded: function (notif) {
+      var player_id = notif.args.player_id;
+      var discardedHandCards = notif.args.cards;
+      var discardCount = notif.args.discardCount;
+      var handCount = notif.args.handCount;
+      // @TODO
+    },
+
+    notif_keeperDiscarded: function (notif) {
+      var player_id = notif.args.player_id;
+      var discardedKeepers = notif.args.cards;
+      var discardCount = notif.args.discardCount;
+      // @TODO
     },
 
     notif_newScores: function (notif) {
