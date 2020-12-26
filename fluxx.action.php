@@ -43,4 +43,38 @@ class action_fluxx extends APP_GameAction
     $this->game->action_playCard($card_id, $card_definition_id);
     self::ajaxResponse();
   }
+
+  public function stripListOfCardIds($card_ids_raw)
+  {
+    // Removing last ';' if exists
+    if (substr($card_ids_raw, -1) == ";") {
+      $card_ids_raw = substr($card_ids_raw, 0, -1);
+    }
+    if ($card_ids_raw == "") {
+      $card_ids = [];
+    } else {
+      $card_ids = explode(";", $card_ids_raw);
+    }
+    return $card_ids;
+  }
+
+  public function discardHandCards()
+  {
+    self::setAjaxMode();
+    $card_ids_raw = self::getArg("card_ids", AT_numberlist, true); // ids of card to discard
+    $result = $this->game->action_removeCardsFromHand(
+      $this->stripListOfCardIds($card_ids_raw)
+    );
+    self::ajaxResponse();
+  }
+
+  public function discardKeepers()
+  {
+    self::setAjaxMode();
+    $card_ids_raw = self::getArg("card_ids", AT_numberlist, true); // ids of card to discard
+    $result = $this->game->action_removeKeepersFromPlay(
+      $this->stripListOfCardIds($card_ids_raw)
+    );
+    self::ajaxResponse();
+  }
 }

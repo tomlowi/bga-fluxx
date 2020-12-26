@@ -1,45 +1,49 @@
 define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
-  return declare("fluxx.cardTrait", null, {
+  return declare("fluxx.states.playCard", null, {
     constructor() {},
 
     onEnteringStatePlayCard: function (args) {
       console.log("Entering state: PlayCard");
 
-      dojo.connect(
-        this.handStock,
-        "onChangeSelection",
-        this,
-        "onSelectHandPlayCard"
-      );
+      if (this.isCurrentPlayerActive()) {
+        this.handStock.setSelectionMode(1);
+
+        dojo.connect(
+          this.handStock,
+          "onChangeSelection",
+          this,
+          "onSelectCardPlayCard"
+        );
+      }
     },
 
     onLeavingStatePlayCard: function () {
       console.log("Leaving state: PlayCard");
+
+      if (this.isCurrentPlayerActive()) {
+        this.handStock.setSelectionMode(0);
+        dojo.disconnect(this.handStock, "onChangeSelection");
+      }
     },
     onUpdateActionButtonsPlayCard: function (args) {
       console.log("Update Action Buttons: PlayCard");
     },
 
-    onSelectHandPlayCard: function () {
+    onSelectCardPlayCard: function () {
+      var action = "playCard";
       var items = this.handStock.getSelectedItems();
 
-      console.log("onSelectHandCard", items, this.currentState);
+      console.log("onSelectHandPlayCard", items);
 
       if (items.length == 0) return;
 
-      if (this.checkAction("playCard")) {
+      if (this.checkAction(action, true)) {
         // Play a card
-        this.ajaxcall(
-          "/" + this.game_name + "/" + this.game_name + "/playCard.html",
-          {
-            card_id: items[0].id,
-            card_definition_id: items[0].type,
-            lock: true,
-          },
-          this,
-          function (result) {},
-          function (is_error) {}
-        );
+        this.ajaxAction(action, {
+          card_id: items[0].id,
+          card_definition_id: items[0].type,
+          lock: true,
+        });
       }
 
       this.handStock.unselectAll();

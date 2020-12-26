@@ -19,11 +19,14 @@ define([
   "dojo",
   "dojo/_base/declare",
   "ebg/core/gamegui",
+  "ebg/counter",
   "ebg/stock",
 
   g_gamethemeurl + "modules/js/cardTrait.js",
 
   g_gamethemeurl + "modules/js/states/playCard.js",
+  g_gamethemeurl + "modules/js/states/handLimit.js",
+  g_gamethemeurl + "modules/js/states/keepersLimit.js",
 ], function (dojo, declare) {
   return declare(
     "bgagame.fluxx",
@@ -88,6 +91,13 @@ define([
         this.discardStock.setOverlap(0.00001, 0);
         this.discardStock.item_margin = 0;
 
+        this.deckCounter = new ebg.counter();
+        this.deckCounter.create("deckCount");
+        this.discardCounter = new ebg.counter();
+        this.discardCounter.create("discardCount");
+        this.deckCounter.toValue(this.gamedatas.deckCount);
+        this.discardCounter.toValue(this.gamedatas.discardCount);
+
         this.rulesStock = {};
 
         this.rulesStock.drawRule = this.createCardStock("drawRuleStock", 0, [
@@ -125,12 +135,27 @@ define([
         this.goalsStock.setOverlap(50, 0);
 
         this.keepersStock = {};
+        this.handCounter = {};
+        this.keepersCounter = {};
         for (var player_id in gamedatas.players) {
           // Setting up player keepers stocls
           this.keepersStock[player_id] = this.createKeepersStock(
             "keepersStock" + player_id,
             0
           );
+          this.handCounter[player_id] = new ebg.counter();
+          this.keepersCounter[player_id] = new ebg.counter();
+
+          this.handCounter[player_id].create("handCount" + player_id);
+          this.keepersCounter[player_id].create("keepersCount" + player_id);
+
+          this.handCounter[player_id].toValue(
+            this.gamedatas.handsCount[player_id]
+          );
+          this.keepersCounter[player_id].toValue(
+            this.keepersStock[player_id].count()
+          );
+
           this.addCardsToStock(
             this.keepersStock[player_id],
             this.gamedatas.keepers[player_id]
@@ -171,12 +196,20 @@ define([
       //
       onEnteringState: function (stateName, args) {
         this.currentState = stateName;
-
         console.log("Entering state: " + stateName);
 
         switch (stateName) {
           case "playCard":
             this.onEnteringStatePlayCard(args);
+            break;
+
+          case "handLimit":
+            this.onEnteringStateHandLimit(args);
+            break;
+
+          case "keeperLimit":
+            this.onEnteringStateKeepersLimit(args);
+            break;
 
           case "dummmy":
             break;
@@ -192,6 +225,15 @@ define([
         switch (stateName) {
           case "playCard":
             this.onLeavingStatePlayCard(args);
+            break;
+
+          case "handLimit":
+            this.onLeavingStateHandLimit(args);
+            break;
+
+          case "keeperLimit":
+            this.onLeavingStateKeepersLimit(args);
+            break;
 
           case "dummmy":
             break;
@@ -208,12 +250,35 @@ define([
           switch (stateName) {
             case "playCard":
               this.onUpdateActionButtonsPlayCard(args);
+              break;
+            case "handLimit":
+              this.onUpdateActionButtonsHandLimit(args);
+              break;
+            case "keeperLimit":
+              this.onUpdateActionButtonsKeepersLimit(args);
+              break;
           }
         }
       },
 
       ////
       // Utility methods
+      ajaxAction: function (action, args) {
+        if (!args) {
+          args = [];
+        }
+        if (!args.hasOwnProperty("lock")) {
+          args.lock = true;
+        }
+        var name = this.game_name;
+        this.ajaxcall(
+          "/" + name + "/" + name + "/" + action + ".html",
+          args,
+          this,
+          function (result) {},
+          function (is_error) {}
+        );
+      },
 
       createCardStock: function (elem, mode, types) {
         var stock = new ebg.stock();
@@ -257,7 +322,7 @@ define([
           );
         }
 
-        stock.setSelectionMode(1);
+        stock.setSelectionMode(2);
         return stock;
       },
 
@@ -267,23 +332,6 @@ define([
           stock.addToStockWithId(card.type_arg, card.id);
         }
       },
-
-      setDeckCount: function (count) {
-        $("deckCount").innerHTML = count;
-      },
-
-      setDiscardCount: function (count) {
-        $("discardCount").innerHTML = count;
-      },
-
-      setPlayerBoardHandCount: function (player_id, count) {
-        $("handCount" + player_id).innerHTML = count;
-      },
-
-      setPlayerBoardKeepersCount: function (player_id, count) {
-        $("keepersCount" + player_id).innerHTML = count;
-      },
-
       setupNotifications() {
         console.log(this._notifications);
         this._notifications.forEach((notif) => {

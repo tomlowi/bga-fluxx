@@ -10,6 +10,8 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         ["rulesDiscarded", null],
         ["rulePlayed", null],
         ["actionPlayed", null],
+        ["handDiscarded", null],
+        ["keeperDiscarded", null],
         ["reshuffle", null]
       );
     },
@@ -60,16 +62,15 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
     },
 
     notif_cardsDrawnOther: function (notif) {
-      this.setPlayerBoardHandCount(notif.args.player_id, notif.args.handCount);
-      this.setDeckCount(notif.args.deckCount);
+      this.handCounter[notif.args.player_id].toValue(notif.args.handCount);
+      this.deckCounter.toValue(notif.args.deckCount);
     },
 
     notif_keeperPlayed: function (notif) {
       var player_id = notif.args.player_id;
       this.playCard(player_id, notif.args.card, this.keepersStock[player_id]);
-      this.setPlayerBoardHandCount(player_id, notif.args.handCount);
-      this.setPlayerBoardKeepersCount(
-        player_id,
+      this.handCounter[player_id].toValue(notif.args.handCount);
+      this.keepersCounter[player_id].toValue(
         this.keepersStock[player_id].count()
       );
     },
@@ -79,13 +80,13 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         var card = notif.args.cards[card_id];
         this.discardCard(card, this.goalsStock);
       }
-      this.setDiscardCount(notif.args.discardCount);
+      this.discardCounter.toValue(notif.args.discardCount);
     },
 
     notif_goalPlayed: function (notif) {
       var player_id = notif.args.player_id;
       this.playCard(player_id, notif.args.card, this.goalsStock);
-      this.setPlayerBoardHandCount(player_id, notif.args.handCount);
+      this.handCounter[player_id].toValue(notif.args.handCount);
     },
 
     notif_rulesDiscarded: function (notif) {
@@ -96,7 +97,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       for (var card_id in notif.args.cards) {
         this.discardCard(notif.args.cards[card_id], this.rulesStock[ruleType]);
       }
-      this.setDiscardCount(notif.args.discardCount);
+      this.discardCounter.toValue(notif.args.discardCount);
     },
 
     notif_rulePlayed: function (notif) {
@@ -108,18 +109,37 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       }
 
       this.playCard(player_id, notif.args.card, this.rulesStock[ruleType]);
-      this.setPlayerBoardHandCount(player_id, notif.args.handCount);
+      this.handCounter[player_id].toValue(notif.args.handCount);
     },
 
     notif_actionPlayed: function (notif) {
       var player_id = notif.args.player_id;
+      var card = notif.args.card;
+      var handCount = notif.args.handCount;
+      var discardCount = notif.args.discardCount;
+
       if (this.isCurrentPlayerActive()) {
-        this.discardCard(notif.args.card, this.handStock);
+        this.discardCard(card, this.handStock);
       } else {
-        this.discardCard(notif.args.card, undefined, player_id);
+        this.discardCard(card, undefined, player_id);
       }
-      this.setPlayerBoardHandCount(player_id, notif.args.handCount);
-      this.setDiscardCount(notif.args.discardCount);
+      this.handCounter[player_id].toValue(handCount);
+      this.discardCounter.toValue(discardCount);
+    },
+
+    notif_handDiscarded: function (notif) {
+      var player_id = notif.args.player_id;
+      var discardedHandCards = notif.args.cards;
+      var discardCount = notif.args.discardCount;
+      var handCount = notif.args.handCount;
+      // @TODO
+    },
+
+    notif_keeperDiscarded: function (notif) {
+      var player_id = notif.args.player_id;
+      var discardedKeepers = notif.args.cards;
+      var discardCount = notif.args.discardCount;
+      // @TODO
     },
 
     notif_reshuffle: function (notif) {
