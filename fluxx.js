@@ -20,28 +20,41 @@ define([
   "dojo/_base/declare",
   "ebg/core/gamegui",
   "ebg/stock",
+
+  g_gamethemeurl + "modules/js/cardTrait.js",
+
+  g_gamethemeurl + "modules/js/states/playCard.js",
 ], function (dojo, declare) {
-  return declare("bgagame.fluxx", ebg.core.gamegui, {
-    constructor: function () {
-      this.CARD_WIDTH = 166;
-      this.CARD_HEIGHT = 258;
-      this.CARDS_SPRITES_PATH = g_gamethemeurl + "img/cards.png";
-      this.CARDS_SPRITES_PER_ROW = 17;
+  return declare(
+    "bgagame.fluxx",
+    [ebg.core.gamegui, fluxx.cardTrait, fluxx.goalTrait],
+    {
+      constructor: function () {
+        this._notifications = [];
 
-      this.KEEPER_WIDTH = 83;
-      this.KEEPER_HEIGHT = 129;
-      this.KEEPERS_SPRITES_PATH = g_gamethemeurl + "img/keepers.png";
-      this.KEEPERS_SPRITES_PER_ROW = 10;
+        this.CARD_WIDTH = 166;
+        this.CARD_HEIGHT = 258;
+        this.CARDS_SPRITES_PATH = g_gamethemeurl + "img/cards.png";
+        this.CARDS_SPRITES_PER_ROW = 17;
 
-      this.CARDS_TYPES = {
-        keeper: { count: 19, spriteOffset: 0, materialOffset: 1 },
-        goal: { count: 30, spriteOffset: 19, materialOffset: 101 },
-        rule: { count: 27, spriteOffset: 19 + 30, materialOffset: 201 },
-        action: { count: 23, spriteOffset: 19 + 30 + 27, materialOffset: 301 },
-      };
-    },
+        this.KEEPER_WIDTH = 83;
+        this.KEEPER_HEIGHT = 129;
+        this.KEEPERS_SPRITES_PATH = g_gamethemeurl + "img/keepers.png";
+        this.KEEPERS_SPRITES_PER_ROW = 10;
 
-    /*
+        this.CARDS_TYPES = {
+          keeper: { count: 19, spriteOffset: 0, materialOffset: 1 },
+          goal: { count: 30, spriteOffset: 19, materialOffset: 101 },
+          rule: { count: 27, spriteOffset: 19 + 30, materialOffset: 201 },
+          action: {
+            count: 23,
+            spriteOffset: 19 + 30 + 27,
+            materialOffset: 301,
+          },
+        };
+      },
+
+      /*
             setup:
             
             This method sets up the game user interface according to the current game 
@@ -53,444 +66,245 @@ define([
             
             "gamedatas" argument contains all datas retrieved by your "getAllDatas" PHP method.
         */
-    setup: function (gamedatas) {
-      // Setup all stocks and restore existing state
-      this.handStock = this.createCardStock("handStock", 2, [
-        "keeper",
-        "goal",
-        "rule",
-        "action",
-      ]);
-      this.addCardsToStock(this.handStock, this.gamedatas.hand);
+      setup: function (gamedatas) {
+        // Setup all stocks and restore existing state
+        this.handStock = this.createCardStock("handStock", 2, [
+          "keeper",
+          "goal",
+          "rule",
+          "action",
+        ]);
+        this.addCardsToStock(this.handStock, this.gamedatas.hand);
 
-      this.discardStock = this.createCardStock("discardStock", 0, [
-        "keeper",
-        "goal",
-        "rule",
-        "action",
-      ]);
-      if (this.gamedatas.discard) {
-        this.addCardsToStock(this.discardStock, [this.gamedatas.discard]);
-      }
-      this.discardStock.setOverlap(0.00001, 0);
-      this.discardStock.item_margin = 0;
+        this.discardStock = this.createCardStock("discardStock", 0, [
+          "keeper",
+          "goal",
+          "rule",
+          "action",
+        ]);
+        if (this.gamedatas.discard) {
+          this.addCardsToStock(this.discardStock, [this.gamedatas.discard]);
+        }
+        this.discardStock.setOverlap(0.00001, 0);
+        this.discardStock.item_margin = 0;
 
-      this.rulesStock = {};
+        this.rulesStock = {};
 
-      this.rulesStock.drawRule = this.createCardStock("drawRuleStock", 0, [
-        "rule",
-      ]);
-      this.rulesStock.playRule = this.createCardStock("playRuleStock", 0, [
-        "rule",
-      ]);
-      this.rulesStock.others = this.createCardStock("othersStock", 0, ["rule"]);
-      this.addCardsToStock(
-        this.rulesStock.drawRule,
-        this.gamedatas.rules.drawRule
-      );
-      this.addCardsToStock(
-        this.rulesStock.playRule,
-        this.gamedatas.rules.playRule
-      );
-      this.addCardsToStock(
-        this.rulesStock.others,
-        this.gamedatas.rules.handLimit
-      );
-      this.addCardsToStock(
-        this.rulesStock.others,
-        this.gamedatas.rules.keepersLimit
-      );
-      this.addCardsToStock(this.rulesStock.others, this.gamedatas.rules.others);
-
-      this.goalsStock = this.createCardStock("goalsStock", 0, ["goal"]);
-      this.addCardsToStock(this.goalsStock, this.gamedatas.goals);
-      this.goalsStock.setOverlap(50, 0);
-
-      this.keepersStock = {};
-      for (var player_id in gamedatas.players) {
-        // Setting up player keepers stocls
-        this.keepersStock[player_id] = this.createKeepersStock(
-          "keepersStock" + player_id,
-          0
+        this.rulesStock.drawRule = this.createCardStock("drawRuleStock", 0, [
+          "rule",
+        ]);
+        this.rulesStock.playRule = this.createCardStock("playRuleStock", 0, [
+          "rule",
+        ]);
+        this.rulesStock.others = this.createCardStock("othersStock", 0, [
+          "rule",
+        ]);
+        this.addCardsToStock(
+          this.rulesStock.drawRule,
+          this.gamedatas.rules.drawRule
         );
         this.addCardsToStock(
-          this.keepersStock[player_id],
-          this.gamedatas.keepers[player_id]
+          this.rulesStock.playRule,
+          this.gamedatas.rules.playRule
+        );
+        this.addCardsToStock(
+          this.rulesStock.others,
+          this.gamedatas.rules.handLimit
+        );
+        this.addCardsToStock(
+          this.rulesStock.others,
+          this.gamedatas.rules.keepersLimit
+        );
+        this.addCardsToStock(
+          this.rulesStock.others,
+          this.gamedatas.rules.others
         );
 
-        // Setting up player boards
-        var player_board_div = $("player_board_" + player_id);
-        dojo.place(
-          this.format_block("jstpl_player_board", {
-            id: player_id,
-          }),
-          player_board_div
-        );
+        this.goalsStock = this.createCardStock("goalsStock", 0, ["goal"]);
+        this.addCardsToStock(this.goalsStock, this.gamedatas.goals);
+        this.goalsStock.setOverlap(50, 0);
 
-        this.setDeckCount(this.gamedatas.deckCount);
-        this.setDiscardCount(this.gamedatas.discardCount);
-        this.setPlayerBoardHandCount(
-          player_id,
-          this.gamedatas.handsCount[player_id]
-        );
-        this.setPlayerBoardKeepersCount(
-          player_id,
-          this.keepersStock[player_id].count()
-        );
-      }
+        this.keepersStock = {};
+        for (var player_id in gamedatas.players) {
+          // Setting up player keepers stocls
+          this.keepersStock[player_id] = this.createKeepersStock(
+            "keepersStock" + player_id,
+            0
+          );
+          this.addCardsToStock(
+            this.keepersStock[player_id],
+            this.gamedatas.keepers[player_id]
+          );
 
-      dojo.connect(
-        this.handStock,
-        "onChangeSelection",
-        this,
-        "onSelectHandCard"
-      );
+          // Setting up player boards
+          var player_board_div = $("player_board_" + player_id);
+          dojo.place(
+            this.format_block("jstpl_player_board", {
+              id: player_id,
+            }),
+            player_board_div
+          );
 
-      // Setup game notifications to handle (see "setupNotifications" method below)
-      this.setupNotifications();
-
-      console.log("Setup completed!");
-    },
-
-    ///////////////////////////////////////////////////
-    //// Game & client states
-
-    // onEnteringState: this method is called each time we are entering into a new game state.
-    //                  You can use this method to perform some user interface changes at this moment.
-    //
-    onEnteringState: function (stateName, args) {
-      this.currentState = stateName;
-
-      console.log("Entering state: " + stateName);
-
-      switch (stateName) {
-        /* Example:
-            
-            case 'myGameState':
-            
-                // Show some HTML block at this game state
-                dojo.style( 'my_html_block_id', 'display', 'block' );
-                
-                break;
-           */
-
-        case "dummmy":
-          break;
-      }
-    },
-
-    // onLeavingState: this method is called each time we are leaving a game state.
-    //                 You can use this method to perform some user interface changes at this moment.
-    //
-    onLeavingState: function (stateName) {
-      console.log("Leaving state: " + stateName);
-
-      switch (stateName) {
-        /* Example:
-            
-            case 'myGameState':
-            
-                // Hide the HTML block we are displaying only during this game state
-                dojo.style( 'my_html_block_id', 'display', 'none' );
-                
-                break;
-           */
-
-        case "dummmy":
-          break;
-      }
-    },
-
-    // onUpdateActionButtons: in this method you can manage "action buttons" that are displayed in the
-    //                        action status bar (ie: the HTML links in the status bar).
-    //
-    onUpdateActionButtons: function (stateName, args) {
-      console.log("onUpdateActionButtons: " + stateName);
-
-      if (this.isCurrentPlayerActive()) {
-        switch (
-          stateName
-          /*               
-                 Example:
- 
-                 case 'myGameState':
-                    
-                    // Add 3 action buttons in the action status bar:
-                    
-                    this.addActionButton( 'button_1_id', _('Button 1 label'), 'onMyMethodToCall1' ); 
-                    this.addActionButton( 'button_2_id', _('Button 2 label'), 'onMyMethodToCall2' ); 
-                    this.addActionButton( 'button_3_id', _('Button 3 label'), 'onMyMethodToCall3' ); 
-                    break;
-*/
-        ) {
+          this.setDeckCount(this.gamedatas.deckCount);
+          this.setDiscardCount(this.gamedatas.discardCount);
+          this.setPlayerBoardHandCount(
+            player_id,
+            this.gamedatas.handsCount[player_id]
+          );
+          this.setPlayerBoardKeepersCount(
+            player_id,
+            this.keepersStock[player_id].count()
+          );
         }
-      }
-    },
 
-    ////
-    // Utility methods
+        // Setup game notifications to handle (see "setupNotifications" method below)
+        this.setupNotifications();
 
-    playCard: function (player_id, card, destinationStock) {
-      if (this.isCurrentPlayerActive()) {
-        destinationStock.addToStockWithId(
-          card.type_arg,
-          card.id,
-          this.handStock.getItemDivId(card.id)
-        );
-        this.handStock.removeFromStockById(card.id);
-      } else {
-        destinationStock.addToStockWithId(
-          card.type_arg,
-          card.id,
-          "player_board_" + player_id
-        );
-      }
-    },
+        console.log("Setup completed!");
+      },
 
-    discardCard: function (card, stock, player_id) {
-      var that = this;
+      ///////////////////////////////////////////////////
+      //// Game & client states
 
-      // The new card should be on top (=first) in the discard pile
-      this.discardStock.changeItemsWeight({
-        [card.type_arg]: this.discardStock.count() + 1000,
-      });
+      // onEnteringState: this method is called each time we are entering into a new game state.
+      //                  You can use this method to perform some user interface changes at this moment.
+      //
+      onEnteringState: function (stateName, args) {
+        this.currentState = stateName;
 
-      var origin;
-      if (typeof stock !== "undefined") {
-        origin = stock.getItemDivId(card.id);
-      } else if (typeof player_id !== "undefined") {
-        origin = "player_board_" + player_id;
-      }
+        console.log("Entering state: " + stateName);
 
-      this.discardStock.addToStockWithId(card.type_arg, card.id, origin);
+        switch (stateName) {
+          case "playCard":
+            this.onEnteringStatePlayCard(args);
 
-      if (typeof stock !== "undefined") {
-        stock.removeFromStockById(card.id);
-      }
-    },
+          case "dummmy":
+            break;
+        }
+      },
 
-    createCardStock: function (elem, mode, types) {
-      var stock = new ebg.stock();
-      stock.create(this, $(elem), this.CARD_WIDTH, this.CARD_HEIGHT);
-      stock.image_items_per_row = this.CARDS_SPRITES_PER_ROW;
+      // onLeavingState: this method is called each time we are leaving a game state.
+      //                 You can use this method to perform some user interface changes at this moment.
+      //
+      onLeavingState: function (stateName) {
+        console.log("Leaving state: " + stateName);
 
-      for (var type of types) {
-        var count = this.CARDS_TYPES[type].count;
-        var spriteOffset = this.CARDS_TYPES[type].spriteOffset;
-        var materialOffset = this.CARDS_TYPES[type].materialOffset;
+        switch (stateName) {
+          case "playCard":
+            this.onLeavingStatePlayCard(args);
+
+          case "dummmy":
+            break;
+        }
+      },
+
+      // onUpdateActionButtons: in this method you can manage "action buttons" that are displayed in the
+      //                        action status bar (ie: the HTML links in the status bar).
+      //
+      onUpdateActionButtons: function (stateName, args) {
+        console.log("onUpdateActionButtons: " + stateName);
+
+        if (this.isCurrentPlayerActive()) {
+          switch (stateName) {
+            case "playCard":
+              this.onUpdateActionButtonsPlayCard(args);
+          }
+        }
+      },
+
+      ////
+      // Utility methods
+
+      createCardStock: function (elem, mode, types) {
+        var stock = new ebg.stock();
+        stock.create(this, $(elem), this.CARD_WIDTH, this.CARD_HEIGHT);
+        stock.image_items_per_row = this.CARDS_SPRITES_PER_ROW;
+
+        for (var type of types) {
+          var count = this.CARDS_TYPES[type].count;
+          var spriteOffset = this.CARDS_TYPES[type].spriteOffset;
+          var materialOffset = this.CARDS_TYPES[type].materialOffset;
+
+          for (var i = 0; i < count; i++) {
+            stock.addItemType(
+              materialOffset + i,
+              materialOffset + i,
+              this.CARDS_SPRITES_PATH,
+              spriteOffset + i
+            );
+          }
+        }
+
+        stock.setSelectionMode(mode);
+        return stock;
+      },
+
+      createKeepersStock: function (elem) {
+        var stock = new ebg.stock();
+        stock.create(this, $(elem), this.KEEPER_WIDTH, this.KEEPER_HEIGHT);
+        stock.image_items_per_row = this.KEEPERS_SPRITES_PER_ROW;
+
+        var count = this.CARDS_TYPES.keeper.count;
+        var spriteOffset = this.CARDS_TYPES.keeper.spriteOffset;
+        var materialOffset = this.CARDS_TYPES.keeper.materialOffset;
 
         for (var i = 0; i < count; i++) {
           stock.addItemType(
             materialOffset + i,
             materialOffset + i,
-            this.CARDS_SPRITES_PATH,
+            this.KEEPERS_SPRITES_PATH,
             spriteOffset + i
           );
         }
-      }
 
-      stock.setSelectionMode(mode);
-      return stock;
-    },
+        stock.setSelectionMode(1);
+        return stock;
+      },
 
-    createKeepersStock: function (elem) {
-      var stock = new ebg.stock();
-      stock.create(this, $(elem), this.KEEPER_WIDTH, this.KEEPER_HEIGHT);
-      stock.image_items_per_row = this.KEEPERS_SPRITES_PER_ROW;
+      addCardsToStock: function (stock, cards) {
+        for (var card_id in cards) {
+          var card = cards[card_id];
+          stock.addToStockWithId(card.type_arg, card.id);
+        }
+      },
 
-      var count = this.CARDS_TYPES.keeper.count;
-      var spriteOffset = this.CARDS_TYPES.keeper.spriteOffset;
-      var materialOffset = this.CARDS_TYPES.keeper.materialOffset;
+      setDeckCount: function (count) {
+        $("deckCount").innerHTML = count;
+      },
 
-      for (var i = 0; i < count; i++) {
-        stock.addItemType(
-          materialOffset + i,
-          materialOffset + i,
-          this.KEEPERS_SPRITES_PATH,
-          spriteOffset + i
-        );
-      }
+      setDiscardCount: function (count) {
+        $("discardCount").innerHTML = count;
+      },
 
-      stock.setSelectionMode(1);
-      return stock;
-    },
+      setPlayerBoardHandCount: function (player_id, count) {
+        $("handCount" + player_id).innerHTML = count;
+      },
 
-    addCardsToStock: function (stock, cards) {
-      for (var card_id in cards) {
-        var card = cards[card_id];
-        stock.addToStockWithId(card.type_arg, card.id);
-      }
-    },
+      setPlayerBoardKeepersCount: function (player_id, count) {
+        $("keepersCount" + player_id).innerHTML = count;
+      },
 
-    setDeckCount: function (count) {
-      $("deckCount").innerHTML = count;
-    },
+      setupNotifications() {
+        console.log(this._notifications);
+        this._notifications.forEach((notif) => {
+          var functionName = "notif_" + notif[0];
 
-    setDiscardCount: function (count) {
-      $("discardCount").innerHTML = count;
-    },
+          dojo.subscribe(notif[0], this, functionName);
+          if (notif[1] != null) {
+            this.notifqueue.setSynchronous(notif[0], notif[1]);
+          }
+        });
 
-    setPlayerBoardHandCount: function (player_id, count) {
-      $("handCount" + player_id).innerHTML = count;
-    },
+        // TODO: useful?
+        dojo.subscribe("newScores", this, "notif_newScores");
+      },
 
-    setPlayerBoardKeepersCount: function (player_id, count) {
-      $("keepersCount" + player_id).innerHTML = count;
-    },
-
-    ///////////////////////////////////////////////////
-    //// Player's action
-
-    onSelectHandCard: function () {
-      var items = this.handStock.getSelectedItems();
-
-      console.log("onSelectHandCard", items, this.currentState);
-
-      if (items.length == 0) {
-        return;
-      }
-
-      if (this.checkAction("playCard", true)) {
-        // Play a card
-        this.ajaxcall(
-          "/" + this.game_name + "/" + this.game_name + "/playCard.html",
-          {
-            card_id: items[0].id,
-            card_definition_id: items[0].type,
-            lock: true,
-          },
-          this,
-          function (result) {},
-          function (is_error) {}
-        );
-
-        this.handStock.unselectAll();
-      } else if (this.checkAction("discardCards")) {
-        // Discards cards
-      } else {
-        this.handStock.unselectAll();
-      }
-    },
-
-    onRuleSelectionChanged: function () {
-      this.rulesSection.unselectAll();
-    },
-
-    onKeeperSelectionChanged: function () {
-      for (const player_id in this.keepersStock) {
-        this.keepersStock[player_id].unselectAll();
-      }
-    },
-
-    ///////////////////////////////////////////////////
-    //// Reaction to cometD notifications
-
-    /*
-            setupNotifications:
-            
-            In this method, you associate each of your game notifications with your local method to handle it.
-            
-            Note: game notification names correspond to "notifyAllPlayers" and "notifyPlayer" calls in
-                  your fluxx.game.php file.
-        
-        */
-    setupNotifications: function () {
-      dojo.subscribe("cardsDrawn", this, "notif_cardsDrawn");
-      dojo.subscribe("cardsDrawnOther", this, "notif_cardsDrawnOther");
-
-      dojo.subscribe("keeperPlayed", this, "notif_keeperPlayed");
-      dojo.subscribe("goalsDiscarded", this, "notif_goalsDiscarded");
-      dojo.subscribe("goalPlayed", this, "notif_goalPlayed");
-      dojo.subscribe("rulesDiscarded", this, "notif_rulesDiscarded");
-      dojo.subscribe("rulePlayed", this, "notif_rulePlayed");
-      dojo.subscribe("actionPlayed", this, "notif_actionPlayed");
-
-      dojo.subscribe("newScores", this, "notif_newScores");
-      dojo.subscribe("reshuffle", this, "notif_reshuffle");
-    },
-
-    notif_cardsDrawn: function (notif) {
-      for (var card of notif.args.cards) {
-        this.handStock.addToStockWithId(card.type_arg, card.id, "deckCard");
-      }
-    },
-
-    notif_cardsDrawnOther: function (notif) {
-      this.setPlayerBoardHandCount(notif.args.player_id, notif.args.handCount);
-      this.setDeckCount(notif.args.deckCount);
-    },
-
-    notif_keeperPlayed: function (notif) {
-      var player_id = notif.args.player_id;
-      this.playCard(player_id, notif.args.card, this.keepersStock[player_id]);
-      this.setPlayerBoardHandCount(player_id, notif.args.handCount);
-      this.setPlayerBoardKeepersCount(
-        player_id,
-        this.keepersStock[player_id].count()
-      );
-    },
-
-    notif_goalsDiscarded: function (notif) {
-      for (var card_id in notif.args.cards) {
-        var card = notif.args.cards[card_id];
-        this.discardCard(card, this.goalsStock);
-      }
-      this.setDiscardCount(notif.args.discardCount);
-    },
-
-    notif_goalPlayed: function (notif) {
-      var player_id = notif.args.player_id;
-      this.playCard(player_id, notif.args.card, this.goalsStock);
-      this.setPlayerBoardHandCount(player_id, notif.args.handCount);
-    },
-
-    notif_rulesDiscarded: function (notif) {
-      var ruleType = notif.args.ruleType;
-      if (ruleType != "drawRule" && ruleType != "playRule") {
-        ruleType = "others";
-      }
-      for (var card_id in notif.args.cards) {
-        this.discardCard(notif.args.cards[card_id], this.rulesStock[ruleType]);
-      }
-      this.setDiscardCount(notif.args.discardCount);
-    },
-
-    notif_rulePlayed: function (notif) {
-      var player_id = notif.args.player_id;
-
-      var ruleType = notif.args.ruleType;
-      if (ruleType != "drawRule" && ruleType != "playRule") {
-        ruleType = "others";
-      }
-
-      this.playCard(player_id, notif.args.card, this.rulesStock[ruleType]);
-      this.setPlayerBoardHandCount(player_id, notif.args.handCount);
-    },
-
-    notif_actionPlayed: function (notif) {
-      var player_id = notif.args.player_id;
-      if (this.isCurrentPlayerActive()) {
-        this.discardCard(notif.args.card, this.handStock);
-      } else {
-        this.discardCard(notif.args.card, undefined, player_id);
-      }
-      this.setPlayerBoardHandCount(player_id, notif.args.handCount);
-      this.setDiscardCount(notif.args.discardCount);
-    },
-
-    notif_newScores: function (notif) {
-      // Update players' scores
-      for (var player_id in notif.args.newScores) {
-        this.scoreCtrl[player_id].toValue(notif.args.newScores[player_id]);
-      }
-    },
-
-    notif_reshuffle: function (notif) {
-      // @TODO: hide deck when there is no card in it anymore
-      console.log("RESHUFFLE", notif);
-      this.setDeckCount(notif.args.deckCount);
-      this.setDiscardCount(notif.args.discardCount);
-      this.discardStock.removeAll();
-    },
-  });
+      notif_newScores: function (notif) {
+        // Update players' scores
+        for (var player_id in notif.args.newScores) {
+          this.scoreCtrl[player_id].toValue(notif.args.newScores[player_id]);
+        }
+      },
+    }
+  );
 });
