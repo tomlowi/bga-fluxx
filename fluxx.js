@@ -35,8 +35,6 @@ define([
     [customgame.game, fluxx.cardTrait, fluxx.states.playCards],
     {
       constructor: function () {
-        this._notifications = [];
-
         this.CARD_WIDTH = 166;
         this.CARD_HEIGHT = 258;
         this.CARDS_SPRITES_PATH = g_gamethemeurl + "img/cards.png";
@@ -322,7 +320,7 @@ define([
         }
       },
       setupNotifications() {
-        console.log(this._notifications);
+        console.log("SETUP NOTIFICATIONS", this._notifications);
         this._notifications.forEach((notif) => {
           var functionName = "notif_" + notif[0];
 
