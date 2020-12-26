@@ -28,6 +28,6 @@ class ActionDummy extends ActionCard
             'unique_id' => $cardUniqueId
         ]);
 
-        return parent::immediateEffectOnPlay($player);
+        parent::immediateEffectOnPlay($player);
     }
 }

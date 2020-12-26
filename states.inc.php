@@ -82,14 +82,16 @@ $machinestates = [
 
   STATE_PLAYCARDS => [
     "name" => "cardsPlay",
-    "description" => clienttranslate('${actplayer} must play a card'),
-    "descriptionmyturn" => clienttranslate('${you} must play a card'),
+    "description" => clienttranslate('${actplayer} must play ${nb} card(s)'),
+    "descriptionmyturn" => clienttranslate('${you} must play ${nb} card(s)'),
     "type" => "activeplayer",
+    "args" => "argsCardsPlay",
     "possibleactions" => ["playCard"],
     "transitions" => [
       "enforceLimits" => STATE_HANDLIMIT,
       "donePlayingCards" => STATE_HANDLIMIT,
       "resolveActionCard" => STATE_RESOLVEACTION,
+      "continuePlay" => STATE_PLAYCARDS,
       "endGame" => GAME_END,
     ],
   ],
@@ -111,23 +113,23 @@ $machinestates = [
 
   STATE_HANDLIMIT => [
     "name" => "handLimit",
-    "description" => clienttranslate('${actplayer} must discard ${nb} cards'),
-    "descriptionmyturn" => clienttranslate('${you} must discard ${nb} cards'),
-    "type" => "activeplayer",
+    "description" => clienttranslate('Other players must discard cards for Hand Limit ${limit}'),
+    "descriptionmyturn" => clienttranslate('${you} must discard ${nb} cards for Hand Limit ${limit}'),
+    "type" => "multipleactiveplayer",
     "args" => "argHandLimit",
     "action" => "stHandLimit",
-    "possibleactions" => ["discardCard"],
+    "possibleactions" => ["discardCards"],
     "transitions" => ["" => STATE_KEEPERLIMIT],
   ],
 
   STATE_KEEPERLIMIT => [
     "name" => "keeperLimit",
-    "description" => clienttranslate('${actplayer} discard play ${nb} keepers'),
-    "descriptionmyturn" => clienttranslate('${you} discard play ${nb} keepers'),
-    "type" => "activeplayer",
+    "description" => clienttranslate('Other players must remove keepers for Keeper Limit ${limit}'),
+    "descriptionmyturn" => clienttranslate('${you} must remove ${nb} keepers for Keeper Limit ${limit}'),
+    "type" => "multipleactiveplayer",
     "args" => "argKeeperLimit",
     "action" => "stKeeperLimit",
-    "possibleactions" => ["discardKeeper"],
+    "possibleactions" => ["discardKeepers"],
     "transitions" => ["" => STATE_NEXTPLAYER],
   ],
 
