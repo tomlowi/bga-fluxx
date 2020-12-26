@@ -22,15 +22,17 @@ define([
   "ebg/counter",
   "ebg/stock",
 
+  g_gamethemeurl + "modules/js/game.js",
+
   g_gamethemeurl + "modules/js/cardTrait.js",
 
-  g_gamethemeurl + "modules/js/states/playCard.js",
+  g_gamethemeurl + "modules/js/states/playCards.js",
   g_gamethemeurl + "modules/js/states/handLimit.js",
   g_gamethemeurl + "modules/js/states/keepersLimit.js",
 ], function (dojo, declare) {
   return declare(
     "bgagame.fluxx",
-    [ebg.core.gamegui, fluxx.cardTrait, fluxx.goalTrait],
+    [customgame.game, fluxx.cardTrait, fluxx.states.playCards],
     {
       constructor: function () {
         this._notifications = [];
@@ -71,7 +73,7 @@ define([
         */
       setup: function (gamedatas) {
         // Setup all stocks and restore existing state
-        this.handStock = this.createCardStock("handStock", 2, [
+        this.handStock = this.createCardStock("handStock", [
           "keeper",
           "goal",
           "rule",
@@ -79,7 +81,7 @@ define([
         ]);
         this.addCardsToStock(this.handStock, this.gamedatas.hand);
 
-        this.discardStock = this.createCardStock("discardStock", 0, [
+        this.discardStock = this.createCardStock("discardStock", [
           "keeper",
           "goal",
           "rule",
@@ -88,7 +90,7 @@ define([
         if (this.gamedatas.discard) {
           this.addCardsToStock(this.discardStock, [this.gamedatas.discard]);
         }
-        this.discardStock.setOverlap(0.00001, 0);
+        this.discardStock.setOverlap(0.00001);
         this.discardStock.item_margin = 0;
 
         this.deckCounter = new ebg.counter();
@@ -100,15 +102,13 @@ define([
 
         this.rulesStock = {};
 
-        this.rulesStock.drawRule = this.createCardStock("drawRuleStock", 0, [
+        this.rulesStock.drawRule = this.createCardStock("drawRuleStock", [
           "rule",
         ]);
-        this.rulesStock.playRule = this.createCardStock("playRuleStock", 0, [
+        this.rulesStock.playRule = this.createCardStock("playRuleStock", [
           "rule",
         ]);
-        this.rulesStock.others = this.createCardStock("othersStock", 0, [
-          "rule",
-        ]);
+        this.rulesStock.others = this.createCardStock("othersStock", ["rule"]);
         this.addCardsToStock(
           this.rulesStock.drawRule,
           this.gamedatas.rules.drawRule
@@ -130,7 +130,7 @@ define([
           this.gamedatas.rules.others
         );
 
-        this.goalsStock = this.createCardStock("goalsStock", 0, ["goal"]);
+        this.goalsStock = this.createCardStock("goalsStock", ["goal"]);
         this.addCardsToStock(this.goalsStock, this.gamedatas.goals);
         this.goalsStock.setOverlap(50, 0);
 
@@ -143,19 +143,6 @@ define([
             "keepersStock" + player_id,
             0
           );
-          this.handCounter[player_id] = new ebg.counter();
-          this.keepersCounter[player_id] = new ebg.counter();
-
-          this.handCounter[player_id].create("handCount" + player_id);
-          this.keepersCounter[player_id].create("keepersCount" + player_id);
-
-          this.handCounter[player_id].toValue(
-            this.gamedatas.handsCount[player_id]
-          );
-          this.keepersCounter[player_id].toValue(
-            this.keepersStock[player_id].count()
-          );
-
           this.addCardsToStock(
             this.keepersStock[player_id],
             this.gamedatas.keepers[player_id]
@@ -170,14 +157,16 @@ define([
             player_board_div
           );
 
-          this.setDeckCount(this.gamedatas.deckCount);
-          this.setDiscardCount(this.gamedatas.discardCount);
-          this.setPlayerBoardHandCount(
-            player_id,
+          this.handCounter[player_id] = new ebg.counter();
+          this.keepersCounter[player_id] = new ebg.counter();
+
+          this.handCounter[player_id].create("handCount" + player_id);
+          this.keepersCounter[player_id].create("keepersCount" + player_id);
+
+          this.handCounter[player_id].toValue(
             this.gamedatas.handsCount[player_id]
           );
-          this.setPlayerBoardKeepersCount(
-            player_id,
+          this.keepersCounter[player_id].toValue(
             this.keepersStock[player_id].count()
           );
         }
@@ -199,8 +188,8 @@ define([
         console.log("Entering state: " + stateName);
 
         switch (stateName) {
-          case "playCard":
-            this.onEnteringStatePlayCard(args);
+          case "playCards":
+            this.onEnteringStatePlayCards(args);
             break;
 
           case "handLimit":
@@ -223,16 +212,16 @@ define([
         console.log("Leaving state: " + stateName);
 
         switch (stateName) {
-          case "playCard":
-            this.onLeavingStatePlayCard(args);
+          case "playCards":
+            this.onLeavingStatePlayCards();
             break;
 
           case "handLimit":
-            this.onLeavingStateHandLimit(args);
+            this.onLeavingStateHandLimit();
             break;
 
           case "keeperLimit":
-            this.onLeavingStateKeepersLimit(args);
+            this.onLeavingStateKeepersLimit();
             break;
 
           case "dummmy":
@@ -248,8 +237,8 @@ define([
 
         if (this.isCurrentPlayerActive()) {
           switch (stateName) {
-            case "playCard":
-              this.onUpdateActionButtonsPlayCard(args);
+            case "playCards":
+              this.onUpdateActionButtonsPlayCards(args);
               break;
             case "handLimit":
               this.onUpdateActionButtonsHandLimit(args);
@@ -280,7 +269,7 @@ define([
         );
       },
 
-      createCardStock: function (elem, mode, types) {
+      createCardStock: function (elem, types) {
         var stock = new ebg.stock();
         stock.create(this, $(elem), this.CARD_WIDTH, this.CARD_HEIGHT);
         stock.image_items_per_row = this.CARDS_SPRITES_PER_ROW;
@@ -300,7 +289,7 @@ define([
           }
         }
 
-        stock.setSelectionMode(mode);
+        stock.setSelectionMode(0);
         return stock;
       },
 
