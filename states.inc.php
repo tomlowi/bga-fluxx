@@ -82,14 +82,16 @@ $machinestates = [
 
   STATE_PLAYCARDS => [
     "name" => "cardsPlay",
-    "description" => clienttranslate('${actplayer} must play a card'),
-    "descriptionmyturn" => clienttranslate('${you} must play a card'),
+    "description" => clienttranslate('${actplayer} must play ${nb} card(s)'),
+    "descriptionmyturn" => clienttranslate('${you} must play ${nb} card(s)'),
     "type" => "activeplayer",
+    "args" => "argsCardsPlay",
     "possibleactions" => ["playCard"],
     "transitions" => [
       "enforceLimits" => STATE_HANDLIMIT,
       "donePlayingCards" => STATE_HANDLIMIT,
       "resolveActionCard" => STATE_RESOLVEACTION,
+      "continuePlay" => STATE_PLAYCARDS,
       "endGame" => GAME_END,
     ],
   ],

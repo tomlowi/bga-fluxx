@@ -24,7 +24,8 @@ abstract class Card extends \APP_GameClass
     public function getCardId()		{ return $this->cardId; }
     public function getUniqueId()	{ return $this->uniqueId; }
     public function getName()		{ return $this->name; }
-    public function getText()		{ return $this->text; }
+    public function getSubtitle()		{ return $this->subtitle; }
+    public function getDescription()		{ return $this->description; }
     
 
     /**
