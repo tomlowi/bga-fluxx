@@ -58,7 +58,7 @@ if (!defined("STATE_DRAWCARDS")) {
   define("STATE_RESOLVEACTION", 30);
   define("STATE_HANDLIMIT", 40);
   define("STATE_KEEPERLIMIT", 50);
-  define("STATE_NEXTPLAYER", 60);    
+  define("STATE_NEXTPLAYER", 60);
 }
 
 $machinestates = [
@@ -81,11 +81,11 @@ $machinestates = [
   ],
 
   STATE_PLAYCARDS => [
-    "name" => "cardsPlay",
+    "name" => "playCards",
     "description" => clienttranslate('${actplayer} must play ${nb} card(s)'),
     "descriptionmyturn" => clienttranslate('${you} must play ${nb} card(s)'),
     "type" => "activeplayer",
-    "args" => "argsCardsPlay",
+    "args" => "argsPlayCards",
     "possibleactions" => ["playCard"],
     "transitions" => [
       "enforceLimits" => STATE_HANDLIMIT,
@@ -96,7 +96,7 @@ $machinestates = [
     ],
   ],
 
-  STATE_RESOLVEACTION => array(
+  STATE_RESOLVEACTION => [
     "name" => "actionResolve",
     "description" => clienttranslate('${actplayer} must resolve their action'),
     "descriptionmyturn" => clienttranslate('${you} must resolve your action'),
@@ -105,27 +105,35 @@ $machinestates = [
     "action" => "stResolveAction",
     "possibleactions" => ["resolveAction"],
     "transitions" => [
-        "resolvedAction" => STATE_PLAYCARDS,
-        "donePlayingCards" => STATE_HANDLIMIT,
-        "endGame" => GAME_END
+      "resolvedAction" => STATE_PLAYCARDS,
+      "donePlayingCards" => STATE_HANDLIMIT,
+      "endGame" => GAME_END,
     ],
-  ),
+  ],
 
   STATE_HANDLIMIT => [
     "name" => "handLimit",
-    "description" => clienttranslate('Other players must discard cards for Hand Limit ${limit}'),
-    "descriptionmyturn" => clienttranslate('${you} must discard ${nb} cards for Hand Limit ${limit}'),
+    "description" => clienttranslate(
+      'Other players must discard cards for Hand Limit ${limit}'
+    ),
+    "descriptionmyturn" => clienttranslate(
+      '${you} must discard ${nb} cards for Hand Limit ${limit}'
+    ),
     "type" => "multipleactiveplayer",
     "args" => "argHandLimit",
     "action" => "stHandLimit",
-    "possibleactions" => ["discardCards"],
+    "possibleactions" => ["discardHandCards"],
     "transitions" => ["" => STATE_KEEPERLIMIT],
   ],
 
   STATE_KEEPERLIMIT => [
     "name" => "keeperLimit",
-    "description" => clienttranslate('Other players must remove keepers for Keeper Limit ${limit}'),
-    "descriptionmyturn" => clienttranslate('${you} must remove ${nb} keepers for Keeper Limit ${limit}'),
+    "description" => clienttranslate(
+      'Other players must remove keepers for Keeper Limit ${limit}'
+    ),
+    "descriptionmyturn" => clienttranslate(
+      '${you} must remove ${nb} keepers for Keeper Limit ${limit}'
+    ),
     "type" => "multipleactiveplayer",
     "args" => "argKeeperLimit",
     "action" => "stKeeperLimit",
