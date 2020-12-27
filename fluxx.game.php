@@ -909,7 +909,7 @@ class fluxx extends Table
   function action_removeCardsFromHand($cards)
   {
     // multiple active state, so don't use checkAction or getActivePlayerId here!
-    $this->gamestate->checkPossibleAction("discardCards");
+    $this->gamestate->checkPossibleAction("discardHandCards");
     $playerId = self::getCurrentPlayerId();
 
     // @TODO : verify the correct nr of cards is discarded
@@ -996,7 +996,7 @@ class fluxx extends Table
     $drawRule = self::getGameStateValue("drawRule");
     return ["nb" => $drawRule];
   }
-  public function argsCardsPlay()
+  public function argsPlayCards()
   {
     $playRule = self::getGameStateValue("playRule");
     $played = self::getGameStateValue("playedCards");
