@@ -1,6 +1,8 @@
 define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
   return declare("fluxx.states.keepersLimit", null, {
-    constructor() {},
+    constructor() {
+      this._notifications.push(["keeperDiscarded", null]);
+    },
 
     onEnteringStateKeepersLimit: function (args) {
       console.log("Entering state: KeepersLimit", args);
@@ -76,6 +78,22 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       this.ajaxAction("discardKeepers", {
         card_ids: card_ids.join(";"),
       });
+    },
+
+    notif_keeperDiscarded: function (notif) {
+      var player_id = notif.args.player_id;
+      var cards = notif.args.cards;
+
+      if (this.isCurrentPlayerActive()) {
+        this.discardCards(cards, this.handStock);
+      } else {
+        this.discardCards(cards, undefined, player_id);
+      }
+
+      this.keepersCounter[player_id].toValue(
+        this.keepersStock[player_id].count()
+      );
+      this.discardCounter.toValue(notif.args.discardCount);
     },
   });
 });

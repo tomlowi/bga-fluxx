@@ -79,20 +79,14 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
     },
 
     notif_handDiscarded: function (notif) {
-      var that = this;
-
       var player_id = notif.args.player_id;
       var cards = notif.args.cards;
 
-      console.log(player_id, cards);
-
-      cards.forEach(function (card) {
-        if (that.isCurrentPlayerActive()) {
-          that.discardCard(card, that.handStock);
-        } else {
-          that.discardCard(card, undefined, player_id);
-        }
-      });
+      if (this.isCurrentPlayerActive()) {
+        this.discardCards(cards, this.handStock);
+      } else {
+        this.discardCards(cards, undefined, player_id);
+      }
 
       this.handCounter[player_id].toValue(notif.args.handCount);
       this.discardCounter.toValue(notif.args.discardCount);

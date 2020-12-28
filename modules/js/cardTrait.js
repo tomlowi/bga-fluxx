@@ -10,7 +10,6 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         ["rulesDiscarded", null],
         ["rulePlayed", null],
         ["actionPlayed", null],
-        ["keeperDiscarded", null],
         ["reshuffle", null]
       );
     },
@@ -33,8 +32,6 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
     },
 
     discardCard: function (card, stock, player_id) {
-      var that = this;
-
       // The new card should be on top (=first) in the discard pile
       this.discardStock.changeItemsWeight({
         [card.type_arg]: this.discardStock.count() + 1000,
@@ -52,6 +49,21 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       if (typeof stock !== "undefined") {
         stock.removeFromStockById(card.id);
       }
+    },
+
+    discardCards: function (cards, stock, player_id) {
+      var that = this;
+
+      var count = 0;
+
+      // If it's someone else's cards, we want to see the animation
+      var delay = player_id === undefined ? 0 : 250;
+
+      cards.forEach(function (card) {
+        setTimeout(function () {
+          that.discardCard(card, stock, player_id);
+        }, count++ * delay);
+      });
     },
 
     notif_cardsDrawn: function (notif) {
@@ -75,10 +87,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
     },
 
     notif_goalsDiscarded: function (notif) {
-      for (var card_id in notif.args.cards) {
-        var card = notif.args.cards[card_id];
-        this.discardCard(card, this.goalsStock);
-      }
+      this.discardCards(notif.args.cards, this.goalsStock);
       this.discardCounter.toValue(notif.args.discardCount);
     },
 
@@ -93,9 +102,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       if (ruleType != "drawRule" && ruleType != "playRule") {
         ruleType = "others";
       }
-      for (var card_id in notif.args.cards) {
-        this.discardCard(notif.args.cards[card_id], this.rulesStock[ruleType]);
-      }
+      this.discardCards(notif.args.cards, this.rulesStock[ruleType]);
       this.discardCounter.toValue(notif.args.discardCount);
     },
 
@@ -124,13 +131,6 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       }
       this.handCounter[player_id].toValue(handCount);
       this.discardCounter.toValue(discardCount);
-    },
-
-    notif_keeperDiscarded: function (notif) {
-      var player_id = notif.args.player_id;
-      var discardedKeepers = notif.args.cards;
-      var discardCount = notif.args.discardCount;
-      // @TODO
     },
 
     notif_reshuffle: function (notif) {
