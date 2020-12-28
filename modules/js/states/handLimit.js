@@ -72,7 +72,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       });
 
       console.log("discard from hand:", card_ids);
-      this.ajaxAction("discardKeepers", {
+      this.ajaxAction("discardHandCards", {
         card_ids: card_ids.join(";"),
       });
     },
