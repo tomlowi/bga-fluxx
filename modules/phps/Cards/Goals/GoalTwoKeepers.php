@@ -23,8 +23,12 @@ class GoalTwoKeepers extends GoalCard
   {
     $cards = Utils::getGame()->cards;
 
-    $first_keeper_card = $cards->getCard($first_keeper);
-    $second_keeper_card = $cards->getCard($second_keeper);
+    $first_keeper_card = array_values(
+      $cards->getCardsOfType("keeper", $first_keeper)
+    )[0];
+    $second_keeper_card = array_values(
+      $cards->getCardsOfType("keeper", $second_keeper)
+    )[0];
 
     // If both keepers are not in a player's keepers, noone wins
     if (

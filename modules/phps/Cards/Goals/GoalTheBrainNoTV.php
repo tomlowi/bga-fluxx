@@ -22,21 +22,27 @@ class GoalTheBrainNoTV extends GoalCard
   {
     $cards = Utils::getGame()->cards;
 
-    $brain_keeper_card = $cards->getCard($this->brain_keeper);
+    $brain_keeper_card = array_values(
+      $cards->getCardsOfType("keeper", $this->brain_keeper)
+    )[0];
 
     // Someone needs to have the brain
-    if ($brain_keeper_card['location'] != 'keepers') {
+    if ($brain_keeper_card["location"] != "keepers") {
       return null;
     }
 
-    $tv_keeper_card = $cards->getCard($this->tv_keeper);
+    $tv_keeper_cards = $cards->getCardsOfTypeInLocation(
+      "keeper",
+      $this->tv_keeper,
+      "keepers"
+    );
 
     // Noone needs to have the TV
-    if ($tv_keeper_card['location'] == 'keepers') {
+    if (count($tv_keeper_card) == 0) {
       return null;
     }
 
     // Then the player with the brain wins
-    return $brain_keeper_card['location_arg']
+    return $brain_keeper_card["location_arg"];
   }
 }

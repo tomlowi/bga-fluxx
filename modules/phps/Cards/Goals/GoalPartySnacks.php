@@ -9,7 +9,7 @@ class GoalPartySnacks extends GoalTwoKeepers
   {
     parent::__construct($cardId, $uniqueId);
 
-    $this->name = clienttranslate("The Brain (No TV)");
+    $this->name = clienttranslate("Party Snacks");
     $this->subtitle = clienttranslate("The Party + at least 1 food Keeper");
 
     $this->party_keeper = 16;
