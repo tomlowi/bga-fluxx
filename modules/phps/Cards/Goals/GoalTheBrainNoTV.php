@@ -3,7 +3,7 @@ namespace Fluxx\Cards\Goals;
 
 use Fluxx\Game\Utils;
 
-class GoalTheBrainNoTV extends GoalTwoKeepers
+class GoalTheBrainNoTV extends GoalCard
 {
   public function __construct($cardId, $uniqueId)
   {
@@ -14,18 +14,29 @@ class GoalTheBrainNoTV extends GoalTwoKeepers
       "If no one has Television on the table, the player with The Brain on the table wins."
     );
 
-    $this->keeper1 = 2;
-    $this->keeper2 = 12;
+    $this->brain_keeper = 2;
+    $this->tv_keeper = 12;
   }
 
   public function goalReachedByPlayer()
   {
-    $winner_id = $this->checkTwoKeepersWin(
-      $this->keeper1,
-      $this->keeper2,
-      true
-    );
+    $cards = Utils::getGame()->cards;
 
-    return $winner_id;
+    $brain_keeper_card = $cards->getCard($this->brain_keeper);
+
+    // Someone needs to have the brain
+    if ($brain_keeper_card['location'] != 'keepers') {
+      return null;
+    }
+
+    $tv_keeper_card = $cards->getCard($this->tv_keeper);
+
+    // Noone needs to have the TV
+    if ($tv_keeper_card['location'] == 'keepers') {
+      return null;
+    }
+
+    // Then the player with the brain wins
+    return $brain_keeper_card['location_arg']
   }
 }
