@@ -518,10 +518,10 @@ class fluxx extends Table
       $players = self::loadPlayersBasicInfos();
       self::notifyAllPlayers(
           "win",
-          clienttranslate('${player_name} wins with goal ${goal_name}'),
+          clienttranslate('${player_name} wins with goal <b>${goal_name}</b>'),
           [
               "player_id" => $winnerId,
-              "player_name" => $players[$winnerId],
+              "player_name" => $players[$winnerId]["player_name"],
               "goal_name" => $winningGoal,
           ]
       );

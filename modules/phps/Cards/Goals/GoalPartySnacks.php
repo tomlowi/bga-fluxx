@@ -28,6 +28,6 @@ class GoalPartySnacks extends GoalTwoKeepers
             $i++;
         }
 
-        return winner_id;
+        return $winner_id;
     }
 }

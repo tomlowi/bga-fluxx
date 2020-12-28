@@ -26,6 +26,6 @@ class GoalTheBrainNoTV extends GoalTwoKeepers
             true
         );
 
-        return winner_id;
+        return $winner_id;
     }
 }
