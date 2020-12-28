@@ -3,36 +3,39 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
     constructor() {},
 
     onEnteringStateKeepersLimit: function (args) {
-      var stock = this.keepersStock[this.player_id];
       console.log("Entering state: KeepersLimit");
-
-      if (this.isCurrentPlayerActive()) {
-        stock[this.player_id].setSelectionMode(2);
-        this._event = dojo.connect(
-          stock[this.player_id],
-          "onChangeSelection",
-          this,
-          "onSelectCardKeepersLimit"
-        );
-      }
     },
     onLeavingStateKeepersLimit: function () {
       var stock = this.keepersStock[this.player_id];
       console.log("Leaving state: KeepersLimit");
 
-      if (this.isCurrentPlayerActive()) {
-        dojo.disconnect(this._event);
-        delete this._event;
+      if (this._listener !== undefined) {
+        dojo.disconnect(this._listener);
+        delete this._listener;
         stock.setSelectionMode(0);
       }
     },
 
     onUpdateActionButtonsKeepersLimit: function (args) {
       console.log("Update Action Buttons: KeepersLimit");
+
+      var stock = this.keepersStock[this.player_id];
+      if (this.isCurrentPlayerActive()) {
+        stock.setSelectionMode(2);
+
+        if (this._listener !== undefined) dojo.disconnect(this._listener);
+        this._listener = dojo.connect(
+          stock,
+          "onChangeSelection",
+          this,
+          "onSelectCardKeepersLimit"
+        );
+      }
+
       this.addActionButton(
         "button_1",
         _("Discard selected"),
-        "onRemoveCardsFromHand"
+        "onRemoveCardsKeepersLimit"
       );
     },
 
@@ -51,17 +54,16 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       }
     },
 
-    onRemoveKeepersFromPlay: function () {
-      var items = this.keepersStock[this.player_id].getSelectedItems();
+    onRemoveCardsKeepersLimit: function () {
+      var cards = this.keepersStock[this.player_id].getSelectedItems();
       var arg_card_ids = "";
-      for (var i in items) {
+      for (var card of items) {
         console.log(
-          "discard from keepers: " + items[i].id + ", type: " + items[i].type
+          "discard from keepers: " + card.id + ", type: " + card.type
         );
-        arg_card_ids += items[i].id + ";";
+        arg_card_ids += card.id + ";";
       }
-      var actionDiscard = "discardKeepers";
-      this.ajaxAction(actionDiscard, {
+      this.ajaxAction("discardKeepers", {
         card_ids: arg_card_ids,
       });
     },

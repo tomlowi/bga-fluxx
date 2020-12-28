@@ -4,35 +4,39 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
 
     onEnteringStateHandLimit: function (args) {
       console.log("Entering state: HandLimit");
-
-      if (this.isCurrentPlayerActive()) {
-        this.handStock.setSelectionMode(2);
-
-        this._event = dojo.connect(
-          this.handStock,
-          "onChangeSelection",
-          this,
-          "onSelectCardHandLimit"
-        );
-      }
     },
 
     onLeavingStateHandLimit: function () {
       console.log("Leaving state: HandLimit");
 
-      if (this.isCurrentPlayerActive()) {
-        dojo.disconnect(this._event);
-        delete this._event;
+      if (this._listener !== undefined) {
+        dojo.disconnect(this._listener);
+        delete this._listener;
         this.handStock.setSelectionMode(0);
       }
     },
 
     onUpdateActionButtonsHandLimit: function (args) {
       console.log("Update Action Buttons: HandLimit");
+
+      if (this.isCurrentPlayerActive()) {
+        this.handStock.setSelectionMode(2);
+
+        // Let's prevent registering this listener twice
+        if (this._listener !== undefined) dojo.disconnect(this._listener);
+
+        this._listener = dojo.connect(
+          this.handStock,
+          "onChangeSelection",
+          this,
+          "onSelectCardHandLimit"
+        );
+      }
+
       this.addActionButton(
         "button_1",
         _("Discard selected"),
-        "onRemoveCardsFromHand"
+        "onRemoveCardsHandLimit"
       );
     },
 
@@ -49,17 +53,14 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       }
     },
 
-    onRemoveCardsFromHand: function () {
-      var items = this.handStock.getSelectedItems();
+    onRemoveCardsHandLimit: function () {
+      var cards = this.handStock.getSelectedItems();
       var arg_card_ids = "";
-      for (var i in items) {
-        console.log(
-          "discard from hand: " + items[i].id + ", type: " + items[i].type
-        );
-        arg_card_ids += items[i].id + ";";
+      for (var card in cards) {
+        console.log("discard from hand: " + card.id + ", type: " + card.type);
+        arg_card_ids += card.id + ";";
       }
-      var actionDiscard = "discardCards";
-      this.ajaxAction(actionDiscard, {
+      this.ajaxAction("discardCards", {
         card_ids: arg_card_ids,
       });
     },
