@@ -3,21 +3,11 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
     constructor() {},
 
     onEnteringStateKeepersLimit: function (args) {
-      console.log("Entering state: KeepersLimit");
-    },
-    onLeavingStateKeepersLimit: function () {
-      var stock = this.keepersStock[this.player_id];
-      console.log("Leaving state: KeepersLimit");
-
-      if (this._listener !== undefined) {
-        dojo.disconnect(this._listener);
-        delete this._listener;
-        stock.setSelectionMode(0);
-      }
+      console.log("Entering state: KeepersLimit", args);
     },
 
     onUpdateActionButtonsKeepersLimit: function (args) {
-      console.log("Update Action Buttons: KeepersLimit");
+      console.log("Update Action Buttons: KeepersLimit", args);
 
       var stock = this.keepersStock[this.player_id];
       if (this.isCurrentPlayerActive()) {
@@ -30,6 +20,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
           this,
           "onSelectCardKeepersLimit"
         );
+        this.discardCountKeepersLimit = args.nb;
       }
 
       this.addActionButton(
@@ -37,6 +28,18 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         _("Discard selected"),
         "onRemoveCardsKeepersLimit"
       );
+    },
+
+    onLeavingStateKeepersLimit: function () {
+      var stock = this.keepersStock[this.player_id];
+      console.log("Leaving state: KeepersLimit");
+
+      if (this._listener !== undefined) {
+        dojo.disconnect(this._listener);
+        delete this._listener;
+        stock.setSelectionMode(0);
+      }
+      delete this.discardCountKeepersLimit;
     },
 
     onSelectCardKeepersLimit: function () {
@@ -56,15 +59,22 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
 
     onRemoveCardsKeepersLimit: function () {
       var cards = this.keepersStock[this.player_id].getSelectedItems();
-      var arg_card_ids = "";
-      for (var card of items) {
-        console.log(
-          "discard from keepers: " + card.id + ", type: " + card.type
+
+      if (cards.length != this.discardCountKeepersLimit) {
+        this.showMessage(
+          _("You must discard the right amount of keepers!"),
+          "error"
         );
-        arg_card_ids += card.id + ";";
+        return;
       }
+
+      var card_ids = cards.map(function (card) {
+        return card.id;
+      });
+
+      console.log("discard from keepers:", card_ids);
       this.ajaxAction("discardKeepers", {
-        card_ids: arg_card_ids,
+        card_ids: card_ids.join(";"),
       });
     },
   });
