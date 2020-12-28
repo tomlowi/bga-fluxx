@@ -12,7 +12,7 @@ class GoalPartySnacks extends GoalTwoKeepers
     $this->name = clienttranslate("The Brain (No TV)");
     $this->subtitle = clienttranslate("The Party + at least 1 food Keeper");
 
-    $this->keeper1 = 16;
+    $this->party_keeper = 16;
     $this->food_keepers = [3, 4, 5, 6];
   }
 
@@ -22,7 +22,7 @@ class GoalPartySnacks extends GoalTwoKeepers
     $winner_id = null;
     while ($i < count($this->food_keepers) && $winner_id == null) {
       $winner_id = $this->checkTwoKeepersWin(
-        $this->keeper1,
+        $this->party_keeper,
         $this->food_keepers[$i]
       );
       $i++;
