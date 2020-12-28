@@ -934,7 +934,7 @@ class fluxx extends Table
         );
       }
 
-      $cards[] = $card;
+      $cards[$card["id"]] = $card;
 
       // Discard card
       $this->cards->playCard($card["id"]);
@@ -981,13 +981,13 @@ class fluxx extends Table
         );
       }
 
-      $cards[] = $card;
+      $cards[$card["id"]] = $card;
 
       // Discard card
       $this->cards->playCard($card["id"]);
     }
 
-    self::notifyAllPlayers("keeperDiscarded", "", [
+    self::notifyAllPlayers("keepersDiscarded", "", [
       "player_id" => $playerId,
       "cards" => $cards,
       "discardCount" => $this->cards->countCardInLocation("discard"),

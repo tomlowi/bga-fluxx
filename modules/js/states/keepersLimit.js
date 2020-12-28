@@ -1,7 +1,7 @@
 define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
   return declare("fluxx.states.keepersLimit", null, {
     constructor() {
-      this._notifications.push(["keeperDiscarded", null]);
+      this._notifications.push(["keepersDiscarded", null]);
     },
 
     onEnteringStateKeepersLimit: function (args) {
@@ -80,7 +80,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       });
     },
 
-    notif_keeperDiscarded: function (notif) {
+    notif_keepersDiscarded: function (notif) {
       var player_id = notif.args.player_id;
       var cards = notif.args.cards;
 

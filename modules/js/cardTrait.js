@@ -53,16 +53,20 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
 
     discardCards: function (cards, stock, player_id) {
       var that = this;
+      var cards_array = [];
+      for (var card_id in cards) {
+        cards_array.push(cards[card_id]);
+      }
 
       var count = 0;
-
-      // If it's someone else's cards, we want to see the animation
-      var delay = player_id === undefined ? 0 : 250;
-
-      cards.forEach(function (card) {
-        setTimeout(function () {
+      cards_array.forEach((card) => {
+        if (player_id !== undefined) {
+          setTimeout(function () {
+            that.discardCard(card, stock, player_id);
+          }, count++ * 250);
+        } else {
           that.discardCard(card, stock, player_id);
-        }, count++ * delay);
+        }
       });
     },
 
