@@ -494,73 +494,70 @@ class fluxx extends Table
 
   public function checkWinConditions()
   {
-      $winnerInfo = $this->checkCurrentGoalsWinner();
-      if ($winnerInfo == null) {
-          return;
-      }
+    $winnerInfo = $this->checkCurrentGoalsWinner();
+    if ($winnerInfo == null) {
+      return;
+    }
 
-      // We have one winner, no tie
-      $winnerId = $winnerInfo["winner"];
-      $winningGoal = $winnerInfo["goal"];
+    // We have one winner, no tie
+    $winnerId = $winnerInfo["winner"];
+    $winningGoal = $winnerInfo["goal"];
 
-      // set final score
-      $sql = "UPDATE player SET player_score=1  WHERE player_id='$winnerId'";
-      self::DbQuery($sql);
+    // set final score
+    $sql = "UPDATE player SET player_score=1  WHERE player_id='$winnerId'";
+    self::DbQuery($sql);
 
-      $newScores = self::getCollectionFromDb(
-          "SELECT player_id, player_score FROM player",
-          true
-      );
-      self::notifyAllPlayers("newScores", "", [
-          "newScores" => $newScores,
-      ]);
+    $newScores = self::getCollectionFromDb(
+      "SELECT player_id, player_score FROM player",
+      true
+    );
+    self::notifyAllPlayers("newScores", "", [
+      "newScores" => $newScores,
+    ]);
 
-      $players = self::loadPlayersBasicInfos();
-      self::notifyAllPlayers(
-          "win",
-          clienttranslate('${player_name} wins with goal <b>${goal_name}</b>'),
-          [
-              "player_id" => $winnerId,
-              "player_name" => $players[$winnerId]["player_name"],
-              "goal_name" => $winningGoal,
-          ]
-      );
+    $players = self::loadPlayersBasicInfos();
+    self::notifyAllPlayers(
+      "win",
+      clienttranslate('${player_name} wins with goal <b>${goal_name}</b>'),
+      [
+        "player_id" => $winnerId,
+        "player_name" => $players[$winnerId]["player_name"],
+        "goal_name" => $winningGoal,
+      ]
+    );
 
-      $this->gamestate->nextState("endGame");
+    $this->gamestate->nextState("endGame");
   }
 
   public function checkCurrentGoalsWinner()
   {
-      $winnerId = null;
-      $winningGoalCard = null;
-      $goals = $this->cards->getCardsInLocation("goals");
-      foreach ($goals as $card_id => $card) {
-          $goalCard = GoalCardFactory::getCard(
-              $card["id"],
-              $card["type_arg"]
-          );
+    $winnerId = null;
+    $winningGoalCard = null;
+    $goals = $this->cards->getCardsInLocation("goals");
+    foreach ($goals as $card_id => $card) {
+      $goalCard = GoalCardFactory::getCard($card["id"], $card["type_arg"]);
 
-          $goalReachedByPlayerId = $goalCard->goalReachedByPlayer();
-          if ($goalReachedByPlayerId != null) {
-              // some player reached this goal
-              if ($winnerId != null && $goalReachedByPlayerId != $winnerId) {
-                  // if multiple goals reached by different players, keep playing
-                  return null;
-              }
-              // this player is the winner, unless someone else also reached a next goal
-              $winnerId = $goalReachedByPlayerId;
-              $winningGoalCard = $goalCard->getName();
-          }
-      }
-
-      if ($winnerId == null) {
+      $goalReachedByPlayerId = $goalCard->goalReachedByPlayer();
+      if ($goalReachedByPlayerId != null) {
+        // some player reached this goal
+        if ($winnerId != null && $goalReachedByPlayerId != $winnerId) {
+          // if multiple goals reached by different players, keep playing
           return null;
+        }
+        // this player is the winner, unless someone else also reached a next goal
+        $winnerId = $goalReachedByPlayerId;
+        $winningGoalCard = $goalCard->getName();
       }
+    }
 
-      return [
-          "winner" => $winnerId,
-          "goal" => $winningGoalCard,
-      ];
+    if ($winnerId == null) {
+      return null;
+    }
+
+    return [
+      "winner" => $winnerId,
+      "goal" => $winningGoalCard,
+    ];
   }
 
   public function discardRule($ruleType)
