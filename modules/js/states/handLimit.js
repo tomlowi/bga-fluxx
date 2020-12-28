@@ -1,7 +1,8 @@
 define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
   return declare("fluxx.states.handLimit", null, {
-    constructor() {},
-
+    constructor() {
+      this._notifications.push(["handDiscarded", null]);
+    },
     onEnteringStateHandLimit: function (args) {
       console.log("Entering state: HandLimit", args);
     },
@@ -75,6 +76,26 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       this.ajaxAction("discardHandCards", {
         card_ids: card_ids.join(";"),
       });
+    },
+
+    notif_handDiscarded: function (notif) {
+      var that = this;
+
+      var player_id = notif.args.player_id;
+      var cards = notif.args.cards;
+
+      console.log(player_id, cards);
+
+      cards.forEach(function (card) {
+        if (that.isCurrentPlayerActive()) {
+          that.discardCard(card, that.handStock);
+        } else {
+          that.discardCard(card, undefined, player_id);
+        }
+      });
+
+      this.handCounter[player_id].toValue(notif.args.handCount);
+      this.discardCounter.toValue(notif.args.discardCount);
     },
   });
 });

@@ -10,7 +10,6 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         ["rulesDiscarded", null],
         ["rulePlayed", null],
         ["actionPlayed", null],
-        ["handDiscarded", null],
         ["keeperDiscarded", null],
         ["reshuffle", null]
       );
@@ -127,14 +126,6 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       this.discardCounter.toValue(discardCount);
     },
 
-    notif_handDiscarded: function (notif) {
-      var player_id = notif.args.player_id;
-      var discardedHandCards = notif.args.cards;
-      var discardCount = notif.args.discardCount;
-      var handCount = notif.args.handCount;
-      // @TODO
-    },
-
     notif_keeperDiscarded: function (notif) {
       var player_id = notif.args.player_id;
       var discardedKeepers = notif.args.cards;
@@ -145,8 +136,8 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
     notif_reshuffle: function (notif) {
       // @TODO: hide deck when there is no card in it anymore
       console.log("RESHUFFLE", notif);
-      this.setDeckCount(notif.args.deckCount);
-      this.setDiscardCount(notif.args.discardCount);
+      this.deckCounter.toValue(notif.args.deckCount);
+      this.discardCounter.toValue(notif.args.discardCount);
       this.discardStock.removeAll();
     },
   });
