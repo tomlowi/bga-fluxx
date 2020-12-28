@@ -19,54 +19,28 @@ class GoalTwoKeepers extends GoalCard
     return $winner_id;
   }
 
-  function checkTwoKeepersWin($keeper_nbr_A, $keeper_nbr_B, $without_B = false)
+  function checkTwoKeepersWin($first_keeper, $second_keeper)
   {
     $cards = Utils::getGame()->cards;
 
-    $keeper_A = $cards->getCardsOfTypeInLocation(
-      "keeper",
-      $keeper_nbr_A,
-      "keepers",
-      null
-    );
-    $keeper_B = $cards->getCardsOfTypeInLocation(
-      "keeper",
-      $keeper_nbr_B,
-      "keepers",
-      null
-    );
+    $first_keeper_card = $cards->getCard($first_keeper);
+    $second_keeper_card = $cards->getCard($second_keeper);
 
-    if ($without_B) {
-      // win if player has keeper A and keeper B is not in play anywhere
-      if (count($keeper_A) != 0 && count($keeper_B) == 0) {
-        $location_arg_A = null; // location_arg = player id
-        foreach ($keeper_A as $card_id => $card) {
-          $location_arg_A = $card["location_arg"];
-        }
-        return $location_arg_A;
-      } else {
-        return null;
-      }
-    } else {
-      // win if same player has both keeper A and keeper B
-      if (count($keeper_A) != 0 && count($keeper_B) != 0) {
-        $location_arg_A = null;
-        $location_arg_B = null;
-        foreach ($keeper_A as $card_id => $card) {
-          $location_arg_A = $card["location_arg"];
-        }
-        foreach ($keeper_B as $card_id => $card) {
-          $location_arg_B = $card["location_arg"];
-        }
-        // Check if keeper A and B are in same hand?
-        if ($location_arg_B == $location_arg_A) {
-          return $location_arg_A;
-        } else {
-          return null;
-        }
-      } else {
-        return null;
-      }
+    // If both keepers are not in a player's keepers, noone wins
+    if (
+      $first_keeper_card["location"] != "keepers" or
+      $second_keeper_card["location"] != "keepers"
+    ) {
+      return null;
     }
+
+    // If both keepers are in the same player's keepers, this player wins
+    if (
+      $first_keeper_card["location_arg"] == $second_keeper_card["location_arg"]
+    ) {
+      return $first_keeper_card["location_arg"];
+    }
+
+    return null;
   }
 }
