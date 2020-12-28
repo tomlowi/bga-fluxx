@@ -4,8 +4,8 @@ use fluxx;
 
 class Utils
 {
-    public static function getGame()
-    {
-        return fluxx::get();
-    }
+  public static function getGame()
+  {
+    return fluxx::get();
+  }
 }
