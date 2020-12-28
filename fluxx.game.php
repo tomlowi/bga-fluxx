@@ -662,16 +662,22 @@ class fluxx extends Table
   /*
    * Player discards a nr of cards for hand limit
    */
-  function action_removeCardsFromHand($cards)
+  function action_removeCardsFromHand($cards_id)
   {
     // multiple active state, so don't use checkAction or getActivePlayerId here!
     $this->gamestate->checkPossibleAction("discardHandCards");
     $playerId = self::getCurrentPlayerId();
 
-    // @TODO : verify the correct nr of cards is discarded
+    $args = self::argHandLimit();
+    if (count($cards_id) != $args["nb"]) {
+      throw new BgaUserException(
+        self::_("Wrong number of cards. Expected: ") . $args["nb"]
+      );
+    }
 
+    $cards = [];
     self::dump("discardingPlayer", $playerId);
-    foreach ($cards as $card_id) {
+    foreach ($cards_id as $card_id) {
       // Verify card was in player hand
       $card = $this->cards->getCard($card_id);
       if (
@@ -684,8 +690,10 @@ class fluxx extends Table
         );
       }
 
+      $cards[$card["id"]] = $card;
+
       // Discard card
-      $this->cards->moveCard($card_id, "discard");
+      $this->cards->playCard($card["id"]);
     }
 
     self::notifyAllPlayers("handDiscarded", "", [
@@ -702,15 +710,21 @@ class fluxx extends Table
   /*
    * Player discards a nr of cards for keeper limit
    */
-  function action_removeKeepersFromPlay($cards)
+  function action_removeKeepersFromPlay($cards_id)
   {
     // multiple active state, so don't use checkAction or getActivePlayerId here!
     $this->gamestate->checkPossibleAction("discardKeepers");
     $playerId = self::getCurrentPlayerId();
 
-    // @TODO : verify the correct nr of cards is discarded
+    $args = self::argKeeperLimit();
+    if (count($cards_id) != $args["nb"]) {
+      throw new BgaUserException(
+        self::_("Wrong number of cards. Expected: ") . $args["nb"]
+      );
+    }
 
-    foreach ($cards as $card_id) {
+    $cards = [];
+    foreach ($cards_id as $card_id) {
       // Verify card was in player hand
       $card = $this->cards->getCard($card_id);
       if (
@@ -723,11 +737,13 @@ class fluxx extends Table
         );
       }
 
+      $cards[$card["id"]] = $card;
+
       // Discard card
-      $this->cards->moveCard($card_id, "discard");
+      $this->cards->playCard($card["id"]);
     }
 
-    self::notifyAllPlayers("keeperDiscarded", "", [
+    self::notifyAllPlayers("keepersDiscarded", "", [
       "player_id" => $playerId,
       "cards" => $cards,
       "discardCount" => $this->cards->countCardInLocation("discard"),

@@ -8,7 +8,10 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       if (this.isCurrentPlayerActive()) {
         this.handStock.setSelectionMode(1);
 
-        this._event = dojo.connect(
+        // Let's prevent registering this listener twice
+        if (this._listener !== undefined) dojo.disconnect(this._listener);
+
+        this._listener = dojo.connect(
           this.handStock,
           "onChangeSelection",
           this,
@@ -20,9 +23,9 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
     onLeavingStatePlayCards: function () {
       console.log("Leaving state: PlayCards");
 
-      if (this.isCurrentPlayerActive()) {
-        dojo.disconnect(this._event);
-        delete this._event;
+      if (this._listener !== undefined) {
+        dojo.disconnect(this._listener);
+        delete this._listener;
         this.handStock.setSelectionMode(0);
       }
     },
