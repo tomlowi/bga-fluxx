@@ -84,7 +84,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       var player_id = notif.args.player_id;
       var cards = notif.args.cards;
 
-      if (this.isCurrentPlayerActive()) {
+      if (player_id == this.player_id) {
         this.discardCards(cards, this.handStock);
       } else {
         this.discardCards(cards, undefined, player_id);
