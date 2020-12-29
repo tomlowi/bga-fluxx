@@ -5,14 +5,14 @@ use Fluxx\Game\Utils;
 
 class GoalRocketScience extends GoalTwoKeepers
 {
-    public function __construct($cardId, $uniqueId)
-    {
-        parent::__construct($cardId, $uniqueId);
+  public function __construct($cardId, $uniqueId)
+  {
+    parent::__construct($cardId, $uniqueId);
 
-        $this->name = clienttranslate("Rocket Science");
-        $this->subtitle = clienttranslate("The Rocket + The Brain");
+    $this->name = clienttranslate("Rocket Science");
+    $this->subtitle = clienttranslate("The Rocket + The Brain");
 
-        $this->keeper1 = 10;
-        $this->keeper2 = 2;
-    }
+    $this->keeper1 = 10;
+    $this->keeper2 = 2;
+  }
 }
