@@ -2,7 +2,7 @@
 /**
  *------
  * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
- * fluxx implementation : © Alexandre Spaeth <alexandre.spaeth@hey.com> & Julien Rossignol <tacotaco.dev@gmail.com>
+ * fluxx implementation : © Alexandre Spaeth <alexandre.spaeth@hey.com> & Iwan Tomlow <iwan.tomlow@gmail.com> & Julien Rossignol <tacotaco.dev@gmail.com>
  *
  * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
  * See http://en.boardgamearena.com/#!doc/Studio for more information.
@@ -39,6 +39,7 @@ require_once "modules/phps/constants.inc.php";
 
 use Fluxx\Cards\ActionCards\ActionCardFactory;
 use Fluxx\Cards\NewRules\RuleCardFactory;
+use Fluxx\Cards\Goals\GoalCardFactory;
 
 class fluxx extends Table
 {
@@ -280,6 +281,9 @@ class fluxx extends Table
         "deckCount" => $this->cards->countCardInLocation("deck"),
       ]
     );
+
+    // check victory: some goals can also be triggered when extra cards drawn
+    $this->checkWinConditions();
   }
 
   public function playKeeperCard($player_id, $card, $card_definition)
@@ -488,320 +492,72 @@ class fluxx extends Table
     ]);
   }
 
-  public function checkWin()
+  public function checkWinConditions()
   {
-    return;
-    $rules = $this->cards->getCardsInLocation("rules");
-    $goals = [];
+    $winnerInfo = $this->checkCurrentGoalsWinner();
+    if ($winnerInfo == null) {
+      return;
+    }
+
+    // We have one winner, no tie
+    $winnerId = $winnerInfo["winner"];
+    $winningGoal = $winnerInfo["goal"];
+
+    // set final score
+    $sql = "UPDATE player SET player_score=1  WHERE player_id='$winnerId'";
+    self::DbQuery($sql);
+
+    $newScores = self::getCollectionFromDb(
+      "SELECT player_id, player_score FROM player",
+      true
+    );
+    self::notifyAllPlayers("newScores", "", [
+      "newScores" => $newScores,
+    ]);
 
     $players = self::loadPlayersBasicInfos();
-    $winner_id = null;
+    self::notifyAllPlayers(
+      "win",
+      clienttranslate('${player_name} wins with goal <b>${goal_name}</b>'),
+      [
+        "player_id" => $winnerId,
+        "player_name" => $players[$winnerId]["player_name"],
+        "goal_name" => $winningGoal,
+      ]
+    );
 
-    foreach ($rules as $card_id => $card) {
-      if ($card["type"] == 3) {
-        switch ($card["type_arg"]) {
-          case 1:
-            // If someone has 10 or more cards in his or her hand,
-            // then the player with the most cards in hand wins.
-            // In the event of a tie, continue playing until a clear winner emerges.
-            $maxCards = -1;
-            $cardCounts = [];
-            foreach ($players as $player_id => $player) {
-              // Count each player hand cards
-              $nbCards = $this->cards->countCardInLocation("hand", $player_id);
-              if ($nbCards >= 10) {
-                if ($nbCards > $maxCards) {
-                  $cardCounts = [];
-                  $maxCards = $nbCards;
-                  $cardCounts[] = $player_id;
-                }
-                if ($nbCards == $maxCards) {
-                  $cardCounts[] = $player_id;
-                }
-              }
-            }
-            if (count($cardCounts) == 1) {
-              // We have one winner, no tie
-              $winner_id = $cardCounts[0];
-              $sql = "UPDATE player SET player_score=1  WHERE player_id='$winner_id'";
-              self::DbQuery($sql);
-
-              $newScores = self::getCollectionFromDb(
-                "SELECT player_id, player_score FROM player",
-                true
-              );
-              self::notifyAllPlayers("newScores", "", [
-                "newScores" => $newScores,
-              ]);
-
-              self::notifyAllPlayers(
-                "win",
-                clienttranslate(
-                  '${player_name} wins with ${nbr} cards in hand'
-                ),
-                [
-                  "player_id" => $winner_id,
-                  "player_name" => $players[$winner_id],
-                  "nbr" => $maxCards,
-                ]
-              );
-              $this->gamestate->nextState("endGame");
-              return true;
-            }
-            break;
-
-          case 2:
-            // If someone has 5 or more Keepers on the table,
-            // then the player with the most Keepers in play wins.
-            // In the event of a tie, continue playing until a clear winner emerges.
-            $maxkeepers = -1;
-            $keeperCounts = [];
-
-            foreach ($players as $player_id => $player) {
-              // Count each player keepers
-              $nbKeepers = $this->cards->countCardInLocation(
-                "keepers",
-                $player_id
-              );
-              if ($nbKeepers >= 5) {
-                if ($nbKeepers > $maxkeepers) {
-                  $keeperCounts = [];
-                  $maxkeepers = $nbKeepers;
-                  $keeperCounts[] = $player_id;
-                } elseif ($nbKeepers == $maxkeepers) {
-                  $keeperCounts[] = $player_id;
-                }
-              }
-            }
-
-            if (count($keeperCounts) == 1) {
-              // We have one winner, no tie
-              $winner_id = $keeperCounts[0];
-              $sql = "UPDATE player SET player_score=1  WHERE player_id='$winner_id'";
-              self::DbQuery($sql);
-
-              $newScores = self::getCollectionFromDb(
-                "SELECT player_id, player_score FROM player",
-                true
-              );
-              self::notifyAllPlayers("newScores", "", [
-                "newScores" => $newScores,
-              ]);
-
-              self::notifyAllPlayers(
-                "win",
-                clienttranslate(
-                  '${player_name} wins with ${nbr} keepers in play'
-                ),
-                [
-                  "player_id" => $winner_id,
-                  "player_name" => $players[$winner_id],
-                  "nbr" => $maxkeepers,
-                ]
-              );
-              $this->gamestate->nextState("endGame");
-              return true;
-            }
-
-            break;
-          case 3:
-            // The Toaster + Television
-            $winner_id = $this->checkTwoKeepersWin(11, 12);
-            break;
-          case 4:
-            // Bread + Cookies
-            $winner_id = $this->checkTwoKeepersWin(3, 5);
-            break;
-          case 5:
-            // Sleep + Time
-            $winner_id = $this->checkTwoKeepersWin(1, 13);
-            break;
-          case 6:
-            // If no one has Television on the table, the player with The Brain on the table wins.
-            $winner_id = $this->checkTwoKeepersWin(2, 12, true);
-            break;
-          case 7:
-            // Bread + Chocolate
-            $winner_id = $this->checkTwoKeepersWin(3, 4);
-            break;
-          case 8:
-            // Money + Love
-            $winner_id = $this->checkTwoKeepersWin(7, 18);
-            break;
-          case 9:
-            // Chocolate + Cookies
-            $winner_id = $this->checkTwoKeepersWin(4, 5);
-            break;
-          case 10:
-            // Chocolate + Milk
-            $winner_id = $this->checkTwoKeepersWin(4, 6);
-            break;
-          case 11:
-            // The Sun + Dreams
-            $winner_id = $this->checkTwoKeepersWin(17, 14);
-            break;
-          case 12:
-            // Sleep + Dreams
-            $winner_id = $this->checkTwoKeepersWin(1, 14);
-            break;
-          case 13:
-            // The Eye + Love
-            $winner_id = $this->checkTwoKeepersWin(8, 18);
-            break;
-          case 14:
-            // Music + Television
-            $winner_id = $this->checkTwoKeepersWin(15, 12);
-            break;
-          case 15:
-            // Love + The Brain
-            $winner_id = $this->checkTwoKeepersWin(18, 2);
-            break;
-          case 16:
-            // Peace + Love
-            $winner_id = $this->checkTwoKeepersWin(19, 18);
-            break;
-          case 17:
-            // Sleep + Music
-            $winner_id = $this->checkTwoKeepersWin(1, 15);
-            break;
-          case 18:
-            // Milk + Cookies
-            $winner_id = $this->checkTwoKeepersWin(6, 5);
-            break;
-          case 19:
-            //The Brain + The Eye
-            $winner_id = $this->checkTwoKeepersWin(2, 8);
-            break;
-          case 20:
-            // The Sun + The Moon
-            $winner_id = $this->checkTwoKeepersWin(17, 9);
-            break;
-          case 21:
-            // The Party + at least 1 food Keeper (Bread, Chocolate, Cookies, Milk)
-            $food_keepers_id = [3, 4, 5, 6];
-            $i = 0;
-            while ($i < count($food_keepers_id) && $winner_id == null) {
-              $winner_id = $this->checkTwoKeepersWin(16, $food_keepers_id[$i]);
-              $i++;
-            }
-            break;
-          case 22:
-            // The Party + Time
-            $winner_id = $this->checkTwoKeepersWin(16, 13);
-            break;
-          case 23:
-            // The Rocket + The Brain
-            $winner_id = $this->checkTwoKeepersWin(10, 2);
-            break;
-          case 24:
-            // The Rocket + The Moon
-            $winner_id = $this->checkTwoKeepersWin(10, 9);
-            break;
-          case 25:
-            // Chocolate + The Sun
-            $winner_id = $this->checkTwoKeepersWin(4, 17);
-            break;
-          case 26:
-            // Time + Money
-            $winner_id = $this->checkTwoKeepersWin(13, 7);
-            break;
-          case 27:
-            // Bread + The Toaster
-            $winner_id = $this->checkTwoKeepersWin(3, 11);
-            break;
-          case 28:
-            // Music + The Party
-            $winner_id = $this->checkTwoKeepersWin(15, 16);
-            break;
-          case 29:
-            // Dreams + Money
-            $winner_id = $this->checkTwoKeepersWin(14, 7);
-            break;
-          case 30:
-            // Dreams + Peace
-            $winner_id = $this->checkTwoKeepersWin(14, 19);
-            break;
-        }
-
-        if ($winner_id != null) {
-          $winning_card = $card["type"] * 100 + ($card["type_arg"] - 0);
-
-          $sql = "UPDATE player SET player_score=1  WHERE player_id='$winner_id'";
-          self::DbQuery($sql);
-
-          $newScores = self::getCollectionFromDb(
-            "SELECT player_id, player_score FROM player",
-            true
-          );
-          self::notifyAllPlayers("newScores", "", ["newScores" => $newScores]);
-
-          self::notifyAllPlayers(
-            "win",
-            clienttranslate('${player_name} wins with <b>${card_name}</b>'),
-            [
-              "player_id" => $winner_id,
-              "player_name" => $players[$winner_id],
-              "card_name" => $this->id_label[$winning_card]["name"],
-            ]
-          );
-          $this->gamestate->nextState("endGame");
-          return true;
-        }
-      }
-    }
-
-    return false;
+    $this->gamestate->nextState("endGame");
   }
 
-  public function setFinalScore()
+  public function checkCurrentGoalsWinner()
   {
-  }
+    $winnerId = null;
+    $winningGoalCard = null;
+    $goals = $this->cards->getCardsInLocation("goals");
+    foreach ($goals as $card_id => $card) {
+      $goalCard = GoalCardFactory::getCard($card["id"], $card["type_arg"]);
 
-  public function checkTwoKeepersWin(
-    $keeper_nbr_A,
-    $keeper_nbr_B,
-    $without_B = false
-  ) {
-    //getCardsOfTypeInLocation( $type, $type_arg=null, $location, $location_arg = null )
-    $keeper_A = $this->cards->getCardsOfTypeInLocation(
-      2,
-      $keeper_nbr_A,
-      "keepers",
-      null
-    );
-    $keeper_B = $this->cards->getCardsOfTypeInLocation(
-      2,
-      $keeper_nbr_B,
-      "keepers",
-      null
-    );
-
-    if ($without_B) {
-      if (count($keeper_A) != 0 && count($keeper_B) == 0) {
-        return $keeper_A["location_arg"];
-      } else {
-        return null;
-      }
-    } else {
-      if (count($keeper_A) != 0 && count($keeper_B) != 0) {
-        $location_arg_A = null;
-        $location_arg_B = null;
-        foreach ($keeper_A as $card_id => $card) {
-          $location_arg_A = $card["location_arg"];
-        }
-        foreach ($keeper_B as $card_id => $card) {
-          $location_arg_B = $card["location_arg"];
-        }
-
-        if ($location_arg_B == $location_arg_B) {
-          return $location_arg_A;
-        } else {
+      $goalReachedByPlayerId = $goalCard->goalReachedByPlayer();
+      if ($goalReachedByPlayerId != null) {
+        // some player reached this goal
+        if ($winnerId != null && $goalReachedByPlayerId != $winnerId) {
+          // if multiple goals reached by different players, keep playing
           return null;
         }
-      } else {
-        return null;
+        // this player is the winner, unless someone else also reached a next goal
+        $winnerId = $goalReachedByPlayerId;
+        $winningGoalCard = $goalCard->getName();
       }
     }
+
+    if ($winnerId == null) {
+      return null;
+    }
+
+    return [
+      "winner" => $winnerId,
+      "goal" => $winningGoalCard,
+    ];
   }
 
   public function discardRule($ruleType)
@@ -882,10 +638,7 @@ class fluxx extends Table
     self::incGameStateValue("playedCards", 1);
 
     // A card has been played: do we have a new winner?
-    if ($this->checkWin()) {
-      $this->setFinalScore();
-      $this->gamestate->nextState("endGame");
-    }
+    $this->checkWinConditions();
 
     // @TODO: are we reaching a new hand or keeper limit for someone
     if (false) {

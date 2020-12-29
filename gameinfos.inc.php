@@ -146,6 +146,7 @@ $gameinfos = [
     2, // Casual games
     11, //  Medium length game
     200, // Card game
+    204, // Hand management
   ],
 
   //////// BGA SANDBOX ONLY PARAMETERS (DO NOT MODIFY)
