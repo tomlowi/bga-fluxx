@@ -22,14 +22,14 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
           this,
           "onSelectCardKeepersLimit"
         );
-        this.discardCountKeepersLimit = args.nb;
-      }
+        this.discardCountKeepersLimit = args._private.nb;
 
-      this.addActionButton(
-        "button_1",
-        _("Discard selected"),
-        "onRemoveCardsKeepersLimit"
-      );
+        this.addActionButton(
+          "button_1",
+          _("Discard selected"),
+          "onRemoveCardsKeepersLimit"
+        );
+      }
     },
 
     onLeavingStateKeepersLimit: function () {
@@ -84,11 +84,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       var player_id = notif.args.player_id;
       var cards = notif.args.cards;
 
-      if (player_id == this.player_id) {
-        this.discardCards(cards, this.handStock);
-      } else {
-        this.discardCards(cards, undefined, player_id);
-      }
+      this.discardCards(cards, this.keepersStock[player_id]);
 
       this.keepersCounter[player_id].toValue(
         this.keepersStock[player_id].count()
