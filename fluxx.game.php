@@ -80,6 +80,11 @@ class fluxx extends Table
     return self::$instance;
   }
 
+  // Exposing protected method for translations in modules
+  public static function totranslate($text) {
+    return self::_($text);
+  }
+
   protected function getGameName()
   {
     // Used for translations and stuff. Please do not modify.
@@ -417,6 +422,8 @@ class fluxx extends Table
     // execute the action immediate effect
     $stateTransition = $actionCard->playFromHand($player_id);
 
+    self::dump("====playActionCard====", $stateTransition);
+
     // We play the new action card
     $this->cards->playCard($card["id"]);
 
@@ -435,11 +442,7 @@ class fluxx extends Table
       ]
     );
 
-    if ($stateTransition != null) {
-      // player must resolve the action before continuing to play more cards
-      // action card that needs to be resolved has been set in GameStateValue "actionToResolve"
-      $this->gamestate->nextstate($stateTransition);
-    }
+    return $stateTransition;
   }
 
   function checkPlayerShouldPlayMoreCards($player_id)
@@ -593,6 +596,25 @@ class fluxx extends Table
     }
   }
 
+  public function removeCardFromPlay($playerId, $cardId, $cardType, $fromPlayer)
+  {
+    // playCard = move card to top of discard pile
+    $this->cards->playCard($cardId);
+
+    $players = self::loadPlayersBasicInfos();
+    // @TODO: react to this notification to display changes client side
+    // include all relevant data like changes in discard count, keeper/hand count etc
+    self::notifyAllPlayers("removeCardFromPlay", 
+    clienttranslate('${player_name} trashes card ${card_id} from ${target_player}'), 
+    [
+      "player_name" => self::getActivePlayerName(),
+      "player_id" => $playerId,
+      "card_id" => $cardId,
+      "card_type" => $cardType,
+      "target_player" => $players[$fromPlayer]["player_name"],
+    ]);
+  }
+
   //////////////////////////////////////////////////////////////////////////////
   //////////// Player actions
   ////////////
@@ -616,7 +638,7 @@ class fluxx extends Table
     }
 
     $card_type = $card_definition["type"];
-
+    $stateTransition = null;
     switch ($card_type) {
       case "keeper":
         $this->playKeeperCard($player_id, $card, $card_definition);
@@ -628,7 +650,11 @@ class fluxx extends Table
         $this->playRuleCard($player_id, $card, $card_definition);
         break;
       case "action":
-        $this->playActionCard($player_id, $card, $card_definition);
+        $stateTransition = $this->playActionCard(
+          $player_id,
+          $card,
+          $card_definition
+        );
         break;
       default:
         die("Not implemented: Card type $card_type does not exist");
@@ -646,8 +672,12 @@ class fluxx extends Table
       return;
     }
 
+    if ($stateTransition != null) {
+      // player must resolve the action before continuing to play more cards
+      $this->gamestate->nextstate($stateTransition);
+    }
     // check if the active player should continue to play more cards
-    if (!$this->checkPlayerShouldPlayMoreCards($player_id)) {
+    elseif (!$this->checkPlayerShouldPlayMoreCards($player_id)) {
       $this->prepareForNextPlayerTurn();
     } else {
       // else: just let player continue playing cards
@@ -750,6 +780,44 @@ class fluxx extends Table
     $this->gamestate->setPlayerNonMultiactive($playerId, "");
   }
 
+  /*
+   * Player resolves any action card, with the cards selected
+   */
+  function action_resolveActionWithCards($cards_id)
+  {
+    self::checkAction("resolveAction");
+    $playerId = self::getActivePlayerId();
+
+    $args = self::argResolveAction();
+    $actionCardId = $args["action"];
+    $card = $this->cards->getCard($actionCardId);
+    $actionCard = ActionCardFactory::getCard($card["id"], $card["type_arg"]);
+    $actionName = $actionCard->getName();
+
+    $stateTransition = $actionCard->resolvedBy($playerId, $cards_id);
+
+    $players = self::loadPlayersBasicInfos();
+    self::notifyAllPlayers(
+      "actionDone",
+      clienttranslate('${player_name} finished action ${action_name}'),
+      [
+        "player_id" => $playerId,
+        "player_name" => $players[$playerId]["player_name"],
+        "action_name" => $actionName,
+      ]
+    );
+    self::setGameStateValue("actionToResolve", -1);
+
+    if ($stateTransition != null) {
+      $this->gamestate->nextstate($stateTransition);
+    }
+    else if (!$this->checkPlayerShouldPlayMoreCards($playerId)) {
+      $this->prepareForNextPlayerTurn();
+    } else {
+      $this->gamestate->nextstate("resolvedAction");
+    }
+  }
+
   //////////////////////////////////////////////////////////////////////////////
   //////////// Game state arguments
   ////////////
@@ -779,8 +847,14 @@ class fluxx extends Table
   }
   public function argResolveAction()
   {
-    $actionCard = self::getGameStateValue("actionToResolve");
-    return ["action" => $actionCard];
+    $actionCardId = self::getGameStateValue("actionToResolve");
+    $card = $this->cards->getCard($actionCardId);
+    $actionCard = ActionCardFactory::getCard($card["id"], $card["type_arg"]);
+
+    return [
+      "action" => $actionCardId,
+      "action_name" => $actionCard->getName(),
+    ];
   }
   public function argHandLimit()
   {
@@ -823,40 +897,17 @@ class fluxx extends Table
     $this->gamestate->nextstate("goPlayCards");
   }
 
-  function stResolveAction()
-  {
-    $player_id = self::getActivePlayerId();
-    $players = self::loadPlayersBasicInfos();
+  // function stResolveAction()
+  // {
+  //   $player_id = self::getActivePlayerId();
+  //   $players = self::loadPlayersBasicInfos();
 
-    // @TODO: for now, just mark action as finished and continue play
-    // this should actually be done as response to specific client actions
-    // depending on the special action card that was played
-    $actionCardId = self::getGameStateValue("actionToResolve");
-    $actionCardRow = $this->cards->getCard($actionCardId);
-    $actionCard = ActionCardFactory::getCard(
-      $actionCardId,
-      $actionCardRow["type_arg"]
-    );
-    $actionName = $actionCard->getName();
+  //   // @TODO: for now, just mark action as finished and continue play
+  //   // this should actually be done as response to specific client actions
+  //   // depending on the special action card that was played
 
-    self::notifyAllPlayers(
-      "actionDone",
-      clienttranslate('${player_name} finished action ${action_name}'),
-      [
-        "player_id" => $player_id,
-        "player_name" => $players[$player_id]["player_name"],
-        "action_name" => $actionName,
-      ]
-    );
-
-    self::setGameStateValue("actionToResolve", -1);
-
-    if (!$this->checkPlayerShouldPlayMoreCards($player_id)) {
-      $this->prepareForNextPlayerTurn();
-    } else {
-      $this->gamestate->nextstate("resolvedAction");
-    }
-  }
+  //   //self::action_resolveActionWithCards([]);
+  // }
 
   public function stHandLimit()
   {

@@ -77,4 +77,14 @@ class action_fluxx extends APP_GameAction
     );
     self::ajaxResponse();
   }
+
+  public function resolveActionWithCards()
+  {
+    self::setAjaxMode();
+    $card_ids_raw = self::getArg("card_ids", AT_numberlist, true); // ids of card to use
+    $result = $this->game->action_resolveActionWithCards(
+      $this->stripListOfCardIds($card_ids_raw)
+    );
+    self::ajaxResponse();
+  }
 }

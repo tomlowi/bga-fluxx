@@ -8,4 +8,9 @@ class Utils
   {
     return fluxx::get();
   }
+
+  public static function throwInvalidUserAction($msg)
+  {
+    throw new \BgaUserException($msg);
+  }
 }

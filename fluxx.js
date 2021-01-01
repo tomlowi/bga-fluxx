@@ -29,6 +29,7 @@ define([
   g_gamethemeurl + "modules/js/states/playCards.js",
   g_gamethemeurl + "modules/js/states/handLimit.js",
   g_gamethemeurl + "modules/js/states/keepersLimit.js",
+  g_gamethemeurl + "modules/js/states/actionResolve.js",
 ], function (dojo, declare) {
   return declare(
     "bgagame.fluxx",
@@ -38,6 +39,7 @@ define([
       fluxx.states.playCards,
       fluxx.states.handLimit,
       fluxx.states.keepersLimit,
+      fluxx.states.actionResolve,
     ],
     {
       constructor: function () {
@@ -204,6 +206,10 @@ define([
             this.onEnteringStateKeepersLimit(args);
             break;
 
+          case "actionResolve":
+            this.onEnteringStateActionResolve(args);
+            break;
+
           case "dummmy":
             break;
         }
@@ -228,6 +234,10 @@ define([
             this.onLeavingStateKeepersLimit();
             break;
 
+          case "actionResolve":
+            this.onLeavingStateActionResolve();
+            break;
+
           case "dummmy":
             break;
         }
@@ -249,6 +259,9 @@ define([
               break;
             case "keeperLimit":
               this.onUpdateActionButtonsKeepersLimit(args);
+              break;
+            case "actionResolve":
+              this.onUpdateActionButtonsActionResolve(args);
               break;
           }
         }
