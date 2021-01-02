@@ -13,7 +13,8 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
     onUpdateActionButtonsActionResolve: function (args) {
       console.log("Update Action Buttons: ActionResolve", args);
 
-      this.actionCardId = args.action;
+      this.actionCardId = args.action_id;
+      this.actionCardArg = args.action_arg;
       // @TODO: depending on specific Action Card, different selections to be made
       // for now, allow selections in Hand and all player's Keepers
 
@@ -50,6 +51,30 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       );
     },
 
+    onUpdateActionButtonsForSpecificAction(actionCardArg) {
+      switch(actionCardArg) {
+        case 302: // Rotate Hands
+          this.addActionButton(
+            "button_1",
+            _("Rotate Left"),
+            "onResolveActionWithOption1"
+          );
+          this.addActionButton(
+            "button_2",
+            _("Rotate Right"),
+            "onResolveActionWithOption2"
+          );          
+          break;
+        default:
+          this.addActionButton(
+            "button_1",
+            _("Do It (with selected cards)"),
+            "onResolveActionWithSelectedCards"
+          );
+          break;
+      }
+    },
+
     onLeavingStateActionResolve: function () {
       console.log("Leaving state: ActionResolve");
 
@@ -77,6 +102,22 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
     },
 
     onResolveActionWithSelectedCards: function () {
+      this.onResolveActionWithSelections(0);
+    },
+
+    onResolveActionWithOption1: function () {
+      this.onResolveActionWithSelections(1);
+    },
+
+    onResolveActionWithOption2: function () {
+      this.onResolveActionWithSelections(2);
+    },
+
+    onResolveActionWithOption3: function () {
+      this.onResolveActionWithSelections(3);
+    },
+
+    onResolveActionWithSelections: function (option_chosen) {
       var cards = [];
 
       var selectedInHand = this.handStock.getSelectedItems();
@@ -93,6 +134,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
 
       console.log("resolve action with:", card_ids);
       this.ajaxAction("resolveActionWithCards", {
+        option: option_chosen,
         card_ids: card_ids.join(";"),
       });
     },

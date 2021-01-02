@@ -26,33 +26,38 @@ class ActionTrashAKeeper extends ActionCard
     // nothing now, needs to go to resolve action state
   }
 
-  public function resolvedBy($player, $args)
+  public function resolvedBy($player, $option, $cardIdsSelected)
   {
-    self::dump("====resolve args====", $args);
     // verify args has 1 card id, and it is a keeper in play
     // (or that no keepers are in play and args is empty)
     $game = Utils::getGame();
     $keepersInPlay = $game->cards->countCardInLocation("keepers");
-    if ($keepersInPlay == 0) 
-    { // no keepers in play anywhere, this action does nothing
+    if ($keepersInPlay == 0) {
+      // no keepers in play anywhere, this action does nothing
       return;
     }
 
-    if (count($args) != 1)
-    {
-      Utils::throwInvalidUserAction(fluxx::totranslate("You must select exactly 1 Keeper card in play"));
+    if (count($cardIdsSelected) != 1) {
+      Utils::throwInvalidUserAction(
+        fluxx::totranslate("You must select exactly 1 Keeper card in play")
+      );
     }
 
-    $cardId = $args[0];
+    $cardId = $cardIdsSelected[0];
     $cardSelected = $game->cards->getCard($cardId);
-    if ($cardSelected == null || $cardSelected["location"] != "keepers")
-    {
-      Utils::throwInvalidUserAction(fluxx::totranslate("You must select exactly 1 Keeper card in play"));
+    if ($cardSelected == null || $cardSelected["location"] != "keepers") {
+      Utils::throwInvalidUserAction(
+        fluxx::totranslate("You must select exactly 1 Keeper card in play")
+      );
     }
 
     // discard this keeper from play
     $fromPlayer = $cardSelected["location_arg"];
-    $game->removeCardFromPlay($player, $cardId, $cardSelected["type"], $fromPlayer);
-    
+    $game->removeCardFromPlay(
+      $player,
+      $cardId,
+      $cardSelected["type"],
+      $fromPlayer
+    );
   }
 }

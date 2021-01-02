@@ -81,7 +81,8 @@ class fluxx extends Table
   }
 
   // Exposing protected method for translations in modules
-  public static function totranslate($text) {
+  public static function totranslate($text)
+  {
     return self::_($text);
   }
 
@@ -261,6 +262,34 @@ class fluxx extends Table
       return self::getCurrentPlayerId();
     }
     return self::getActivePlayerId();
+  }
+
+  /*
+   * Return an array of players in natural turn order starting
+   * with the current player. This can be used to build the player
+   * tables in the same order as the player boards,
+   * and for actions that need the players in order.
+   */
+  public function getPlayersInOrder()
+  {
+    $result = [];
+
+    $players = self::loadPlayersBasicInfos();
+    $next_player = self::getNextPlayerTable();
+    $player_id = self::getCurrentPlayerId();
+
+    // Check for spectator
+    if (!key_exists($player_id, $players)) {
+      $player_id = $next_player[0];
+    }
+
+    // Build array starting with current player
+    for ($i = 0; $i < count($players); $i++) {
+      $result[] = $player_id;
+      $player_id = $next_player[$player_id];
+    }
+
+    return $result;
   }
 
   public function drawExtraCards($player_id, $drawCount)
@@ -604,15 +633,19 @@ class fluxx extends Table
     $players = self::loadPlayersBasicInfos();
     // @TODO: react to this notification to display changes client side
     // include all relevant data like changes in discard count, keeper/hand count etc
-    self::notifyAllPlayers("removeCardFromPlay", 
-    clienttranslate('${player_name} trashes card ${card_id} from ${target_player}'), 
-    [
-      "player_name" => self::getActivePlayerName(),
-      "player_id" => $playerId,
-      "card_id" => $cardId,
-      "card_type" => $cardType,
-      "target_player" => $players[$fromPlayer]["player_name"],
-    ]);
+    self::notifyAllPlayers(
+      "removeCardFromPlay",
+      clienttranslate(
+        '${player_name} trashes card ${card_id} from ${target_player}'
+      ),
+      [
+        "player_name" => self::getActivePlayerName(),
+        "player_id" => $playerId,
+        "card_id" => $cardId,
+        "card_type" => $cardType,
+        "target_player" => $players[$fromPlayer]["player_name"],
+      ]
+    );
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -783,18 +816,18 @@ class fluxx extends Table
   /*
    * Player resolves any action card, with the cards selected
    */
-  function action_resolveActionWithCards($cards_id)
+  function action_resolveActionWithCards($option, $cards_id)
   {
     self::checkAction("resolveAction");
     $playerId = self::getActivePlayerId();
 
     $args = self::argResolveAction();
-    $actionCardId = $args["action"];
+    $actionCardId = $args["action_id"];
     $card = $this->cards->getCard($actionCardId);
     $actionCard = ActionCardFactory::getCard($card["id"], $card["type_arg"]);
     $actionName = $actionCard->getName();
 
-    $stateTransition = $actionCard->resolvedBy($playerId, $cards_id);
+    $stateTransition = $actionCard->resolvedBy($playerId, $option, $cards_id);
 
     $players = self::loadPlayersBasicInfos();
     self::notifyAllPlayers(
@@ -810,8 +843,7 @@ class fluxx extends Table
 
     if ($stateTransition != null) {
       $this->gamestate->nextstate($stateTransition);
-    }
-    else if (!$this->checkPlayerShouldPlayMoreCards($playerId)) {
+    } elseif (!$this->checkPlayerShouldPlayMoreCards($playerId)) {
       $this->prepareForNextPlayerTurn();
     } else {
       $this->gamestate->nextstate("resolvedAction");
@@ -852,8 +884,9 @@ class fluxx extends Table
     $actionCard = ActionCardFactory::getCard($card["id"], $card["type_arg"]);
 
     return [
-      "action" => $actionCardId,
+      "action_id" => $actionCardId,
       "action_name" => $actionCard->getName(),
+      "action_arg" => $card["type_arg"],
     ];
   }
   public function argHandLimit()
