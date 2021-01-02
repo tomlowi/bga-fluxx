@@ -44,26 +44,31 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         }
       }
 
-      this.addActionButton(
-        "button_1",
-        _("Do It (with selected cards)"),
-        "onResolveActionWithSelectedCards"
-      );
+      this.onUpdateActionButtonsForSpecificAction(this.actionCardArg);
+    },
+
+    addOption1(msg) {
+      this.addActionButton("button_1", msg, "onResolveActionWithOption1");
+    },
+
+    addOption2(msg) {
+      this.addActionButton("button_2", msg, "onResolveActionWithOption2");
+    },
+
+    addOption3(msg) {
+      this.addActionButton("button_3", msg, "onResolveActionWithOption3");
     },
 
     onUpdateActionButtonsForSpecificAction(actionCardArg) {
-      switch(actionCardArg) {
+      switch (actionCardArg) {
         case 302: // Rotate Hands
-          this.addActionButton(
-            "button_1",
-            _("Rotate Left"),
-            "onResolveActionWithOption1"
-          );
-          this.addActionButton(
-            "button_2",
-            _("Rotate Right"),
-            "onResolveActionWithOption2"
-          );          
+          this.addOption1(_("Rotate Left"));
+          this.addOption2(_("Rotate Right"));
+          break;
+        case 305: // RockPaperScissors
+          this.addOption1(_("Rock"));
+          this.addOption2(_("Paper"));
+          this.addOption3(_("Scissors"));
           break;
         default:
           this.addActionButton(

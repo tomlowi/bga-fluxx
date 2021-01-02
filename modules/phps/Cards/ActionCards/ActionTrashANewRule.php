@@ -2,17 +2,18 @@
 namespace Fluxx\Cards\ActionCards;
 
 use Fluxx\Game\Utils;
+use Fluxx\Cards\NewRules;
 use fluxx;
 
-class ActionTrashAKeeper extends ActionCard
+class ActionTrashANewRule extends ActionCard
 {
   public function __construct($cardId, $uniqueId)
   {
     parent::__construct($cardId, $uniqueId);
 
-    $this->name = clienttranslate("Trash a Keeper");
+    $this->name = clienttranslate("Trash a New Rule");
     $this->description = clienttranslate(
-      "Take a Keeper from in front of any player and put it on the discard pile. <br/> If no one has any Keepers in play, nothing happens when you play this card."
+      "Select one of the New Rule cards in play and place it in the discard pile."
     );
   }
 
@@ -28,30 +29,33 @@ class ActionTrashAKeeper extends ActionCard
 
   public function resolvedBy($player, $option, $cardIdsSelected)
   {
-    // verify args has 1 card id, and it is a keeper in play
-    // (or that no keepers are in play and args is empty)
+    // verify args has 1 card id, and it is a Rule in play
+    // (or that no rules are in play and args is empty)
     $game = Utils::getGame();
-    $keepersInPlay = $game->cards->countCardInLocation("keepers");
-    if ($keepersInPlay == 0) {
-      // no keepers in play anywhere, this action does nothing
+    $rulesInPlay = $game->cards->countCardInLocation("rules");
+    if ($rulesInPlay == 0) {
+      // no rules in play anywhere, this action does nothing
       return;
     }
 
     if (count($cardIdsSelected) != 1) {
       Utils::throwInvalidUserAction(
-        fluxx::totranslate("You must select exactly 1 Keeper card in play")
+        fluxx::totranslate("You must select exactly 1 New Rule card in play")
       );
     }
 
     $cardId = $cardIdsSelected[0];
     $cardSelected = $game->cards->getCard($cardId);
-    if ($cardSelected == null || $cardSelected["location"] != "keepers") {
+    if ($cardSelected == null || $cardSelected["location"] != "rules") {
       Utils::throwInvalidUserAction(
-        fluxx::totranslate("You must select exactly 1 Keeper card in play")
+        fluxx::totranslate("You must select exactly 1 New Rule card in play")
       );
     }
 
-    // discard this keeper from play
+    // discard this rule from play
+    $rule = RuleCardFactory::getCard($cardId);
+    $rule->immediateEffectOnDiscard($player);
+
     $fromTarget = $cardSelected["location_arg"];
     $game->removeCardFromPlay(
       $player,

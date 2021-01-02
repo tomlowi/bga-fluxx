@@ -625,25 +625,29 @@ class fluxx extends Table
     }
   }
 
-  public function removeCardFromPlay($playerId, $cardId, $cardType, $fromPlayer)
+  public function removeCardFromPlay($playerId, $cardId, $cardType, $fromTarget)
   {
     // playCard = move card to top of discard pile
     $this->cards->playCard($cardId);
 
     $players = self::loadPlayersBasicInfos();
+    $target_name = $fromTarget;
+    if ($players[$fromTarget] != null) {
+      $target_name = $players[$fromTarget]["player_name"];
+    }
     // @TODO: react to this notification to display changes client side
     // include all relevant data like changes in discard count, keeper/hand count etc
     self::notifyAllPlayers(
       "removeCardFromPlay",
       clienttranslate(
-        '${player_name} trashes card ${card_id} from ${target_player}'
+        '${player_name} trashes card ${card_id} from ${target_name}'
       ),
       [
         "player_name" => self::getActivePlayerName(),
         "player_id" => $playerId,
         "card_id" => $cardId,
         "card_type" => $cardType,
-        "target_player" => $players[$fromPlayer]["player_name"],
+        "target_name" => $target_name,
       ]
     );
   }
