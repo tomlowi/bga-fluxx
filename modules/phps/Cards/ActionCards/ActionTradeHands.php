@@ -29,7 +29,7 @@ class ActionTradeHands extends ActionCard
   public function resolvedBy($player, $option, $cardIdsSelected)
   {
     // options: index or id of the player chosen ?
-    // @TODO, for now simply 1/2/3
+    // @TODO: TradeHands with selected player - for now simply 1/2/3
     $players_ordered = $game->getPlayersInOrder();
     $playerVictim = $players_ordered[max($option, count($players_ordered) - 1)];
 

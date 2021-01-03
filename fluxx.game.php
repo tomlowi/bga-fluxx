@@ -360,7 +360,11 @@ class fluxx extends Table
       }
     } else {
       // @TODO: handle double agenda rule
-      die("Double agenda not implemented");
+      self::notifyAllPlayers(
+        "notImplemented",
+        clienttranslate("Double agenda not implemented"),
+        null
+      );
     }
 
     // We play the new goal

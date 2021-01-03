@@ -10,6 +10,14 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       console.log("Entering state: ActionResolve", args);
     },
 
+    needsDiscardPileVisible(actionCardArg) {
+      switch (actionCardArg) {
+        case 316: // LetsDoThatAgain
+          return true;
+      }
+      return false;
+    },
+
     onUpdateActionButtonsActionResolve: function (args) {
       console.log("Update Action Buttons: ActionResolve", args);
 
@@ -19,6 +27,12 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       // for now, allow selections in Hand and all player's Keepers
 
       if (this.isCurrentPlayerActive()) {
+
+        this.discardStock.setSelectionMode(2);
+        if (this.needsDiscardPileVisible(this.actionCardArg)) {
+          this.discardStock.setOverlap(50, 0);
+        };
+
         this.handStock.setSelectionMode(2);
         if (this._listenerHand !== undefined)
           dojo.disconnect(this._listenerHand);
@@ -93,6 +107,9 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
 
     onLeavingStateActionResolve: function () {
       console.log("Leaving state: ActionResolve");
+
+      this.discardStock.setSelectionMode(0);
+      this.discardStock.setOverlap(0.00001);
 
       if (this._listenerHand !== undefined) {
         dojo.disconnect(this._listenerHand);
