@@ -48,7 +48,7 @@ class ActionRotateHands extends ActionCard
       $tempHand
     );
     // now shift all hands in between to previous player
-    for ($i = 1; $i <= $count_players; $i++) {
+    for ($i = 1; $i < $count_players; $i++) {
       $to_player_id = $players_ordered[$i - 1];
       $from_player_id = $players_ordered[$i];
 
