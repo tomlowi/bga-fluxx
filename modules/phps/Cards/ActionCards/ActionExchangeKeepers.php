@@ -52,14 +52,15 @@ class ActionExchangeKeepers extends ActionCard
         )
       );
     }
-
+    
     $card1Id = $cardIdsSelected[0];
     $card1Selected = $game->cards->getCard($card1Id);
     $card1Player = $card1Selected["location_arg"];
 
     $card2Id = $cardIdsSelected[1];
-    $card2Selected = $game->cards->getCard($card2Id);
-    $card2Player = $card1Selected["location_arg"];
+    $card2Selected = $game->cards->getCard($card2Id);    
+    $card2Player = $card2Selected["location_arg"];
+
     // verify these cards are valid keepers to switch
     if (
       $card1Selected == null ||
