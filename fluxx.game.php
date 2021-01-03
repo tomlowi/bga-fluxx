@@ -341,7 +341,7 @@ class fluxx extends Table
     );
   }
 
-  public function playGoalCard($player_id, $card, $card_definition)
+  public function playGoalCard($player_id, $card)
   {
     $currentGoalCount = $this->cards->countCardInLocation("goals");
     $hasDoubleAgenda = count(
@@ -367,6 +367,7 @@ class fluxx extends Table
       );
     }
 
+    $goalCard = GoalCardFactory::getCard($card["id"], $card["type_arg"]);
     // We play the new goal
     $this->cards->moveCard($card["id"], "goals");
 
@@ -378,7 +379,7 @@ class fluxx extends Table
         "i18n" => ["card_name"],
         "player_name" => self::getActivePlayerName(),
         "player_id" => $player_id,
-        "card_name" => $card_definition["name"],
+        "card_name" => $goalCard->getName(),
         "card" => $card,
         "handCount" => $this->cards->countCardInLocation("hand", $player_id),
       ]
