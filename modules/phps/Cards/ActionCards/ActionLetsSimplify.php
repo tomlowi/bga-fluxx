@@ -45,7 +45,7 @@ class ActionLetsSimplify extends ActionCard
     }
 
     $cardsSelected = [];
-    foreach ($cardIdsSelected => $cardId) 
+    foreach ($cardIdsSelected as $cardId) 
     {
       $cardSelected = $game->cards->getCard($cardId);
       if ($cardSelected == null || $cardSelected["location"] != "rules") {
@@ -57,7 +57,7 @@ class ActionLetsSimplify extends ActionCard
     }
 
     // discard these rules from play
-    foreach ($cardsSelected => $cardId => $cardSelected) 
+    foreach ($cardsSelected as $cardId => $cardSelected) 
     {
       $rule = RuleCardFactory::getCard($cardId, $cardSelected["type_arg"]);
       $rule->immediateEffectOnDiscard($player);
