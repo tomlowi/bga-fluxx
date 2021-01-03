@@ -967,6 +967,7 @@ class fluxx extends Table
     if ($handLimit < 0) {
       // no active Hand Limit, nothing to do
       $this->gamestate->nextstate("");
+      return;
     }
 
     $players = self::loadPlayersBasicInfos();
@@ -983,6 +984,7 @@ class fluxx extends Table
     }
 
     // Activate all players that need to discard (if any)
+    self::dump("===stHandLimit===", $active_players);
     if (count($active_players) > 0) {
       $this->gamestate->setPlayersMultiactive($active_players, "", true);
     } else {
@@ -996,6 +998,7 @@ class fluxx extends Table
     if ($keeperLimit < 0) {
       // no active Keeper Limit, nothing to do
       $this->gamestate->nextstate("");
+      return;
     }
 
     $players = self::loadPlayersBasicInfos();
@@ -1012,6 +1015,7 @@ class fluxx extends Table
     }
 
     // Activate all players that need to remove keepers (if any)
+    self::dump("===stKeepersLimit===", $active_players);
     if (count($active_players) > 0) {
       $this->gamestate->setPlayersMultiactive($active_players, "", true);
     } else {
