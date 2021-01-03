@@ -2,7 +2,7 @@
 namespace Fluxx\Cards\ActionCards;
 
 use Fluxx\Game\Utils;
-use Fluxx\Cards\NewRules;
+use Fluxx\Cards\NewRules\RuleCardFactory;
 
 class ActionRulesReset extends ActionCard
 {

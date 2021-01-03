@@ -2,6 +2,7 @@
 namespace Fluxx\Cards\ActionCards;
 
 use Fluxx\Game\Utils;
+use Fluxx\Cards\NewRules\RuleCardFactory;
 use fluxx;
 
 class ActionZapACard extends ActionCard

@@ -2,7 +2,7 @@
 namespace Fluxx\Cards\ActionCards;
 
 use Fluxx\Game\Utils;
-use Fluxx\Cards\NewRules;
+use Fluxx\Cards\NewRules\RuleCardFactory;
 
 class ActionNoLimits extends ActionCard
 {
@@ -23,8 +23,9 @@ class ActionNoLimits extends ActionCard
 
   public function immediateEffectOnPlay($player)
   {
-    $handLimits = $this->cards->getCardsInLocation("rules", RULE_HAND_LIMIT);
-    $keeperLimits = $this->cards->getCardsInLocation(
+    $game = Utils::getGame();
+    $handLimits = $game->cards->getCardsInLocation("rules", RULE_HAND_LIMIT);
+    $keeperLimits = $game->cards->getCardsInLocation(
       "rules",
       RULE_KEEPERS_LIMIT
     );
@@ -35,7 +36,7 @@ class ActionNoLimits extends ActionCard
       $rule->immediateEffectOnDiscard($player);
 
       // playCard = move to top of discard pile
-      Utils::getGame()->cards->playCard($card_id);
+      $game->cards->playCard($card_id);
     }
   }
 }
