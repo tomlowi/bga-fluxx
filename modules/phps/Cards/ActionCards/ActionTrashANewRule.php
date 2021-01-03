@@ -53,7 +53,7 @@ class ActionTrashANewRule extends ActionCard
     }
 
     // discard this rule from play
-    $rule = RuleCardFactory::getCard($cardId);
+    $rule = RuleCardFactory::getCard($cardId, $cardSelected["type_arg"]);
     $rule->immediateEffectOnDiscard($player);
 
     $fromTarget = $cardSelected["location_arg"];

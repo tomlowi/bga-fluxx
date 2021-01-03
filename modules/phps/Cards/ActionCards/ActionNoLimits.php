@@ -32,7 +32,7 @@ class ActionNoLimits extends ActionCard
 
     $rulesToDiscard = array_merge($handLimits, $keeperLimits);
     foreach ($rulesToDiscard as $card_id => $card) {
-      $rule = RuleCardFactory::getCard($card_id);
+      $rule = RuleCardFactory::getCard($card_id, $card["type_arg"]);
       $rule->immediateEffectOnDiscard($player);
 
       // playCard = move to top of discard pile

@@ -59,7 +59,7 @@ class ActionLetsSimplify extends ActionCard
     // discard these rules from play
     foreach ($cardsSelected => $cardId => $cardSelected) 
     {
-      $rule = RuleCardFactory::getCard($cardId);
+      $rule = RuleCardFactory::getCard($cardId, $cardSelected["type_arg"]);
       $rule->immediateEffectOnDiscard($player);
   
       $fromTarget = $cardSelected["location_arg"];

@@ -25,7 +25,7 @@ class ActionRulesReset extends ActionCard
   {
     $rulesInPlay = Utils::getGame()->cards->getCardsInLocation("rules");
     foreach ($rulesInPlay as $card_id => $card) {
-      $rule = RuleCardFactory::getCard($card_id);
+      $rule = RuleCardFactory::getCard($card_id, $card["type_arg"]);
       $rule->immediateEffectOnDiscard($player);
 
       // playCard = move to top of discard pile

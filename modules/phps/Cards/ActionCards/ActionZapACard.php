@@ -62,7 +62,7 @@ class ActionZapACard extends ActionCard
 
     // if a rule is taken back, its effect stops
     if ($cardLocation == "rules") {
-      $rule = RuleCardFactory::getCard($cardId);
+      $rule = RuleCardFactory::getCard($cardId, $cardSelected["type_arg"]);
       $rule->immediateEffectOnDiscard($player);
     }
 
