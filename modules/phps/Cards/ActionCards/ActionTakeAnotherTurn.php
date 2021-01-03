@@ -22,6 +22,6 @@ class ActionTakeAnotherTurn extends ActionCard
 
   public function immediateEffectOnPlay($player)
   {
-    Utils::getGame()->incGameStateValue("anotherTurnMark");
+    Utils::getGame()->incGameStateValue("anotherTurnMark", 1);
   }
 }
