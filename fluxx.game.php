@@ -1021,13 +1021,13 @@ class fluxx extends Table
   public function stNextPlayer()
   {
     // special case: current player received another turn
-    $anotherTurnMark = self::getGameState("anotherTurnMark");
+    $anotherTurnMark = self::getGameStateValue("anotherTurnMark");
     $player_id = -1;
     if ($anotherTurnMark == 1) {
       // Take Another Turn can only be used once (two turns in a row)
       $player_id = self::activePrevPlayer();
     } else {
-      self::setGameState("anotherTurnMark", 0);
+      self::setGameStateValue("anotherTurnMark", 0);
       $player_id = self::activeNextPlayer();
     }
 
