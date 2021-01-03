@@ -63,6 +63,7 @@ class fluxx extends Table
       "drawnCards" => 20,
       "playedCards" => 21,
       "actionToResolve" => 22,
+      "anotherTurnMark" => 23,
     ]);
     $this->cards = self::getNew("module.common.deck");
     $this->cards->init("card");
@@ -142,6 +143,7 @@ class fluxx extends Table
     self::setGameStateInitialValue("keepersLimit", -1); // TODO: compute from table
     self::setGameStateInitialValue("drawnCards", 0);
     self::setGameStateInitialValue("playedCards", 0);
+    self::setGameStateInitialValue("anotherTurnMark", 0);
 
     // Create cards
     $cards = [];
@@ -417,7 +419,7 @@ class fluxx extends Table
     }
   }
 
-  public function playRuleCard($player_id, $card, $card_definition)
+  public function playRuleCard($player_id, $card)
   {
     $ruleCard = RuleCardFactory::getCard($card["id"], $card["type_arg"]);
     $ruleType = $ruleCard->getRuleType();
@@ -435,7 +437,7 @@ class fluxx extends Table
       [
         "i18n" => ["card_name"],
         "player_name" => self::getActivePlayerName(),
-        "card_name" => $card_definition["name"],
+        "card_name" => $ruleCard->getName(),
         "player_id" => $player_id,
         "ruleType" => $ruleType,
         "card" => $card,
@@ -444,7 +446,7 @@ class fluxx extends Table
     );
   }
 
-  public function playActionCard($player_id, $card, $card_definition)
+  public function playActionCard($player_id, $card)
   {
     self::setGameStateValue("actionToResolve", -1);
     $actionCard = ActionCardFactory::getCard($card["id"], $card["type_arg"]);
@@ -464,7 +466,7 @@ class fluxx extends Table
         "i18n" => ["card_name"],
         "player_name" => self::getActivePlayerName(),
         "player_id" => $player_id,
-        "card_name" => $card_definition["name"],
+        "card_name" => $actionCard->getName(),
         "card" => $card,
         "handCount" => $this->cards->countCardInLocation("hand", $player_id),
         "discardCount" => $this->cards->countCardInLocation("discard"),
@@ -681,17 +683,13 @@ class fluxx extends Table
         $this->playKeeperCard($player_id, $card, $card_definition);
         break;
       case "goal":
-        $this->playGoalCard($player_id, $card, $card_definition);
+        $this->playGoalCard($player_id, $card);
         break;
       case "rule":
-        $this->playRuleCard($player_id, $card, $card_definition);
+        $this->playRuleCard($player_id, $card);
         break;
       case "action":
-        $stateTransition = $this->playActionCard(
-          $player_id,
-          $card,
-          $card_definition
-        );
+        $stateTransition = $this->playActionCard($player_id, $card);
         break;
       default:
         die("Not implemented: Card type $card_type does not exist");
@@ -1018,7 +1016,17 @@ class fluxx extends Table
 
   public function stNextPlayer()
   {
-    $player_id = self::activeNextPlayer();
+    // special case: current player received another turn
+    $anotherTurnMark = self::getGameState("anotherTurnMark");
+    $player_id = -1;
+    if ($anotherTurnMark == 1) {
+      // Take Another Turn can only be used once (two turns in a row)
+      $player_id = self::activePrevPlayer();
+    } else {
+      self::setGameState("anotherTurnMark", 0);
+      $player_id = self::activeNextPlayer();
+    }
+
     self::giveExtraTime($player_id);
     $this->gamestate->nextState("nextPlayer");
   }

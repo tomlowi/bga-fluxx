@@ -28,7 +28,7 @@ class ActionUseWhatYouTake extends ActionCard
 
   public function resolvedBy($player, $option, $cardIdsSelected)
   {
-    // options: index or id of the player challenged ?
+    // options: index or id of the player chosen ?
 
     // @TODO: Use What You Take
     // Challenges: select any of other players, then use the stolen card as if played from hand
