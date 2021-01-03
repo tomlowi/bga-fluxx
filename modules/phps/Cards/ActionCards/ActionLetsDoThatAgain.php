@@ -70,6 +70,8 @@ class ActionLetsDoThatAgain extends ActionCard
       );
     }
 
+    // temporary move to hand so it can be played again
+    $game->cards->moveCard($cardId, "hand", $player);
     if ($cardType == "action") {
       // @TODO: check how this interrupts the game state of the current action
       $game->playActionCard($player, $cardSelected);

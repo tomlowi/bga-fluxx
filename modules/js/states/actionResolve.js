@@ -153,6 +153,9 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
     onResolveActionWithSelections: function (option_chosen) {
       var cards = [];
 
+      var selectedInDiscard = this.discardStock.getSelectedItems();
+      cards = cards.concat(selectedInDiscard);
+
       var selectedInHand = this.handStock.getSelectedItems();
       cards = cards.concat(selectedInHand);
       for (var player_id in this.keepersStock) {
