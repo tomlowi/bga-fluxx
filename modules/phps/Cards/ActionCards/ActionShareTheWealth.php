@@ -29,15 +29,16 @@ class ActionShareTheWealth extends ActionCard
     $playerCount = count($players_ordered);
 
     // gather and shuffle all keepers in play
-    shuffle($keepersInPlay);
+    $keys = array_keys($keepersInPlay);
+    shuffle($keys);
 
     // deal them back out, starting with the current player
     $receivingPlayerIndex = 1;
-    foreach ($keepersInPlay as $cardId => $card) {
+    foreach ($keys as $cardId) {
       $game->cards->moveCard(
         $cardId,
         "keepers",
-        $players_ordered[$receivingPlayer - 1]
+        $players_ordered[$receivingPlayerIndex - 1]
       );
 
       $receivingPlayerIndex++;

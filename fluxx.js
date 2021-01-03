@@ -78,6 +78,7 @@ define([
             "gamedatas" argument contains all datas retrieved by your "getAllDatas" PHP method.
         */
       setup: function (gamedatas) {
+        console.log("GameDatas: ", gamedatas);
         // Setup all stocks and restore existing state
         this.handStock = this.createCardStock("handStock", [
           "keeper",

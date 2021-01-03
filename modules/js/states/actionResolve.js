@@ -12,7 +12,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
 
     needsDiscardPileVisible(actionCardArg) {
       switch (actionCardArg) {
-        case 316: // LetsDoThatAgain
+        case "316": // LetsDoThatAgain
           return true;
       }
       return false;
@@ -75,22 +75,22 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
 
     onUpdateActionButtonsForSpecificAction(actionCardArg) {
       switch (actionCardArg) {
-        case 302: // Rotate Hands
+        case "302": // Rotate Hands
           this.addOption1(_("Rotate Left"));
           this.addOption2(_("Rotate Right"));
           break;
-        case 305: // RockPaperScissors
+        case "305": // RockPaperScissors
           this.addOption1(_("Rock"));
           this.addOption2(_("Paper"));
           this.addOption3(_("Scissors"));
           break;
-        case 319: // TradeHand: select another player
+        case "319": // TradeHand: select another player
           // @TODO: to be replaced with nice visual way of selecting other players
           this.addOption1(_("Opponent 1"));
           this.addOption2(_("Opponent 2"));
           this.addOption3(_("Opponent 3"));
           break;
-        case 323: // Today Special
+        case "323": // Today Special
           this.addOption3(_("It's my Birthday!"));
           this.addOption2(_("Holiday or Anniversary"));
           this.addOption1(_("Just another day..."));
