@@ -16,10 +16,7 @@ class ActionStealAKeeper extends ActionCard
     );
   }
 
-  public function needsInteraction()
-  {
-    return true;
-  }
+  public $needsInteraction = true;
 
   public function immediateEffectOnPlay($player)
   {

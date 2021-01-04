@@ -14,7 +14,7 @@ class RuleDraw3 extends RuleDraw
     $this->description = clienttranslate(
       "Draw 3 cards per turn. If you just played this card, draw extra cards as needed to reach 3 cards drawn."
     );
-
-    $this->setNewDrawCount(3);
   }
+
+  protected $drawCount = 3;
 }

@@ -14,7 +14,7 @@ class RuleKeeperLimit4 extends RuleKeeperLimit
     $this->description = clienttranslate(
       "If it isn't your turn, you can only have 4 Keepers in play. Discard extras immediately. You may acquire new Keepers during your turn as long as you discard down to 4 when your turn ends."
     );
-
-    $this->setNewKeeperLimit(4);
   }
+
+  protected $keeperLimit = 4;
 }

@@ -26,7 +26,6 @@ class GoalCard extends Card
    */
   public function playFromHand($player)
   {
-    Utils::getGame()->checkWinConditions();
     return null;
   }
 }

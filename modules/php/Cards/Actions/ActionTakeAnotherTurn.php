@@ -15,11 +15,6 @@ class ActionTakeAnotherTurn extends ActionCard
     );
   }
 
-  public function needsInteraction()
-  {
-    return false;
-  }
-
   public function immediateEffectOnPlay($player)
   {
     Utils::getGame()->incGameStateValue("anotherTurnMark", 1);

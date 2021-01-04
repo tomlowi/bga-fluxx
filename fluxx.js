@@ -26,9 +26,9 @@ define([
 
   g_gamethemeurl + "modules/js/cardTrait.js",
 
-  g_gamethemeurl + "modules/js/states/playCards.js",
-  g_gamethemeurl + "modules/js/states/handLimit.js",
-  g_gamethemeurl + "modules/js/states/keepersLimit.js",
+  g_gamethemeurl + "modules/js/states/playCard.js",
+  g_gamethemeurl + "modules/js/states/enforceHandLimit.js",
+  g_gamethemeurl + "modules/js/states/enforceKeepersLimit.js",
   g_gamethemeurl + "modules/js/states/actionResolve.js",
 ], function (dojo, declare) {
   return declare(
@@ -36,9 +36,9 @@ define([
     [
       customgame.game,
       fluxx.cardTrait,
-      fluxx.states.playCards,
-      fluxx.states.handLimit,
-      fluxx.states.keepersLimit,
+      fluxx.states.playCard,
+      fluxx.states.enforceHandLimit,
+      fluxx.states.enforceKeepersLimit,
       fluxx.states.actionResolve,
     ],
     {
@@ -94,9 +94,7 @@ define([
           "rule",
           "action",
         ]);
-        if (this.gamedatas.discard) {
-          this.addCardsToStock(this.discardStock, [this.gamedatas.discard]);
-        }
+        this.addCardsToStock(this.discardStock, this.gamedatas.discard);
         this.discardStock.setOverlap(0.00001);
         this.discardStock.item_margin = 0;
 
@@ -195,16 +193,18 @@ define([
         console.log("Entering state: " + stateName);
 
         switch (stateName) {
-          case "playCards":
-            this.onEnteringStatePlayCards(args);
+          case "playCard":
+            this.onEnteringStatePlayCard(args);
             break;
 
-          case "handLimit":
-            this.onEnteringStateHandLimit(args);
+          case "enforceHandLimitForOthers":
+          case "enforceHandLimitForSelf":
+            this.onEnteringStateEnforceHandLimit(args);
             break;
 
-          case "keeperLimit":
-            this.onEnteringStateKeepersLimit(args);
+          case "enforceKeepersLimitForOthers":
+          case "enforceKeepersLimitForSelf":
+            this.onEnteringStateEnforceKeepersLimit(args);
             break;
 
           case "actionResolve":
@@ -223,16 +223,18 @@ define([
         console.log("Leaving state: " + stateName);
 
         switch (stateName) {
-          case "playCards":
-            this.onLeavingStatePlayCards();
+          case "playCard":
+            this.onLeavingStatePlayCard();
             break;
 
-          case "handLimit":
-            this.onLeavingStateHandLimit();
+          case "enforceHandLimitForOthers":
+          case "enforceHandLimitForSelf":
+            this.onLeavingStateEnforceHandLimit();
             break;
 
-          case "keeperLimit":
-            this.onLeavingStateKeepersLimit();
+          case "enforceKeepersLimitForOthers":
+          case "enforceKeepersLimitForSelf":
+            this.onLeavingStateEnforceKeepersLimit();
             break;
 
           case "actionResolve":
@@ -252,14 +254,16 @@ define([
 
         if (this.isCurrentPlayerActive()) {
           switch (stateName) {
-            case "playCards":
-              this.onUpdateActionButtonsPlayCards(args);
+            case "playCard":
+              this.onUpdateActionButtonsPlayCard(args);
               break;
-            case "handLimit":
-              this.onUpdateActionButtonsHandLimit(args);
+            case "enforceHandLimitForOthers":
+            case "enforceHandLimitForSelf":
+              this.onUpdateActionButtonsEnforceHandLimit(args);
               break;
-            case "keeperLimit":
-              this.onUpdateActionButtonsKeepersLimit(args);
+            case "enforceKeepersLimitForOthers":
+            case "enforceKeepersLimitForSelf":
+              this.onUpdateActionButtonsEnforceKeepersLimit(args);
               break;
             case "actionResolve":
               this.onUpdateActionButtonsActionResolve(args);
@@ -350,9 +354,13 @@ define([
           }
         });
 
-        // TODO: useful?
         dojo.subscribe("newScores", this, "notif_newScores");
+
+        // TODO: remove
+        dojo.subscribe("notImplemented", this, "notif_notImplemented");
       },
+
+      notif_notImplemented: function (notif) {},
 
       notif_newScores: function (notif) {
         // Update players' scores

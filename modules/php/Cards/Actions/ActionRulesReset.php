@@ -16,11 +16,6 @@ class ActionRulesReset extends ActionCard
     );
   }
 
-  public function needsInteraction()
-  {
-    return false;
-  }
-
   public function immediateEffectOnPlay($player)
   {
     $rulesInPlay = Utils::getGame()->cards->getCardsInLocation("rules");

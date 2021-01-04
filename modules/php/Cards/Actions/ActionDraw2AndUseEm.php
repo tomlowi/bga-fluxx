@@ -16,10 +16,7 @@ class ActionDraw2AndUseEm extends ActionCard
     );
   }
 
-  public function needsInteraction()
-  {
-    return true;
-  }
+  public $needsInteraction = true;
 
   public function immediateEffectOnPlay($player)
   {
@@ -35,6 +32,6 @@ class ActionDraw2AndUseEm extends ActionCard
     // this will probably require an entirely separate state?
     // and after all is done, current player needs to continue its turn
 
-    Utils::getGame()->drawExtraCards($player, 2);
+    Utils::getGame()->performDrawCards($player, 2);
   }
 }

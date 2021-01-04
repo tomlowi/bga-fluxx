@@ -19,38 +19,24 @@ class RuleDraw extends RuleCard
 
   protected $drawCount;
 
-  public function setNewDrawCount($newValue)
-  {
-    $this->drawCount = $newValue;
-  }
-
-  public function usedInPlayerTurn()
-  {
-    return false;
-  }
-
   public function immediateEffectOnPlay($player)
   {
     // current Draw Rule is changed immediately
-    $this->adaptDrawRule($player, $this->drawCount);
+    $oldValue = Utils::getGame()->getGameStateValue("drawRule");
+    // discard any other draw rules
+    Utils::getGame()->discardRuleCardsForType("drawRule");
+    // set new draw rule
+    Utils::getGame()->setGameStateValue("drawRule", $this->drawCount);
+    // draw extra cards for the difference
+    if ($this->drawCount - $oldValue > 0) {
+      Utils::getGame()->performDrawCards($player, $this->drawCount - $oldValue);
+      Utils::getGame()->setGameStateValue("drawnCards", $this->drawCount);
+    }
   }
 
   public function immediateEffectOnDiscard($player)
   {
     // reset to Basic Draw Rule
-    $this->adaptDrawRule($player, 1);
-  }
-
-  protected function adaptDrawRule($player, $newValue)
-  {
-    $oldValue = Utils::getGame()->getGameStateValue("drawRule");
-    // discard any other draw rules
-    Utils::getGame()->discardRuleCardsForType("drawRule");
-    // set new draw rule
-    Utils::getGame()->setGameStateValue("drawRule", $newValue);
-    // draw extra cards for the difference
-    if ($newValue - $oldValue > 0) {
-      Utils::getGame()->drawExtraCards($player, $newValue - $oldValue);
-    }
+    Utils::getGame()->setGameStateValue("drawRule", 1);
   }
 }

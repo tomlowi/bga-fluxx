@@ -16,10 +16,7 @@ class ActionTradeHands extends ActionCard
     );
   }
 
-  public function needsInteraction()
-  {
-    return true;
-  }
+  public $needsInteraction = true;
 
   public function immediateEffectOnPlay($player)
   {
@@ -28,12 +25,13 @@ class ActionTradeHands extends ActionCard
 
   public function resolvedBy($player, $option, $cardIdsSelected)
   {
+    $game = Utils::getGame();
+
     // options: index or id of the player chosen ?
     // @TODO: TradeHands with selected player - for now simply 1/2/3
     $players_ordered = $game->getPlayersInOrder();
     $playerVictim = $players_ordered[max($option, count($players_ordered) - 1)];
 
-    $game = Utils::getGame();
     // move current player cards to temporary hand
     $tempHand = -1;
     $game->cards->moveAllCardsInLocation("hand", "hand", $player, $tempHand);

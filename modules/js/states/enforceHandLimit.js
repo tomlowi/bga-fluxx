@@ -1,14 +1,11 @@
 define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
-  return declare("fluxx.states.handLimit", null, {
-    constructor() {
-      this._notifications.push(["handDiscarded", null]);
-    },
-    onEnteringStateHandLimit: function (args) {
-      console.log("Entering state: HandLimit", args);
+  return declare("fluxx.states.enforceHandLimit", null, {
+    onEnteringStateEnforceHandLimit: function (args) {
+      console.log("Entering state: EnforceHandLimit", args);
     },
 
-    onUpdateActionButtonsHandLimit: function (args) {
-      console.log("Update Action Buttons: HandLimit", args);
+    onUpdateActionButtonsEnforceHandLimit: function (args) {
+      console.log("Update Action Buttons: EnforceHandLimit", args);
 
       if (this.isCurrentPlayerActive()) {
         this.handStock.setSelectionMode(2);
@@ -20,31 +17,31 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
           this.handStock,
           "onChangeSelection",
           this,
-          "onSelectCardHandLimit"
+          "onSelectCardEnforceHandLimit"
         );
 
-        this.discardCountHandLimit = args._private.nb;
+        this._discardCount = args._private.count;
 
         this.addActionButton(
           "button_1",
           _("Discard selected"),
-          "onRemoveCardsHandLimit"
+          "onRemoveCardsEnforceHandLimit"
         );
       }
     },
 
-    onLeavingStateHandLimit: function () {
-      console.log("Leaving state: HandLimit");
+    onLeavingStateEnforceHandLimit: function () {
+      console.log("Leaving state: EnforceHandLimit");
 
       if (this._listener !== undefined) {
         dojo.disconnect(this._listener);
         delete this._listener;
-        this.handStock.setSelectionMode(0);
       }
-      delete this.discardCountHandLimit;
+      this.handStock.setSelectionMode(0);
+      delete this._discardCount;
     },
 
-    onSelectCardHandLimit: function () {
+    onSelectCardEnforceHandLimit: function () {
       var action = "discardHandCards";
       var items = this.handStock.getSelectedItems();
 
@@ -57,10 +54,10 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       }
     },
 
-    onRemoveCardsHandLimit: function () {
+    onRemoveCardsEnforceHandLimit: function () {
       var cards = this.handStock.getSelectedItems();
 
-      if (cards.length != this.discardCountHandLimit) {
+      if (cards.length != this._discardCount) {
         this.showMessage(
           _("You must discard the right amount of cards!"),
           "error"
@@ -76,20 +73,6 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       this.ajaxAction("discardHandCards", {
         card_ids: card_ids.join(";"),
       });
-    },
-
-    notif_handDiscarded: function (notif) {
-      var player_id = notif.args.player_id;
-      var cards = notif.args.cards;
-
-      if (player_id == this.player_id) {
-        this.discardCards(cards, this.handStock);
-      } else {
-        this.discardCards(cards, undefined, player_id);
-      }
-
-      this.handCounter[player_id].toValue(notif.args.handCount);
-      this.discardCounter.toValue(notif.args.discardCount);
     },
   });
 });

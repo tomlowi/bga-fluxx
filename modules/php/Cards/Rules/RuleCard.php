@@ -19,10 +19,7 @@ class RuleCard extends Card
   }
 
   // Indicates this Rule effect can be used during client-side player turns
-  public function usedInPlayerTurn()
-  {
-    return false;
-  }
+  public $canBeUsedByPlayer = false;
 
   // Implements the immediate effect when this rule is put in play
   public function immediateEffectOnPlay($player)

@@ -16,11 +16,6 @@ class ActionNoLimits extends ActionCard
     );
   }
 
-  public function needsInteraction()
-  {
-    return false;
-  }
-
   public function immediateEffectOnPlay($player)
   {
     $game = Utils::getGame();

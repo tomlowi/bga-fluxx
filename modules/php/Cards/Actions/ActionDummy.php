@@ -12,11 +12,6 @@ class ActionDummy extends ActionCard
     parent::__construct($cardId, $uniqueId);
   }
 
-  public function needsInteraction()
-  {
-    return false;
-  }
-
   public function playFromHand($player)
   {
     parent::playFromHand($player);

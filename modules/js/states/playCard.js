@@ -1,9 +1,9 @@
 define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
-  return declare("fluxx.states.playCards", null, {
+  return declare("fluxx.states.playCard", null, {
     constructor() {},
 
-    onEnteringStatePlayCards: function (args) {
-      console.log("Entering state: PlayCards", this.isCurrentPlayerActive());
+    onEnteringStatePlayCard: function (args) {
+      console.log("Entering state: PlayCard", this.isCurrentPlayerActive());
 
       if (this.isCurrentPlayerActive()) {
         this.handStock.setSelectionMode(1);
@@ -15,13 +15,13 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
           this.handStock,
           "onChangeSelection",
           this,
-          "onSelectCardPlayCards"
+          "onSelectCardPlayCard"
         );
       }
     },
 
-    onLeavingStatePlayCards: function () {
-      console.log("Leaving state: PlayCards");
+    onLeavingStatePlayCard: function () {
+      console.log("Leaving state: PlayCard");
 
       if (this._listener !== undefined) {
         dojo.disconnect(this._listener);
@@ -29,15 +29,15 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         this.handStock.setSelectionMode(0);
       }
     },
-    onUpdateActionButtonsPlayCards: function (args) {
-      console.log("Update Action Buttons: PlayCards");
+    onUpdateActionButtonsPlayCard: function (args) {
+      console.log("Update Action Buttons: PlayCard");
     },
 
-    onSelectCardPlayCards: function () {
+    onSelectCardPlayCard: function () {
       var action = "playCard";
       var items = this.handStock.getSelectedItems();
 
-      console.log("onSelectHandPlayCards", items);
+      console.log("onSelectHandPlayCard", items);
 
       if (items.length == 0) return;
 

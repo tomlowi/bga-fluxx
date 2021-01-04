@@ -14,7 +14,7 @@ class RulePlay2 extends RulePlay
     $this->description = clienttranslate(
       "Play 2 cards per turn. If you have fewer than that, play all your cards."
     );
-
-    $this->setNewPlayCount(2);
   }
+
+  protected $playCount = 2;
 }

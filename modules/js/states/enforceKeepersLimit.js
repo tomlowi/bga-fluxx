@@ -1,15 +1,11 @@
 define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
-  return declare("fluxx.states.keepersLimit", null, {
-    constructor() {
-      this._notifications.push(["keepersDiscarded", null]);
+  return declare("fluxx.states.enforceKeepersLimit", null, {
+    onEnteringStateEnforceKeepersLimit: function (args) {
+      console.log("Entering state: EnforceKeepersLimit", args);
     },
 
-    onEnteringStateKeepersLimit: function (args) {
-      console.log("Entering state: KeepersLimit", args);
-    },
-
-    onUpdateActionButtonsKeepersLimit: function (args) {
-      console.log("Update Action Buttons: KeepersLimit", args);
+    onUpdateActionButtonsEnforceKeepersLimit: function (args) {
+      console.log("Update Action Buttons: EnforceKeepersLimit", args);
 
       var stock = this.keepersStock[this.player_id];
       if (this.isCurrentPlayerActive()) {
@@ -20,31 +16,31 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
           stock,
           "onChangeSelection",
           this,
-          "onSelectCardKeepersLimit"
+          "onSelectCardEnforceKeepersLimit"
         );
-        this.discardCountKeepersLimit = args._private.nb;
+        this._discardCount = args._private.count;
 
         this.addActionButton(
           "button_1",
           _("Discard selected"),
-          "onRemoveCardsKeepersLimit"
+          "onRemoveCardsEnforceKeepersLimit"
         );
       }
     },
 
-    onLeavingStateKeepersLimit: function () {
+    onLeavingStateEnforceKeepersLimit: function () {
       var stock = this.keepersStock[this.player_id];
-      console.log("Leaving state: KeepersLimit");
+      console.log("Leaving state: EnforceKeepersLimit");
 
       if (this._listener !== undefined) {
         dojo.disconnect(this._listener);
         delete this._listener;
-        stock.setSelectionMode(0);
       }
-      delete this.discardCountKeepersLimit;
+      stock.setSelectionMode(0);
+      delete this._discardCount;
     },
 
-    onSelectCardKeepersLimit: function () {
+    onSelectCardEnforceKeepersLimit: function () {
       var stock = this.keepersStock[this.player_id];
 
       var action = "discardKeepers";
@@ -59,10 +55,10 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       }
     },
 
-    onRemoveCardsKeepersLimit: function () {
+    onRemoveCardsEnforceKeepersLimit: function () {
       var cards = this.keepersStock[this.player_id].getSelectedItems();
 
-      if (cards.length != this.discardCountKeepersLimit) {
+      if (cards.length != this._discardCount) {
         this.showMessage(
           _("You must discard the right amount of keepers!"),
           "error"
@@ -78,18 +74,6 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       this.ajaxAction("discardKeepers", {
         card_ids: card_ids.join(";"),
       });
-    },
-
-    notif_keepersDiscarded: function (notif) {
-      var player_id = notif.args.player_id;
-      var cards = notif.args.cards;
-
-      this.discardCards(cards, this.keepersStock[player_id]);
-
-      this.keepersCounter[player_id].toValue(
-        this.keepersStock[player_id].count()
-      );
-      this.discardCounter.toValue(notif.args.discardCount);
     },
   });
 });

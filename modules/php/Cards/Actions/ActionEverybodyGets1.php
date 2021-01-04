@@ -15,17 +15,12 @@ class ActionEverybodyGets1 extends ActionCard
     );
   }
 
-  public function needsInteraction()
-  {
-    return false;
-  }
-
   public function immediateEffectOnPlay($player)
   {
     $game = Utils::getGame();
     $players_ordered = $game->getPlayersInOrder();
     for ($i = 1; $i <= count($players_ordered); $i++) {
-      $game->drawExtraCards($players_ordered[$i - 1], 1);
+      $game->performDrawCards($players_ordered[$i - 1], 1);
     }
   }
 

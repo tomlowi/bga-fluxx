@@ -15,11 +15,6 @@ class ActionDiscardAndDraw extends ActionCard
     );
   }
 
-  public function needsInteraction()
-  {
-    return false;
-  }
-
   public function immediateEffectOnPlay($player)
   {
     $game = Utils::getGame();
@@ -34,6 +29,6 @@ class ActionDiscardAndDraw extends ActionCard
     // discard all hand cards
     $game->cards->moveCards(array_keys($handCards), "discard");
     // draw equal nr of new cards
-    $game->drawExtraCards($player, $countHandCards);
+    $game->performDrawCards($player, $countHandCards);
   }
 }
