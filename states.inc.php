@@ -117,7 +117,7 @@ $machinestates = [
       'Other players must discard cards for Hand Limit ${limit}'
     ),
     "descriptionmyturn" => clienttranslate(
-      '${you} must discard ${nb} cards for Hand Limit ${limit}'
+      '${you} must discard ${_private.nb} cards for Hand Limit ${limit}'
     ),
     "type" => "multipleactiveplayer",
     "args" => "argHandLimit",
@@ -132,7 +132,7 @@ $machinestates = [
       'Other players must remove keepers for Keeper Limit ${limit}'
     ),
     "descriptionmyturn" => clienttranslate(
-      '${you} must remove ${nb} keepers for Keeper Limit ${limit}'
+      '${you} must remove ${_private.nb} keepers for Keeper Limit ${limit}'
     ),
     "type" => "multipleactiveplayer",
     "args" => "argKeeperLimit",

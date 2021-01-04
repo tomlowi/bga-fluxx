@@ -23,14 +23,14 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
           "onSelectCardHandLimit"
         );
 
-        this.discardCountHandLimit = args.nb;
-      }
+        this.discardCountHandLimit = args._private.nb;
 
-      this.addActionButton(
-        "button_1",
-        _("Discard selected"),
-        "onRemoveCardsHandLimit"
-      );
+        this.addActionButton(
+          "button_1",
+          _("Discard selected"),
+          "onRemoveCardsHandLimit"
+        );
+      }
     },
 
     onLeavingStateHandLimit: function () {

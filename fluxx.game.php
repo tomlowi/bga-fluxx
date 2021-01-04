@@ -666,9 +666,10 @@ class fluxx extends Table
     $playerId = self::getCurrentPlayerId();
 
     $args = self::argHandLimit();
-    if (count($cards_id) != $args["nb"]) {
+    $expectedCount = $args["_private"][$playerId]["nb"];
+    if (count($cards_id) != $expectedCount) {
       throw new BgaUserException(
-        self::_("Wrong number of cards. Expected: ") . $args["nb"]
+        self::_("Wrong number of cards. Expected: ") . $expectedCount
       );
     }
 
@@ -714,9 +715,10 @@ class fluxx extends Table
     $playerId = self::getCurrentPlayerId();
 
     $args = self::argKeeperLimit();
-    if (count($cards_id) != $args["nb"]) {
+    $expectedCount = $args["_private"][$playerId]["nb"];
+    if (count($cards_id) != $expectedCount) {
       throw new BgaUserException(
-        self::_("Wrong number of cards. Expected: ") . $args["nb"]
+        self::_("Wrong number of cards. Expected: ") . $expectedCount
       );
     }
 
@@ -786,24 +788,34 @@ class fluxx extends Table
   {
     $handLimit = self::getGameStateValue("handLimit");
 
-    $player_id = self::getCurrentPlayerId(); // multiple active state!
-    $cardsInHand = $this->cards->countCardInLocation("hand", $player_id);
+    // multiple active state, can't use getCurrentPlayerId here!
+    $players = self::loadPlayersBasicInfos();
+    $perPlayerNumber = [];
+    foreach ($players as $player_id => $player) {
+      $cardsInHand = $this->cards->countCardInLocation("hand", $player_id);
+      $perPlayerNumber[$player_id] = ["nb" => $cardsInHand - $handLimit];
+    }
 
     return [
       "limit" => $handLimit,
-      "nb" => $cardsInHand - $handLimit,
+      "_private" => $perPlayerNumber,
     ];
   }
   public function argKeeperLimit()
   {
     $keeperLimit = self::getGameStateValue("keepersLimit");
 
-    $player_id = self::getCurrentPlayerId(); // multiple active state!
-    $keepersInPlay = $this->cards->countCardInLocation("keepers", $player_id);
+    // multiple active state, can't use getCurrentPlayerId here!
+    $players = self::loadPlayersBasicInfos();
+    $perPlayerNumber = [];
+    foreach ($players as $player_id => $player) {
+      $keepersInPlay = $this->cards->countCardInLocation("keepers", $player_id);
+      $perPlayerNumber[$player_id] = ["nb" => $keepersInPlay - $keeperLimit];
+    }
 
     return [
       "limit" => $keeperLimit,
-      "nb" => $keepersInPlay - $keeperLimit,
+      "_private" => $perPlayerNumber,
     ];
   }
 
