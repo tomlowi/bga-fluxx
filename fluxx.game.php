@@ -62,8 +62,9 @@ class fluxx extends Table
       "keepersLimit" => 13,
       "drawnCards" => 20,
       "playedCards" => 21,
-      "actionToResolve" => 22,
-      "anotherTurnMark" => 23,
+      "lastGoalBeforeDoubleAgenda" => 30,
+      "actionToResolve" => 40,
+      "anotherTurnMark" => 41,
     ]);
     $this->cards = self::getNew("module.common.deck");
     $this->cards->init("card");
@@ -144,6 +145,7 @@ class fluxx extends Table
     self::setGameStateInitialValue("drawnCards", 0);
     self::setGameStateInitialValue("playedCards", 0);
     self::setGameStateInitialValue("anotherTurnMark", 0);
+    self::setGameStateInitialValue("lastGoalBeforeDoubleAgenda", -1);
 
     // Create cards
     $cards = [];
@@ -342,35 +344,8 @@ class fluxx extends Table
 
   public function playGoalCard($player_id, $card)
   {
-    $currentGoalCount = $this->cards->countCardInLocation("goals");
-    $hasDoubleAgenda = count(
-      $this->cards->getCardsOfTypeInLocation("rule", 220, "rules")
-    );
-
-    if (!$hasDoubleAgenda) {
-      // We discard existing goals
-      $cards = $this->cards->getCardsInLocation("goals");
-      if ($cards) {
-        $this->cards->moveAllCardsInLocation("goals", "discard");
-        self::notifyAllPlayers("goalsDiscarded", "", [
-          "cards" => $cards,
-          "discardCount" => $this->cards->countCardInLocation("discard"),
-        ]);
-      }
-    } else {
-      // @TODO: handle double agenda rule
-      self::notifyAllPlayers(
-        "notImplemented",
-        clienttranslate("Double agenda not implemented"),
-        []
-      );
-    }
-
-    $goalCard = GoalCardFactory::getCard($card["id"], $card["type_arg"]);
-    // We play the new goal
-    $this->cards->moveCard($card["id"], "goals");
-
     // Notify all players about the goal played
+    $goalCard = GoalCardFactory::getCard($card["id"], $card["type_arg"]);
     self::notifyAllPlayers(
       "goalPlayed",
       clienttranslate('${player_name} sets a new goal <b>${card_name}</b>'),
@@ -383,6 +358,30 @@ class fluxx extends Table
         "handCount" => $this->cards->countCardInLocation("hand", $player_id),
       ]
     );
+
+    $existingGoalCount = $this->cards->countCardInLocation("goals");
+    $hasDoubleAgenda =
+      count($this->cards->getCardsOfTypeInLocation("rule", 220, "rules")) > 0;
+
+    // No double agenda: we simply discard the oldest goal
+    if (!$hasDoubleAgenda) {
+      $cards = $this->cards->getCardsInLocation("goals");
+      if ($cards) {
+        $this->cards->moveAllCardsInLocation("goals", "discard");
+        self::notifyAllPlayers("goalsDiscarded", "", [
+          "cards" => $cards,
+          "discardCount" => $this->cards->countCardInLocation("discard"),
+        ]);
+      }
+    }
+
+    // We play the new goal
+    $this->cards->moveCard($card["id"], "goals");
+
+    if ($hasDoubleAgenda && $existingGoalCount > 1) {
+      self::setGameStateValue("lastGoalBeforeDoubleAgenda", $card["id"]);
+      return "doubleAgendaRule";
+    }
   }
 
   protected function getLocationArgForRuleType($ruleType)
@@ -428,13 +427,8 @@ class fluxx extends Table
     $ruleCard = RuleCardFactory::getCard($card["id"], $card["type_arg"]);
     $ruleType = $ruleCard->getRuleType();
 
-    // Execute the immediate rule effect
-    $stateTransition = $ruleCard->playFromHand($player_id);
-
-    $location_arg = $this->getLocationArgForRuleType($ruleType);
-    $this->cards->moveCard($card["id"], "rules", $location_arg);
-
-    // Notify of the new rule
+    // Notify all players about the new rule
+    // (this needs to be done before the effect, otherwise the history is confusing)
     self::notifyAllPlayers(
       "rulePlayed",
       clienttranslate('${player_name} placed a new rule: <b>${card_name}</b>'),
@@ -449,6 +443,12 @@ class fluxx extends Table
       ]
     );
 
+    // Execute the immediate rule effect
+    $stateTransition = $ruleCard->playFromHand($player_id);
+
+    $location_arg = $this->getLocationArgForRuleType($ruleType);
+    $this->cards->moveCard($card["id"], "rules", $location_arg);
+
     return $stateTransition;
   }
 
@@ -457,15 +457,8 @@ class fluxx extends Table
     self::setGameStateValue("actionToResolve", -1);
     $actionCard = ActionCardFactory::getCard($card["id"], $card["type_arg"]);
 
-    // execute the action immediate effect
-    $stateTransition = $actionCard->playFromHand($player_id);
-
-    self::dump("====playActionCard====", $stateTransition);
-
-    // We play the new action card
-    $this->cards->playCard($card["id"]);
-
     // Notify all players about the action played
+    // (this needs to be done before the effect, otherwise the history is confusing)
     self::notifyAllPlayers(
       "actionPlayed",
       clienttranslate('${player_name} plays an action: <b>${card_name}</b>'),
@@ -479,6 +472,14 @@ class fluxx extends Table
         "discardCount" => $this->cards->countCardInLocation("discard"),
       ]
     );
+
+    // execute the action immediate effect
+    $stateTransition = $actionCard->playFromHand($player_id);
+
+    self::dump("====playActionCard====", $stateTransition);
+
+    // We play the new action card
+    $this->cards->playCard($card["id"]);
 
     return $stateTransition;
   }
@@ -656,7 +657,7 @@ class fluxx extends Table
         $this->playKeeperCard($player_id, $card, $card_definition);
         break;
       case "goal":
-        $this->playGoalCard($player_id, $card);
+        $stateTransition = $this->playGoalCard($player_id, $card);
         break;
       case "rule":
         $stateTransition = $this->playRuleCard($player_id, $card);
@@ -675,7 +676,7 @@ class fluxx extends Table
     $this->checkWinConditions();
 
     if ($stateTransition != null) {
-      // player must resolve the action before continuing to play more cards
+      // player must resolve something before continuing to play more cards
       $this->gamestate->nextstate($stateTransition);
     } else {
       // else: just let player continue playing cards
@@ -795,6 +796,40 @@ class fluxx extends Table
   }
 
   /*
+   * Player discards a goal after double agenda
+   */
+  public function action_discardGoal($card_id, $card_definition_id)
+  {
+    self::checkAction("discardGoal");
+    $player_id = self::getActivePlayerId();
+    $card = $this->cards->getCard($card_id);
+    $card_definition = $this->cardsDefinitions[$card_definition_id];
+
+    $lastPlayedGoal = self::getGameStateValue("lastGoalBeforeDoubleAgenda");
+
+    if ($card["id"] == $lastPlayedGoal) {
+      throw new BgaUserException(
+        self::_("You cannot discard the goal card you just played.")
+      );
+    }
+
+    if ($card["location"] != "goals") {
+      throw new BgaUserException(self::_("This goal is not in play."));
+    }
+
+    // Discard card
+    $this->cards->playCard($card["id"]);
+
+    self::notifyAllPlayers("goalsDiscarded", "", [
+      "cards" => [$card],
+      "discardCount" => $this->cards->countCardInLocation("discard"),
+    ]);
+
+    self::setGameStateValue("lastGoalBeforeDoubleAgenda", -1);
+    $this->gamestate->nextstate("");
+  }
+
+  /*
    * Player resolves any action card, with the cards selected
    */
   function action_resolveActionWithCards($option, $cards_id)
@@ -843,7 +878,7 @@ class fluxx extends Table
   {
     $playRule = self::getGameStateValue("playRule");
     $played = self::getGameStateValue("playedCards");
-    if ($playRule == 200) {
+    if ($playRule > 100) {
       return ["count" => "All"];
     }
     if ($playRule == -1) {
@@ -896,7 +931,6 @@ class fluxx extends Table
   {
     $handLimit = self::getGameStateValue("handLimit");
 
-    // multiple active state, can't use getCurrentPlayerId here!
     $player_id = $this->getActivePlayerId();
     $cardsInHand = $this->cards->countCardInLocation("hand", $player_id);
 
@@ -1093,6 +1127,22 @@ class fluxx extends Table
 
     if ($keepersInPlay <= $keeperLimit) {
       // Player is complying with the rule
+      $this->gamestate->nextstate("");
+      return;
+    }
+  }
+
+  public function st_goalCleaning()
+  {
+    $hasDoubleAgenda = count(
+      $this->cards->getCardsOfTypeInLocation("rule", 220, "rules")
+    );
+    $existingGoalCount = $this->cards->countCardInLocation("goals");
+
+    $expectedCount = $hasDoubleAgenda + 1;
+
+    if ($existingGoalCount <= $expectedCount) {
+      // We already have the proper number of goals, proceed to play
       $this->gamestate->nextstate("");
       return;
     }

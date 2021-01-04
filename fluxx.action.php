@@ -78,6 +78,15 @@ class action_fluxx extends APP_GameAction
     self::ajaxResponse();
   }
 
+  public function discardGoal()
+  {
+    self::setAjaxMode();
+    $card_id = self::getArg("card_id", AT_posint, true);
+    $card_definition_id = self::getArg("card_definition_id", AT_posint, true);
+    $this->game->action_discardGoal($card_id, $card_definition_id);
+    self::ajaxResponse();
+  }
+
   public function resolveActionWithCards()
   {
     self::setAjaxMode();

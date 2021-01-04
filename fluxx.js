@@ -29,6 +29,7 @@ define([
   g_gamethemeurl + "modules/js/states/playCard.js",
   g_gamethemeurl + "modules/js/states/enforceHandLimit.js",
   g_gamethemeurl + "modules/js/states/enforceKeepersLimit.js",
+  g_gamethemeurl + "modules/js/states/goalCleaning.js",
   g_gamethemeurl + "modules/js/states/actionResolve.js",
 ], function (dojo, declare) {
   return declare(
@@ -39,6 +40,7 @@ define([
       fluxx.states.playCard,
       fluxx.states.enforceHandLimit,
       fluxx.states.enforceKeepersLimit,
+      fluxx.states.goalCleaning,
       fluxx.states.actionResolve,
     ],
     {
@@ -137,7 +139,7 @@ define([
 
         this.goalsStock = this.createCardStock("goalsStock", ["goal"]);
         this.addCardsToStock(this.goalsStock, this.gamedatas.goals);
-        this.goalsStock.setOverlap(50, 0);
+        this.goalsStock.setOverlap(50);
 
         this.keepersStock = {};
         this.handCounter = {};
@@ -207,6 +209,10 @@ define([
             this.onEnteringStateEnforceKeepersLimit(args);
             break;
 
+          case "goalCleaning":
+            this.onEnteringStateGoalCleaning(args);
+            break;
+
           case "actionResolve":
             this.onEnteringStateActionResolve(args);
             break;
@@ -237,6 +243,10 @@ define([
             this.onLeavingStateEnforceKeepersLimit();
             break;
 
+          case "goalCleaning":
+            this.onLeavingStateGoalCleaning();
+            break;
+
           case "actionResolve":
             this.onLeavingStateActionResolve();
             break;
@@ -264,6 +274,9 @@ define([
             case "enforceKeepersLimitForOthers":
             case "enforceKeepersLimitForSelf":
               this.onUpdateActionButtonsEnforceKeepersLimit(args);
+              break;
+            case "goalCleaning":
+              this.onUpdateActionButtonsGoalCleaning(args);
               break;
             case "actionResolve":
               this.onUpdateActionButtonsActionResolve(args);
@@ -355,12 +368,7 @@ define([
         });
 
         dojo.subscribe("newScores", this, "notif_newScores");
-
-        // TODO: remove
-        dojo.subscribe("notImplemented", this, "notif_notImplemented");
       },
-
-      notif_notImplemented: function (notif) {},
 
       notif_newScores: function (notif) {
         // Update players' scores

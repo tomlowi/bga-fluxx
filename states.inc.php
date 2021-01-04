@@ -97,6 +97,7 @@ $machinestates = [
       "handLimitRulePlayed" => STATE_ENFORCE_HAND_LIMIT_OTHERS,
       "keepersLimitRulePlayed" => STATE_ENFORCE_KEEPERS_LIMIT_OTHERS,
       "endOfTurn" => STATE_ENFORCE_HAND_LIMIT_SELF,
+      "doubleAgendaRule" => STATE_GOAL_CLEANING,
 
       "resolveActionCard" => STATE_RESOLVEACTION,
       "continuePlay" => STATE_PLAY_CARD,
@@ -152,16 +153,26 @@ $machinestates = [
   STATE_ENFORCE_KEEPERS_LIMIT_SELF => [
     "name" => "enforceKeepersLimitForSelf",
     "description" => clienttranslate(
-      'Other players must remove keepers for Keeper Limit ${limit}'
+      '${actplayer} must remove keepers(s) for Keepers Limit ${limit}'
     ),
     "descriptionmyturn" => clienttranslate(
-      '${you} must remove ${_private.nb} keepers for Keeper Limit ${limit}'
+      '${you} must remove ${_private.count} keeper(s) for Keepers Limit ${limit}'
     ),
-    "type" => "multipleactiveplayer",
+    "type" => "activeplayer",
     "args" => "arg_enforceKeepersLimitForSelf",
     "action" => "st_enforceKeepersLimitForSelf",
     "possibleactions" => ["discardKeepers"],
     "transitions" => ["" => STATE_NEXT_PLAYER],
+  ],
+
+  STATE_GOAL_CLEANING => [
+    "name" => "goalCleaning",
+    "description" => clienttranslate('${actplayer} must discard a goal'),
+    "descriptionmyturn" => clienttranslate('${you} must discard a goal'),
+    "type" => "activeplayer",
+    "action" => "st_goalCleaning",
+    "possibleactions" => ["discardGoal"],
+    "transitions" => ["" => STATE_PLAY_CARD],
   ],
 
   STATE_RESOLVEACTION => [
