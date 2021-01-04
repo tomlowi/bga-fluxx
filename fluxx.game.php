@@ -22,7 +22,7 @@ $swdNamespaceAutoload = function ($class) {
     array_shift($classParts);
     $file =
       dirname(__FILE__) .
-      "/modules/phps/" .
+      "/modules/php/" .
       implode(DIRECTORY_SEPARATOR, $classParts) .
       ".php";
     if (file_exists($file)) {
@@ -35,10 +35,10 @@ $swdNamespaceAutoload = function ($class) {
 spl_autoload_register($swdNamespaceAutoload, true, true);
 
 require_once APP_GAMEMODULE_PATH . "module/table/table.game.php";
-require_once "modules/phps/constants.inc.php";
+require_once "modules/php/constants.inc.php";
 
-use Fluxx\Cards\ActionCards\ActionCardFactory;
-use Fluxx\Cards\NewRules\RuleCardFactory;
+use Fluxx\Cards\Actions\ActionCardFactory;
+use Fluxx\Cards\Rules\RuleCardFactory;
 use Fluxx\Cards\Goals\GoalCardFactory;
 
 class fluxx extends Table
@@ -1028,13 +1028,11 @@ class fluxx extends Table
     // special case: current player received another turn
     $anotherTurnMark = self::getGameStateValue("anotherTurnMark");
     $player_id = -1;
-    if ($anotherTurnMark == 1) 
-    { // Take Another Turn can only be used once (two turns in a row)
+    if ($anotherTurnMark == 1) {
+      // Take Another Turn can only be used once (two turns in a row)
       self::setGameStateValue("anotherTurnMark", 2);
       $player_id = self::getActivePlayerId();
-    } 
-    else 
-    {
+    } else {
       self::setGameStateValue("anotherTurnMark", 0);
       $player_id = self::activeNextPlayer();
     }
