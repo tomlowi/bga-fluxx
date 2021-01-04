@@ -81,6 +81,11 @@ define([
         */
       setup: function (gamedatas) {
         console.log("GameDatas: ", gamedatas);
+
+        // Save card metadata that we will use for UI & metadata
+        this.cardsDefinitions = this.gamedatas.cardsDefinitions;
+        console.log("Cards definitions", this.cardsDefinitions);
+
         // Setup all stocks and restore existing state
         this.handStock = this.createCardStock("handStock", [
           "keeper",
@@ -325,6 +330,7 @@ define([
         }
 
         stock.setSelectionMode(0);
+        stock.onItemCreate = dojo.hitch(this, "setupNewCard");
         return stock;
       },
 
@@ -347,7 +353,31 @@ define([
         }
 
         stock.setSelectionMode(2);
+        stock.onItemCreate = dojo.hitch(this, "setupNewCard");
         return stock;
+      },
+
+      setupNewCard: function (card_div, card_type_id, card_id) {
+        var cardDefinition = this.cardsDefinitions[card_type_id];
+
+        var card = {
+          name: cardDefinition.name,
+          subtitle: cardDefinition.subtitle || "",
+          description: cardDefinition.description || "",
+          type: cardDefinition.type,
+          id: card_type_id,
+        };
+
+        // Add a special tooltip on the card:
+        this.addTooltipHtml(
+          card_div.id,
+          this.format_block("jstpl_cardTooltip", card)
+        );
+
+        // Note that "card_type_id" contains the type of the item, so you can do special actions depending on the item type
+
+        // Add some custom HTML content INSIDE the Stock item:
+        // dojo.place("<p>test</p>", card_div.id);
       },
 
       addCardsToStock: function (stock, cards) {

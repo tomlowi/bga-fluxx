@@ -150,7 +150,7 @@ class fluxx extends Table
     // Create cards
     $cards = [];
 
-    foreach ($this->cardsDefinitions as $cardId => $card) {
+    foreach ($this->getCardsDefinitions() as $cardId => $card) {
       // keeper, goal, rule, action
 
       $cards[] = ["type" => $card["type"], "type_arg" => $cardId, "nbr" => 1];
@@ -195,6 +195,7 @@ class fluxx extends Table
 
     $result = [
       "players" => $players,
+      "cardsDefinitions" => $this->getCardsDefinitions(),
       "hand" => $this->cards->getCardsInLocation("hand", $current_player_id),
       "rules" => [
         "drawRule" => $this->cards->getCardsInLocation("rules", RULE_DRAW_RULE),
@@ -255,6 +256,16 @@ class fluxx extends Table
   /*
     In this space, you can put any utility methods useful for your game logic
    */
+
+  /*
+   * Returns all cards definitions using factories
+   */
+
+  function getCardsDefinitions()
+  {
+    // TODO: use factories
+    return $this->cardsDefinitions;
+  }
 
   /*
    * Returns player Id based on simultaneous game option state
