@@ -2,6 +2,9 @@
 namespace Fluxx\States;
 
 use Fluxx\Game\Utils;
+use Fluxx\Cards\Rules\RuleCardFactory;
+use Fluxx\Cards\Goals\GoalCardFactory;
+use Fluxx\Cards\Actions\ActionCardFactory;
 
 trait PlayCardTrait
 {
