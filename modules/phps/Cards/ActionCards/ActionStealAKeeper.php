@@ -4,15 +4,15 @@ namespace Fluxx\Cards\ActionCards;
 use Fluxx\Game\Utils;
 use fluxx;
 
-class ActionTrashAKeeper extends ActionCard
+class ActionStealAKeeper extends ActionCard
 {
   public function __construct($cardId, $uniqueId)
   {
     parent::__construct($cardId, $uniqueId);
 
-    $this->name = clienttranslate("Trash a Keeper");
+    $this->name = clienttranslate("Steal a Keeper");
     $this->description = clienttranslate(
-      "Take a Keeper from in front of any player and put it on the discard pile. <br/> If no one has any Keepers in play, nothing happens when you play this card."
+      "Steal a Keeper from in front of another player, and add it to your collection of Keepers on the table."
     );
   }
 
@@ -39,25 +39,27 @@ class ActionTrashAKeeper extends ActionCard
 
     if (count($cardIdsSelected) != 1) {
       Utils::throwInvalidUserAction(
-        fluxx::totranslate("You must select exactly 1 Keeper card in play")
+        fluxx::totranslate(
+          "You must select exactly 1 Keeper card from in front of another player"
+        )
       );
     }
 
     $cardId = $cardIdsSelected[0];
     $cardSelected = $game->cards->getCard($cardId);
-    if ($cardSelected == null || $cardSelected["location"] != "keepers") {
+    if (
+      $cardSelected == null ||
+      $cardSelected["location"] != "keepers" ||
+      $cardSelected["location_arg"] == $player
+    ) {
       Utils::throwInvalidUserAction(
-        fluxx::totranslate("You must select exactly 1 Keeper card in play")
+        fluxx::totranslate(
+          "You must select exactly 1 Keeper from in front of another player"
+        )
       );
     }
 
-    // discard this keeper from play
-    $fromTarget = $cardSelected["location_arg"];
-    $game->removeCardFromPlay(
-      $player,
-      $cardId,
-      $cardSelected["type"],
-      $fromTarget
-    );
+    // move this keeper to the current player
+    $game->cards->moveCard($cardId, "keepers", $player);
   }
 }

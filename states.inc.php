@@ -98,11 +98,15 @@ $machinestates = [
 
   STATE_RESOLVEACTION => [
     "name" => "actionResolve",
-    "description" => clienttranslate('${actplayer} must resolve their action'),
-    "descriptionmyturn" => clienttranslate('${you} must resolve your action'),
+    "description" => clienttranslate(
+      '${actplayer} must resolve their action: ${action_name}'
+    ),
+    "descriptionmyturn" => clienttranslate(
+      '${you} must resolve your action: ${action_name}'
+    ),
     "type" => "activeplayer",
     "args" => "argResolveAction",
-    "action" => "stResolveAction",
+    //"action" => "stResolveAction",
     "possibleactions" => ["resolveAction"],
     "transitions" => [
       "resolvedAction" => STATE_PLAYCARDS,

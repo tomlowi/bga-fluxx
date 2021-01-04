@@ -53,7 +53,7 @@ class RuleCard extends Card
    * return: null if the game should continue the play loop,
    * or "state Transition Name" if another state need to be called
    */
-  public function resolvedBy($player, $args)
+  public function resolvedBy($player, $option, $cardIdsSelected)
   {
     return null;
   }

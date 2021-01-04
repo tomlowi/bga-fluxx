@@ -10,6 +10,7 @@ abstract class Card extends \APP_GameClass
   {
     $this->cardId = $cardId;
     $this->uniqueId = $uniqueId;
+    $this->name = clienttranslate("Not Implemented");
   }
 
   /*
