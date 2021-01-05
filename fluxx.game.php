@@ -367,6 +367,16 @@ class fluxx extends Table
 
     // We discard the conflicting rule cards
     $cards = $this->cards->getCardsInLocation("rules", $location_arg);
+    $player_id = self::getCurrentPlayerId();
+
+    foreach ($cards as $card_id => $card) {
+      $rule = RuleCardFactory::getCard($card_id, $card["type_arg"]);
+      $rule->immediateEffectOnDiscard($player_id);
+
+      // playCard = move to top of discard pile
+      $this->cards->playCard($card_id);
+    }
+
     if ($cards) {
       $this->cards->moveAllCardsInLocation("rules", "discard", $location_arg);
       self::notifyAllPlayers("rulesDiscarded", "", [
