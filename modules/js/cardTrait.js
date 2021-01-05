@@ -86,6 +86,12 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
 
       this.handCounter[notif.args.player_id].toValue(notif.args.handCount);
       this.deckCounter.toValue(notif.args.deckCount);
+
+      if (notif.args.deckCount == 0) {
+        dojo.addClass("deckCard", "flx-deck-empty");
+      } else {
+        dojo.removeClass("deckCard", "flx-deck-empty");
+      }
     },
 
     notif_keeperPlayed: function (notif) {
@@ -208,6 +214,8 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       // @TODO: hide deck when there is no card in it anymore
       console.log("RESHUFFLE", notif);
       this.deckCounter.toValue(notif.args.deckCount);
+      dojo.removeClass("deckCard", "flx-deck-empty");
+
       this.discardCounter.toValue(notif.args.discardCount);
 
       var exceptionCards = notif.args.exceptionCards;

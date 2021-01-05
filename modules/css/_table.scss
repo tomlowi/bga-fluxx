@@ -51,6 +51,10 @@
   .flx-deck-card {
     background-image: url("img/cards.png");
     background-position: -1500% -500%;
+
+    &.flx-deck-empty {
+      background-position: -1600% -500%;
+    }
   }
   #discardStock {
     border: 1px;

@@ -112,6 +112,9 @@ define([
         this.discardCounter = new ebg.counter();
         this.discardCounter.create("discardCount");
         this.deckCounter.toValue(this.gamedatas.deckCount);
+        if (this.gamedatas.deckCount == 0) {
+          dojo.addClass("deckCard", "flx-deck-empty");
+        }
         this.discardCounter.toValue(this.gamedatas.discardCount);
 
         this.rulesStock = {};
