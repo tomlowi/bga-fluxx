@@ -16,38 +16,65 @@ class ActionTradeHands extends ActionCard
     );
   }
 
-  public $needsInteraction = true;
+  public $interactionNeeded = "playerSelection";
 
   public function immediateEffectOnPlay($player)
   {
     // nothing now, needs to go to resolve action state
   }
 
-  public function resolvedBy($player, $option, $cardIdsSelected)
+  public function resolvedBy($player_id, $option, $cardIdsSelected)
   {
     $game = Utils::getGame();
+    $players = $game->loadPlayersBasicInfos();
 
-    // options: index or id of the player chosen ?
-    // @TODO: TradeHands with selected player - for now simply 1/2/3
-    $players_ordered = $game->getPlayersInOrder();
-    $playerVictim = $players_ordered[max($option, count($players_ordered) - 1)];
+    $player_name = $players[$player_id]["player_name"];
+    $selected_player_id = $option;
+    $selected_player_name = $players[$selected_player_id]["player_name"];
 
-    // move current player cards to temporary hand
-    $tempHand = -1;
-    $game->cards->moveAllCardsInLocation("hand", "hand", $player, $tempHand);
-    // now shift victim's hand to current player
-    $game->cards->moveAllCardsInLocation(
+    $selected_player_hand = $game->cards->getCardsInLocation(
       "hand",
-      "hand",
-      $playerVictim,
-      $player
+      $selected_player_id
     );
-    // finally move 1st player temp hand to victim player
-    $game->cards->moveAllCardsInLocation(
+    $player_hand = $game->cards->getCardsInLocation("hand", $player_id);
+
+    $game->cards->moveCards(
+      array_keys($selected_player_hand),
       "hand",
-      "hand",
-      $tempHand,
-      $playerVictim
+      $player_id
     );
+    $game->cards->moveCards(
+      array_keys($player_hand),
+      "hand",
+      $selected_player_id
+    );
+    $game->notifyPlayer($player_id, "cardsSentToPlayer", "", [
+      "cards" => $player_hand,
+      "player_id" => $selected_player_id,
+    ]);
+    $game->notifyPlayer($player_id, "cardsReceivedFromPlayer", "", [
+      "cards" => $selected_player_hand,
+      "player_id" => $selected_player_id,
+    ]);
+    $game->notifyPlayer($selected_player_id, "cardsSentToPlayer", "", [
+      "cards" => $selected_player_hand,
+      "player_id" => $player_id,
+    ]);
+    $game->notifyPlayer($selected_player_id, "cardsReceivedFromPlayer", "", [
+      "cards" => $player_hand,
+      "player_id" => $player_id,
+    ]);
+
+    $game->notifyAllPlayers(
+      "actionDone",
+      clienttranslate(
+        '${player_name} trades hands with ${selected_player_name}'
+      ),
+      [
+        "player_name" => $player_name,
+        "selected_player_name" => $selected_player_name,
+      ]
+    );
+    $game->sendHandCountNotifications();
   }
 }

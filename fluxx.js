@@ -82,6 +82,8 @@ define([
       setup: function (gamedatas) {
         console.log("GameDatas: ", gamedatas);
 
+        this.players = gamedatas.players;
+
         // Save card metadata that we will use for UI & metadata
         this.cardsDefinitions = this.gamedatas.cardsDefinitions;
         console.log("Cards definitions", this.cardsDefinitions);

@@ -16,7 +16,7 @@ class ActionTodaysSpecial extends ActionCard
     );
   }
 
-  public $needsInteraction = true;
+  public $interactionNeeded = "todaysSpecial";
 
   public function immediateEffectOnPlay($player)
   {

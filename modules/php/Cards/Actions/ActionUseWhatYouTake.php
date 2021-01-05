@@ -16,7 +16,7 @@ class ActionUseWhatYouTake extends ActionCard
     );
   }
 
-  public $needsInteraction = true;
+  public $interactionNeeded = "playerSelection";
 
   public function immediateEffectOnPlay($player)
   {

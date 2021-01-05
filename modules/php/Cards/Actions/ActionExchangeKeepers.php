@@ -16,7 +16,7 @@ class ActionExchangeKeepers extends ActionCard
     );
   }
 
-  public $needsInteraction = true;
+  public $interactionNeeded = "keepersExchange";
 
   public function immediateEffectOnPlay($player)
   {

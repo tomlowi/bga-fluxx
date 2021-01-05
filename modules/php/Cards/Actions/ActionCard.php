@@ -14,7 +14,7 @@ class ActionCard extends Card
   }
 
   // Indicates this Action can be handled without client-side player interactions
-  public $needsInteraction = false;
+  public $interactionNeeded = null;
 
   // Implements the immediate effect when this action is played
   public function immediateEffectOnPlay($player)
@@ -31,7 +31,7 @@ class ActionCard extends Card
     // Execute the immediate effect
     $this->immediateEffectOnPlay($player);
 
-    if ($this->needsInteraction) {
+    if ($this->interactionNeeded != null) {
       Utils::getGame()->setGameStateValue(
         "actionToResolve",
         $this->getCardId()

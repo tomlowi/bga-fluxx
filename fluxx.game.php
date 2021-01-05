@@ -43,11 +43,6 @@ use Fluxx\Cards\Goals\GoalCardFactory;
 
 class fluxx extends Table
 {
-  use Fluxx\States\DrawCardsTrait;
-  use Fluxx\States\PlayCardTrait;
-  use Fluxx\States\HandLimitTrait;
-  use Fluxx\States\KeepersLimitTrait;
-
   public static $instance = null;
   public function __construct()
   {
@@ -575,41 +570,6 @@ class fluxx extends Table
     $this->gamestate->nextstate("");
   }
 
-  /*
-   * Player resolves any action card, with the cards selected
-   */
-  function action_resolveActionWithCards($option, $cards_id)
-  {
-    self::checkAction("resolveAction");
-    $player_id = self::getActivePlayerId();
-
-    $args = self::argResolveAction();
-    $actionCardId = $args["action_id"];
-    $card = $this->cards->getCard($actionCardId);
-    $actionCard = ActionCardFactory::getCard($card["id"], $card["type_arg"]);
-    $actionName = $actionCard->getName();
-
-    $stateTransition = $actionCard->resolvedBy($player_id, $option, $cards_id);
-
-    $players = self::loadPlayersBasicInfos();
-    self::notifyAllPlayers(
-      "actionDone",
-      clienttranslate('${player_name} finished action ${action_name}'),
-      [
-        "player_id" => $player_id,
-        "player_name" => $players[$player_id]["player_name"],
-        "action_name" => $actionName,
-      ]
-    );
-    self::setGameStateValue("actionToResolve", -1);
-
-    if ($stateTransition != null) {
-      $this->gamestate->nextstate($stateTransition);
-    } else {
-      $this->gamestate->nextstate("resolvedAction");
-    }
-  }
-
   //////////////////////////////////////////////////////////////////////////////
   //////////// Game state arguments
   ////////////
@@ -620,18 +580,11 @@ class fluxx extends Table
     game state.
      */
 
-  public function argResolveAction()
-  {
-    $actionCardId = self::getGameStateValue("actionToResolve");
-    $card = $this->cards->getCard($actionCardId);
-    $actionCard = ActionCardFactory::getCard($card["id"], $card["type_arg"]);
-
-    return [
-      "action_id" => $actionCardId,
-      "action_name" => $actionCard->getName(),
-      "action_arg" => $card["type_arg"],
-    ];
-  }
+  use Fluxx\States\DrawCardsTrait;
+  use Fluxx\States\PlayCardTrait;
+  use Fluxx\States\HandLimitTrait;
+  use Fluxx\States\KeepersLimitTrait;
+  use Fluxx\States\ResolveActionTrait;
 
   //////////////////////////////////////////////////////////////////////////////
   //////////// Game state actions
@@ -652,18 +605,6 @@ class fluxx extends Table
       return;
     }
   }
-
-  // function stResolveAction()
-  // {
-  //   $player_id = self::getActivePlayerId();
-  //   $players = self::loadPlayersBasicInfos();
-
-  //   // @TODO: for now, just mark action as finished and continue play
-  //   // this should actually be done as response to specific client actions
-  //   // depending on the special action card that was played
-
-  //   //self::action_resolveActionWithCards([]);
-  // }
 
   public function st_nextPlayer()
   {

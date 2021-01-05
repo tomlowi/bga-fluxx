@@ -16,7 +16,7 @@ class ActionDraw2AndUseEm extends ActionCard
     );
   }
 
-  public $needsInteraction = true;
+  public $interactionNeeded = "TODO";
 
   public function immediateEffectOnPlay($player)
   {
