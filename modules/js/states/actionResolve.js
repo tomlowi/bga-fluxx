@@ -27,11 +27,10 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       // for now, allow selections in Hand and all player's Keepers
 
       if (this.isCurrentPlayerActive()) {
-
         this.discardStock.setSelectionMode(2);
         if (this.needsDiscardPileVisible(this.actionCardArg)) {
-          this.discardStock.setOverlap(50, 0);
-        };
+          this.discardStock.setOverlap(50);
+        }
 
         this.handStock.setSelectionMode(2);
         if (this._listenerHand !== undefined)

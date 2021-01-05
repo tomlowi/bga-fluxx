@@ -10,6 +10,8 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         ["rulesDiscarded", null],
         ["rulePlayed", null],
         ["actionPlayed", null],
+        ["handDiscarded", null],
+        ["keepersDiscarded", null],
         ["reshuffle", null]
       );
     },
@@ -135,6 +137,32 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       }
       this.handCounter[player_id].toValue(handCount);
       this.discardCounter.toValue(discardCount);
+    },
+
+    notif_handDiscarded: function (notif) {
+      var player_id = notif.args.player_id;
+      var cards = notif.args.cards;
+
+      if (player_id == this.player_id) {
+        this.discardCards(cards, this.handStock);
+      } else {
+        this.discardCards(cards, undefined, player_id);
+      }
+
+      this.handCounter[player_id].toValue(notif.args.handCount);
+      this.discardCounter.toValue(notif.args.discardCount);
+    },
+
+    notif_keepersDiscarded: function (notif) {
+      var player_id = notif.args.player_id;
+      var cards = notif.args.cards;
+
+      this.discardCards(cards, this.keepersStock[player_id]);
+
+      this.keepersCounter[player_id].toValue(
+        this.keepersStock[player_id].count()
+      );
+      this.discardCounter.toValue(notif.args.discardCount);
     },
 
     notif_reshuffle: function (notif) {

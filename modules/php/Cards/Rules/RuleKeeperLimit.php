@@ -1,0 +1,38 @@
+<?php
+namespace Fluxx\Cards\Rules;
+
+use Fluxx\Game\Utils;
+/*
+ * RuleKeeperLimit: base class for all Rule cards that adapt the current Keeper Limit
+ */
+class RuleKeeperLimit extends RuleCard
+{
+  public function getRuleType()
+  {
+    return "keepersLimit";
+  }
+
+  protected $keeperLimit;
+
+  public function immediateEffectOnPlay($player)
+  {
+    // Discard old keepers limit card in play
+    Utils::getGame()->discardRuleCardsForType("keepersLimit");
+    // set new play rule
+    Utils::getGame()->setGameStateValue("keepersLimit", $this->keeperLimit);
+  }
+
+  public function playFromHand($player)
+  {
+    // Execute the immediate effect
+    $this->immediateEffectOnPlay($player);
+
+    return "keepersLimitRulePlayed";
+  }
+
+  public function immediateEffectOnDiscard($player)
+  {
+    // reset to Basic Keeper Limit = none
+    Utils::getGame()->setGameStateValue("keepersLimit", -1);
+  }
+}

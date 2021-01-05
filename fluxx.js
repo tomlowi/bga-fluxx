@@ -26,9 +26,10 @@ define([
 
   g_gamethemeurl + "modules/js/cardTrait.js",
 
-  g_gamethemeurl + "modules/js/states/playCards.js",
-  g_gamethemeurl + "modules/js/states/handLimit.js",
-  g_gamethemeurl + "modules/js/states/keepersLimit.js",
+  g_gamethemeurl + "modules/js/states/playCard.js",
+  g_gamethemeurl + "modules/js/states/enforceHandLimit.js",
+  g_gamethemeurl + "modules/js/states/enforceKeepersLimit.js",
+  g_gamethemeurl + "modules/js/states/goalCleaning.js",
   g_gamethemeurl + "modules/js/states/actionResolve.js",
 ], function (dojo, declare) {
   return declare(
@@ -36,9 +37,10 @@ define([
     [
       customgame.game,
       fluxx.cardTrait,
-      fluxx.states.playCards,
-      fluxx.states.handLimit,
-      fluxx.states.keepersLimit,
+      fluxx.states.playCard,
+      fluxx.states.enforceHandLimit,
+      fluxx.states.enforceKeepersLimit,
+      fluxx.states.goalCleaning,
       fluxx.states.actionResolve,
     ],
     {
@@ -79,6 +81,11 @@ define([
         */
       setup: function (gamedatas) {
         console.log("GameDatas: ", gamedatas);
+
+        // Save card metadata that we will use for UI & metadata
+        this.cardsDefinitions = this.gamedatas.cardsDefinitions;
+        console.log("Cards definitions", this.cardsDefinitions);
+
         // Setup all stocks and restore existing state
         this.handStock = this.createCardStock("handStock", [
           "keeper",
@@ -94,9 +101,7 @@ define([
           "rule",
           "action",
         ]);
-        if (this.gamedatas.discard) {
-          this.addCardsToStock(this.discardStock, [this.gamedatas.discard]);
-        }
+        this.addCardsToStock(this.discardStock, this.gamedatas.discard);
         this.discardStock.setOverlap(0.00001);
         this.discardStock.item_margin = 0;
 
@@ -139,7 +144,7 @@ define([
 
         this.goalsStock = this.createCardStock("goalsStock", ["goal"]);
         this.addCardsToStock(this.goalsStock, this.gamedatas.goals);
-        this.goalsStock.setOverlap(50, 0);
+        this.goalsStock.setOverlap(50);
 
         this.keepersStock = {};
         this.handCounter = {};
@@ -195,16 +200,22 @@ define([
         console.log("Entering state: " + stateName);
 
         switch (stateName) {
-          case "playCards":
-            this.onEnteringStatePlayCards(args);
+          case "playCard":
+            this.onEnteringStatePlayCard(args);
             break;
 
-          case "handLimit":
-            this.onEnteringStateHandLimit(args);
+          case "enforceHandLimitForOthers":
+          case "enforceHandLimitForSelf":
+            this.onEnteringStateEnforceHandLimit(args);
             break;
 
-          case "keeperLimit":
-            this.onEnteringStateKeepersLimit(args);
+          case "enforceKeepersLimitForOthers":
+          case "enforceKeepersLimitForSelf":
+            this.onEnteringStateEnforceKeepersLimit(args);
+            break;
+
+          case "goalCleaning":
+            this.onEnteringStateGoalCleaning(args);
             break;
 
           case "actionResolve":
@@ -223,16 +234,22 @@ define([
         console.log("Leaving state: " + stateName);
 
         switch (stateName) {
-          case "playCards":
-            this.onLeavingStatePlayCards();
+          case "playCard":
+            this.onLeavingStatePlayCard();
             break;
 
-          case "handLimit":
-            this.onLeavingStateHandLimit();
+          case "enforceHandLimitForOthers":
+          case "enforceHandLimitForSelf":
+            this.onLeavingStateEnforceHandLimit();
             break;
 
-          case "keeperLimit":
-            this.onLeavingStateKeepersLimit();
+          case "enforceKeepersLimitForOthers":
+          case "enforceKeepersLimitForSelf":
+            this.onLeavingStateEnforceKeepersLimit();
+            break;
+
+          case "goalCleaning":
+            this.onLeavingStateGoalCleaning();
             break;
 
           case "actionResolve":
@@ -252,14 +269,19 @@ define([
 
         if (this.isCurrentPlayerActive()) {
           switch (stateName) {
-            case "playCards":
-              this.onUpdateActionButtonsPlayCards(args);
+            case "playCard":
+              this.onUpdateActionButtonsPlayCard(args);
               break;
-            case "handLimit":
-              this.onUpdateActionButtonsHandLimit(args);
+            case "enforceHandLimitForOthers":
+            case "enforceHandLimitForSelf":
+              this.onUpdateActionButtonsEnforceHandLimit(args);
               break;
-            case "keeperLimit":
-              this.onUpdateActionButtonsKeepersLimit(args);
+            case "enforceKeepersLimitForOthers":
+            case "enforceKeepersLimitForSelf":
+              this.onUpdateActionButtonsEnforceKeepersLimit(args);
+              break;
+            case "goalCleaning":
+              this.onUpdateActionButtonsGoalCleaning(args);
               break;
             case "actionResolve":
               this.onUpdateActionButtonsActionResolve(args);
@@ -308,6 +330,7 @@ define([
         }
 
         stock.setSelectionMode(0);
+        stock.onItemCreate = dojo.hitch(this, "setupNewCard");
         return stock;
       },
 
@@ -330,7 +353,31 @@ define([
         }
 
         stock.setSelectionMode(2);
+        stock.onItemCreate = dojo.hitch(this, "setupNewCard");
         return stock;
+      },
+
+      setupNewCard: function (card_div, card_type_id, card_id) {
+        var cardDefinition = this.cardsDefinitions[card_type_id];
+
+        var card = {
+          name: cardDefinition.name,
+          subtitle: cardDefinition.subtitle || "",
+          description: cardDefinition.description || "",
+          type: cardDefinition.type,
+          id: card_type_id,
+        };
+
+        // Add a special tooltip on the card:
+        this.addTooltipHtml(
+          card_div.id,
+          this.format_block("jstpl_cardTooltip", card)
+        );
+
+        // Note that "card_type_id" contains the type of the item, so you can do special actions depending on the item type
+
+        // Add some custom HTML content INSIDE the Stock item:
+        // dojo.place("<p>test</p>", card_div.id);
       },
 
       addCardsToStock: function (stock, cards) {
@@ -350,7 +397,6 @@ define([
           }
         });
 
-        // TODO: useful?
         dojo.subscribe("newScores", this, "notif_newScores");
       },
 

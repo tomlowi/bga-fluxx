@@ -1,104 +1,102 @@
 @charset "UTF-8";
-.flx_player {
+.flx-player {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
 }
-.flx_player .flx_hand {
+.flx-player .flx-hand {
+  margin-right: 10px;
   flex: 3 0;
 }
-.flx_player .flx_keepers {
+.flx-player .flx-keepers {
   flex: 1 0;
 }
-.flx_player .flx_hand {
-  margin-right: 10px;
-}
 
-.flx_table {
+.flx-table {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
 }
-.flx_table .flx_deck {
+.flx-table .flx-deck {
   flex: 1 0;
   padding-top: 42px;
   margin-right: 10px;
 }
-.flx_table .flx_deck .flx_card-count {
+.flx-table .flx-deck .flx-card-count {
   padding: 5px;
 }
-.flx_table .flx_goal {
+.flx-table .flx-goal {
   flex: 1 0;
   margin-right: 10px;
 }
-.flx_table .flx_rules {
+.flx-table .flx-rules {
   flex: 1 0;
 }
-.flx_table .flx_rules .flx_card-stack {
+.flx-table .flx-rules .flx-card-stack {
   position: relative;
   margin: auto;
   width: 350px;
   height: 415px;
 }
-.flx_table .flx_rules .flx_card-stack .flx_card-stack-center {
+.flx-table .flx-rules .flx-card-stack .flx-card-stack-center {
   position: absolute;
   left: 90px;
 }
-.flx_table .flx_rules .flx_card-stack .flx_card-stack-left {
+.flx-table .flx-rules .flx-card-stack .flx-card-stack-left {
   position: absolute;
   top: 153px;
   left: 0px;
 }
-.flx_table .flx_rules .flx_card-stack .flx_card-stack-right {
+.flx-table .flx-rules .flx-card-stack .flx-card-stack-right {
   position: absolute;
   top: 153px;
   left: 180px;
 }
-.flx_table .flx_card {
+.flx-table .flx-card {
   width: 166px;
   height: 258px;
 }
-.flx_table .flx_deck-card {
+.flx-table .flx-deck-card {
   background-image: url("img/cards.png");
   background-position: -1500% -500%;
 }
-.flx_table #discardStock {
+.flx-table #discardStock {
   border: 1px;
 }
-.flx_table #baseRuleCard {
+.flx-table #baseRuleCard {
   width: 166px;
   height: 258px;
   background-image: url("img/cards.png");
   background-position: -1400% -500%;
 }
 
-.flx_other_players {
+.flx-other-players {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
 }
-.flx_other_players .flx_keepers {
+.flx-other-players .flx-keepers {
   flex: 1 0;
   margin-right: 10px;
 }
-.flx_other_players .flx_keepers:last-child {
+.flx-other-players .flx-keepers:last-child {
   margin-right: 0px;
 }
 
-.flx_icons {
+.flx-icons {
   display: inline-block;
   overflow: hidden;
   background-repeat: no-repeat;
   background-image: url(img/icons.png);
 }
 
-.flx_icons_hand {
+.flx-icons-hand {
   width: 23px;
   height: 33px;
   background-position: 0px 0px;
 }
 
-.flx_icons_keeper {
+.flx-icons-keeper {
   width: 22px;
   height: 33px;
   background-position: -23px 0px;
