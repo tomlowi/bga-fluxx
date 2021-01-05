@@ -19,8 +19,19 @@ class ActionEmptyTheTrash extends ActionCard
   {
     $game = Utils::getGame();
 
-    // current card is not yet discarded, so no worries there
     $game->cards->moveAllCardsInLocation("discard", "deck");
     $game->cards->shuffle("deck");
+
+    // The current card needs to be put in the new discard pile
+    $card_id = self::getCardId();
+    $game->cards->playCard($card_id);
+
+    $card = $game->cards->getCard($card_id);
+
+    $game->notifyAllPlayers("reshuffle", "", [
+      "deckCount" => $game->cards->countCardInLocation("deck"),
+      "discardCount" => $game->cards->countCardInLocation("discard"),
+      "exceptionCards" => [$card],
+    ]);
   }
 }

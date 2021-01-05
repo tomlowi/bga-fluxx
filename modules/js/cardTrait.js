@@ -5,10 +5,10 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         ["cardsDrawn", null],
         ["cardsDrawnOther", null],
         ["keeperPlayed", 500],
-        ["goalsDiscarded", null],
-        ["goalPlayed", 500],
-        ["rulesDiscarded", null],
-        ["rulePlayed", 500],
+        ["goalsDiscarded", 500],
+        ["goalPlayed", null],
+        ["rulesDiscarded", 500],
+        ["rulePlayed", null],
         ["actionPlayed", 500],
         ["handDiscarded", 500],
         ["keepersDiscarded", 500],
@@ -209,7 +209,21 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       console.log("RESHUFFLE", notif);
       this.deckCounter.toValue(notif.args.deckCount);
       this.discardCounter.toValue(notif.args.discardCount);
-      this.discardStock.removeAll();
+
+      var exceptionCards = notif.args.exceptionCards;
+      if (exceptionCards === undefined) {
+        this.discardStock.removeAll();
+      } else {
+        var exceptionCardsType = exceptionCards.map(function (card) {
+          return card.type_arg;
+        });
+        for (var card of this.discardStock.getAllItems()) {
+          if (exceptionCardsType.indexOf(card.type) == -1) {
+            this.discardStock.removeFromStockById(card.id, "deckCard", true);
+          }
+        }
+        this.discardStock.updateDisplay();
+      }
     },
   });
 });
