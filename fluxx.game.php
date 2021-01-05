@@ -43,6 +43,11 @@ use Fluxx\Cards\Goals\GoalCardFactory;
 
 class fluxx extends Table
 {
+  use Fluxx\States\DrawCardsTrait;
+  use Fluxx\States\PlayCardTrait;
+  use Fluxx\States\HandLimitTrait;
+  use Fluxx\States\KeepersLimitTrait;
+
   public static $instance = null;
   public function __construct()
   {
@@ -334,67 +339,6 @@ class fluxx extends Table
     $this->checkWinConditions();
   }
 
-  public function playKeeperCard($player_id, $card, $card_definition)
-  {
-    $this->cards->moveCard($card["id"], "keepers", $player_id);
-
-    // Notify all players about the keeper played
-    self::notifyAllPlayers(
-      "keeperPlayed",
-      clienttranslate('${player_name} plays keeper <b>${card_name}</b>'),
-      [
-        "i18n" => ["card_name"],
-        "player_name" => self::getActivePlayerName(),
-        "player_id" => $player_id,
-        "card_name" => $card_definition["name"],
-        "card" => $card,
-        "handCount" => $this->cards->countCardInLocation("hand", $player_id),
-      ]
-    );
-  }
-
-  public function playGoalCard($player_id, $card)
-  {
-    // Notify all players about the goal played
-    $goalCard = GoalCardFactory::getCard($card["id"], $card["type_arg"]);
-    self::notifyAllPlayers(
-      "goalPlayed",
-      clienttranslate('${player_name} sets a new goal <b>${card_name}</b>'),
-      [
-        "i18n" => ["card_name"],
-        "player_name" => self::getActivePlayerName(),
-        "player_id" => $player_id,
-        "card_name" => $goalCard->getName(),
-        "card" => $card,
-        "handCount" => $this->cards->countCardInLocation("hand", $player_id),
-      ]
-    );
-
-    $existingGoalCount = $this->cards->countCardInLocation("goals");
-    $hasDoubleAgenda =
-      count($this->cards->getCardsOfTypeInLocation("rule", 220, "rules")) > 0;
-
-    // No double agenda: we simply discard the oldest goal
-    if (!$hasDoubleAgenda) {
-      $cards = $this->cards->getCardsInLocation("goals");
-      if ($cards) {
-        $this->cards->moveAllCardsInLocation("goals", "discard");
-        self::notifyAllPlayers("goalsDiscarded", "", [
-          "cards" => $cards,
-          "discardCount" => $this->cards->countCardInLocation("discard"),
-        ]);
-      }
-    }
-
-    // We play the new goal
-    $this->cards->moveCard($card["id"], "goals");
-
-    if ($hasDoubleAgenda && $existingGoalCount > 1) {
-      self::setGameStateValue("lastGoalBeforeDoubleAgenda", $card["id"]);
-      return "doubleAgendaRule";
-    }
-  }
-
   protected function getLocationArgForRuleType($ruleType)
   {
     switch ($ruleType) {
@@ -433,70 +377,28 @@ class fluxx extends Table
     }
   }
 
-  public function playRuleCard($player_id, $card)
+  public function discardCardsFromLocation($cards_id, $location, $location_arg)
   {
-    $ruleCard = RuleCardFactory::getCard($card["id"], $card["type_arg"]);
-    $ruleType = $ruleCard->getRuleType();
+    $cards = [];
+    foreach ($cards_id as $card_id) {
+      // Verify card is in the right location
+      $card = $this->cards->getCard($card_id);
+      if (
+        $card == null ||
+        $card["location"] != $location ||
+        $card["location_arg"] != $location_arg
+      ) {
+        Utils::throwInvalidUserAction(
+          self::_("Impossible discard: invalid card ") . $card_id
+        );
+      }
 
-    // Notify all players about the new rule
-    // (this needs to be done before the effect, otherwise the history is confusing)
-    self::notifyAllPlayers(
-      "rulePlayed",
-      clienttranslate('${player_name} placed a new rule: <b>${card_name}</b>'),
-      [
-        "i18n" => ["card_name"],
-        "player_name" => self::getActivePlayerName(),
-        "card_name" => $ruleCard->getName(),
-        "player_id" => $player_id,
-        "ruleType" => $ruleType,
-        "card" => $card,
-        "handCount" => $this->cards->countCardInLocation("hand", $player_id),
-      ]
-    );
+      $cards[$card["id"]] = $card;
 
-    // Execute the immediate rule effect
-    $stateTransition = $ruleCard->playFromHand($player_id);
-
-    $location_arg = $this->getLocationArgForRuleType($ruleType);
-    $this->cards->moveCard($card["id"], "rules", $location_arg);
-
-    return $stateTransition;
-  }
-
-  public function playActionCard($player_id, $card)
-  {
-    self::setGameStateValue("actionToResolve", -1);
-    $actionCard = ActionCardFactory::getCard($card["id"], $card["type_arg"]);
-
-    // Notify all players about the action played
-    // (this needs to be done before the effect, otherwise the history is confusing)
-    self::notifyAllPlayers(
-      "actionPlayed",
-      clienttranslate('${player_name} plays an action: <b>${card_name}</b>'),
-      [
-        "i18n" => ["card_name"],
-        "player_name" => self::getActivePlayerName(),
-        "player_id" => $player_id,
-        "card_name" => $actionCard->getName(),
-        "card" => $card,
-        "handCount" => $this->cards->countCardInLocation("hand", $player_id),
-        "discardCount" => $this->cards->countCardInLocation("discard"),
-      ]
-    );
-
-    // execute the action immediate effect
-    $stateTransition = $actionCard->playFromHand($player_id);
-
-    self::dump("====playActionCard====", $stateTransition);
-
-    // We play the new action card
-    $this->cards->playCard($card["id"]);
-
-    return $stateTransition;
-  }
-
-  function prepareForNextPlayerTurn()
-  {
+      // Discard card
+      $this->cards->playCard($card["id"]);
+    }
+    return $cards;
   }
 
   public function deckAutoReshuffle()
@@ -575,39 +477,6 @@ class fluxx extends Table
     ];
   }
 
-  public function discardRule($ruleType)
-  {
-    // 1 : Play
-    // 2 : Draw
-    // 3 : Keeper limit
-    // 4 : Hand limit
-
-    $rules = $this->cards->getCardsInLocation("rules");
-    $card_args = [];
-    switch ($ruleType) {
-      case 1:
-        $card_args = [1, 2, 3, 4, 5];
-        break;
-      case 2:
-        $card_args = [6, 7, 8, 9];
-        break;
-      case 3:
-        $card_args = [10, 11, 12];
-        break;
-      case 4:
-        $card_args = [13, 14, 15, 16];
-        break;
-      default:
-        return;
-    }
-
-    foreach ($rules as $card_id => $card) {
-      if (in_array($card["type_arg"], $card_args)) {
-        $this->cards->moveCard($card_id, "discard");
-      }
-    }
-  }
-
   public function removeCardFromPlay(
     $player_id,
     $cardId,
@@ -647,164 +516,6 @@ class fluxx extends Table
     Each time a player is doing some game action, one of the methods below is called.
     (note: each method below must match an input method in fluxx.action.php)
      */
-
-  public function action_playCard($card_id, $card_definition_id)
-  {
-    // Check that this is the player's turn and that it is a "possible action" at this game state (see states.inc.php)
-    self::checkAction("playCard");
-
-    $player_id = self::getActivePlayerId();
-    $card = $this->cards->getCard($card_id);
-    $card_definition = $this->cardsDefinitions[$card_definition_id];
-
-    if ($card["location"] != "hand" or $card["location_arg"] != $player_id) {
-      throw new BgaUserException(self::_("You do not have this card in hand"));
-    }
-
-    $card_type = $card_definition["type"];
-    $stateTransition = null;
-    switch ($card_type) {
-      case "keeper":
-        $this->playKeeperCard($player_id, $card, $card_definition);
-        break;
-      case "goal":
-        $stateTransition = $this->playGoalCard($player_id, $card);
-        break;
-      case "rule":
-        $stateTransition = $this->playRuleCard($player_id, $card);
-        break;
-      case "action":
-        $stateTransition = $this->playActionCard($player_id, $card);
-        break;
-      default:
-        die("Not implemented: Card type $card_type does not exist");
-        break;
-    }
-
-    self::incGameStateValue("playedCards", 1);
-
-    // A card has been played: do we have a new winner?
-    $this->checkWinConditions();
-
-    if ($stateTransition != null) {
-      // player must resolve something before continuing to play more cards
-      $this->gamestate->nextstate($stateTransition);
-    } else {
-      // else: just let player continue playing cards
-      // but explicitly set state again to force args refresh
-      $this->gamestate->nextstate("continuePlay");
-    }
-  }
-
-  /*
-   * Player discards a nr of cards for hand limit
-   */
-  function action_discardHandCards($cards_id)
-  {
-    // possible multiple active state, so don't use checkAction or getActivePlayerId here!
-    $this->gamestate->checkPossibleAction("discardHandCards");
-    $player_id = self::getCurrentPlayerId();
-
-    $handLimit = self::getGameStateValue("handLimit");
-    $cardsInHand = $this->cards->countCardInLocation("hand", $player_id);
-    $expectedCount = $cardsInHand - $handLimit;
-    if (count($cards_id) != $expectedCount) {
-      throw new BgaUserException(
-        self::_("Wrong number of cards. Expected: ") . $expectedCount
-      );
-    }
-
-    $cards = [];
-    self::dump("discardingPlayer", $player_id);
-    foreach ($cards_id as $card_id) {
-      // Verify card was in player hand
-      $card = $this->cards->getCard($card_id);
-      if (
-        $card == null ||
-        $card["location"] != "hand" ||
-        $card["location_arg"] != $player_id
-      ) {
-        throw new BgaUserException(
-          self::_("Impossible discard: invalid card ") . $card_id
-        );
-      }
-
-      $cards[$card["id"]] = $card;
-
-      // Discard card
-      $this->cards->playCard($card["id"]);
-    }
-
-    self::notifyAllPlayers("handDiscarded", "", [
-      "player_id" => $player_id,
-      "cards" => $cards,
-      "discardCount" => $this->cards->countCardInLocation("discard"),
-      "handCount" => $this->cards->countCardInLocation("hand", $player_id),
-    ]);
-
-    $state = $this->gamestate->state();
-
-    if ($state["type"] == "multipleactiveplayer") {
-      // Multiple active state: this player is done
-      $this->gamestate->setPlayerNonMultiactive($player_id, "");
-    } else {
-      $this->gamestate->nextstate("");
-    }
-  }
-
-  /*
-   * Player discards a nr of cards for keeper limit
-   */
-  function action_discardKeepers($cards_id)
-  {
-    // multiple active state, so don't use checkAction or getActivePlayerId here!
-    $this->gamestate->checkPossibleAction("discardKeepers");
-    $player_id = self::getCurrentPlayerId();
-
-    $keepersLimit = self::getGameStateValue("keepersLimit");
-    $keepersInPlay = $this->cards->countCardInLocation("keepers", $player_id);
-    $expectedCount = $keepersInPlay - $keepersLimit;
-    if (count($cards_id) != $expectedCount) {
-      throw new BgaUserException(
-        self::_("Wrong number of cards. Expected: ") . $expectedCount
-      );
-    }
-
-    $cards = [];
-    foreach ($cards_id as $card_id) {
-      // Verify card was in player hand
-      $card = $this->cards->getCard($card_id);
-      if (
-        $card == null ||
-        $card["location"] != "keepers" ||
-        $card["location_arg"] != $player_id
-      ) {
-        throw new BgaUserException(
-          self::_("Impossible discard: invalid card ") . $card_id
-        );
-      }
-
-      $cards[$card["id"]] = $card;
-
-      // Discard card
-      $this->cards->playCard($card["id"]);
-    }
-
-    self::notifyAllPlayers("keepersDiscarded", "", [
-      "player_id" => $player_id,
-      "cards" => $cards,
-      "discardCount" => $this->cards->countCardInLocation("discard"),
-    ]);
-
-    $state = $this->gamestate->state();
-
-    if ($state["type"] == "multipleactiveplayer") {
-      // Multiple active state: this player is done
-      $this->gamestate->setPlayerNonMultiactive($player_id, "");
-    } else {
-      $this->gamestate->nextstate("");
-    }
-  }
 
   /*
    * Player discards a goal after double agenda
@@ -885,95 +596,6 @@ class fluxx extends Table
     game state.
      */
 
-  public function arg_playCard()
-  {
-    $playRule = self::getGameStateValue("playRule");
-    $played = self::getGameStateValue("playedCards");
-    if ($playRule > 100) {
-      return ["count" => "All"];
-    }
-    if ($playRule == -1) {
-      return ["count" => "All but 1"];
-    }
-    return ["count" => $playRule - $played];
-  }
-
-  public function arg_enforceHandLimitForOthers()
-  {
-    $handLimit = self::getGameStateValue("handLimit");
-
-    // multiple active state, can't use getCurrentPlayerId here!
-    $players = self::loadPlayersBasicInfos();
-    $playersInfraction = [];
-
-    foreach ($players as $player_id => $player) {
-      $cardsInHand = $this->cards->countCardInLocation("hand", $player_id);
-      $playersInfraction[$player_id] = ["count" => $cardsInHand - $handLimit];
-    }
-
-    return [
-      "limit" => $handLimit,
-      "_private" => $playersInfraction,
-    ];
-  }
-
-  public function arg_enforceKeepersLimitForOthers()
-  {
-    $keepersLimit = self::getGameStateValue("keepersLimit");
-
-    // multiple active state, can't use getCurrentPlayerId here!
-    $players = self::loadPlayersBasicInfos();
-    $playersInfraction = [];
-
-    foreach ($players as $player_id => $player) {
-      $keepersInPlay = $this->cards->countCardInLocation("keepers", $player_id);
-      $playersInfraction[$player_id] = [
-        "count" => $keepersInPlay - $keepersLimit,
-      ];
-    }
-
-    return [
-      "limit" => $keepersLimit,
-      "_private" => $playersInfraction,
-    ];
-  }
-
-  public function arg_enforceHandLimitForSelf()
-  {
-    $handLimit = self::getGameStateValue("handLimit");
-
-    $player_id = $this->getActivePlayerId();
-    $cardsInHand = $this->cards->countCardInLocation("hand", $player_id);
-
-    $playersInfraction = [
-      "active" => ["count" => $cardsInHand - $handLimit],
-    ];
-
-    return [
-      "limit" => $handLimit,
-      "_private" => $playersInfraction,
-    ];
-  }
-
-  public function arg_enforceKeepersLimitForSelf()
-  {
-    $keepersLimit = self::getGameStateValue("keepersLimit");
-
-    $player_id = $this->getActivePlayerId();
-    $keepersInPlay = $this->cards->countCardInLocation("keepers", $player_id);
-
-    $playersInfraction = [
-      "active" => [
-        "count" => $keepersInPlay - $keepersLimit,
-      ],
-    ];
-
-    return [
-      "limit" => $keepersLimit,
-      "_private" => $playersInfraction,
-    ];
-  }
-
   public function argResolveAction()
   {
     $actionCardId = self::getGameStateValue("actionToResolve");
@@ -990,158 +612,6 @@ class fluxx extends Table
   //////////////////////////////////////////////////////////////////////////////
   //////////// Game state actions
   ////////////
-
-  public function st_drawCards()
-  {
-    $player_id = self::getActivePlayerId();
-
-    // Check if this player is empty handed and the "no-hand-bonus" is in play
-    $hasNoHandBonus =
-      count($this->cards->getCardsOfTypeInLocation("rule", 216, "rules")) > 0;
-    $cardsInHand = $this->cards->countCardInLocation("hand", $player_id);
-
-    if ($cardsInHand == 0 && $hasNoHandBonus) {
-      $this->performDrawCards($player_id, 3);
-    }
-
-    $drawRule = self::getGameStateValue("drawRule");
-
-    // entering this state, so this player can always draw for current draw rule
-    $this->performDrawCards($player_id, $drawRule);
-    self::setGameStateValue("drawnCards", $drawRule);
-
-    $this->gamestate->nextstate("cardsDrawn");
-  }
-
-  public function st_playCard()
-  {
-    // If any "free action" rule can be played, we cannot move to the next state
-    $rules = $this->cards->getCardsInLocation("rules", RULE_OTHERS);
-
-    foreach ($rules as $rule_id => $rule) {
-      $ruleCard = RuleCardFactory::getCard($rule["id"], $rule["type_arg"]);
-
-      if ($ruleCard->canBeUsedByPlayer) {
-        return;
-      }
-    }
-
-    $player_id = self::getActivePlayerId();
-
-    // current rule and nb of cards already played
-    $playRule = self::getGameStateValue("playRule");
-    $cardsPlayed = self::getGameStateValue("playedCards");
-
-    // still cards in hand?
-    $cardsInHand = $this->cards->countCardInLocation("hand", $player_id);
-
-    // is Play All But 1 in play ?
-    // If not, did the player play enough cards already (or hand empty) ?
-    if (
-      ($playRule == -1 && $cardsInHand == 1) ||
-      ($playRule != -1 && $cardsPlayed >= $playRule) ||
-      $cardsInHand == 0
-    ) {
-      $this->gamestate->nextstate("endOfTurn");
-    }
-  }
-
-  public function st_enforceHandLimitForOthers()
-  {
-    $handLimit = self::getGameStateValue("handLimit");
-    if ($handLimit < 0) {
-      // no active Hand Limit, nothing to do
-      $this->gamestate->nextstate("");
-      return;
-    }
-
-    // The hand limit doesn't apply to the active player.
-    $active_player_id = $this->getActivePlayerId();
-
-    $players = self::loadPlayersBasicInfos();
-    // find all players with too much cards in hand
-    $playersInInfraction = [];
-    foreach ($players as $player_id => $player) {
-      if ($player_id != $active_player_id) {
-        $cardsInHand = $this->cards->countCardInLocation("hand", $player_id);
-        if ($cardsInHand > $handLimit) {
-          $playersInInfraction[] = $player_id;
-        }
-      }
-    }
-
-    // Activate all players that need to discard (if any)
-    $this->gamestate->setPlayersMultiactive($playersInInfraction, "", true);
-  }
-
-  public function st_enforceKeepersLimitForOthers()
-  {
-    $keeperLimit = self::getGameStateValue("keepersLimit");
-    if ($keeperLimit < 0) {
-      // no active Keeper Limit, nothing to do
-      $this->gamestate->nextstate("");
-      return;
-    }
-
-    // The keepers limit doesn't apply to the active player.
-    $active_player_id = $this->getActivePlayerId();
-
-    $players = self::loadPlayersBasicInfos();
-    // find all players with too much keepers in play
-    $playersInInfraction = [];
-    foreach ($players as $player_id => $player) {
-      if ($player_id != $active_player_id) {
-        $keepersInPlay = $this->cards->countCardInLocation(
-          "keepers",
-          $player_id
-        );
-        if ($keepersInPlay > $keeperLimit) {
-          $playersInInfraction[] = $player_id;
-        }
-      }
-    }
-
-    // Activate all players that need to remove keepers (if any)
-    $this->gamestate->setPlayersMultiactive($playersInInfraction, "", true);
-  }
-
-  public function st_enforceHandLimitForSelf()
-  {
-    $handLimit = self::getGameStateValue("handLimit");
-    if ($handLimit < 0) {
-      // no active Hand Limit, nothing to do
-      $this->gamestate->nextstate("");
-      return;
-    }
-
-    $player_id = $this->getActivePlayerId();
-    $cardsInHand = $this->cards->countCardInLocation("hand", $player_id);
-
-    if ($cardsInHand <= $handLimit) {
-      // Player is complying with the rule
-      $this->gamestate->nextstate("");
-      return;
-    }
-  }
-
-  public function st_enforceKeepersLimitForSelf()
-  {
-    $keeperLimit = self::getGameStateValue("keepersLimit");
-    if ($keeperLimit < 0) {
-      // no active Keepers Limit, nothing to do
-      $this->gamestate->nextstate("");
-      return;
-    }
-
-    $player_id = $this->getActivePlayerId();
-    $keepersInPlay = $this->cards->countCardInLocation("keepers", $player_id);
-
-    if ($keepersInPlay <= $keeperLimit) {
-      // Player is complying with the rule
-      $this->gamestate->nextstate("");
-      return;
-    }
-  }
 
   public function st_goalCleaning()
   {
