@@ -3,7 +3,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
     constructor() {
       this._notifications.push(["actionResolved", null]);
 
-      this._listenerKeepers = [];
+      this._listeners = [];
     },
 
     onEnteringStateActionResolve: function (args) {
@@ -23,41 +23,16 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
 
       this.actionCardId = args.action_id;
       this.actionCardArg = args.action_arg;
-      // @TODO: depending on specific Action Card, different selections to be made
-      // for now, allow selections in Hand and all player's Keepers
+      this.action_type = args.action_type;
 
       if (this.isCurrentPlayerActive()) {
-        this.discardStock.setSelectionMode(2);
-        if (this.needsDiscardPileVisible(this.actionCardArg)) {
-          this.discardStock.setOverlap(50);
-        }
-
-        this.handStock.setSelectionMode(2);
-        if (this._listenerHand !== undefined)
-          dojo.disconnect(this._listenerHand);
-        this._listenerHand = dojo.connect(
-          this.handStock,
-          "onChangeSelection",
-          this,
-          "onSelectCardForAction"
-        );
-
-        for (var player_id in this.keepersStock) {
-          var stock = this.keepersStock[player_id];
-          stock.setSelectionMode(2);
-
-          if (this._listenerKeepers[player_id] !== undefined)
-            dojo.disconnect(this._listenerKeepers[player_id]);
-          this._listenerKeepers[player_id] = dojo.connect(
-            stock,
-            "onChangeSelection",
-            this,
-            "onSelectCardForAction"
-          );
+        method = this.updateActionButtonsActionResolve[this.action_type];
+        if (method !== undefined) {
+          method(this, args);
+        } else {
+          console.log("TODO");
         }
       }
-
-      this.onUpdateActionButtonsForSpecificAction(this.actionCardArg);
     },
 
     addOption1(msg) {
@@ -72,6 +47,102 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       this.addActionButton("button_3", msg, "onResolveActionWithOption3");
     },
 
+    updateActionButtonsActionResolve: {
+      keepersExchange: function (that, args) {
+        for (var player_id in that.keepersStock) {
+          var stock = that.keepersStock[player_id];
+          stock.setSelectionMode(1);
+
+          if (that._listeners["keepers_" + player_id] !== undefined) {
+            dojo.disconnect(that._listeners["keepers_" + player_id]);
+          }
+          that._listeners["keepers_" + player_id] = dojo.connect(
+            stock,
+            "onChangeSelection",
+            that,
+            "onSelectCardForAction"
+          );
+        }
+      },
+      keeperSelection: function (that, args) {
+        for (var player_id in that.keepersStock) {
+          if (player_id != that.player_id) {
+            var stock = that.keepersStock[player_id];
+            stock.setSelectionMode(1);
+
+            if (that._listeners["keepers_" + player_id] !== undefined) {
+              dojo.disconnect(that._listeners["keepers_" + player_id]);
+            }
+            that._listeners["keepers_" + player_id] = dojo.connect(
+              stock,
+              "onChangeSelection",
+              that,
+              "onSelectCardForAction"
+            );
+          }
+        }
+      },
+      playerSelection: function (that, args) {
+        // @TODO: to be replaced with nice visual way of selecting other players
+        for (var player_id in that.players) {
+          if (player_id != that.player_id) {
+            that.addActionButton(
+              "button_" + player_id,
+              that.players[player_id]["name"],
+              "onResolveActionPlayerSelection"
+            );
+            dojo.attr("button_" + player_id, "data-player-id", player_id);
+          }
+        }
+      },
+      discardSelection: function (that, args) {},
+      rulesSelection: function (that, args) {},
+      ruleSelection: function (that, args) {},
+      cardSelection: function (that, args) {},
+      direction: function (that, args) {},
+      todaysSpecial: function (that, args) {},
+    },
+
+    _bak_call: function () {
+      this.discardStock.setSelectionMode(2);
+      if (this.needsDiscardPileVisible(this.actionCardArg)) {
+        this.discardStock.setOverlap(50);
+      }
+
+      this.handStock.setSelectionMode(2);
+      if (this._listenerHand !== undefined) dojo.disconnect(this._listenerHand);
+      this._listenerHand = dojo.connect(
+        this.handStock,
+        "onChangeSelection",
+        this,
+        "onSelectCardForAction"
+      );
+
+      for (var player_id in this.keepersStock) {
+        var stock = this.keepersStock[player_id];
+        stock.setSelectionMode(2);
+
+        if (this._listeners[player_id] !== undefined)
+          dojo.disconnect(this._listeners[player_id]);
+        this._listeners[player_id] = dojo.connect(
+          stock,
+          "onChangeSelection",
+          this,
+          "onSelectCardForAction"
+        );
+      }
+
+      this.onUpdateActionButtonsForSpecificAction(this.actionCardArg);
+    },
+
+    onResolveActionPlayerSelection(ev) {
+      var player_id = ev.target.getAttribute("data-player-id");
+
+      this.ajaxAction("resolveActionPlayerSelection", {
+        player_id: player_id,
+      });
+    },
+
     onUpdateActionButtonsForSpecificAction(actionCardArg) {
       switch (actionCardArg) {
         case "302": // Rotate Hands
@@ -84,10 +155,6 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
           this.addOption3(_("Scissors"));
           break;
         case "319": // TradeHand: select another player
-          // @TODO: to be replaced with nice visual way of selecting other players
-          this.addOption1(_("Opponent 1"));
-          this.addOption2(_("Opponent 2"));
-          this.addOption3(_("Opponent 3"));
           break;
         case "323": // Today Special
           this.addOption3(_("It's my Birthday!"));
@@ -110,18 +177,21 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       this.discardStock.setSelectionMode(0);
       this.discardStock.setOverlap(0.00001);
 
-      if (this._listenerHand !== undefined) {
-        dojo.disconnect(this._listenerHand);
-        delete this._listenerHand;
-        this.handStock.setSelectionMode(0);
-      }
+      this.handStock.setSelectionMode(0);
 
       for (var player_id in this.keepersStock) {
         var stock = this.keepersStock[player_id];
-        if (this._listenerKeepers[player_id] !== undefined) {
-          dojo.disconnect(this._listenerKeepers[player_id]);
-          delete this._listenerKeepers[player_id];
-          stock.setSelectionMode(0);
+        stock.setSelectionMode(0);
+      }
+
+      if (this._listenerHand !== undefined) {
+        dojo.disconnect(this._listenerHand);
+        delete this._listenerHand;
+      }
+      for (var player_id in this._listeners) {
+        if (this._listeners[player_id] !== undefined) {
+          dojo.disconnect(this._listeners[player_id]);
+          delete this._listeners[player_id];
         }
       }
     },

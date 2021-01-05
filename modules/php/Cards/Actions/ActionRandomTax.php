@@ -15,20 +15,54 @@ class ActionRandomTax extends ActionCard
     );
   }
 
-  public function immediateEffectOnPlay($player)
+  public function immediateEffectOnPlay($player_id)
   {
     $game = Utils::getGame();
-    $players_ordered = $game->getPlayersInOrder();
-    $to_player = $player;
-    for ($i = 1; $i <= count($players_ordered); $i++) {
-      $from_player = $players_ordered[$i - 1];
-      if ($from_player != $to_player) {
-        $handCards = $game->cards->getCardsInLocation("hand", $from_player);
-        if (count($handCards) > 0) {
-          shuffle($handCards);
-          $game->cards->moveCard($handCards[0]["id"], "hand", $to_player);
+
+    $player_name = $game->getActivePlayerName();
+
+    $players = $game->loadPlayersBasicInfos();
+
+    foreach ($players as $from_player_id => $from_player) {
+      if ($from_player_id != $player_id) {
+        $cards = $game->cards->getCardsInLocation("hand", $from_player_id);
+        $cardsCount = count($cards);
+
+        if ($cardsCount > 0) {
+          $i = bga_rand(0, $cardsCount - 1);
+          $card = array_values($cards)[$i];
+          $card_definition = $game->cardsDefinitions[$card["type_arg"]];
+          $game->cards->moveCard($card["id"], "hand", $player_id);
+          $game->notifyPlayer(
+            $player_id,
+            "cardsReceivedFromPlayer",
+            clienttranslate(
+              '<b>You</b> received <b>${card_name}</b> from ${player_name}'
+            ),
+            [
+              "cards" => [$card],
+              "card_name" => $card_definition["name"],
+              "player_id" => $from_player_id,
+              "player_name" => $from_player["player_name"],
+            ]
+          );
+          $game->notifyPlayer(
+            $from_player_id,
+            "cardsSentToPlayer",
+            clienttranslate(
+              '${player_name} took <b>${card_name}</b> from your hand'
+            ),
+            [
+              "cards" => [$card],
+              "card_name" => $card_definition["name"],
+              "player_id" => $player_id,
+              "player_name" => $player_name,
+            ]
+          );
         }
       }
     }
+
+    $game->sendHandCountNotifications();
   }
 }

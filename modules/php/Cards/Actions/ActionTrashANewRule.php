@@ -17,7 +17,7 @@ class ActionTrashANewRule extends ActionCard
     );
   }
 
-  public $needsInteraction = true;
+  public $interactionNeeded = "ruleSelection";
 
   public function immediateEffectOnPlay($player)
   {

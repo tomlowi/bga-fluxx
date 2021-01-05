@@ -16,7 +16,7 @@ class ActionLetsDoThatAgain extends ActionCard
     );
   }
 
-  public $needsInteraction = true;
+  public $interactionNeeded = "discardSelection";
 
   public function immediateEffectOnPlay($player)
   {

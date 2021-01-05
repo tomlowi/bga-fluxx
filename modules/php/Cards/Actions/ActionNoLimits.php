@@ -19,19 +19,7 @@ class ActionNoLimits extends ActionCard
   public function immediateEffectOnPlay($player)
   {
     $game = Utils::getGame();
-    $handLimits = $game->cards->getCardsInLocation("rules", RULE_HAND_LIMIT);
-    $keeperLimits = $game->cards->getCardsInLocation(
-      "rules",
-      RULE_KEEPERS_LIMIT
-    );
-
-    $rulesToDiscard = array_merge($handLimits, $keeperLimits);
-    foreach ($rulesToDiscard as $card_id => $card) {
-      $rule = RuleCardFactory::getCard($card_id, $card["type_arg"]);
-      $rule->immediateEffectOnDiscard($player);
-
-      // playCard = move to top of discard pile
-      $game->cards->playCard($card_id);
-    }
+    $game->discardRuleCardsForType("handLimit");
+    $game->discardRuleCardsForType("keepersLimit");
   }
 }

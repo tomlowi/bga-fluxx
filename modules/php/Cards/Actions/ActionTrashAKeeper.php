@@ -16,7 +16,7 @@ class ActionTrashAKeeper extends ActionCard
     );
   }
 
-  public $needsInteraction = true;
+  public $interactionNeeded = "keeperSelection";
 
   public function immediateEffectOnPlay($player)
   {

@@ -60,6 +60,9 @@
   background-image: url("img/cards.png");
   background-position: -1500% -500%;
 }
+.flx-table .flx-deck-card.flx-deck-empty {
+  background-position: -1600% -500%;
+}
 .flx-table #discardStock {
   border: 1px;
 }

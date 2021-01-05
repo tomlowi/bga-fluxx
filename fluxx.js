@@ -82,6 +82,8 @@ define([
       setup: function (gamedatas) {
         console.log("GameDatas: ", gamedatas);
 
+        this.players = gamedatas.players;
+
         // Save card metadata that we will use for UI & metadata
         this.cardsDefinitions = this.gamedatas.cardsDefinitions;
         console.log("Cards definitions", this.cardsDefinitions);
@@ -110,6 +112,9 @@ define([
         this.discardCounter = new ebg.counter();
         this.discardCounter.create("discardCount");
         this.deckCounter.toValue(this.gamedatas.deckCount);
+        if (this.gamedatas.deckCount == 0) {
+          dojo.addClass("deckCard", "flx-deck-empty");
+        }
         this.discardCounter.toValue(this.gamedatas.discardCount);
 
         this.rulesStock = {};

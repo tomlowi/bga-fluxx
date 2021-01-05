@@ -4,14 +4,17 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       this._notifications.push(
         ["cardsDrawn", null],
         ["cardsDrawnOther", null],
-        ["keeperPlayed", null],
-        ["goalsDiscarded", null],
+        ["keeperPlayed", 500],
+        ["goalsDiscarded", 500],
         ["goalPlayed", null],
-        ["rulesDiscarded", null],
+        ["rulesDiscarded", 500],
         ["rulePlayed", null],
-        ["actionPlayed", null],
-        ["handDiscarded", null],
-        ["keepersDiscarded", null],
+        ["actionPlayed", 500],
+        ["handDiscarded", 500],
+        ["keepersDiscarded", 500],
+        ["cardsReceivedFromPlayer", 500],
+        ["cardsSentToPlayer", null],
+        ["handCountUpdate", null],
         ["reshuffle", null]
       );
     },
@@ -79,8 +82,16 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
     },
 
     notif_cardsDrawnOther: function (notif) {
+      // TODO: slide card to player
+
       this.handCounter[notif.args.player_id].toValue(notif.args.handCount);
       this.deckCounter.toValue(notif.args.deckCount);
+
+      if (notif.args.deckCount == 0) {
+        dojo.addClass("deckCard", "flx-deck-empty");
+      } else {
+        dojo.removeClass("deckCard", "flx-deck-empty");
+      }
     },
 
     notif_keeperPlayed: function (notif) {
@@ -165,12 +176,62 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       this.discardCounter.toValue(notif.args.discardCount);
     },
 
+    notif_cardsReceivedFromPlayer: function (notif) {
+      var player_id = notif.args.player_id;
+      var cards = notif.args.cards;
+
+      for (var card_id in cards) {
+        var card = cards[card_id];
+        this.handStock.addToStockWithId(
+          card.type_arg,
+          card.id,
+          "player_board_" + player_id
+        );
+      }
+    },
+
+    notif_cardsSentToPlayer: function (notif) {
+      var player_id = notif.args.player_id;
+      var cards = notif.args.cards;
+
+      for (var card_id in cards) {
+        var card = cards[card_id];
+        this.handStock.removeFromStockById(
+          card.id,
+          "player_board_" + player_id
+        );
+      }
+    },
+
+    notif_handCountUpdate: function (notif) {
+      var handsCount = notif.args.handsCount;
+      for (var player_id in handsCount) {
+        this.handCounter[player_id].toValue(handsCount[player_id]);
+      }
+    },
+
     notif_reshuffle: function (notif) {
       // @TODO: hide deck when there is no card in it anymore
       console.log("RESHUFFLE", notif);
       this.deckCounter.toValue(notif.args.deckCount);
+      dojo.removeClass("deckCard", "flx-deck-empty");
+
       this.discardCounter.toValue(notif.args.discardCount);
-      this.discardStock.removeAll();
+
+      var exceptionCards = notif.args.exceptionCards;
+      if (exceptionCards === undefined) {
+        this.discardStock.removeAll();
+      } else {
+        var exceptionCardsType = exceptionCards.map(function (card) {
+          return card.type_arg;
+        });
+        for (var card of this.discardStock.getAllItems()) {
+          if (exceptionCardsType.indexOf(card.type) == -1) {
+            this.discardStock.removeFromStockById(card.id, "deckCard", true);
+          }
+        }
+        this.discardStock.updateDisplay();
+      }
     },
   });
 });

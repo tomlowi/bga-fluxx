@@ -17,7 +17,7 @@ class ActionZapACard extends ActionCard
     );
   }
 
-  public $needsInteraction = true;
+  public $interactionNeeded = "cardSelection";
 
   public function immediateEffectOnPlay($player)
   {

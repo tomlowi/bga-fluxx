@@ -16,7 +16,7 @@ class ActionDraw3Play2 extends ActionCard
     );
   }
 
-  public $needsInteraction = true;
+  public $interactionNeeded = "TODO";
 
   public function immediateEffectOnPlay($player)
   {

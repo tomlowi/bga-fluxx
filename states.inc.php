@@ -60,7 +60,7 @@ if (!defined("STATE_GAME_SETUP")) {
   define("STATE_ENFORCE_HAND_LIMIT_SELF", 23);
   define("STATE_ENFORCE_KEEPERS_LIMIT_SELF", 24);
   define("STATE_GOAL_CLEANING", 25);
-  define("STATE_RESOLVEACTION", 30);
+  define("STATE_RESOLVE_ACTION", 30);
   define("STATE_NEXT_PLAYER", 90);
 }
 
@@ -99,7 +99,7 @@ $machinestates = [
       "endOfTurn" => STATE_ENFORCE_HAND_LIMIT_SELF,
       "doubleAgendaRule" => STATE_GOAL_CLEANING,
 
-      "resolveActionCard" => STATE_RESOLVEACTION,
+      "resolveActionCard" => STATE_RESOLVE_ACTION,
       "continuePlay" => STATE_PLAY_CARD,
       "endGame" => STATE_GAME_END,
     ],
@@ -175,7 +175,7 @@ $machinestates = [
     "transitions" => ["" => STATE_PLAY_CARD],
   ],
 
-  STATE_RESOLVEACTION => [
+  STATE_RESOLVE_ACTION => [
     "name" => "actionResolve",
     "description" => clienttranslate(
       '${actplayer} must resolve their action: ${action_name}'
@@ -184,8 +184,8 @@ $machinestates = [
       '${you} must resolve your action: ${action_name}'
     ),
     "type" => "activeplayer",
-    "args" => "argResolveAction",
-    //"action" => "stResolveAction",
+    "args" => "arg_resolveAction",
+    //"action" => "st_resolveAction",
     "possibleactions" => ["resolveAction"],
     "transitions" => [
       "resolvedAction" => STATE_PLAY_CARD,

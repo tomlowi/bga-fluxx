@@ -17,7 +17,7 @@ class ActionLetsSimplify extends ActionCard
     );
   }
 
-  public $needsInteraction = true;
+  public $interactionNeeded = "rulesSelection";
 
   public function immediateEffectOnPlay($player)
   {
