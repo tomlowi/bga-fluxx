@@ -372,9 +372,6 @@ class fluxx extends Table
     foreach ($cards as $card_id => $card) {
       $rule = RuleCardFactory::getCard($card_id, $card["type_arg"]);
       $rule->immediateEffectOnDiscard($player_id);
-
-      // playCard = move to top of discard pile
-      $this->cards->playCard($card_id);
     }
 
     if ($cards) {

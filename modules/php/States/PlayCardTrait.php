@@ -199,10 +199,11 @@ trait PlayCardTrait
     );
 
     $location_arg = $game->getLocationArgForRuleType($ruleType);
-    $game->cards->moveCard($card["id"], "rules", $location_arg);
 
     // Execute the immediate rule effect
     $stateTransition = $ruleCard->playFromHand($player_id);
+
+    $game->cards->moveCard($card["id"], "rules", $location_arg);
 
     return $stateTransition;
   }
