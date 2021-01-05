@@ -15,20 +15,23 @@ class ActionDiscardAndDraw extends ActionCard
     );
   }
 
-  public function immediateEffectOnPlay($player)
+  public function immediateEffectOnPlay($player_id)
   {
     $game = Utils::getGame();
 
-    $handCards = $game->cards->getCardsInLocation("hand", $player);
-    // current card should be excluded
-    if ($handCards[$this->cardId] != null) {
-      unset($handCards[$this->cardId]);
-    }
+    $cards = $game->cards->getCardsInLocation("hand", $player_id);
 
-    $countHandCards = count($handCards);
-    // discard all hand cards
-    $game->cards->moveCards(array_keys($handCards), "discard");
+    // discard all cards
+    $game->cards->moveCards(array_keys($cards), "discard");
+
+    $game->notifyAllPlayers("handDiscarded", "", [
+      "player_id" => $player_id,
+      "cards" => $cards,
+      "discardCount" => $game->cards->countCardInLocation("discard"),
+      "handCount" => $game->cards->countCardInLocation("hand", $player_id),
+    ]);
+
     // draw equal nr of new cards
-    $game->performDrawCards($player, $countHandCards);
+    $game->performDrawCards($player_id, count($cards));
   }
 }
