@@ -201,7 +201,7 @@ trait PlayCardTrait
     $location_arg = $game->getLocationArgForRuleType($ruleType);
 
     // Execute the immediate rule effect
-    $stateTransition = $ruleCard->playFromHand($player_id);
+    $stateTransition = $ruleCard->immediateEffectOnPlay($player_id);
 
     $game->cards->moveCard($card["id"], "rules", $location_arg);
 
@@ -235,7 +235,7 @@ trait PlayCardTrait
     $game->cards->playCard($card["id"]);
 
     // execute the action immediate effect
-    $stateTransition = $actionCard->playFromHand($player_id);
+    $stateTransition = $actionCard->immediateEffectOnPlay($player_id);
 
     return $stateTransition;
   }

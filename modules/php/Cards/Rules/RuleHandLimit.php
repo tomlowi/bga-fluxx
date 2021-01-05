@@ -20,12 +20,6 @@ class RuleHandLimit extends RuleCard
     Utils::getGame()->discardRuleCardsForType("handLimit");
     // set new hand limit rule
     Utils::getGame()->setGameStateValue("handLimit", $this->handLimit);
-  }
-
-  public function playFromHand($player)
-  {
-    // Execute the immediate effect
-    $this->immediateEffectOnPlay($player);
 
     return "handLimitRulePlayed";
   }

@@ -13,24 +13,13 @@ class ActionCard extends Card
     parent::__construct($cardId, $uniqueId);
   }
 
-  // Indicates this Action can be handled without client-side player interactions
+  // Indicates which interaction is expected by this Action
+  // null indicated that this action  can be handled without client-side interaction
   public $interactionNeeded = null;
 
   // Implements the immediate effect when this action is played
-  public function immediateEffectOnPlay($player)
+  public function immediateEffectOnPlay($player_id)
   {
-  }
-
-  /**
-   * playFromHand : default function to execute when a Card is played from hand.
-   * return: null if the game should continue the play loop,
-   * or "state Transition Name" if another state need to be called
-   */
-  public function playFromHand($player)
-  {
-    // Execute the immediate effect
-    $this->immediateEffectOnPlay($player);
-
     if ($this->interactionNeeded != null) {
       Utils::getGame()->setGameStateValue(
         "actionToResolve",
@@ -38,17 +27,6 @@ class ActionCard extends Card
       );
       return "resolveActionCard";
     }
-    return null;
-  }
-
-  /**
-   * resolvedBy : default function to execute when interactive decisions
-   * for the played Action card have been resolved (passed in via args).
-   * return: null if the game should continue the play loop,
-   * or "state Transition Name" if another state need to be called
-   */
-  public function resolvedBy($player, $option, $cardIdsSelected)
-  {
     return null;
   }
 }
