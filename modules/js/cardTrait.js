@@ -12,6 +12,9 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         ["actionPlayed", null],
         ["handDiscarded", null],
         ["keepersDiscarded", null],
+        ["cardsReceivedFromPlayer", null],
+        ["cardsSentToPlayer", null],
+        ["handCountUpdate", null],
         ["reshuffle", null]
       );
     },
@@ -79,6 +82,8 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
     },
 
     notif_cardsDrawnOther: function (notif) {
+      // TODO: slide card to player
+
       this.handCounter[notif.args.player_id].toValue(notif.args.handCount);
       this.deckCounter.toValue(notif.args.deckCount);
     },
@@ -163,6 +168,40 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         this.keepersStock[player_id].count()
       );
       this.discardCounter.toValue(notif.args.discardCount);
+    },
+
+    notif_cardsReceivedFromPlayer: function (notif) {
+      var player_id = notif.args.player_id;
+      var cards = notif.args.cards;
+
+      for (var card_id in cards) {
+        var card = cards[card_id];
+        this.handStock.addToStockWithId(
+          card.type_arg,
+          card.id,
+          "player_board_" + player_id
+        );
+      }
+    },
+
+    notif_cardsSentToPlayer: function (notif) {
+      var player_id = notif.args.player_id;
+      var cards = notif.args.cards;
+
+      for (var card_id in cards) {
+        var card = cards[card_id];
+        this.handStock.removeFromStockById(
+          card.id,
+          "player_board_" + player_id
+        );
+      }
+    },
+
+    notif_handCountUpdate: function (notif) {
+      var handsCount = notif.args.handsCount;
+      for (var player_id in handsCount) {
+        this.handCounter[player_id].toValue(handsCount[player_id]);
+      }
     },
 
     notif_reshuffle: function (notif) {

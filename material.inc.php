@@ -549,7 +549,7 @@ $this->cardsDefinitions = [
     "type" => "action",
     "name" => clienttranslate("Random Tax"),
     "description" => clienttranslate(
-      "Take 1 card at random from the hand of each other player and add these cardsto your own hand."
+      "Take 1 card at random from the hand of each other player and add these cards to your own hand."
     ),
   ],
   305 => [
