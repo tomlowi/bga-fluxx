@@ -5,95 +5,90 @@ use Fluxx\Game\Utils;
 
 trait HandLimitTrait
 {
-  public function st_enforceHandLimitForOthers()
+  private function getHandLimit()
   {
-    $game = Utils::getGame();
+    return self::getGameStateValue("handLimit");
+  }
 
-    $handLimit = $game->getGameStateValue("handLimit");
+  private function getHandInfractions($players_id = null)
+  {
+    $handLimit = $this->getHandLimit();
+
+    // no active Hand Limit, nothing to do
     if ($handLimit < 0) {
-      // no active Hand Limit, nothing to do
-      $game->gamestate->nextstate("");
-      return;
+      return [];
     }
+    if ($players_id == null) {
+      $players_id = array_keys(self::loadPlayersBasicInfos());
+    }
+    $playersInfraction = [];
 
-    // The hand limit doesn't apply to the active player.
-    $active_player_id = $game->getActivePlayerId();
+    $cards = Utils::getGame()->cards;
 
-    $players = $game->loadPlayersBasicInfos();
-    // find all players with too much cards in hand
-    $playersInInfraction = [];
-    foreach ($players as $player_id => $player) {
-      if ($player_id != $active_player_id) {
-        $cardsInHand = $game->cards->countCardInLocation("hand", $player_id);
-        if ($cardsInHand > $handLimit) {
-          $playersInInfraction[] = $player_id;
-        }
+    foreach ($players_id as $player_id) {
+      $handCount = $cards->countCardInLocation("hand", $player_id);
+      if ($handCount > $handLimit) {
+        $playersInfraction[$player_id] = [
+          "count" => $handCount - $handLimit,
+        ];
       }
     }
 
-    // Activate all players that need to discard (if any)
-    $game->gamestate->setPlayersMultiactive($playersInInfraction, "", true);
+    return $playersInfraction;
+  }
+
+  public function st_enforceHandLimitForOthers()
+  {
+    $playersInfraction = $this->getHandInfractions();
+
+    // The hand limit doesn't apply to the active player.
+    $active_player_id = self::getActivePlayerId();
+
+    if (array_key_exists($active_player_id, $playersInfraction)) {
+      unset($playersInfraction[$active_player_id]);
+    }
+
+    $gamestate = Utils::getGame()->gamestate;
+
+    // Activate all players that need to discard some cards (if any)
+    $gamestate->setPlayersMultiactive(array_keys($playersInfraction), "", true);
   }
 
   public function st_enforceHandLimitForSelf()
   {
-    $game = Utils::getGame();
+    $player_id = self::getActivePlayerId();
+    $playersInfraction = $this->getHandInfractions([$player_id]);
 
-    $handLimit = $game->getGameStateValue("handLimit");
-    if ($handLimit < 0) {
-      // no active Hand Limit, nothing to do
-      $game->gamestate->nextstate("");
-      return;
-    }
+    $gamestate = Utils::getGame()->gamestate;
 
-    $player_id = $game->getActivePlayerId();
-    $cardsInHand = $game->cards->countCardInLocation("hand", $player_id);
-
-    if ($cardsInHand <= $handLimit) {
-      // Player is complying with the rule
-      $game->gamestate->nextstate("");
+    if (count($playersInfraction) == 0) {
+      // Player is not in the infraction with the rule
+      $gamestate->nextstate("");
       return;
     }
   }
 
   public function arg_enforceHandLimitForOthers()
   {
-    $game = Utils::getGame();
-
-    $handLimit = $game->getGameStateValue("handLimit");
-
-    // multiple active state, can't use getCurrentPlayerId here!
-    $players = $game->loadPlayersBasicInfos();
-    $playersInfraction = [];
-
-    foreach ($players as $player_id => $player) {
-      $cardsInHand = $game->cards->countCardInLocation("hand", $player_id);
-      $playersInfraction[$player_id] = ["count" => $cardsInHand - $handLimit];
-    }
-
     return [
-      "limit" => $handLimit,
-      "_private" => $playersInfraction,
+      "limit" => $this->getHandLimit(),
+      "_private" => $this->getHandInfractions(),
     ];
   }
 
   public function arg_enforceHandLimitForSelf()
   {
-    $game = Utils::getGame();
+    $player_id = self::getActivePlayerId();
+    $playersInfraction = $this->getHandInfractions([$player_id]);
 
-    $handLimit = $game->getGameStateValue("handLimit");
-
-    $player_id = $game->getActivePlayerId();
-    $cardsInHand = $game->cards->countCardInLocation("hand", $player_id);
-
-    $playersInfraction = [
-      "active" => ["count" => $cardsInHand - $handLimit],
+    $out = [
+      "limit" => $this->getHandLimit(),
+      "_private" => [
+        "active" => $playersInfraction[$player_id] ?? ["count" => 0],
+      ],
     ];
 
-    return [
-      "limit" => $handLimit,
-      "_private" => $playersInfraction,
-    ];
+    return $out;
   }
 
   /*
@@ -103,39 +98,20 @@ trait HandLimitTrait
   {
     $game = Utils::getGame();
 
-    // possible multiple active state, so don't use checkAction or getActivePlayerId here!
+    // possible multiple active state, so use currentPlayer rather than activePlayer
     $game->gamestate->checkPossibleAction("discardHandCards");
-    $player_id = $game->getCurrentPlayerId();
+    $player_id = self::getCurrentPlayerId();
 
-    $handLimit = $game->getGameStateValue("handLimit");
-    $cardsInHand = $game->cards->countCardInLocation("hand", $player_id);
-    $expectedCount = $cardsInHand - $handLimit;
+    $playersInfraction = $this->getHandInfractions([$player_id]);
+    $expectedCount = $playersInfraction[$player_id]["count"];
+
     if (count($cards_id) != $expectedCount) {
-      throw new BgaUserException(
-        $game->_("Wrong number of cards. Expected: ") . $expectedCount
+      Utils::throwInvalidUserAction(
+        self::_("Wrong number of cards. Expected: ") . $expectedCount
       );
     }
 
-    $cards = [];
-    $game->dump("discardingPlayer", $player_id);
-    foreach ($cards_id as $card_id) {
-      // Verify card was in player hand
-      $card = $game->cards->getCard($card_id);
-      if (
-        $card == null ||
-        $card["location"] != "hand" ||
-        $card["location_arg"] != $player_id
-      ) {
-        throw new BgaUserException(
-          $game->_("Impossible discard: invalid card ") . $card_id
-        );
-      }
-
-      $cards[$card["id"]] = $card;
-
-      // Discard card
-      $game->cards->playCard($card["id"]);
-    }
+    $cards = self::discardCardsFromLocation($cards_id, "hand", $player_id);
 
     $game->notifyAllPlayers("handDiscarded", "", [
       "player_id" => $player_id,

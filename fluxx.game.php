@@ -377,8 +377,28 @@ class fluxx extends Table
     }
   }
 
-  function prepareForNextPlayerTurn()
+  public function discardCardsFromLocation($cards_id, $location, $location_arg)
   {
+    $cards = [];
+    foreach ($cards_id as $card_id) {
+      // Verify card is in the right location
+      $card = $this->cards->getCard($card_id);
+      if (
+        $card == null ||
+        $card["location"] != $location ||
+        $card["location_arg"] != $location_arg
+      ) {
+        Utils::throwInvalidUserAction(
+          self::_("Impossible discard: invalid card ") . $card_id
+        );
+      }
+
+      $cards[$card["id"]] = $card;
+
+      // Discard card
+      $this->cards->playCard($card["id"]);
+    }
+    return $cards;
   }
 
   public function deckAutoReshuffle()

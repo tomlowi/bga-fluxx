@@ -70,7 +70,9 @@ trait PlayCardTrait
     $card_definition = $game->cardsDefinitions[$card_definition_id];
 
     if ($card["location"] != "hand" or $card["location_arg"] != $player_id) {
-      throw new BgaUserException($game->_("You do not have this card in hand"));
+      Utils::throwInvalidUserAction(
+        $game->_("You do not have this card in hand")
+      );
     }
 
     $card_type = $card_definition["type"];
