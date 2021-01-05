@@ -339,6 +339,23 @@ class fluxx extends Table
     $this->checkWinConditions();
   }
 
+  public function sendHandCountNotifications()
+  {
+    $players = self::loadPlayersBasicInfos();
+    $handsCount = [];
+
+    foreach ($players as $player_id => $player) {
+      $handsCount[$player_id] = $this->cards->countCardInLocation(
+        "hand",
+        $player_id
+      );
+    }
+
+    self::notifyAllPlayers("handCountUpdate", "", [
+      "handsCount" => $handsCount,
+    ]);
+  }
+
   protected function getLocationArgForRuleType($ruleType)
   {
     switch ($ruleType) {

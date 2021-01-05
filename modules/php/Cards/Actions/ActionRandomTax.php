@@ -63,17 +63,6 @@ class ActionRandomTax extends ActionCard
       }
     }
 
-    $handsCount = [];
-
-    foreach ($players as $player_id_ => $player_) {
-      $handsCount[$player_id_] = $game->cards->countCardInLocation(
-        "hand",
-        $player_id_
-      );
-    }
-
-    $game->notifyAllPlayers("handCountUpdate", "", [
-      "handsCount" => $handsCount,
-    ]);
+    $game->sendHandCountNotifications();
   }
 }
