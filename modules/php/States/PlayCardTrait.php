@@ -67,7 +67,6 @@ trait PlayCardTrait
 
     $player_id = $game->getActivePlayerId();
     $card = $game->cards->getCard($card_id);
-    $card_definition = $game->cardsDefinitions[$card_definition_id];
 
     if ($card["location"] != "hand" or $card["location_arg"] != $player_id) {
       Utils::throwInvalidUserAction(
@@ -79,7 +78,7 @@ trait PlayCardTrait
     $stateTransition = null;
     switch ($card_type) {
       case "keeper":
-        $this->playKeeperCard($player_id, $card, $card_definition);
+        $this->playKeeperCard($player_id, $card);
         break;
       case "goal":
         $stateTransition = $this->playGoalCard($player_id, $card);
@@ -110,13 +109,14 @@ trait PlayCardTrait
     }
   }
 
-  public function playKeeperCard($player_id, $card, $card_definition)
+  public function playKeeperCard($player_id, $card)
   {
     $game = Utils::getGame();
 
     $game->cards->moveCard($card["id"], "keepers", $player_id);
 
     // Notify all players about the keeper played
+    $keeperCard = KeeperCardFactory::getCard($card["id"], $card["type_arg"]);
     $game->notifyAllPlayers(
       "keeperPlayed",
       clienttranslate('${player_name} plays keeper <b>${card_name}</b>'),
@@ -124,7 +124,7 @@ trait PlayCardTrait
         "i18n" => ["card_name"],
         "player_name" => $game->getActivePlayerName(),
         "player_id" => $player_id,
-        "card_name" => $card_definition["name"],
+        "card_name" => $keeperCard->getName(),
         "card" => $card,
         "handCount" => $game->cards->countCardInLocation("hand", $player_id),
       ]

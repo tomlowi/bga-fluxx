@@ -13,6 +13,23 @@ class RuleCardFactory extends CardFactory
     return $name;
   }
 
+  public static function listCardDefinitions()
+  {
+    $ruleDefinitions = [];
+    foreach (self::$classes as $definitionId => $class) {
+      $card = self::getCard(0, $definitionId);
+
+      $ruleDefinitions[$definitionId] = [
+        "type" => "rule",
+        "ruleType" => $card->getRuleType(),
+        "name" => $card->getName(),
+        "subtitle" => $card->getSubtitle(),
+        "description" => $card->getDescription(),
+      ];
+    }
+    return $ruleDefinitions;
+  }
+
   /*
    * cardClasses : for each card Id, the corresponding class name
    */

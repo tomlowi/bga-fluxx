@@ -31,7 +31,7 @@ class ActionRandomTax extends ActionCard
         if ($cardsCount > 0) {
           $i = bga_rand(0, $cardsCount - 1);
           $card = array_values($cards)[$i];
-          $card_definition = $game->cardsDefinitions[$card["type_arg"]];
+          $card_definition = $game->getCardDefinitionFor($card);
           $game->cards->moveCard($card["id"], "hand", $player_id);
           $game->notifyPlayer(
             $player_id,
@@ -41,7 +41,7 @@ class ActionRandomTax extends ActionCard
             ),
             [
               "cards" => [$card],
-              "card_name" => $card_definition["name"],
+              "card_name" => $card_definition->getName(),
               "player_id" => $from_player_id,
               "player_name" => $from_player["player_name"],
             ]

@@ -9,7 +9,7 @@ class GoalPartyTime extends GoalTwoKeepers
   {
     parent::__construct($cardId, $uniqueId);
 
-    $this->name = clienttranslate("Party Time");
+    $this->name = clienttranslate("Party Time!");
     $this->subtitle = clienttranslate("The Party + Time");
 
     $this->keeper1 = 16;

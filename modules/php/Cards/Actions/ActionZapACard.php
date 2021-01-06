@@ -38,7 +38,7 @@ class ActionZapACard extends ActionCard
     $game = Utils::getGame();
 
     $card = $args["card"];
-    $card_definition = $game->cardsDefinitions[$card["type_arg"]];
+    $card_definition = $game->getCardDefinitionFor($card);
 
     $card_location = $card["location"];
 
@@ -49,7 +49,7 @@ class ActionZapACard extends ActionCard
     }
 
     // if a rule is taken back, its effect stops
-    if ($card_definition["type"] == "rule") {
+    if ($card["type"] == "rule") {
       $rule = RuleCardFactory::getCard($card["id"], $card["type_arg"]);
       $rule->immediateEffectOnDiscard($player_id);
     }
@@ -62,7 +62,7 @@ class ActionZapACard extends ActionCard
       clienttranslate('${player_name} zaps <b>${card_name}</b>'),
       [
         "player_name" => $game->getActivePlayerName(),
-        "card_name" => $card_definition["name"],
+        "card_name" => $card_definition->getName(),
         "card" => $card,
         "player_id" => $player_id,
         "handCount" => $game->cards->countCardInLocation("hand", $player_id),

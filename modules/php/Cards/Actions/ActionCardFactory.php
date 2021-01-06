@@ -13,6 +13,21 @@ class ActionCardFactory extends CardFactory
     return $name;
   }
 
+  public static function listCardDefinitions()
+  {
+    $actionDefinitions = [];
+    foreach (self::$classes as $definitionId => $class) {
+      $card = self::getCard(0, $definitionId);
+
+      $actionDefinitions[$definitionId] = [
+        "type" => "action",
+        "name" => $card->getName(),
+        "description" => $card->getDescription(),
+      ];
+    }
+    return $actionDefinitions;
+  }
+
   /*
    * cardClasses : for each card Id, the corresponding class name
    */
