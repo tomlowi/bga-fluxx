@@ -19,13 +19,17 @@ class ActionLetsSimplify extends ActionCard
 
   public $interactionNeeded = "rulesSelection";
 
-  public function immediateEffectOnPlay($player)
+  public function immediateEffectOnPlay($player_id)
   {
     // nothing now, needs to go to resolve action state
+    // TODO: check how many rules are in play: if none, skip
+    return parent::immediateEffectOnPlay($player_id);
   }
 
-  public function resolvedBy($player, $option, $cardIdsSelected)
+  public function resolvedBy($player_id, $args)
   {
+    $option = $args["option"];
+    $cardIdsSelected = $args["cardIdsSelected"];
     // verify args has card ids, and it is all Rule in play
     // (or that no rules are in play and args is empty)
     $game = Utils::getGame();
@@ -59,11 +63,11 @@ class ActionLetsSimplify extends ActionCard
     // discard these rules from play
     foreach ($cardsSelected as $cardId => $cardSelected) {
       $rule = RuleCardFactory::getCard($cardId, $cardSelected["type_arg"]);
-      $rule->immediateEffectOnDiscard($player);
+      $rule->immediateEffectOnDiscard($player_id);
 
       $fromTarget = $cardSelected["location_arg"];
       $game->removeCardFromPlay(
-        $player,
+        $player_id,
         $cardId,
         $cardSelected["type"],
         $fromTarget

@@ -18,18 +18,13 @@ class ActionTradeHands extends ActionCard
 
   public $interactionNeeded = "playerSelection";
 
-  public function immediateEffectOnPlay($player)
-  {
-    // nothing now, needs to go to resolve action state
-  }
-
-  public function resolvedBy($player_id, $option, $cardIdsSelected)
+  public function resolvedBy($player_id, $args)
   {
     $game = Utils::getGame();
     $players = $game->loadPlayersBasicInfos();
 
     $player_name = $players[$player_id]["player_name"];
-    $selected_player_id = $option;
+    $selected_player_id = $args["player_id"];
     $selected_player_name = $players[$selected_player_id]["player_name"];
 
     $selected_player_hand = $game->cards->getCardsInLocation(

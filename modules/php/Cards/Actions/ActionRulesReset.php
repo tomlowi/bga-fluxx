@@ -16,15 +16,13 @@ class ActionRulesReset extends ActionCard
     );
   }
 
-  public function immediateEffectOnPlay($player)
+  public function immediateEffectOnPlay($player_id)
   {
-    $rulesInPlay = Utils::getGame()->cards->getCardsInLocation("rules");
-    foreach ($rulesInPlay as $card_id => $card) {
-      $rule = RuleCardFactory::getCard($card_id, $card["type_arg"]);
-      $rule->immediateEffectOnDiscard($player);
-
-      // playCard = move to top of discard pile
-      Utils::getGame()->cards->playCard($card_id);
-    }
+    $game = Utils::getGame();
+    $game->discardRuleCardsForType("playLimit");
+    $game->discardRuleCardsForType("drawRule");
+    $game->discardRuleCardsForType("keepersLimit");
+    $game->discardRuleCardsForType("handLimit");
+    $game->discardRuleCardsForType("others");
   }
 }

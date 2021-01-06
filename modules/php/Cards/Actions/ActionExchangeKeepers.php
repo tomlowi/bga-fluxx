@@ -18,20 +18,18 @@ class ActionExchangeKeepers extends ActionCard
 
   public $interactionNeeded = "keepersExchange";
 
-  public function immediateEffectOnPlay($player)
+  public function resolvedBy($player_id, $args)
   {
-    // nothing now, needs to go to resolve action state
-  }
+    $option = $args["option"];
+    $cardIdsSelected = $args["cardIdsSelected"];
 
-  public function resolvedBy($player, $option, $cardIdsSelected)
-  {
     // verify args has 2 card ids:
     // 1 = keeper in play of this player
     // 1 = keeper in play of another player
     // (or that no keepers are in play and args is empty)
     $game = Utils::getGame();
     $keepersInPlay = $game->cards->countCardInLocation("keepers");
-    $keepersOfPlayer = $game->cards->countCardInLocation("keepers", $player);
+    $keepersOfPlayer = $game->cards->countCardInLocation("keepers", $player_id);
     if (
       $keepersInPlay == 0 ||
       $keepersOfPlayer == 0 ||

@@ -15,7 +15,7 @@ class ActionEmptyTheTrash extends ActionCard
     );
   }
 
-  public function immediateEffectOnPlay($player)
+  public function immediateEffectOnPlay($player_id)
   {
     $game = Utils::getGame();
 

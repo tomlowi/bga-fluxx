@@ -15,16 +15,17 @@ class ActionEverybodyGets1 extends ActionCard
     );
   }
 
-  public function immediateEffectOnPlay($player)
+  public function immediateEffectOnPlay($player_id)
   {
     $game = Utils::getGame();
     $players_ordered = $game->getPlayersInOrder();
     for ($i = 1; $i <= count($players_ordered); $i++) {
       $game->performDrawCards($players_ordered[$i - 1], 1);
     }
+    return parent::immediateEffectOnPlay($player_id);
   }
 
-  public function resolvedBy($player, $option, $cardIdsSelected)
+  public function resolvedBy($player_id, $args)
   {
     // @TODO: Everybody gets 1
     // Challenges: we need to show the drawn cards somewhere separately,

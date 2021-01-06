@@ -19,15 +19,8 @@ class ActionZapACard extends ActionCard
 
   public $interactionNeeded = "cardSelection";
 
-  public function immediateEffectOnPlay($player)
+  public function immediateEffectOnPlay($player_id)
   {
-    // nothing now, needs to go to resolve action state
-  }
-
-  public function resolvedBy($player, $option, $cardIdsSelected)
-  {
-    // verify args has 1 card id, and it is a card in play
-    // (or that no cards are in play and args is empty)
     $game = Utils::getGame();
     $keepersInPlay = $game->cards->countCardInLocation("keepers");
     $rulesInPlay = $game->cards->countCardInLocation("rules");
@@ -37,34 +30,43 @@ class ActionZapACard extends ActionCard
       return;
     }
 
-    if (count($cardIdsSelected) != 1) {
-      Utils::throwInvalidUserAction(
-        fluxx::totranslate("You must select exactly 1 Card in play")
-      );
-    }
+    return parent::immediateEffectOnPlay($player_id);
+  }
 
-    $cardId = $cardIdsSelected[0];
-    $cardSelected = $game->cards->getCard($cardId);
-    $cardLocation = $cardSelected["location"];
-    if (
-      $cardSelected == null ||
-      ($cardLocation != "keepers" &&
-        $cardLocation != "rules" &&
-        $cardLocation != "goals")
-    ) {
+  public function resolvedBy($player_id, $args)
+  {
+    $game = Utils::getGame();
+
+    $card = $args["card"];
+    $card_definition = $game->cardsDefinitions[$card["type_arg"]];
+
+    $card_location = $card["location"];
+
+    if (!in_array($card_location, ["keepers", "rules", "goals"])) {
       Utils::throwInvalidUserAction(
-        fluxx::totranslate("You must select exactly 1 Card in play")
+        clienttranslate("You must select a card in play on the table")
       );
     }
 
     // if a rule is taken back, its effect stops
-    if ($cardLocation == "rules") {
-      $rule = RuleCardFactory::getCard($cardId, $cardSelected["type_arg"]);
-      $rule->immediateEffectOnDiscard($player);
+    if ($card_definition["type"] == "rule") {
+      $rule = RuleCardFactory::getCard($card["id"], $card["type_arg"]);
+      $rule->immediateEffectOnDiscard($player_id);
     }
 
-    // move this card from its current location to player hand
-    $fromTarget = $cardSelected["location_arg"];
-    $game->cards->moveCard($cardId, "hand", $player);
+    // move this card to player hand
+    $game->cards->moveCard($card["id"], "hand", $player_id);
+
+    $game->notifyAllPlayers(
+      "cardFromTableToHand",
+      clienttranslate('${player_name} zaps <b>${card_name}</b>'),
+      [
+        "player_name" => $game->getActivePlayerName(),
+        "card_name" => $card_definition["name"],
+        "card" => $card,
+        "player_id" => $player_id,
+        "handCount" => $game->cards->countCardInLocation("hand", $player_id),
+      ]
+    );
   }
 }

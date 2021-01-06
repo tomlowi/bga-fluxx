@@ -18,13 +18,11 @@ class ActionTodaysSpecial extends ActionCard
 
   public $interactionNeeded = "todaysSpecial";
 
-  public function immediateEffectOnPlay($player)
+  public function resolvedBy($player_id, $args)
   {
-    // nothing now, needs to go to resolve action state
-  }
+    $option = $args["option"];
+    $cardIdsSelected = $args["cardIdsSelected"];
 
-  public function resolvedBy($player, $option, $cardIdsSelected)
-  {
     // options: 3 = Birthday, 2 = Holiday/Anniversary, 1 = Just another day
     $nrCardsToDraw = 3;
     $nrCardsToPlay = $option;
@@ -34,6 +32,6 @@ class ActionTodaysSpecial extends ActionCard
     // this will probably require an entirely separate state?
     // and after all is done, current player needs to continue its turn
 
-    Utils::getGame()->performDrawCards($player, $nrCardsToDraw);
+    Utils::getGame()->performDrawCards($player_id, $nrCardsToDraw);
   }
 }

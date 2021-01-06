@@ -69,7 +69,7 @@ abstract class Card extends \APP_GameClass
    * return: null if the game should continue the play loop,
    * or "state Transition Name" if another state need to be called
    */
-  public function resolvedBy($player, $option, $cardIdsSelected)
+  public function resolvedBy($player_id, $args)
   {
     return null;
   }

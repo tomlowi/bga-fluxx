@@ -18,12 +18,7 @@ class ActionDraw3Play2 extends ActionCard
 
   public $interactionNeeded = "TODO";
 
-  public function immediateEffectOnPlay($player)
-  {
-    // nothing now, needs to go to resolve action state
-  }
-
-  public function resolvedBy($player, $option, $cardIdsSelected)
+  public function resolvedBy($player_id, $args)
   {
     // options: none ?
 
@@ -32,6 +27,6 @@ class ActionDraw3Play2 extends ActionCard
     // this will probably require an entirely separate state?
     // and after all is done, current player needs to continue its turn
 
-    Utils::getGame()->performDrawCards($player, 3);
+    Utils::getGame()->performDrawCards($player_id, 3);
   }
 }

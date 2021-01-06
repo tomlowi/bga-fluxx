@@ -98,7 +98,48 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       discardSelection: function (that, args) {},
       rulesSelection: function (that, args) {},
       ruleSelection: function (that, args) {},
-      cardSelection: function (that, args) {},
+      cardSelection: function (that, args) {
+        that.goalsStock.setSelectionMode(1);
+        if (that._listeners["goal"] !== undefined) {
+          dojo.disconnect(that._listeners["goal"]);
+        }
+        that._listeners["goal"] = dojo.connect(
+          that.goalsStock,
+          "onChangeSelection",
+          that,
+          "onResolveActionCardSelection"
+        );
+
+        for (var player_id in that.keepersStock) {
+          var stock = that.keepersStock[player_id];
+          stock.setSelectionMode(1);
+
+          if (that._listeners["keepers_" + player_id] !== undefined) {
+            dojo.disconnect(that._listeners["keepers_" + player_id]);
+          }
+          that._listeners["keepers_" + player_id] = dojo.connect(
+            stock,
+            "onChangeSelection",
+            that,
+            "onResolveActionCardSelection"
+          );
+        }
+
+        for (var rule_type in that.rulesStock) {
+          var stock = that.rulesStock[rule_type];
+          stock.setSelectionMode(1);
+
+          if (that._listeners["rules_" + rule_type] !== undefined) {
+            dojo.disconnect(that._listeners["rules_" + rule_type]);
+          }
+          that._listeners["rules_" + rule_type] = dojo.connect(
+            stock,
+            "onChangeSelection",
+            that,
+            "onResolveActionCardSelection"
+          );
+        }
+      },
       direction: function (that, args) {},
       todaysSpecial: function (that, args) {},
     },
@@ -135,15 +176,41 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       this.onUpdateActionButtonsForSpecificAction(this.actionCardArg);
     },
 
-    onResolveActionPlayerSelection(ev) {
+    onResolveActionPlayerSelection: function (ev) {
       var player_id = ev.target.getAttribute("data-player-id");
 
-      this.ajaxAction("resolveActionPlayerSelection", {
-        player_id: player_id,
-      });
+      var action = "resolveActionPlayerSelection";
+
+      if (this.checkAction(action)) {
+        this.ajaxAction("resolveActionPlayerSelection", {
+          player_id: player_id,
+        });
+      }
     },
 
-    onUpdateActionButtonsForSpecificAction(actionCardArg) {
+    onResolveActionCardSelection: function (control_name, item_id) {
+      var stock = this._allStocks[control_name];
+
+      var action = "resolveActionCardSelection";
+      var items = stock.getSelectedItems();
+
+      if (items.length == 0) return;
+
+      console.log("onResolveActionCardSelection", items);
+
+      if (this.checkAction(action)) {
+        // Play a card
+        this.ajaxAction(action, {
+          card_id: items[0].id,
+          card_definition_id: items[0].type,
+          lock: true,
+        });
+      }
+
+      stock.unselectAll();
+    },
+
+    onUpdateActionButtonsForSpecificAction: function (actionCardArg) {
       switch (actionCardArg) {
         case "302": // Rotate Hands
           this.addOption1(_("Rotate Left"));
@@ -178,21 +245,21 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       this.discardStock.setOverlap(0.00001);
 
       this.handStock.setSelectionMode(0);
+      this.goalsStock.setSelectionMode(0);
 
       for (var player_id in this.keepersStock) {
         var stock = this.keepersStock[player_id];
         stock.setSelectionMode(0);
       }
 
-      if (this._listenerHand !== undefined) {
-        dojo.disconnect(this._listenerHand);
-        delete this._listenerHand;
+      for (var rule_type in this.rulesStock) {
+        var stock = this.rulesStock[rule_type];
+        stock.setSelectionMode(0);
       }
-      for (var player_id in this._listeners) {
-        if (this._listeners[player_id] !== undefined) {
-          dojo.disconnect(this._listeners[player_id]);
-          delete this._listeners[player_id];
-        }
+
+      for (var listener_id in this._listeners) {
+        dojo.disconnect(this._listeners[listener_id]);
+        delete this._listeners[listener_id];
       }
     },
 

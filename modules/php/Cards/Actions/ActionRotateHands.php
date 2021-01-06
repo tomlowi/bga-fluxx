@@ -18,11 +18,6 @@ class ActionRotateHands extends ActionCard
 
   public $interactionNeeded = "direction";
 
-  public function immediateEffectOnPlay($player)
-  {
-    // nothing now, needs to go to resolve action state
-  }
-
   public function resolvedByBak($player, $option, $cardIdsSelected)
   {
     // options: 1 = Left, 2 = Right
@@ -65,8 +60,11 @@ class ActionRotateHands extends ActionCard
     );
   }
 
-  public function resolvedBy($active_player_id, $option, $cardIdsSelected)
+  public function resolvedBy($player_id, $args)
   {
+    $option = $args["option"];
+    $cardIdsSelected = $args["cardIdsSelected"];
+
     // options: 1 = Left, 2 = Right
     $game = Utils::getGame();
 

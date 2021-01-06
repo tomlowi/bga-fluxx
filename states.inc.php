@@ -186,7 +186,11 @@ $machinestates = [
     "type" => "activeplayer",
     "args" => "arg_resolveAction",
     //"action" => "st_resolveAction",
-    "possibleactions" => ["resolveAction"],
+    "possibleactions" => [
+      "resolveAction",
+      "resolveActionPlayerSelection",
+      "resolveActionCardSelection",
+    ],
     "transitions" => [
       "resolvedAction" => STATE_PLAY_CARD,
       "donePlayingCards" => STATE_ENFORCE_HAND_LIMIT_SELF,
