@@ -107,7 +107,7 @@ trait HandLimitTrait
 
     if (count($cards_id) != $expectedCount) {
       Utils::throwInvalidUserAction(
-        self::_("Wrong number of cards. Expected: ") . $expectedCount
+        clienttranslate("Wrong number of cards. Expected: ") . $expectedCount
       );
     }
 

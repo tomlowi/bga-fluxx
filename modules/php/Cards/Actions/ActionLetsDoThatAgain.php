@@ -18,14 +18,18 @@ class ActionLetsDoThatAgain extends ActionCard
 
   public $interactionNeeded = "discardSelection";
 
-  public function immediateEffectOnPlay($player)
+  public function immediateEffectOnPlay($player_id)
   {
+    return parent::immediateEffectOnPlay($player_id);
     // nothing now, needs to go to resolve action state
     // @TODO: send notification to open up the discard pile and make it visible?
   }
 
-  public function resolvedBy($player, $option, $cardIdsSelected)
+  public function resolvedBy($player_id, $args)
   {
+    $option = $args["option"];
+    $cardIdsSelected = $args["cardIdsSelected"];
+
     // verify args has 1 card id, and it is an Action or Rule card in the discard
     // (or that none are available in the discard pile)
     $game = Utils::getGame();
@@ -68,12 +72,12 @@ class ActionLetsDoThatAgain extends ActionCard
     }
 
     // temporary move to hand so it can be played again
-    $game->cards->moveCard($cardId, "hand", $player);
+    $game->cards->moveCard($cardId, "hand", $player_id);
     if ($cardType == "action") {
       // @TODO: check how this interrupts the game state of the current action
-      $game->playActionCard($player, $cardSelected);
+      $game->playActionCard($player_id, $cardSelected);
     } elseif ($cardType == "rule") {
-      $game->playRuleCard($player, $cardSelected);
+      $game->playRuleCard($player_id, $cardSelected);
     }
   }
 }

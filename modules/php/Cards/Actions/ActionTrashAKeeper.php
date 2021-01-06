@@ -18,13 +18,11 @@ class ActionTrashAKeeper extends ActionCard
 
   public $interactionNeeded = "keeperSelection";
 
-  public function immediateEffectOnPlay($player)
+  public function resolvedBy($player_id, $args)
   {
-    // nothing now, needs to go to resolve action state
-  }
+    $option = $args["option"];
+    $cardIdsSelected = $args["cardIdsSelected"];
 
-  public function resolvedBy($player, $option, $cardIdsSelected)
-  {
     // verify args has 1 card id, and it is a keeper in play
     // (or that no keepers are in play and args is empty)
     $game = Utils::getGame();
@@ -51,7 +49,7 @@ class ActionTrashAKeeper extends ActionCard
     // discard this keeper from play
     $fromTarget = $cardSelected["location_arg"];
     $game->removeCardFromPlay(
-      $player,
+      $player_id,
       $cardId,
       $cardSelected["type"],
       $fromTarget

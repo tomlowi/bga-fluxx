@@ -20,12 +20,6 @@ class RuleKeeperLimit extends RuleCard
     Utils::getGame()->discardRuleCardsForType("keepersLimit");
     // set new play rule
     Utils::getGame()->setGameStateValue("keepersLimit", $this->keeperLimit);
-  }
-
-  public function playFromHand($player)
-  {
-    // Execute the immediate effect
-    $this->immediateEffectOnPlay($player);
 
     return "keepersLimitRulePlayed";
   }

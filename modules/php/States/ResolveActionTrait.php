@@ -59,7 +59,10 @@ trait ResolveActionTrait
     $actionCard = ActionCardFactory::getCard($card["id"], $card["type_arg"]);
     $actionName = $actionCard->getName();
 
-    $stateTransition = $actionCard->resolvedBy($player_id, $option, $cards_id);
+    $stateTransition = $actionCard->resolvedBy($player_id, [
+      "option" => $option,
+      "cardIdsSelected" => $cards_id,
+    ]);
 
     $players = self::loadPlayersBasicInfos();
     self::notifyAllPlayers(
@@ -80,21 +83,15 @@ trait ResolveActionTrait
     }
   }
 
-  public function action_resolveActionPlayerSelection($selected_player_id)
+  private function _action_resolveAction($args)
   {
-    self::checkAction("resolveAction");
     $player_id = self::getActivePlayerId();
 
     $actionCard = self::getCurrentResolveActionCard();
     $actionName = $actionCard->getName();
 
-    $stateTransition = $actionCard->resolvedBy(
-      $player_id,
-      $selected_player_id,
-      null
-    );
+    $stateTransition = $actionCard->resolvedBy($player_id, $args);
 
-    $players = self::loadPlayersBasicInfos();
     self::setGameStateValue("actionToResolve", -1);
 
     $game = Utils::getGame();
@@ -104,5 +101,32 @@ trait ResolveActionTrait
     } else {
       $game->gamestate->nextstate("resolvedAction");
     }
+  }
+
+  public function action_resolveActionPlayerSelection($selected_player_id)
+  {
+    self::checkAction("resolveActionPlayerSelection");
+    return self::_action_resolveAction([
+      "selected_player_id" => $selected_player_id,
+    ]);
+  }
+
+  public function action_resolveActionCardSelection(
+    $card_id,
+    $card_definition_id
+  ) {
+    self::checkAction("resolveActionCardSelection");
+
+    $game = Utils::getGame();
+
+    $card = $game->cards->getCard($card_id);
+
+    return self::_action_resolveAction(["card" => $card]);
+  }
+
+  public function action_resolveActionDirection($direction)
+  {
+    self::checkAction("resolveActionDirection");
+    return self::_action_resolveAction(["direction" => $direction]);
   }
 }

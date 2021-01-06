@@ -14,6 +14,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         ["keepersDiscarded", 500],
         ["cardsReceivedFromPlayer", 500],
         ["cardsSentToPlayer", null],
+        ["cardFromTableToHand", null],
         ["handCountUpdate", null],
         ["reshuffle", null]
       );
@@ -198,9 +199,11 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         var card = cards[card_id];
         this.handStock.removeFromStockById(
           card.id,
-          "player_board_" + player_id
+          "player_board_" + player_id,
+          true
         );
       }
+      this.handStock.updateDisplay();
     },
 
     notif_handCountUpdate: function (notif) {
@@ -231,6 +234,61 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
           }
         }
         this.discardStock.updateDisplay();
+      }
+    },
+
+    notif_cardFromTableToHand: function (notif) {
+      var player_id = notif.args.player_id;
+      var card = notif.args.card;
+
+      var originStock;
+
+      var card_definition = this.cardsDefinitions[card.type_arg];
+
+      console.log(card);
+      console.log(card_definition);
+
+      switch (card.location) {
+        case "keepers":
+          originStock = this.keepersStock[card.location_arg];
+          break;
+
+        case "rules":
+          if (card_definition.ruleType == "playRule") {
+            originStock = this.rulesStock.playRule;
+          } else if (card_definition.ruleType == "drawRule") {
+            originStock = this.rulesStock.drawRule;
+          } else {
+            originStock = this.rulesStock.others;
+          }
+          break;
+
+        case "goals":
+          originStock = this.goalsStock;
+          break;
+
+        default:
+          return;
+      }
+
+      if (player_id == this.player_id) {
+        this.handStock.addToStockWithId(
+          card.type_arg,
+          card.id,
+          originStock.getItemDivId(card.id)
+        );
+        originStock.removeFromStockById(card.id);
+      } else {
+        originStock.removeFromStockById(card.id, "player_board_" + player_id);
+      }
+
+      // Update the hand and keepers counts
+      this.handCounter[player_id].toValue(notif.args.handCount);
+
+      if (card.location == "keepers") {
+        this.keepersCounter[card.location_arg].toValue(
+          this.keepersStock[card.location_arg].count()
+        );
       }
     },
   });

@@ -13,8 +13,8 @@ class ActionJackpot extends ActionCard
     $this->description = clienttranslate("Draw 3 extra cards!");
   }
 
-  public function immediateEffectOnPlay($player)
+  public function immediateEffectOnPlay($player_id)
   {
-    Utils::getGame()->performDrawCards($player, 3);
+    Utils::getGame()->performDrawCards($player_id, 3);
   }
 }

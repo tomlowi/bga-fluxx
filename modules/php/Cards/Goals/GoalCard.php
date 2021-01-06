@@ -18,14 +18,4 @@ class GoalCard extends Card
   {
     return null;
   }
-
-  /**
-   * playFromHand : default function to execute when a Card is played from hand.
-   * return: null if the game should continue the play loop,
-   * or "state Transition Name" if another state need to be called
-   */
-  public function playFromHand($player)
-  {
-    return null;
-  }
 }

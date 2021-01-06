@@ -18,13 +18,10 @@ class ActionUseWhatYouTake extends ActionCard
 
   public $interactionNeeded = "playerSelection";
 
-  public function immediateEffectOnPlay($player)
+  public function resolvedBy($player_id, $args)
   {
-    // nothing now, needs to go to resolve action state
-  }
-
-  public function resolvedBy($player, $option, $cardIdsSelected)
-  {
+    $option = $args["option"];
+    $cardIdsSelected = $args["cardIdsSelected"];
     // options: index or id of the player chosen ?
 
     // @TODO: Use What You Take

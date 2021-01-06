@@ -18,12 +18,10 @@ class ActionStealAKeeper extends ActionCard
 
   public $interactionNeeded = "keeperSelection";
 
-  public function immediateEffectOnPlay($player)
+  public function resolvedBy($player_id, $args)
   {
-    // nothing now, needs to go to resolve action state
-  }
-
-  public function resolvedBy($player, $option, $cardIdsSelected)
+    $option = $args["option"];
+    $cardIdsSelected = $args["cardIdsSelected"];
   {
     // verify args has 1 card id, and it is a keeper in play
     // (or that no keepers are in play and args is empty)
@@ -47,7 +45,7 @@ class ActionStealAKeeper extends ActionCard
     if (
       $cardSelected == null ||
       $cardSelected["location"] != "keepers" ||
-      $cardSelected["location_arg"] == $player
+      $cardSelected["location_arg"] == $player_id
     ) {
       Utils::throwInvalidUserAction(
         fluxx::totranslate(
@@ -57,6 +55,6 @@ class ActionStealAKeeper extends ActionCard
     }
 
     // move this keeper to the current player
-    $game->cards->moveCard($cardId, "keepers", $player);
+    $game->cards->moveCard($cardId, "keepers", $player_id);
   }
 }

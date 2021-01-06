@@ -106,4 +106,24 @@ class action_fluxx extends APP_GameAction
     $this->game->action_resolveActionPlayerSelection($player_id);
     self::ajaxResponse();
   }
+
+  public function resolveActionCardSelection()
+  {
+    self::setAjaxMode();
+    $card_id = self::getArg("card_id", AT_posint, true);
+    $card_definition_id = self::getArg("card_definition_id", AT_posint, true);
+    $this->game->action_resolveActionCardSelection(
+      $card_id,
+      $card_definition_id
+    );
+    self::ajaxResponse();
+  }
+
+  public function resolveActionDirection()
+  {
+    self::setAjaxMode();
+    $direction = self::getArg("direction", AT_posint, true);
+    $this->game->action_resolveActionDirection($direction);
+    self::ajaxResponse();
+  }
 }

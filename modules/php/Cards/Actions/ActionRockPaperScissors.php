@@ -18,12 +18,16 @@ class ActionRockPaperScissors extends ActionCard
 
   public $interactionNeeded = "TODO";
 
-  public function immediateEffectOnPlay($player)
+  public function immediateEffectOnPlay($player_id)
   {
     // nothing now, needs to go to resolve action state
+    return parent::immediateEffectOnPlay($player_id);
   }
 
-  public function resolvedBy($player, $option, $cardIdsSelected)
+  public function resolvedBy($player_id, $args)
+  {
+    $option = $args["option"];
+    $cardIdsSelected = $args["cardIdsSelected"];
   {
     // options: 1 = Rock, 2 = Paper, 3 = Scissors
 

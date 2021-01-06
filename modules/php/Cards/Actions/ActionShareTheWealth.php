@@ -15,7 +15,7 @@ class ActionShareTheWealth extends ActionCard
     );
   }
 
-  public function immediateEffectOnPlay($player)
+  public function immediateEffectOnPlay($player_id)
   {
     $game = Utils::getGame();
 
@@ -41,5 +41,6 @@ class ActionShareTheWealth extends ActionCard
         $receivingPlayerIndex = 1;
       }
     }
+    return parent::immediateEffectOnPlay($player_id);
   }
 }

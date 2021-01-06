@@ -19,13 +19,11 @@ class ActionTrashANewRule extends ActionCard
 
   public $interactionNeeded = "ruleSelection";
 
-  public function immediateEffectOnPlay($player)
+  public function resolvedBy($player_id_id, $args)
   {
-    // nothing now, needs to go to resolve action state
-  }
+    $option = $args["option"];
+    $cardIdsSelected = $args["cardIdsSelected"];
 
-  public function resolvedBy($player, $option, $cardIdsSelected)
-  {
     // verify args has 1 card id, and it is a Rule in play
     // (or that no rules are in play and args is empty)
     $game = Utils::getGame();
@@ -51,11 +49,11 @@ class ActionTrashANewRule extends ActionCard
 
     // discard this rule from play
     $rule = RuleCardFactory::getCard($cardId, $cardSelected["type_arg"]);
-    $rule->immediateEffectOnDiscard($player);
+    $rule->immediateEffectOnDiscard($player_id);
 
     $fromTarget = $cardSelected["location_arg"];
     $game->removeCardFromPlay(
-      $player,
+      $player_id,
       $cardId,
       $cardSelected["type"],
       $fromTarget

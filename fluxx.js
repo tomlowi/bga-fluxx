@@ -65,6 +65,8 @@ define([
             materialOffset: 301,
           },
         };
+
+        this._allStocks = [];
       },
 
       /*
@@ -316,6 +318,7 @@ define([
 
       createCardStock: function (elem, types) {
         var stock = new ebg.stock();
+        this._allStocks[elem] = stock;
         stock.create(this, $(elem), this.CARD_WIDTH, this.CARD_HEIGHT);
         stock.image_items_per_row = this.CARDS_SPRITES_PER_ROW;
 
@@ -341,6 +344,7 @@ define([
 
       createKeepersStock: function (elem) {
         var stock = new ebg.stock();
+        this._allStocks[elem] = stock;
         stock.create(this, $(elem), this.KEEPER_WIDTH, this.KEEPER_HEIGHT);
         stock.image_items_per_row = this.KEEPERS_SPRITES_PER_ROW;
 
