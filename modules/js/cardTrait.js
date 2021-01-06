@@ -199,9 +199,11 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         var card = cards[card_id];
         this.handStock.removeFromStockById(
           card.id,
-          "player_board_" + player_id
+          "player_board_" + player_id,
+          true
         );
       }
+      this.handStock.updateDisplay();
     },
 
     notif_handCountUpdate: function (notif) {

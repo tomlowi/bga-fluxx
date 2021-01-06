@@ -106,10 +106,9 @@ trait ResolveActionTrait
   public function action_resolveActionPlayerSelection($selected_player_id)
   {
     self::checkAction("resolveActionPlayerSelection");
-    $args = [
+    return self::_action_resolveAction([
       "selected_player_id" => $selected_player_id,
-    ];
-    return self::_action_resolveAction($args);
+    ]);
   }
 
   public function action_resolveActionCardSelection(
@@ -122,10 +121,12 @@ trait ResolveActionTrait
 
     $card = $game->cards->getCard($card_id);
 
-    $args = [
-      "card" => $card,
-    ];
+    return self::_action_resolveAction(["card" => $card]);
+  }
 
-    return self::_action_resolveAction($args);
+  public function action_resolveActionDirection($direction)
+  {
+    self::checkAction("resolveActionDirection");
+    return self::_action_resolveAction(["direction" => $direction]);
   }
 }

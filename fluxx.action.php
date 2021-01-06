@@ -118,4 +118,12 @@ class action_fluxx extends APP_GameAction
     );
     self::ajaxResponse();
   }
+
+  public function resolveActionDirection()
+  {
+    self::setAjaxMode();
+    $direction = self::getArg("direction", AT_posint, true);
+    $this->game->action_resolveActionDirection($direction);
+    self::ajaxResponse();
+  }
 }

@@ -190,10 +190,12 @@ $machinestates = [
       "resolveAction",
       "resolveActionPlayerSelection",
       "resolveActionCardSelection",
+      "resolveActionDirection",
     ],
     "transitions" => [
       "resolvedAction" => STATE_PLAY_CARD,
-      "donePlayingCards" => STATE_ENFORCE_HAND_LIMIT_SELF,
+      "handsExchangeOccured" => STATE_ENFORCE_HAND_LIMIT_OTHERS,
+      "keepersExchangeOccured" => STATE_ENFORCE_KEEPERS_LIMIT_OTHERS,
       "endGame" => STATE_GAME_END,
     ],
   ],

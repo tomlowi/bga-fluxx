@@ -55,8 +55,12 @@ class view_fluxx_fluxx extends game_view
     $this->tpl["CURRENT_PLAYER_COLOR"] = $player_info["player_color"];
 
     $this->page->begin_block($template, "keepers");
-    foreach ($players as $player_id => $player_info) {
+
+    $players_in_order = $this->game->getPlayersInOrder();
+
+    foreach ($players_in_order as $player_id) {
       if ($player_id != $current_player_id) {
+        $player_info = $players[$player_id];
         $this->page->insert_block("keepers", [
           "PLAYER_ID" => $player_id,
           "PLAYER_NAME" => $player_info["player_name"],

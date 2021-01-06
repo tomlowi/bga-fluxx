@@ -71,5 +71,7 @@ class ActionTradeHands extends ActionCard
       ]
     );
     $game->sendHandCountNotifications();
+
+    return "handsExchangeOccured";
   }
 }

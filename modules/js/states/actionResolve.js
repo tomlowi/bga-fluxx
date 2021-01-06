@@ -140,7 +140,20 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
           );
         }
       },
-      direction: function (that, args) {},
+      direction: function (that, args) {
+        that.addActionButton(
+          "button_0",
+          _("To the left"),
+          "onResolveActionDirection"
+        );
+        that.addActionButton(
+          "button_1",
+          _("To the right"),
+          "onResolveActionDirection"
+        );
+        dojo.attr("button_0", "data-direction-id", 0);
+        dojo.attr("button_1", "data-direction-id", 1);
+      },
       todaysSpecial: function (that, args) {},
     },
 
@@ -182,7 +195,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       var action = "resolveActionPlayerSelection";
 
       if (this.checkAction(action)) {
-        this.ajaxAction("resolveActionPlayerSelection", {
+        this.ajaxAction(action, {
           player_id: player_id,
         });
       }
@@ -208,6 +221,18 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       }
 
       stock.unselectAll();
+    },
+
+    onResolveActionDirection: function (ev) {
+      var direction = ev.target.getAttribute("data-direction-id");
+
+      var action = "resolveActionDirection";
+
+      if (this.checkAction(action)) {
+        this.ajaxAction(action, {
+          direction: direction,
+        });
+      }
     },
 
     onUpdateActionButtonsForSpecificAction: function (actionCardArg) {
