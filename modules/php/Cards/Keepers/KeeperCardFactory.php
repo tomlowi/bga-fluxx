@@ -21,6 +21,12 @@ class KeeperCardFactory extends CardFactory
     return $keeperDefinitions;
   }
 
+  public static function getCard($cardId, $cardDefinitionId)
+  {
+    $cardDefinition = self::getClasses()[$cardDefinitionId];
+    return new KeeperCard($cardId, $cardDefinitionId, $cardDefinition["name"]);
+  }
+
   /*
    * cardClasses : for each card Id, the corresponding class name
    * no need for separate Keeper Card files, Keepers have no game logic
