@@ -54,7 +54,7 @@ class ActionRandomTax extends ActionCard
             ),
             [
               "cards" => [$card],
-              "card_name" => $card_definition["name"],
+              "card_name" => $card_definition->getName(),
               "player_id" => $player_id,
               "player_name" => $player_name,
             ]
