@@ -74,7 +74,7 @@ trait PlayCardTrait
       );
     }
 
-    $card_type = $card_definition["type"];
+    $card_type = $card["type"];
     $stateTransition = null;
     switch ($card_type) {
       case "keeper":
