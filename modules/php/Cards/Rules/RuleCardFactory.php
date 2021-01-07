@@ -13,6 +13,23 @@ class RuleCardFactory extends CardFactory
     return $name;
   }
 
+  public static function listCardDefinitions()
+  {
+    $ruleDefinitions = [];
+    foreach (self::$classes as $definitionId => $class) {
+      $card = self::getCard(0, $definitionId);
+
+      $ruleDefinitions[$definitionId] = [
+        "type" => "rule",
+        "ruleType" => $card->getRuleType(),
+        "name" => $card->getName(),
+        "subtitle" => $card->getSubtitle(),
+        "description" => $card->getDescription(),
+      ];
+    }
+    return $ruleDefinitions;
+  }
+
   /*
    * cardClasses : for each card Id, the corresponding class name
    */
@@ -32,17 +49,17 @@ class RuleCardFactory extends CardFactory
     213 => "RuleHandLimit0",
     214 => "RuleHandLimit1",
     215 => "RuleHandLimit2",
-    216 => "RuleCard",
-    217 => "RuleCard",
-    218 => "RuleCard",
-    219 => "RuleCard",
-    220 => "RuleCard",
-    221 => "RuleCard",
-    222 => "RuleCard",
-    223 => "RuleCard",
-    224 => "RuleCard",
-    225 => "RuleCard",
-    226 => "RuleCard",
-    227 => "RuleCard",
+    216 => "RuleNoHandBonus",
+    217 => "RulePartyBonus",
+    218 => "RulePoorBonus",
+    219 => "RuleRichBonus",
+    220 => "RuleDoubleAgenda",
+    221 => "RuleFirstPlayRandom",
+    222 => "RuleGetOnWithIt",
+    223 => "RuleGoalMill",
+    224 => "RuleInflation",
+    225 => "RuleMysteryPlay",
+    226 => "RuleRecycling",
+    227 => "RuleSwapPlaysForDraws",
   ];
 }

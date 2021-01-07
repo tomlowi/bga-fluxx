@@ -13,6 +13,21 @@ class GoalCardFactory extends CardFactory
     return $name;
   }
 
+  public static function listCardDefinitions()
+  {
+    $goalDefinitions = [];
+    foreach (self::$classes as $definitionId => $class) {
+      $card = self::getCard(0, $definitionId);
+
+      $goalDefinitions[$definitionId] = [
+        "type" => "goal",
+        "name" => $card->getName(),
+        "subtitle" => $card->getSubtitle(),
+      ];
+    }
+    return $goalDefinitions;
+  }
+
   /*
    * cardClasses : for each card Id, the corresponding class name
    */

@@ -22,7 +22,6 @@ class ActionStealAKeeper extends ActionCard
   {
     $option = $args["option"];
     $cardIdsSelected = $args["cardIdsSelected"];
-  {
     // verify args has 1 card id, and it is a keeper in play
     // (or that no keepers are in play and args is empty)
     $game = Utils::getGame();

@@ -28,7 +28,6 @@ class ActionRockPaperScissors extends ActionCard
   {
     $option = $args["option"];
     $cardIdsSelected = $args["cardIdsSelected"];
-  {
     // options: 1 = Rock, 2 = Paper, 3 = Scissors
 
     // @TODO: Rock-Paper-Scissors Showdown

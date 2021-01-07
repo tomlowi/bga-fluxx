@@ -7,6 +7,10 @@ namespace Fluxx\Cards;
  */
 abstract class CardFactory extends \APP_GameClass
 {
+  public static function listCardDefinitions()
+  {
+  }
+
   public static function getCard($cardId, $cardDefinitionId)
   {
     return self::resToObject($cardId, $cardDefinitionId);

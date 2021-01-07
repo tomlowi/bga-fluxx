@@ -37,9 +37,10 @@ spl_autoload_register($swdNamespaceAutoload, true, true);
 require_once APP_GAMEMODULE_PATH . "module/table/table.game.php";
 require_once "modules/php/constants.inc.php";
 
-use Fluxx\Cards\Actions\ActionCardFactory;
-use Fluxx\Cards\Rules\RuleCardFactory;
+use Fluxx\Cards\Keepers\KeeperCardFactory;
 use Fluxx\Cards\Goals\GoalCardFactory;
+use Fluxx\Cards\Rules\RuleCardFactory;
+use Fluxx\Cards\Actions\ActionCardFactory;
 
 class fluxx extends Table
 {
@@ -150,10 +151,14 @@ class fluxx extends Table
     // Create cards
     $cards = [];
 
-    foreach ($this->getCardsDefinitions() as $cardId => $card) {
+    foreach ($this->getAllCardsDefinitions() as $definitionId => $card) {
       // keeper, goal, rule, action
 
-      $cards[] = ["type" => $card["type"], "type_arg" => $cardId, "nbr" => 1];
+      $cards[] = [
+        "type" => $card["type"],
+        "type_arg" => $definitionId,
+        "nbr" => 1,
+      ];
     }
 
     $this->cards->createCards($cards, "deck");
@@ -195,7 +200,7 @@ class fluxx extends Table
 
     $result = [
       "players" => $players,
-      "cardsDefinitions" => $this->getCardsDefinitions(),
+      "cardsDefinitions" => $this->getAllCardsDefinitions(),
       "hand" => $this->cards->getCardsInLocation("hand", $current_player_id),
       "rules" => [
         "drawRule" => $this->cards->getCardsInLocation("rules", RULE_DRAW_RULE),
@@ -258,13 +263,42 @@ class fluxx extends Table
    */
 
   /*
+   * Get specific card definition for a card row
+   */
+  public function getCardDefinitionFor($card)
+  {
+    $cardType = $card["type"];
+    if ($cardType == "keeper")
+    {
+      return KeeperCardFactory::getCard($card["id"], $card["type_arg"]);
+    } 
+    else if ($cardType == "goal")
+    {
+      return GoalCardFactory::getCard($card["id"], $card["type_arg"]);
+    }
+    else if ($cardType == "rule")
+    {
+      return RuleCardFactory::getCard($card["id"], $card["type_arg"]);
+    }
+    else if ($cardType == "action")
+    {
+      return ActionCardFactory::getCard($card["id"], $card["type_arg"]);
+    }
+
+    return null;
+  }
+  /*
    * Returns all cards definitions using factories
    */
 
-  function getCardsDefinitions()
+  function getAllCardsDefinitions()
   {
-    // TODO: use factories
-    return $this->cardsDefinitions;
+    $keepers = KeeperCardFactory::listCardDefinitions();
+    $goals = GoalCardFactory::listCardDefinitions();
+    $rules = RuleCardFactory::listCardDefinitions();
+    $actions = ActionCardFactory::listCardDefinitions();
+
+    return $keepers + $goals + $rules + $actions;
   }
 
   /*
@@ -539,12 +573,11 @@ class fluxx extends Table
   /*
    * Player discards a goal after double agenda
    */
-  public function action_discardGoal($card_id, $card_definition_id)
+  public function action_discardGoal($card_id)
   {
     self::checkAction("discardGoal");
     $player_id = self::getActivePlayerId();
     $card = $this->cards->getCard($card_id);
-    $card_definition = $this->cardsDefinitions[$card_definition_id];
 
     $lastPlayedGoal = self::getGameStateValue("lastGoalBeforeDoubleAgenda");
 
