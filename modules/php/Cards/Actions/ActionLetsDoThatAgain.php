@@ -90,11 +90,13 @@ class ActionLetsDoThatAgain extends ActionCard
       );
     }
 
-    // @TODO: Everybody gets 1
+    // @TODO: Let's Do That Again
     // Challenges: we need to play the chosen card once we are back to the "playCard"
     // state
 
     // Maybe: Add chosen card in the game state, in order to execute it when
     // back to playCard state?
+
+    // This is similar to "use what you take", so we shoud probably have a common solution
   }
 }
