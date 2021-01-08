@@ -23,18 +23,6 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       }
     },
 
-    addOption1(msg) {
-      this.addActionButton("button_1", msg, "onResolveActionWithOption1");
-    },
-
-    addOption2(msg) {
-      this.addActionButton("button_2", msg, "onResolveActionWithOption2");
-    },
-
-    addOption3(msg) {
-      this.addActionButton("button_3", msg, "onResolveActionWithOption3");
-    },
-
     updateActionButtonsActionResolve: {
       keepersExchange: function (that, args) {
         for (var player_id in that.keepersStock) {
@@ -170,7 +158,14 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
           dojo.attr("button_" + choice.value, "data-value", choice.value);
         }
       },
-      todaysSpecial: function (that, args) {},
+
+      TODO: function (that, args) {
+        that.addActionButton(
+          "button_0",
+          _("Not implemented, ignore"),
+          "onResolveActionButtons"
+        );
+      },
     },
 
     onResolveActionPlayerSelection: function (ev) {
@@ -221,34 +216,6 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       }
     },
 
-    onUpdateActionButtonsForSpecificAction: function (actionCardArg) {
-      switch (actionCardArg) {
-        case "302": // Rotate Hands
-          this.addOption1(_("Rotate Left"));
-          this.addOption2(_("Rotate Right"));
-          break;
-        case "305": // RockPaperScissors
-          this.addOption1(_("Rock"));
-          this.addOption2(_("Paper"));
-          this.addOption3(_("Scissors"));
-          break;
-        case "319": // TradeHand: select another player
-          break;
-        case "323": // Today Special
-          this.addOption3(_("It's my Birthday!"));
-          this.addOption2(_("Holiday or Anniversary"));
-          this.addOption1(_("Just another day..."));
-          break;
-        default:
-          this.addActionButton(
-            "button_1",
-            _("Do It (with selected cards)"),
-            "onResolveActionWithSelectedCards"
-          );
-          break;
-      }
-    },
-
     onLeavingStateActionResolve: function () {
       console.log("Leaving state: ActionResolve");
 
@@ -277,47 +244,6 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         delete this.tmpDiscardStock;
       }
       dojo.destroy("tmpDiscardStock");
-    },
-
-    onResolveActionWithSelectedCards: function () {
-      this.onResolveActionWithSelections(0);
-    },
-
-    onResolveActionWithOption1: function () {
-      this.onResolveActionWithSelections(1);
-    },
-
-    onResolveActionWithOption2: function () {
-      this.onResolveActionWithSelections(2);
-    },
-
-    onResolveActionWithOption3: function () {
-      this.onResolveActionWithSelections(3);
-    },
-
-    onResolveActionWithSelections: function (option_chosen) {
-      var cards = [];
-
-      var selectedInDiscard = this.discardStock.getSelectedItems();
-      cards = cards.concat(selectedInDiscard);
-
-      var selectedInHand = this.handStock.getSelectedItems();
-      cards = cards.concat(selectedInHand);
-      for (var player_id in this.keepersStock) {
-        var stock = this.keepersStock[player_id];
-        var selectedInKeepers = stock.getSelectedItems();
-        cards = cards.concat(selectedInKeepers);
-      }
-
-      var card_ids = cards.map(function (card) {
-        return card.id;
-      });
-
-      console.log("resolve action with:", card_ids);
-      this.ajaxAction("resolveActionWithCards", {
-        option: option_chosen,
-        card_ids: card_ids.join(";"),
-      });
     },
 
     notif_actionResolved: function (notif) {
