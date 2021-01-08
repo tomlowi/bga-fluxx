@@ -83,9 +83,20 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
     },
 
     notif_cardsDrawnOther: function (notif) {
-      // TODO: slide card to player
+      var player_id = notif.args.player_id;
 
-      this.handCounter[notif.args.player_id].toValue(notif.args.handCount);
+      console.log(player_id, this.player_id);
+
+      if (player_id != this.player_id) {
+        this.slideTemporaryObject(
+          '<div class="flx-card flx-deck-card"></div>',
+          "flxTable",
+          "deckCard",
+          "player_board_" + player_id
+        );
+      }
+
+      this.handCounter[player_id].toValue(notif.args.handCount);
       this.deckCounter.toValue(notif.args.deckCount);
 
       if (notif.args.deckCount == 0) {
@@ -214,7 +225,6 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
     },
 
     notif_reshuffle: function (notif) {
-      // @TODO: hide deck when there is no card in it anymore
       console.log("RESHUFFLE", notif);
       this.deckCounter.toValue(notif.args.deckCount);
       dojo.removeClass("deckCard", "flx-deck-empty");
