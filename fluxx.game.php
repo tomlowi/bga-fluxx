@@ -268,25 +268,21 @@ class fluxx extends Table
   public function getCardDefinitionFor($card)
   {
     $cardType = $card["type"];
-    if ($cardType == "keeper")
-    {
-      return KeeperCardFactory::getCard($card["id"], $card["type_arg"]);
-    } 
-    else if ($cardType == "goal")
-    {
-      return GoalCardFactory::getCard($card["id"], $card["type_arg"]);
-    }
-    else if ($cardType == "rule")
-    {
-      return RuleCardFactory::getCard($card["id"], $card["type_arg"]);
-    }
-    else if ($cardType == "action")
-    {
-      return ActionCardFactory::getCard($card["id"], $card["type_arg"]);
-    }
 
-    return null;
+    switch ($cardType) {
+      case "keeper":
+        return KeeperCardFactory::getCard($card["id"], $card["type_arg"]);
+      case "goal":
+        return GoalCardFactory::getCard($card["id"], $card["type_arg"]);
+      case "rule":
+        return RuleCardFactory::getCard($card["id"], $card["type_arg"]);
+      case "action":
+        return ActionCardFactory::getCard($card["id"], $card["type_arg"]);
+      default:
+        return null;
+    }
   }
+
   /*
    * Returns all cards definitions using factories
    */
