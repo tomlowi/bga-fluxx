@@ -24,7 +24,7 @@ class ActionTradeHands extends ActionCard
     $players = $game->loadPlayersBasicInfos();
 
     $player_name = $players[$player_id]["player_name"];
-    $selected_player_id = $args["player_id"];
+    $selected_player_id = $args["selected_player_id"];
     $selected_player_name = $players[$selected_player_id]["player_name"];
 
     $selected_player_hand = $game->cards->getCardsInLocation(
