@@ -125,9 +125,9 @@ trait ResolveActionTrait
     return self::_action_resolveAction(["card" => $card]);
   }
 
-  public function action_resolveActionDirection($direction)
+  public function action_resolveActionButtons($value)
   {
-    self::checkAction("resolveActionDirection");
-    return self::_action_resolveAction(["direction" => $direction]);
+    self::checkAction("resolveActionButtons");
+    return self::_action_resolveAction(["value" => $value]);
   }
 }

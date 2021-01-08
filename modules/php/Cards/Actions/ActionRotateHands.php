@@ -16,7 +16,15 @@ class ActionRotateHands extends ActionCard
     );
   }
 
-  public $interactionNeeded = "direction";
+  public $interactionNeeded = "buttons";
+
+  public function resolveArgs()
+  {
+    return [
+      ["value" => "left", "label" => clienttranslate("To the left")],
+      ["value" => "right", "label" => clienttranslate("To the right")],
+    ];
+  }
 
   public function resolvedByBak($player, $option, $cardIdsSelected)
   {
@@ -62,8 +70,7 @@ class ActionRotateHands extends ActionCard
 
   public function resolvedBy($active_player_id, $args)
   {
-    // 0 = Left, 1 = Right
-    $direction = $args["direction"];
+    $direction = $args["value"];
 
     $game = Utils::getGame();
 
@@ -79,7 +86,7 @@ class ActionRotateHands extends ActionCard
       );
     }
 
-    if ($direction == 0) {
+    if ($direction == "left") {
       $directionTable = $game->getNextPlayerTable();
       $msg = clienttranslate('${player_name} rotated hands to the left');
     } else {

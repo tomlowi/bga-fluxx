@@ -160,19 +160,15 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
           );
         }
       },
-      direction: function (that, args) {
-        that.addActionButton(
-          "button_0",
-          _("To the left"),
-          "onResolveActionDirection"
-        );
-        that.addActionButton(
-          "button_1",
-          _("To the right"),
-          "onResolveActionDirection"
-        );
-        dojo.attr("button_0", "data-direction-id", 0);
-        dojo.attr("button_1", "data-direction-id", 1);
+      buttons: function (that, args) {
+        for (var choice of args) {
+          that.addActionButton(
+            "button_" + choice.value,
+            choice.label,
+            "onResolveActionButtons"
+          );
+          dojo.attr("button_" + choice.value, "data-value", choice.value);
+        }
       },
       todaysSpecial: function (that, args) {},
     },
@@ -211,14 +207,16 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       stock.unselectAll();
     },
 
-    onResolveActionDirection: function (ev) {
-      var direction = ev.target.getAttribute("data-direction-id");
+    onResolveActionButtons: function (ev) {
+      var value = ev.target.getAttribute("data-value");
 
-      var action = "resolveActionDirection";
+      console.log(ev, value);
+
+      var action = "resolveActionButtons";
 
       if (this.checkAction(action)) {
         this.ajaxAction(action, {
-          direction: direction,
+          value: value,
         });
       }
     },
