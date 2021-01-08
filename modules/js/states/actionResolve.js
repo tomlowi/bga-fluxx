@@ -77,7 +77,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
               stock,
               "onChangeSelection",
               that,
-              "onSelectCardForAction"
+              "onResolveActionCardSelection"
             );
           }
         }
@@ -170,38 +170,6 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         dojo.attr("button_1", "data-direction-id", 1);
       },
       todaysSpecial: function (that, args) {},
-    },
-
-    _bak_call: function () {
-      this.discardStock.setSelectionMode(2);
-      if (this.needsDiscardPileVisible(this.actionCardArg)) {
-        this.discardStock.setOverlap(50);
-      }
-
-      this.handStock.setSelectionMode(2);
-      if (this._listenerHand !== undefined) dojo.disconnect(this._listenerHand);
-      this._listenerHand = dojo.connect(
-        this.handStock,
-        "onChangeSelection",
-        this,
-        "onSelectCardForAction"
-      );
-
-      for (var player_id in this.keepersStock) {
-        var stock = this.keepersStock[player_id];
-        stock.setSelectionMode(2);
-
-        if (this._listeners[player_id] !== undefined)
-          dojo.disconnect(this._listeners[player_id]);
-        this._listeners[player_id] = dojo.connect(
-          stock,
-          "onChangeSelection",
-          this,
-          "onSelectCardForAction"
-        );
-      }
-
-      this.onUpdateActionButtonsForSpecificAction(this.actionCardArg);
     },
 
     onResolveActionPlayerSelection: function (ev) {
@@ -300,13 +268,6 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       for (var listener_id in this._listeners) {
         dojo.disconnect(this._listeners[listener_id]);
         delete this._listeners[listener_id];
-      }
-    },
-
-    onSelectCardForAction: function () {
-      var action = "resolveAction";
-      if (!this.checkAction(action, true)) {
-        stock.unselectAll();
       }
     },
 

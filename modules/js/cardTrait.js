@@ -14,6 +14,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         ["keepersDiscarded", 500],
         ["cardsReceivedFromPlayer", 500],
         ["cardsSentToPlayer", null],
+        ["keepersMoved", 500],
         ["cardFromTableToHand", null],
         ["handCountUpdate", null],
         ["reshuffle", null]
@@ -215,6 +216,27 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         );
       }
       this.handStock.updateDisplay();
+    },
+
+    notif_keepersMoved: function (notif) {
+      var player_id = notif.args.player_id;
+      var other_player_id = notif.args.other_player_id;
+      var cards = notif.args.cards;
+
+      var originStock = this.keepersStock[other_player_id];
+      var destinationStock = this.keepersStock[player_id];
+
+      for (var card_id in cards) {
+        var card = cards[card_id];
+        destinationStock.addToStockWithId(
+          card.type_arg,
+          card.id,
+          originStock.getItemDivId(card.id)
+        );
+        originStock.removeFromStockById(card.id);
+      }
+      this.keepersCounter[player_id].toValue(destinationStock.count());
+      this.keepersCounter[other_player_id].toValue(originStock.count());
     },
 
     notif_handCountUpdate: function (notif) {

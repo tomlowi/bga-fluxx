@@ -18,42 +18,59 @@ class ActionStealAKeeper extends ActionCard
 
   public $interactionNeeded = "keeperSelection";
 
-  public function resolvedBy($player_id, $args)
+  public function immediateEffectOnPlay($player_id)
   {
-    $option = $args["option"];
-    $cardIdsSelected = $args["cardIdsSelected"];
-    // verify args has 1 card id, and it is a keeper in play
-    // (or that no keepers are in play and args is empty)
     $game = Utils::getGame();
     $keepersInPlay = $game->cards->countCardInLocation("keepers");
-    if ($keepersInPlay == 0) {
-      // no keepers in play anywhere, this action does nothing
+    $playersKeepersInPlay = $game->cards->countCardInLocation(
+      "keepers",
+      $player_id
+    );
+    if ($keepersInPlay - $playersKeepersInPlay == 0) {
+      // no keepers on the table for others, this action does nothing
       return;
     }
 
-    if (count($cardIdsSelected) != 1) {
-      Utils::throwInvalidUserAction(
-        fluxx::totranslate(
-          "You must select exactly 1 Keeper card from in front of another player"
-        )
-      );
-    }
+    return parent::immediateEffectOnPlay($player_id);
+  }
 
-    $cardId = $cardIdsSelected[0];
-    $cardSelected = $game->cards->getCard($cardId);
-    if (
-      $cardSelected == null ||
-      $cardSelected["location"] != "keepers" ||
-      $cardSelected["location_arg"] == $player_id
-    ) {
+  public function resolvedBy($player_id, $args)
+  {
+    $game = Utils::getGame();
+
+    $card = $args["card"];
+    $card_definition = $game->getCardDefinitionFor($card);
+
+    $card_location = $card["location"];
+    $other_player_id = $card["location_arg"];
+
+    if ($card_location != "keepers" || $other_player_id == $player_id) {
       Utils::throwInvalidUserAction(
-        fluxx::totranslate(
-          "You must select exactly 1 Keeper from in front of another player"
+        clienttranslate(
+          "You must select a keeper card in front of another player"
         )
       );
     }
 
     // move this keeper to the current player
-    $game->cards->moveCard($cardId, "keepers", $player_id);
+    $game->cards->moveCard($card["id"], "keepers", $player_id);
+
+    $players = $game->loadPlayersBasicInfos();
+    $other_player_name = $players[$other_player_id]["player_name"];
+
+    $game->notifyAllPlayers(
+      "keepersMoved",
+      clienttranslate(
+        '${player_name} stole <b>${card_name}</b> from <b>${other_player_name}</b>'
+      ),
+      [
+        "player_name" => $game->getActivePlayerName(),
+        "other_player_name" => $other_player_name,
+        "card_name" => $card_definition->getName(),
+        "player_id" => $player_id,
+        "other_player_id" => $other_player_id,
+        "cards" => [$card],
+      ]
+    );
   }
 }

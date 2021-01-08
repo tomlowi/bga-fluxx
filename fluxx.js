@@ -361,7 +361,7 @@ define([
           );
         }
 
-        stock.setSelectionMode(2);
+        stock.setSelectionMode(0);
         stock.onItemCreate = dojo.hitch(this, "setupNewCard");
         return stock;
       },
