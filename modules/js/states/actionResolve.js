@@ -10,25 +10,13 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       console.log("Entering state: ActionResolve", args);
     },
 
-    needsDiscardPileVisible(actionCardArg) {
-      switch (actionCardArg) {
-        case "316": // LetsDoThatAgain
-          return true;
-      }
-      return false;
-    },
-
     onUpdateActionButtonsActionResolve: function (args) {
       console.log("Update Action Buttons: ActionResolve", args);
 
-      this.actionCardId = args.action_id;
-      this.actionCardArg = args.action_arg;
-      this.action_type = args.action_type;
-
       if (this.isCurrentPlayerActive()) {
-        method = this.updateActionButtonsActionResolve[this.action_type];
+        method = this.updateActionButtonsActionResolve[args.action_type];
         if (method !== undefined) {
-          method(this, args);
+          method(this, args.action_args);
         } else {
           console.log("TODO");
         }
@@ -95,7 +83,24 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
           }
         }
       },
-      discardSelection: function (that, args) {},
+      discardSelection: function (that, args) {
+        dojo.place('<div id="tmpDiscardStock"></div>', "tmpHand", "first");
+
+        that.tmpDiscardStock = that.createCardStock("tmpDiscardStock", [
+          "rule",
+          "action",
+        ]);
+
+        that.addCardsToStock(that.tmpDiscardStock, args.discard);
+        that.tmpDiscardStock.setSelectionMode(1);
+
+        that._listeners["tmpDiscard"] = dojo.connect(
+          that.tmpDiscardStock,
+          "onChangeSelection",
+          that,
+          "onResolveActionCardSelection"
+        );
+      },
       rulesSelection: function (that, args) {},
       ruleSelection: function (that, args) {
         for (var rule_type in that.rulesStock) {
@@ -269,6 +274,11 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         dojo.disconnect(this._listeners[listener_id]);
         delete this._listeners[listener_id];
       }
+
+      if (this.tmpDiscardStock !== undefined) {
+        delete this.tmpDiscardStock;
+      }
+      dojo.destroy("tmpDiscardStock");
     },
 
     onResolveActionWithSelectedCards: function () {

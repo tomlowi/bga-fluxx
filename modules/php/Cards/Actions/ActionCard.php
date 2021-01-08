@@ -29,4 +29,9 @@ class ActionCard extends Card
     }
     return null;
   }
+
+  public function resolveArgs()
+  {
+    return [];
+  }
 }

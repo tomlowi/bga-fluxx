@@ -12,6 +12,8 @@
     fluxx_fluxx.tpl
 -->
 
+<div id="tmpHand" class="whiteblock flx-hand"></div>
+
 <div class="flx-player">
   <div class="whiteblock flx-hand">
     <h3>{MY_HAND}</h3>

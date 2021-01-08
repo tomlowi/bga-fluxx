@@ -1,4 +1,8 @@
 @charset "UTF-8";
+#tmpHand:empty {
+  display: none;
+}
+
 .flx-player {
   display: flex;
   flex-wrap: wrap;

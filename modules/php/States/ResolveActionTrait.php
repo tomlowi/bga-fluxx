@@ -38,8 +38,8 @@ trait ResolveActionTrait
     return [
       "action_id" => $actionCard->getCardId(),
       "action_name" => $actionCard->getName(),
-      // "action_arg" => $card["type_arg"],
       "action_type" => $actionCard->interactionNeeded,
+      "action_args" => $actionCard->resolveArgs(),
     ];
   }
 
@@ -95,6 +95,7 @@ trait ResolveActionTrait
     self::setGameStateValue("actionToResolve", -1);
 
     $game = Utils::getGame();
+    $game->checkWinConditions();
 
     if ($stateTransition != null) {
       $game->gamestate->nextstate($stateTransition);
