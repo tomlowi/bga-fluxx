@@ -19,44 +19,48 @@ class ActionTrashANewRule extends ActionCard
 
   public $interactionNeeded = "ruleSelection";
 
-  public function resolvedBy($player_id_id, $args)
+  public function immediateEffectOnPlay($player_id)
   {
-    $option = $args["option"];
-    $cardIdsSelected = $args["cardIdsSelected"];
-
-    // verify args has 1 card id, and it is a Rule in play
-    // (or that no rules are in play and args is empty)
     $game = Utils::getGame();
     $rulesInPlay = $game->cards->countCardInLocation("rules");
     if ($rulesInPlay == 0) {
-      // no rules in play anywhere, this action does nothing
+      // no rules in play, this action does nothing
       return;
     }
 
-    if (count($cardIdsSelected) != 1) {
+    return parent::immediateEffectOnPlay($player_id);
+  }
+
+  public function resolvedBy($player_id, $args)
+  {
+    $game = Utils::getGame();
+
+    $card = $args["card"];
+    $card_definition = $game->getCardDefinitionFor($card);
+
+    $card_location = $card["location"];
+
+    if ($card_location != "rules") {
       Utils::throwInvalidUserAction(
-        fluxx::totranslate("You must select exactly 1 New Rule card in play")
+        clienttranslate("You must select a new rule card in play on the table")
       );
     }
 
-    $cardId = $cardIdsSelected[0];
-    $cardSelected = $game->cards->getCard($cardId);
-    if ($cardSelected == null || $cardSelected["location"] != "rules") {
-      Utils::throwInvalidUserAction(
-        fluxx::totranslate("You must select exactly 1 New Rule card in play")
-      );
-    }
+    $card_definition->immediateEffectOnDiscard($player_id);
 
-    // discard this rule from play
-    $rule = RuleCardFactory::getCard($cardId, $cardSelected["type_arg"]);
-    $rule->immediateEffectOnDiscard($player_id);
+    // remove this card from the table
+    $game->cards->playCard($card["id"]);
 
-    $fromTarget = $cardSelected["location_arg"];
-    $game->removeCardFromPlay(
-      $player_id,
-      $cardId,
-      $cardSelected["type"],
-      $fromTarget
+    $game->notifyAllPlayers(
+      "rulesDiscarded",
+      clienttranslate('${player_name} trashed <b>${card_name}</b>'),
+      [
+        "player_name" => $game->getActivePlayerName(),
+        "card_name" => $card_definition->getName(),
+        "cards" => [$card],
+        "ruleType" => $card_definition->getRuleType(),
+        "discardCount" => $game->cards->countCardInLocation("discard"),
+      ]
     );
   }
 }

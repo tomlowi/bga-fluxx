@@ -97,7 +97,22 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       },
       discardSelection: function (that, args) {},
       rulesSelection: function (that, args) {},
-      ruleSelection: function (that, args) {},
+      ruleSelection: function (that, args) {
+        for (var rule_type in that.rulesStock) {
+          var stock = that.rulesStock[rule_type];
+          stock.setSelectionMode(1);
+
+          if (that._listeners["rules_" + rule_type] !== undefined) {
+            dojo.disconnect(that._listeners["rules_" + rule_type]);
+          }
+          that._listeners["rules_" + rule_type] = dojo.connect(
+            stock,
+            "onChangeSelection",
+            that,
+            "onResolveActionCardSelection"
+          );
+        }
+      },
       cardSelection: function (that, args) {
         that.goalsStock.setSelectionMode(1);
         if (that._listeners["goal"] !== undefined) {
