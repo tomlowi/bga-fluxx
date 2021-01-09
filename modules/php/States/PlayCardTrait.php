@@ -152,7 +152,7 @@ trait PlayCardTrait
     );
 
     $existingGoalCount = $game->cards->countCardInLocation("goals");
-    $hasDoubleAgenda = Utils::hasActiveDoubleAgenda();
+    $hasDoubleAgenda = Utils::getActiveDoubleAgenda();
 
     // No double agenda: we simply discard the oldest goal
     if (!$hasDoubleAgenda) {
