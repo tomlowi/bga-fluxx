@@ -20,12 +20,53 @@ class ActionUseWhatYouTake extends ActionCard
 
   public function resolvedBy($player_id, $args)
   {
-    $option = $args["option"];
-    $cardIdsSelected = $args["cardIdsSelected"];
-    // options: index or id of the player chosen ?
+    $game = Utils::getGame();
+    $players = $game->loadPlayersBasicInfos();
+
+    $player_name = $players[$player_id]["player_name"];
+    $selected_player_id = $args["selected_player_id"];
+    $selected_player_name = $players[$selected_player_id]["player_name"];
+
+    $cards = $game->cards->getCardsInLocation("hand", $selected_player_id);
+    $cardsCount = count($cards);
+
+    if ($cardsCount == 0) {
+      // No card to steal, nothing to do
+      return null;
+    }
+
+    $i = bga_rand(0, $cardsCount - 1);
+    $card = array_values($cards)[$i];
+    $card_definition = $game->getCardDefinitionFor($card);
+
+    $game->notifyPlayer($player_id, "cardsSentToPlayer", "", [
+      "cards" => [$card],
+      "player_id" => $selected_player_id,
+    ]);
+    $game->notifyPlayer($player_id, "cardsReceivedFromPlayer", "", [
+      "cards" => [$card],
+      "player_id" => $selected_player_id,
+    ]);
+    $game->notifyAllPlayers(
+      "actionDone",
+      clienttranslate(
+        '${player_name} took ${card_name} from <b>${selected_player_name}</b>\'s hand (and must play it)'
+      ),
+      [
+        "card_name" => $card_definition->getName(),
+        "player_name" => $player_name,
+        "selected_player_name" => $selected_player_name,
+      ]
+    );
+    $game->sendHandCountNotifications();
 
     // @TODO: Use What You Take
-    // Challenges: select any of other players, then use the stolen card as if played from hand
-    // and after all is done, current player needs to continue its turn
+    // Challenges: we need to play the chosen card once we are back to the "playCard"
+    // state
+
+    // Maybe: Add chosen card in the game state, in order to execute it when
+    // back to playCard state?
+
+    // This is similar to "let's do that again", so we shoud probably have a common solution
   }
 }

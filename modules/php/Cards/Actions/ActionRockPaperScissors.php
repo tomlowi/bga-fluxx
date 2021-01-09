@@ -16,7 +16,16 @@ class ActionRockPaperScissors extends ActionCard
     );
   }
 
-  public $interactionNeeded = "TODO";
+  public $interactionNeeded = "buttons";
+
+  public function resolveArgs()
+  {
+    return [
+      ["value" => "rock", "label" => clienttranslate("Rock")],
+      ["value" => "paper", "label" => clienttranslate("Paper")],
+      ["value" => "scissors", "label" => clienttranslate("Scissors")],
+    ];
+  }
 
   public function immediateEffectOnPlay($player_id)
   {
@@ -26,9 +35,7 @@ class ActionRockPaperScissors extends ActionCard
 
   public function resolvedBy($player_id, $args)
   {
-    $option = $args["option"];
-    $cardIdsSelected = $args["cardIdsSelected"];
-    // options: 1 = Rock, 2 = Paper, 3 = Scissors
+    $choice = $args["value"];
 
     // @TODO: Rock-Paper-Scissors Showdown
     // winner takes over hand cards from loser

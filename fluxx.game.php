@@ -268,25 +268,21 @@ class fluxx extends Table
   public function getCardDefinitionFor($card)
   {
     $cardType = $card["type"];
-    if ($cardType == "keeper")
-    {
-      return KeeperCardFactory::getCard($card["id"], $card["type_arg"]);
-    } 
-    else if ($cardType == "goal")
-    {
-      return GoalCardFactory::getCard($card["id"], $card["type_arg"]);
-    }
-    else if ($cardType == "rule")
-    {
-      return RuleCardFactory::getCard($card["id"], $card["type_arg"]);
-    }
-    else if ($cardType == "action")
-    {
-      return ActionCardFactory::getCard($card["id"], $card["type_arg"]);
-    }
 
-    return null;
+    switch ($cardType) {
+      case "keeper":
+        return KeeperCardFactory::getCard($card["id"], $card["type_arg"]);
+      case "goal":
+        return GoalCardFactory::getCard($card["id"], $card["type_arg"]);
+      case "rule":
+        return RuleCardFactory::getCard($card["id"], $card["type_arg"]);
+      case "action":
+        return ActionCardFactory::getCard($card["id"], $card["type_arg"]);
+      default:
+        return null;
+    }
   }
+
   /*
    * Returns all cards definitions using factories
    */
@@ -424,7 +420,6 @@ class fluxx extends Table
       $this->cards->moveAllCardsInLocation("rules", "discard", $location_arg);
       self::notifyAllPlayers("rulesDiscarded", "", [
         "cards" => $cards,
-        "ruleType" => $ruleType,
         "discardCount" => $this->cards->countCardInLocation("discard"),
       ]);
     }
@@ -441,7 +436,7 @@ class fluxx extends Table
         $card["location"] != $location ||
         $card["location_arg"] != $location_arg
       ) {
-        Utils::throwInvalidUserAction(
+        BgaUserException(
           self::_("Impossible discard: invalid card ") . $card_id
         );
       }
@@ -528,37 +523,6 @@ class fluxx extends Table
       "winner" => $winnerId,
       "goal" => $winningGoalCard,
     ];
-  }
-
-  public function removeCardFromPlay(
-    $player_id,
-    $cardId,
-    $cardType,
-    $fromTarget
-  ) {
-    // playCard = move card to top of discard pile
-    $this->cards->playCard($cardId);
-
-    $players = self::loadPlayersBasicInfos();
-    $target_name = $fromTarget;
-    if ($players[$fromTarget] != null) {
-      $target_name = $players[$fromTarget]["player_name"];
-    }
-    // @TODO: react to this notification to display changes client side
-    // include all relevant data like changes in discard count, keeper/hand count etc
-    self::notifyAllPlayers(
-      "removeCardFromPlay",
-      clienttranslate(
-        '${player_name} trashes card ${card_id} from ${target_name}'
-      ),
-      [
-        "player_name" => self::getActivePlayerName(),
-        "player_id" => $player_id,
-        "card_id" => $cardId,
-        "card_type" => $cardType,
-        "target_name" => $target_name,
-      ]
-    );
   }
 
   //////////////////////////////////////////////////////////////////////////////

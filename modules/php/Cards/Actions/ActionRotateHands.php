@@ -16,54 +16,19 @@ class ActionRotateHands extends ActionCard
     );
   }
 
-  public $interactionNeeded = "direction";
+  public $interactionNeeded = "buttons";
 
-  public function resolvedByBak($player, $option, $cardIdsSelected)
+  public function resolveArgs()
   {
-    // options: 1 = Left, 2 = Right
-    $game = Utils::getGame();
-
-    $players = $game->loadPlayersBasicInfos();
-    $players_ordered = $game->getPlayersInOrder();
-    if ($option != 1) {
-      // Rotate Right instead of Left
-      $players_ordered = array_reverse($players_ordered);
-    }
-
-    $count_players = count($players_ordered);
-    // move 1st player cards to temporary hand
-    $tempHand = -1;
-    $game->cards->moveAllCardsInLocation(
-      "hand",
-      "hand",
-      $players_ordered[0],
-      $tempHand
-    );
-    // now shift all hands in between to previous player
-    for ($i = 1; $i < $count_players; $i++) {
-      $to_player_id = $players_ordered[$i - 1];
-      $from_player_id = $players_ordered[$i];
-
-      $game->cards->moveAllCardsInLocation(
-        "hand",
-        "hand",
-        $from_player_id,
-        $to_player_id
-      );
-    }
-    // finally move 1st player temp hand to last player
-    $game->cards->moveAllCardsInLocation(
-      "hand",
-      "hand",
-      $tempHand,
-      $players_ordered[$count_players - 1]
-    );
+    return [
+      ["value" => "left", "label" => clienttranslate("To the left")],
+      ["value" => "right", "label" => clienttranslate("To the right")],
+    ];
   }
 
   public function resolvedBy($active_player_id, $args)
   {
-    // 0 = Left, 1 = Right
-    $direction = $args["direction"];
+    $direction = $args["value"];
 
     $game = Utils::getGame();
 
@@ -79,7 +44,7 @@ class ActionRotateHands extends ActionCard
       );
     }
 
-    if ($direction == 0) {
+    if ($direction == "left") {
       $directionTable = $game->getNextPlayerTable();
       $msg = clienttranslate('${player_name} rotated hands to the left');
     } else {

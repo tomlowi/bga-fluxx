@@ -118,12 +118,33 @@ class action_fluxx extends APP_GameAction
     );
     self::ajaxResponse();
   }
-
-  public function resolveActionDirection()
+  public function resolveActionCardsSelection()
   {
     self::setAjaxMode();
-    $direction = self::getArg("direction", AT_posint, true);
-    $this->game->action_resolveActionDirection($direction);
+    $cards_id = self::getArg("cards_id", AT_numberlist, true); // ids of card to discard
+    $this->game->action_resolveActionCardsSelection(
+      $this->stripListOfCardIds($cards_id)
+    );
+    self::ajaxResponse();
+  }
+
+  public function resolveActionKeepersExchange()
+  {
+    self::setAjaxMode();
+    $myKeeperId = self::getArg("myKeeperId", AT_posint, true);
+    $otherKeeperId = self::getArg("otherKeeperId", AT_posint, true);
+    $this->game->action_resolveActionKeepersExchange(
+      $myKeeperId,
+      $otherKeeperId
+    );
+    self::ajaxResponse();
+  }
+
+  public function resolveActionButtons()
+  {
+    self::setAjaxMode();
+    $value = self::getArg("value", AT_alphanum, true);
+    $this->game->action_resolveActionButtons($value);
     self::ajaxResponse();
   }
 }

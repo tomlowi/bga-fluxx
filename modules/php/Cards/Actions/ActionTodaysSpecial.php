@@ -16,21 +16,42 @@ class ActionTodaysSpecial extends ActionCard
     );
   }
 
-  public $interactionNeeded = "todaysSpecial";
+  public $interactionNeeded = "buttons";
+
+  public function resolveArgs()
+  {
+    return [
+      ["value" => "birthday", "label" => clienttranslate("It's my Birthday!")],
+      [
+        "value" => "holiday",
+        "label" => clienttranslate("Holiday or Anniversary"),
+      ],
+      ["value" => "none", "label" => clienttranslate("Just another day...")],
+    ];
+  }
 
   public function resolvedBy($player_id, $args)
   {
-    $option = $args["option"];
-    $cardIdsSelected = $args["cardIdsSelected"];
-
-    // options: 3 = Birthday, 2 = Holiday/Anniversary, 1 = Just another day
+    $value = $args["value"];
     $nrCardsToDraw = 3;
-    $nrCardsToPlay = $option;
+
+    switch ($value) {
+      case "birthday":
+        $nrCardsToPlay = 3;
+        break;
+      case "holiday":
+        $nrCardsToPlay = 2;
+        break;
+      default:
+        $nrCardsToPlay = 1;
+    }
 
     // @TODO: Today’s Special!
     // Challenges: current hand needs to be set aside and player gets special turn with these cards
     // this will probably require an entirely separate state?
     // and after all is done, current player needs to continue its turn
+
+    // This is similar to "draw 2 and play them" and "draw 3, play 2" and must probably have a similar solution
 
     Utils::getGame()->performDrawCards($player_id, $nrCardsToDraw);
   }

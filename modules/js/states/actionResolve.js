@@ -10,41 +10,13 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       console.log("Entering state: ActionResolve", args);
     },
 
-    needsDiscardPileVisible(actionCardArg) {
-      switch (actionCardArg) {
-        case "316": // LetsDoThatAgain
-          return true;
-      }
-      return false;
-    },
-
     onUpdateActionButtonsActionResolve: function (args) {
       console.log("Update Action Buttons: ActionResolve", args);
 
-      this.actionCardId = args.action_id;
-      this.actionCardArg = args.action_arg;
-      this.action_type = args.action_type;
-
       if (this.isCurrentPlayerActive()) {
-        method = this.updateActionButtonsActionResolve[this.action_type];
-        if (method !== undefined) {
-          method(this, args);
-        } else {
-          console.log("TODO");
-        }
+        method = this.updateActionButtonsActionResolve[args.action_type];
+        method(this, args.action_args);
       }
-    },
-
-    addOption1(msg) {
-      this.addActionButton("button_1", msg, "onResolveActionWithOption1");
-    },
-
-    addOption2(msg) {
-      this.addActionButton("button_2", msg, "onResolveActionWithOption2");
-    },
-
-    addOption3(msg) {
-      this.addActionButton("button_3", msg, "onResolveActionWithOption3");
     },
 
     updateActionButtonsActionResolve: {
@@ -52,17 +24,12 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         for (var player_id in that.keepersStock) {
           var stock = that.keepersStock[player_id];
           stock.setSelectionMode(1);
-
-          if (that._listeners["keepers_" + player_id] !== undefined) {
-            dojo.disconnect(that._listeners["keepers_" + player_id]);
-          }
-          that._listeners["keepers_" + player_id] = dojo.connect(
-            stock,
-            "onChangeSelection",
-            that,
-            "onSelectCardForAction"
-          );
         }
+        that.addActionButton(
+          "button_confirm",
+          _("Done"),
+          "onResolveActionKeepersExchange"
+        );
       },
       keeperSelection: function (that, args) {
         for (var player_id in that.keepersStock) {
@@ -77,7 +44,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
               stock,
               "onChangeSelection",
               that,
-              "onSelectCardForAction"
+              "onResolveActionCardSelection"
             );
           }
         }
@@ -95,9 +62,52 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
           }
         }
       },
-      discardSelection: function (that, args) {},
-      rulesSelection: function (that, args) {},
-      ruleSelection: function (that, args) {},
+      discardSelection: function (that, args) {
+        dojo.place('<div id="tmpDiscardStock"></div>', "tmpHand", "first");
+
+        that.tmpDiscardStock = that.createCardStock("tmpDiscardStock", [
+          "rule",
+          "action",
+        ]);
+
+        that.addCardsToStock(that.tmpDiscardStock, args.discard);
+        that.tmpDiscardStock.setSelectionMode(1);
+
+        that._listeners["tmpDiscard"] = dojo.connect(
+          that.tmpDiscardStock,
+          "onChangeSelection",
+          that,
+          "onResolveActionCardSelection"
+        );
+      },
+      rulesSelection: function (that, args) {
+        for (var rule_type in that.rulesStock) {
+          var stock = that.rulesStock[rule_type];
+          stock.setSelectionMode(2);
+        }
+        that.addActionButton(
+          "button_confirm",
+          _("Done"),
+          "onResolveActionRulesSelection"
+        );
+        dojo.attr("button_confirm", "data-count", args.toDiscardCount);
+      },
+      ruleSelection: function (that, args) {
+        for (var rule_type in that.rulesStock) {
+          var stock = that.rulesStock[rule_type];
+          stock.setSelectionMode(1);
+
+          if (that._listeners["rules_" + rule_type] !== undefined) {
+            dojo.disconnect(that._listeners["rules_" + rule_type]);
+          }
+          that._listeners["rules_" + rule_type] = dojo.connect(
+            stock,
+            "onChangeSelection",
+            that,
+            "onResolveActionCardSelection"
+          );
+        }
+      },
       cardSelection: function (that, args) {
         that.goalsStock.setSelectionMode(1);
         if (that._listeners["goal"] !== undefined) {
@@ -140,53 +150,25 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
           );
         }
       },
-      direction: function (that, args) {
+      buttons: function (that, args) {
+        for (var choice of args) {
+          that.addActionButton(
+            "button_" + choice.value,
+            choice.label,
+            "onResolveActionButtons"
+          );
+          dojo.attr("button_" + choice.value, "data-value", choice.value);
+        }
+      },
+
+      TODO: function (that, args) {
         that.addActionButton(
           "button_0",
-          _("To the left"),
-          "onResolveActionDirection"
+          _("Not implemented, ignore"),
+          "onResolveActionButtons"
         );
-        that.addActionButton(
-          "button_1",
-          _("To the right"),
-          "onResolveActionDirection"
-        );
-        dojo.attr("button_0", "data-direction-id", 0);
-        dojo.attr("button_1", "data-direction-id", 1);
+        dojo.attr("button_0", "data-value", 0);
       },
-      todaysSpecial: function (that, args) {},
-    },
-
-    _bak_call: function () {
-      this.discardStock.setSelectionMode(2);
-      if (this.needsDiscardPileVisible(this.actionCardArg)) {
-        this.discardStock.setOverlap(50);
-      }
-
-      this.handStock.setSelectionMode(2);
-      if (this._listenerHand !== undefined) dojo.disconnect(this._listenerHand);
-      this._listenerHand = dojo.connect(
-        this.handStock,
-        "onChangeSelection",
-        this,
-        "onSelectCardForAction"
-      );
-
-      for (var player_id in this.keepersStock) {
-        var stock = this.keepersStock[player_id];
-        stock.setSelectionMode(2);
-
-        if (this._listeners[player_id] !== undefined)
-          dojo.disconnect(this._listeners[player_id]);
-        this._listeners[player_id] = dojo.connect(
-          stock,
-          "onChangeSelection",
-          this,
-          "onSelectCardForAction"
-        );
-      }
-
-      this.onUpdateActionButtonsForSpecificAction(this.actionCardArg);
     },
 
     onResolveActionPlayerSelection: function (ev) {
@@ -209,8 +191,6 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
 
       if (items.length == 0) return;
 
-      console.log("onResolveActionCardSelection", items);
-
       if (this.checkAction(action)) {
         // Play a card
         this.ajaxAction(action, {
@@ -223,43 +203,90 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       stock.unselectAll();
     },
 
-    onResolveActionDirection: function (ev) {
-      var direction = ev.target.getAttribute("data-direction-id");
+    onResolveActionButtons: function (ev) {
+      var value = ev.target.getAttribute("data-value");
 
-      var action = "resolveActionDirection";
+      var action = "resolveActionButtons";
 
       if (this.checkAction(action)) {
         this.ajaxAction(action, {
-          direction: direction,
+          value: value,
         });
       }
     },
 
-    onUpdateActionButtonsForSpecificAction: function (actionCardArg) {
-      switch (actionCardArg) {
-        case "302": // Rotate Hands
-          this.addOption1(_("Rotate Left"));
-          this.addOption2(_("Rotate Right"));
-          break;
-        case "305": // RockPaperScissors
-          this.addOption1(_("Rock"));
-          this.addOption2(_("Paper"));
-          this.addOption3(_("Scissors"));
-          break;
-        case "319": // TradeHand: select another player
-          break;
-        case "323": // Today Special
-          this.addOption3(_("It's my Birthday!"));
-          this.addOption2(_("Holiday or Anniversary"));
-          this.addOption1(_("Just another day..."));
-          break;
-        default:
-          this.addActionButton(
-            "button_1",
-            _("Do It (with selected cards)"),
-            "onResolveActionWithSelectedCards"
-          );
-          break;
+    onResolveActionKeepersExchange: function (ev) {
+      var myKeeper = this.keepersStock[this.player_id].getSelectedItems()[0];
+
+      if (myKeeper === undefined) {
+        this.showMessage(_("You must select one of your keepers"), "error");
+        return;
+      }
+
+      var otherKeeper;
+
+      for (var player_id in this.keepersStock) {
+        if (player_id != this.player_id) {
+          var stock = this.keepersStock[player_id];
+          var items = stock.getSelectedItems();
+
+          if (items.length > 0) {
+            if (otherKeeper !== undefined) {
+              this.showMessage(
+                _("You must select only one other player's keeper"),
+                "error"
+              );
+              return;
+            }
+
+            otherKeeper = items[0];
+          }
+        }
+      }
+
+      if (otherKeeper === undefined) {
+        this.showMessage(_("You must select exactly one other player's keeper"), "error");
+        return;
+      }
+
+      var action = "resolveActionKeepersExchange";
+
+      if (this.checkAction(action)) {
+        this.ajaxAction(action, {
+          myKeeperId: myKeeper.id,
+          otherKeeperId: otherKeeper.id,
+        });
+      }
+    },
+
+    onResolveActionRulesSelection: function (ev) {
+      var toDiscardCount = parseInt(ev.target.getAttribute("data-count"));
+      var rules = [];
+
+      for (var rule_type in this.rulesStock) {
+        var stock = this.rulesStock[rule_type];
+        rules = rules.concat(stock.getSelectedItems());
+      }
+
+      if (rules.length > toDiscardCount) {
+        this.showMessage(
+          dojo.string.substitute(_("You can only pick up to ${nb} rules"), {
+            nb: toDiscardCount,
+          }),
+          "error"
+        );
+        return;
+      }
+
+      var action = "resolveActionCardsSelection";
+      var rules_id = rules.map(function (rule) {
+        return rule.id;
+      });
+
+      if (this.checkAction(action)) {
+        this.ajaxAction(action, {
+          cards_id: rules_id.join(";"),
+        });
       }
     },
 
@@ -286,54 +313,11 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         dojo.disconnect(this._listeners[listener_id]);
         delete this._listeners[listener_id];
       }
-    },
 
-    onSelectCardForAction: function () {
-      var action = "resolveAction";
-      if (!this.checkAction(action, true)) {
-        stock.unselectAll();
+      if (this.tmpDiscardStock !== undefined) {
+        delete this.tmpDiscardStock;
       }
-    },
-
-    onResolveActionWithSelectedCards: function () {
-      this.onResolveActionWithSelections(0);
-    },
-
-    onResolveActionWithOption1: function () {
-      this.onResolveActionWithSelections(1);
-    },
-
-    onResolveActionWithOption2: function () {
-      this.onResolveActionWithSelections(2);
-    },
-
-    onResolveActionWithOption3: function () {
-      this.onResolveActionWithSelections(3);
-    },
-
-    onResolveActionWithSelections: function (option_chosen) {
-      var cards = [];
-
-      var selectedInDiscard = this.discardStock.getSelectedItems();
-      cards = cards.concat(selectedInDiscard);
-
-      var selectedInHand = this.handStock.getSelectedItems();
-      cards = cards.concat(selectedInHand);
-      for (var player_id in this.keepersStock) {
-        var stock = this.keepersStock[player_id];
-        var selectedInKeepers = stock.getSelectedItems();
-        cards = cards.concat(selectedInKeepers);
-      }
-
-      var card_ids = cards.map(function (card) {
-        return card.id;
-      });
-
-      console.log("resolve action with:", card_ids);
-      this.ajaxAction("resolveActionWithCards", {
-        option: option_chosen,
-        card_ids: card_ids.join(";"),
-      });
+      dojo.destroy("tmpDiscardStock");
     },
 
     notif_actionResolved: function (notif) {

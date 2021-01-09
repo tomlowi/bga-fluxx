@@ -12,6 +12,8 @@
     fluxx_fluxx.tpl
 -->
 
+<div id="tmpHand" class="whiteblock flx-hand"></div>
+
 <div class="flx-player">
   <div class="whiteblock flx-hand">
     <h3>{MY_HAND}</h3>
@@ -24,7 +26,7 @@
   </div>
 </div>
 
-<div class="flx-table">
+<div id="flxTable" class="flx-table">
   <div class="whiteblock flx-deck">
     <div id="deckCard" class="flx-card flx-deck-card"></div>
     <div id="deckCount" class="flx-card-count"></div>

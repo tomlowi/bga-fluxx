@@ -20,64 +20,83 @@ class ActionLetsDoThatAgain extends ActionCard
 
   public function immediateEffectOnPlay($player_id)
   {
-    return parent::immediateEffectOnPlay($player_id);
-    // nothing now, needs to go to resolve action state
-    // @TODO: send notification to open up the discard pile and make it visible?
-  }
-
-  public function resolvedBy($player_id, $args)
-  {
-    $option = $args["option"];
-    $cardIdsSelected = $args["cardIdsSelected"];
-
-    // verify args has 1 card id, and it is an Action or Rule card in the discard
-    // (or that none are available in the discard pile)
     $game = Utils::getGame();
-    $actionsInDiscard = $game->cards->getCardsOfTypeInLocation(
-      "action",
-      null,
-      "discard"
-    );
+
     $rulesInDiscard = $game->cards->getCardsOfTypeInLocation(
       "rule",
       null,
       "discard"
     );
-    if ($actionsInDiscard == 0 && $rulesInDiscard == 0) {
-      // nothing available in discard, this action does nothing
+
+    $actionsInDiscard = $game->cards->getCardsOfTypeInLocation(
+      "action",
+      null,
+      "discard"
+    );
+
+    if (count($rulesInDiscard) == 0 && count($actionsInDiscard) == 0) {
+      // no rules or actions in the discard, this action does nothing
+      $game->notifyAllPlayers(
+        "",
+        clienttranslate(
+          "There are no rule or action cards in the discard pile!"
+        )
+      );
+
       return;
     }
 
-    if (count($cardIdsSelected) != 1) {
-      Utils::throwInvalidUserAction(
-        fluxx::totranslate(
-          "You must select exactly 1 Action or New Rule card from discard pile"
-        )
-      );
-    }
+    return parent::immediateEffectOnPlay($player_id);
+  }
 
-    $cardId = $cardIdsSelected[0];
-    $cardSelected = $game->cards->getCard($cardId);
-    $cardType = $cardSelected["type"];
+  public function resolveArgs()
+  {
+    $game = Utils::getGame();
+
+    $rulesInDiscard = $game->cards->getCardsOfTypeInLocation(
+      "rule",
+      null,
+      "discard"
+    );
+
+    $actionsInDiscard = $game->cards->getCardsOfTypeInLocation(
+      "action",
+      null,
+      "discard"
+    );
+
+    return [
+      "discard" => $rulesInDiscard + $actionsInDiscard,
+    ];
+  }
+
+  public function resolvedBy($player_id, $args)
+  {
+    $game = Utils::getGame();
+
+    $card = $args["card"];
+    $card_definition = $game->getCardDefinitionFor($card);
+
+    $cardType = $card["type"];
+
     if (
-      $cardSelected == null ||
-      $cardSelected["location"] != "discard" ||
-      ($cardType != "action" && $cardType != "rule")
+      $card["location"] != "discard" ||
+      !in_array($cardType, ["rule", "action"])
     ) {
       Utils::throwInvalidUserAction(
         fluxx::totranslate(
-          "You must select exactly 1 Action or New Rule card from discard pile"
+          "You must select an action or rule card in the discard pile"
         )
       );
     }
 
-    // temporary move to hand so it can be played again
-    $game->cards->moveCard($cardId, "hand", $player_id);
-    if ($cardType == "action") {
-      // @TODO: check how this interrupts the game state of the current action
-      $game->playActionCard($player_id, $cardSelected);
-    } elseif ($cardType == "rule") {
-      $game->playRuleCard($player_id, $cardSelected);
-    }
+    // @TODO: Let's Do That Again
+    // Challenges: we need to play the chosen card once we are back to the "playCard"
+    // state
+
+    // Maybe: Add chosen card in the game state, in order to execute it when
+    // back to playCard state?
+
+    // This is similar to "use what you take", so we shoud probably have a common solution
   }
 }

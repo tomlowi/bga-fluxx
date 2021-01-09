@@ -38,8 +38,8 @@ trait ResolveActionTrait
     return [
       "action_id" => $actionCard->getCardId(),
       "action_name" => $actionCard->getName(),
-      // "action_arg" => $card["type_arg"],
       "action_type" => $actionCard->interactionNeeded,
+      "action_args" => $actionCard->resolveArgs(),
     ];
   }
 
@@ -95,6 +95,7 @@ trait ResolveActionTrait
     self::setGameStateValue("actionToResolve", -1);
 
     $game = Utils::getGame();
+    $game->checkWinConditions();
 
     if ($stateTransition != null) {
       $game->gamestate->nextstate($stateTransition);
@@ -124,9 +125,38 @@ trait ResolveActionTrait
     return self::_action_resolveAction(["card" => $card]);
   }
 
-  public function action_resolveActionDirection($direction)
+  public function action_resolveActionCardsSelection($cards_id)
   {
-    self::checkAction("resolveActionDirection");
-    return self::_action_resolveAction(["direction" => $direction]);
+    self::checkAction("resolveActionCardsSelection");
+
+    $game = Utils::getGame();
+
+    $cards = [];
+    foreach ($cards_id as $card_id) {
+      $cards[] = $game->cards->getCard($card_id);
+    }
+    return self::_action_resolveAction(["cards" => $cards]);
+  }
+
+  public function action_resolveActionKeepersExchange(
+    $myKeeperId,
+    $otherKeeperId
+  ) {
+    self::checkAction("resolveActionKeepersExchange");
+    $game = Utils::getGame();
+
+    $myKeeper = $game->cards->getCard($myKeeperId);
+    $otherKeeper = $game->cards->getCard($otherKeeperId);
+
+    return self::_action_resolveAction([
+      "myKeeper" => $myKeeper,
+      "otherKeeper" => $otherKeeper,
+    ]);
+  }
+
+  public function action_resolveActionButtons($value)
+  {
+    self::checkAction("resolveActionButtons");
+    return self::_action_resolveAction(["value" => $value]);
   }
 }

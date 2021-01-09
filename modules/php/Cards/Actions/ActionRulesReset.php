@@ -19,7 +19,7 @@ class ActionRulesReset extends ActionCard
   public function immediateEffectOnPlay($player_id)
   {
     $game = Utils::getGame();
-    $game->discardRuleCardsForType("playLimit");
+    $game->discardRuleCardsForType("playRule");
     $game->discardRuleCardsForType("drawRule");
     $game->discardRuleCardsForType("keepersLimit");
     $game->discardRuleCardsForType("handLimit");

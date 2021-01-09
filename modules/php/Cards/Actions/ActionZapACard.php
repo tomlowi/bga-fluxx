@@ -44,14 +44,13 @@ class ActionZapACard extends ActionCard
 
     if (!in_array($card_location, ["keepers", "rules", "goals"])) {
       Utils::throwInvalidUserAction(
-        clienttranslate("You must select a card in play on the table")
+        fluxx::totranslate("You must select a card in play on the table")
       );
     }
 
     // if a rule is taken back, its effect stops
     if ($card["type"] == "rule") {
-      $rule = RuleCardFactory::getCard($card["id"], $card["type_arg"]);
-      $rule->immediateEffectOnDiscard($player_id);
+      $card_definition->immediateEffectOnDiscard($player_id);
     }
 
     // move this card to player hand

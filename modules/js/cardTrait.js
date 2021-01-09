@@ -14,6 +14,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         ["keepersDiscarded", 500],
         ["cardsReceivedFromPlayer", 500],
         ["cardsSentToPlayer", null],
+        ["keepersMoved", 500],
         ["cardFromTableToHand", null],
         ["handCountUpdate", null],
         ["reshuffle", null]
@@ -83,9 +84,18 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
     },
 
     notif_cardsDrawnOther: function (notif) {
-      // TODO: slide card to player
+      var player_id = notif.args.player_id;
 
-      this.handCounter[notif.args.player_id].toValue(notif.args.handCount);
+      if (player_id != this.player_id) {
+        this.slideTemporaryObject(
+          '<div class="flx-card flx-deck-card"></div>',
+          "flxTable",
+          "deckCard",
+          "player_board_" + player_id
+        );
+      }
+
+      this.handCounter[player_id].toValue(notif.args.handCount);
       this.deckCounter.toValue(notif.args.deckCount);
 
       if (notif.args.deckCount == 0) {
@@ -116,11 +126,26 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
     },
 
     notif_rulesDiscarded: function (notif) {
-      var ruleType = notif.args.ruleType;
-      if (ruleType != "drawRule" && ruleType != "playRule") {
-        ruleType = "others";
+      var cards = notif.args.cards;
+
+      var drawRuleCards = {};
+      var playRuleCards = {};
+      var othersRuleCards = {};
+
+      for (var card_id in cards) {
+        var card = cards[card_id];
+        if (card["location_arg"] == 0)
+          // RULE_PLAY_RULE
+          playRuleCards[card_id] = card;
+        else if (card["location_arg"] == 1)
+          // RULE_DRAW_RULE
+          drawRuleCards[card_id] = card;
+        else othersRuleCards[card_id] = card;
       }
-      this.discardCards(notif.args.cards, this.rulesStock[ruleType]);
+
+      this.discardCards(playRuleCards, this.rulesStock.playRule);
+      this.discardCards(drawRuleCards, this.rulesStock.drawRule);
+      this.discardCards(othersRuleCards, this.rulesStock.others);
       this.discardCounter.toValue(notif.args.discardCount);
     },
 
@@ -206,6 +231,29 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       this.handStock.updateDisplay();
     },
 
+    notif_keepersMoved: function (notif) {
+      var destination_player_id = notif.args.destination_player_id;
+      var origin_player_id = notif.args.origin_player_id;
+      var cards = notif.args.cards;
+
+      var originStock = this.keepersStock[origin_player_id];
+      var destinationStock = this.keepersStock[destination_player_id];
+
+      for (var card_id in cards) {
+        var card = cards[card_id];
+        destinationStock.addToStockWithId(
+          card.type_arg,
+          card.id,
+          originStock.getItemDivId(card.id)
+        );
+        originStock.removeFromStockById(card.id);
+      }
+      this.keepersCounter[destination_player_id].toValue(
+        destinationStock.count()
+      );
+      this.keepersCounter[origin_player_id].toValue(originStock.count());
+    },
+
     notif_handCountUpdate: function (notif) {
       var handsCount = notif.args.handsCount;
       for (var player_id in handsCount) {
@@ -214,8 +262,6 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
     },
 
     notif_reshuffle: function (notif) {
-      // @TODO: hide deck when there is no card in it anymore
-      console.log("RESHUFFLE", notif);
       this.deckCounter.toValue(notif.args.deckCount);
       dojo.removeClass("deckCard", "flx-deck-empty");
 
@@ -244,9 +290,6 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       var originStock;
 
       var card_definition = this.cardsDefinitions[card.type_arg];
-
-      console.log(card);
-      console.log(card_definition);
 
       switch (card.location) {
         case "keepers":

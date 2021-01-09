@@ -18,41 +18,49 @@ class ActionTrashAKeeper extends ActionCard
 
   public $interactionNeeded = "keeperSelection";
 
-  public function resolvedBy($player_id, $args)
+  public function immediateEffectOnPlay($player_id)
   {
-    $option = $args["option"];
-    $cardIdsSelected = $args["cardIdsSelected"];
-
-    // verify args has 1 card id, and it is a keeper in play
-    // (or that no keepers are in play and args is empty)
     $game = Utils::getGame();
     $keepersInPlay = $game->cards->countCardInLocation("keepers");
     if ($keepersInPlay == 0) {
-      // no keepers in play anywhere, this action does nothing
+      // no keepers on the table, this action does nothing
       return;
     }
 
-    if (count($cardIdsSelected) != 1) {
+    return parent::immediateEffectOnPlay($player_id);
+  }
+
+  public function resolvedBy($player_id, $args)
+  {
+    $game = Utils::getGame();
+
+    $card = $args["card"];
+    $card_definition = $game->getCardDefinitionFor($card);
+
+    $card_location = $card["location"];
+    $origin_player_id = $card["location_arg"];
+
+    if ($card_location != "keepers") {
       Utils::throwInvalidUserAction(
-        fluxx::totranslate("You must select exactly 1 Keeper card in play")
+        fluxx::totranslate(
+          "You must select a keeper card in front of another player"
+        )
       );
     }
 
-    $cardId = $cardIdsSelected[0];
-    $cardSelected = $game->cards->getCard($cardId);
-    if ($cardSelected == null || $cardSelected["location"] != "keepers") {
-      Utils::throwInvalidUserAction(
-        fluxx::totranslate("You must select exactly 1 Keeper card in play")
-      );
-    }
+    // move this keeper to the discard
+    $game->cards->playCard($card["id"]);
 
-    // discard this keeper from play
-    $fromTarget = $cardSelected["location_arg"];
-    $game->removeCardFromPlay(
-      $player_id,
-      $cardId,
-      $cardSelected["type"],
-      $fromTarget
+    $game->notifyAllPlayers(
+      "keepersDiscarded",
+      clienttranslate('${player_name} trashed <b>${card_name}</b>'),
+      [
+        "player_name" => $game->getActivePlayerName(),
+        "card_name" => $card_definition->getName(),
+        "cards" => [$card],
+        "player_id" => $origin_player_id,
+        "discardCount" => $game->cards->countCardInLocation("discard"),
+      ]
     );
   }
 }

@@ -18,52 +18,40 @@ class ActionExchangeKeepers extends ActionCard
 
   public $interactionNeeded = "keepersExchange";
 
-  public function resolvedBy($player_id, $args)
+  public function immediateEffectOnPlay($player_id)
   {
-    $option = $args["option"];
-    $cardIdsSelected = $args["cardIdsSelected"];
-
-    // verify args has 2 card ids:
-    // 1 = keeper in play of this player
-    // 1 = keeper in play of another player
-    // (or that no keepers are in play and args is empty)
     $game = Utils::getGame();
     $keepersInPlay = $game->cards->countCardInLocation("keepers");
-    $keepersOfPlayer = $game->cards->countCardInLocation("keepers", $player_id);
+    $playersKeepersInPlay = $game->cards->countCardInLocation(
+      "keepers",
+      $player_id
+    );
     if (
-      $keepersInPlay == 0 ||
-      $keepersOfPlayer == 0 ||
-      $keepersInPlay == $keepersOfPlayer
+      $playersKeepersInPlay == 0 ||
+      $keepersInPlay - $playersKeepersInPlay == 0
     ) {
-      // no keepers in play anywhere, or current player has no keepers,
-      // or current player is only with keepers => this action does nothing
+      // no keepers on my side or
+      // no keepers on the table for others, this action does nothing
       return;
     }
 
-    if (count($cardIdsSelected) != 2) {
-      Utils::throwInvalidUserAction(
-        fluxx::totranslate(
-          "You must select exactly 2 Keeper cards, 1 of yours and 1 of another player"
-        )
-      );
-    }
+    return parent::immediateEffectOnPlay($player_id);
+  }
 
-    $card1Id = $cardIdsSelected[0];
-    $card1Selected = $game->cards->getCard($card1Id);
-    $card1Player = $card1Selected["location_arg"];
+  public function resolvedBy($player_id, $args)
+  {
+    $game = Utils::getGame();
 
-    $card2Id = $cardIdsSelected[1];
-    $card2Selected = $game->cards->getCard($card2Id);
-    $card2Player = $card2Selected["location_arg"];
+    $myKeeper = $args["myKeeper"];
+    $otherKeeper = $args["otherKeeper"];
 
-    // verify these cards are valid keepers to switch
+    $other_player_id = $otherKeeper["location_arg"];
+
     if (
-      $card1Selected == null ||
-      $card1Selected["location"] != "keepers" ||
-      $card2Selected == null ||
-      $card2Selected["location"] != "keepers" ||
-      ($card1Player != $player && $card2Player != $player) ||
-      ($card1Player == $player && $card2Player == $player)
+      $myKeeper["location"] != "keepers" ||
+      $otherKeeper["location"] != "keepers" ||
+      $myKeeper["location_arg"] != $player_id ||
+      $other_player_id == $player_id
     ) {
       Utils::throwInvalidUserAction(
         fluxx::totranslate(
@@ -73,7 +61,37 @@ class ActionExchangeKeepers extends ActionCard
     }
 
     // switch the keeper locations
-    $game->cards->moveCard($card1Id, "keepers", $card2Player);
-    $game->cards->moveCard($card2Id, "keepers", $card1Player);
+    $game->cards->moveCard($myKeeper["id"], "keepers", $other_player_id);
+
+    $game->notifyAllPlayers("keepersMoved", "", [
+      "origin_player_id" => $player_id,
+      "destination_player_id" => $other_player_id,
+      "cards" => [$myKeeper],
+    ]);
+
+    $game->cards->moveCard($otherKeeper["id"], "keepers", $player_id);
+    $game->notifyAllPlayers("keepersMoved", "", [
+      "origin_player_id" => $other_player_id,
+      "destination_player_id" => $player_id,
+      "cards" => [$otherKeeper],
+    ]);
+
+    $players = $game->loadPlayersBasicInfos();
+    $other_player_name = $players[$other_player_id]["player_name"];
+    $myKeeperCard = $game->getCardDefinitionFor($myKeeper);
+    $otherKeeperCard = $game->getCardDefinitionFor($otherKeeper);
+
+    $game->notifyAllPlayers(
+      "actionResolved",
+      clienttranslate(
+        '${player_name} got <b>${other_keeper_name}</b> from <b>${other_player_name}</b> in exchange for <b>${my_keeper_name}</b>'
+      ),
+      [
+        "player_name" => $game->getActivePlayerName(),
+        "other_player_name" => $other_player_name,
+        "other_keeper_name" => $otherKeeperCard->getName(),
+        "my_keeper_name" => $myKeeperCard->getName(),
+      ]
+    );
   }
 }
