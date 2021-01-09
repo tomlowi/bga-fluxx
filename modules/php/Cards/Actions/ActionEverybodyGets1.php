@@ -16,11 +16,14 @@ class ActionEverybodyGets1 extends ActionCard
   }
 
   public function immediateEffectOnPlay($player_id)
-  {
+  {    
+    $addInflation = Utils::getActiveInflation() ? 1 : 0;
+    $extraCards = 1 + $addInflation;
+
     $game = Utils::getGame();
     $players_ordered = $game->getPlayersInOrder();
     for ($i = 1; $i <= count($players_ordered); $i++) {
-      $game->performDrawCards($players_ordered[$i - 1], 1);
+      $game->performDrawCards($players_ordered[$i - 1], $extraCards);
     }
     return parent::immediateEffectOnPlay($player_id);
   }
