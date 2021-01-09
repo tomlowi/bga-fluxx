@@ -84,12 +84,13 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         for (var rule_type in that.rulesStock) {
           var stock = that.rulesStock[rule_type];
           stock.setSelectionMode(2);
-          that.addActionButton(
-            "button_confirm",
-            _("Done"),
-            "onResolveActionRulesSelection"
-          );
         }
+        that.addActionButton(
+          "button_confirm",
+          _("Done"),
+          "onResolveActionRulesSelection"
+        );
+        dojo.attr("button_confirm", "data-count", args.toDiscardCount);
       },
       ruleSelection: function (that, args) {
         for (var rule_type in that.rulesStock) {
@@ -189,8 +190,6 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
 
       if (items.length == 0) return;
 
-      console.log("onResolveActionCardSelection", items);
-
       if (this.checkAction(action)) {
         // Play a card
         this.ajaxAction(action, {
@@ -205,8 +204,6 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
 
     onResolveActionButtons: function (ev) {
       var value = ev.target.getAttribute("data-value");
-
-      console.log(ev, value);
 
       var action = "resolveActionButtons";
 
@@ -257,13 +254,32 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
     },
 
     onResolveActionRulesSelection: function (ev) {
-      console.log("TODO");
-      var action = "resolveActionButtons";
-      var action = "resolveActionRulesSelection";
+      var toDiscardCount = parseInt(ev.target.getAttribute("data-count"));
+      var rules = [];
+
+      for (var rule_type in this.rulesStock) {
+        var stock = this.rulesStock[rule_type];
+        rules = rules.concat(stock.getSelectedItems());
+      }
+
+      if (rules.length > toDiscardCount) {
+        this.showMessage(
+          dojo.string.substitute(_("You can only pick up to ${nb} rules"), {
+            nb: toDiscardCount,
+          }),
+          "error"
+        );
+        return;
+      }
+
+      var action = "resolveActionCardsSelection";
+      var rules_id = rules.map(function (rule) {
+        return rule.id;
+      });
 
       if (this.checkAction(action)) {
         this.ajaxAction(action, {
-          value: "TODO",
+          cards_id: rules_id.join(";"),
         });
       }
     },

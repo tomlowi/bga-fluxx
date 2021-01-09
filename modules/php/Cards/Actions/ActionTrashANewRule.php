@@ -58,7 +58,6 @@ class ActionTrashANewRule extends ActionCard
         "player_name" => $game->getActivePlayerName(),
         "card_name" => $card_definition->getName(),
         "cards" => [$card],
-        "ruleType" => $card_definition->getRuleType(),
         "discardCount" => $game->cards->countCardInLocation("discard"),
       ]
     );

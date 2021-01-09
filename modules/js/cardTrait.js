@@ -86,8 +86,6 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
     notif_cardsDrawnOther: function (notif) {
       var player_id = notif.args.player_id;
 
-      console.log(player_id, this.player_id);
-
       if (player_id != this.player_id) {
         this.slideTemporaryObject(
           '<div class="flx-card flx-deck-card"></div>',
@@ -128,11 +126,26 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
     },
 
     notif_rulesDiscarded: function (notif) {
-      var ruleType = notif.args.ruleType;
-      if (ruleType != "drawRule" && ruleType != "playRule") {
-        ruleType = "others";
+      var cards = notif.args.cards;
+
+      var drawRuleCards = {};
+      var playRuleCards = {};
+      var othersRuleCards = {};
+
+      for (var card_id in cards) {
+        var card = cards[card_id];
+        if (card["location_arg"] == 0)
+          // RULE_PLAY_RULE
+          playRuleCards[card_id] = card;
+        else if (card["location_arg" == 1])
+          // RULE_DRAW_RULE
+          drawRuleCards[card_id] = card;
+        else othersRuleCards[card_id] = card;
       }
-      this.discardCards(notif.args.cards, this.rulesStock[ruleType]);
+
+      this.discardCards(playRuleCards, this.rulesStock.playRule);
+      this.discardCards(drawRuleCards, this.rulesStock.drawRule);
+      this.discardCards(othersRuleCards, this.rulesStock.others);
       this.discardCounter.toValue(notif.args.discardCount);
     },
 
@@ -249,7 +262,6 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
     },
 
     notif_reshuffle: function (notif) {
-      console.log("RESHUFFLE", notif);
       this.deckCounter.toValue(notif.args.deckCount);
       dojo.removeClass("deckCard", "flx-deck-empty");
 
@@ -278,9 +290,6 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       var originStock;
 
       var card_definition = this.cardsDefinitions[card.type_arg];
-
-      console.log(card);
-      console.log(card_definition);
 
       switch (card.location) {
         case "keepers":

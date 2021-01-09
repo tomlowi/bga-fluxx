@@ -1,9 +1,9 @@
 <?php
 namespace Fluxx\Cards\Actions;
 
-use Fluxx\Game\Utils;
-use Fluxx\Cards\Rules;
 use fluxx;
+use Fluxx\Game\Utils;
+use Fluxx\Cards\Rules\RuleCardFactory;
 
 class ActionLetsSimplify extends ActionCard
 {
@@ -21,25 +21,35 @@ class ActionLetsSimplify extends ActionCard
 
   public function immediateEffectOnPlay($player_id)
   {
-    // nothing now, needs to go to resolve action state
-    // TODO: check how many rules are in play: if none, skip
+    $game = Utils::getGame();
+    $rulesInPlay = $game->cards->countCardInLocation("rules");
+    if ($rulesInPlay == 0) {
+      // no rules on the table, this action does nothing
+      return;
+    }
+
     return parent::immediateEffectOnPlay($player_id);
+  }
+
+  public function resolveArgs()
+  {
+    $game = Utils::getGame();
+    $rulesInPlay = $game->cards->countCardInLocation("rules");
+
+    return [
+      "toDiscardCount" => ceil($rulesInPlay / 2),
+    ];
   }
 
   public function resolvedBy($player_id, $args)
   {
-    $option = $args["option"];
-    $cardIdsSelected = $args["cardIdsSelected"];
-    // verify args has card ids, and it is all Rule in play
-    // (or that no rules are in play and args is empty)
     $game = Utils::getGame();
-    $rulesInPlay = $game->cards->countCardInLocation("rules");
-    if ($rulesInPlay == 0) {
-      // no rules in play anywhere, this action does nothing
-      return;
-    }
 
-    if (count($cardIdsSelected) > ceil($rulesInPlay / 2)) {
+    $cards = $args["cards"];
+
+    $rulesInPlay = $game->cards->countCardInLocation("rules");
+
+    if (count($cards) > ceil($rulesInPlay / 2)) {
       Utils::throwInvalidUserAction(
         fluxx::totranslate(
           "You must select up to half (rounded up) of the New Rule cards in play"
@@ -47,31 +57,29 @@ class ActionLetsSimplify extends ActionCard
       );
     }
 
-    $cardsSelected = [];
-    foreach ($cardIdsSelected as $cardId) {
-      $cardSelected = $game->cards->getCard($cardId);
-      if ($cardSelected == null || $cardSelected["location"] != "rules") {
+    foreach ($cards as $card) {
+      if ($card == null || $card["location"] != "rules") {
         Utils::throwInvalidUserAction(
           fluxx::totranslate(
             "You must select up to half (rounded up) of the New Rule cards in play"
           )
         );
       }
-      $cardsSelected[$cardId] = $cardSelected;
-    }
 
-    // discard these rules from play
-    foreach ($cardsSelected as $cardId => $cardSelected) {
-      $rule = RuleCardFactory::getCard($cardId, $cardSelected["type_arg"]);
-      $rule->immediateEffectOnDiscard($player_id);
+      $ruleCard = RuleCardFactory::getCard($card["id"], $card["type_arg"]);
+      $ruleCard->immediateEffectOnDiscard($player_id);
 
-      $fromTarget = $cardSelected["location_arg"];
-      $game->removeCardFromPlay(
-        $player_id,
-        $cardId,
-        $cardSelected["type"],
-        $fromTarget
-      );
+      $game->cards->playCard($card["id"]);
     }
+    $game->notifyAllPlayers(
+      "rulesDiscarded",
+      clienttranslate('${player_name} discarded ${discarded_count} rule(s)'),
+      [
+        "player_name" => $game->getActivePlayerName(),
+        "discarded_count" => count($cards),
+        "cards" => $cards,
+        "discardCount" => $game->cards->countCardInLocation("discard"),
+      ]
+    );
   }
 }

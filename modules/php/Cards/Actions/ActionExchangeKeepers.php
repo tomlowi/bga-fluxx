@@ -42,11 +42,9 @@ class ActionExchangeKeepers extends ActionCard
   {
     $game = Utils::getGame();
 
-    $myKeeperId = $args["myKeeperId"];
-    $otherKeeperId = $args["otherKeeperId"];
+    $myKeeper = $args["myKeeper"];
+    $otherKeeper = $args["otherKeeper"];
 
-    $myKeeper = $game->cards->getCard($myKeeperId);
-    $otherKeeper = $game->cards->getCard($otherKeeperId);
     $other_player_id = $otherKeeper["location_arg"];
 
     if (

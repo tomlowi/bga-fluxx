@@ -191,6 +191,7 @@ $machinestates = [
       "resolveAction",
       "resolveActionPlayerSelection",
       "resolveActionCardSelection",
+      "resolveActionCardsSelection",
       "resolveActionKeepersExchange",
       "resolveActionButtons",
     ],

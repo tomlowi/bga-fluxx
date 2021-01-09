@@ -118,6 +118,15 @@ class action_fluxx extends APP_GameAction
     );
     self::ajaxResponse();
   }
+  public function resolveActionCardsSelection()
+  {
+    self::setAjaxMode();
+    $cards_id = self::getArg("cards_id", AT_numberlist, true); // ids of card to discard
+    $this->game->action_resolveActionCardsSelection(
+      $this->stripListOfCardIds($cards_id)
+    );
+    self::ajaxResponse();
+  }
 
   public function resolveActionKeepersExchange()
   {

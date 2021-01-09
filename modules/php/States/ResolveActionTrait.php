@@ -125,14 +125,32 @@ trait ResolveActionTrait
     return self::_action_resolveAction(["card" => $card]);
   }
 
+  public function action_resolveActionCardsSelection($cards_id)
+  {
+    self::checkAction("resolveActionCardsSelection");
+
+    $game = Utils::getGame();
+
+    $cards = [];
+    foreach ($cards_id as $card_id) {
+      $cards[] = $game->cards->getCard($card_id);
+    }
+    return self::_action_resolveAction(["cards" => $cards]);
+  }
+
   public function action_resolveActionKeepersExchange(
     $myKeeperId,
     $otherKeeperId
   ) {
     self::checkAction("resolveActionKeepersExchange");
+    $game = Utils::getGame();
+
+    $myKeeper = $game->cards->getCard($myKeeperId);
+    $otherKeeper = $game->cards->getCard($otherKeeperId);
+
     return self::_action_resolveAction([
-      "myKeeperId" => $myKeeperId,
-      "otherKeeperId" => $otherKeeperId,
+      "myKeeper" => $myKeeper,
+      "otherKeeper" => $otherKeeper,
     ]);
   }
 
