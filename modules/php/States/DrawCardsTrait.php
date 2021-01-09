@@ -12,8 +12,7 @@ trait DrawCardsTrait
     $cards = $game->cards;
 
     // Check if this player is empty handed and the "no-hand-bonus" is in play
-    $hasNoHandBonus =
-      count($cards->getCardsOfTypeInLocation("rule", 216, "rules")) > 0;
+    $hasNoHandBonus = Utils::getActiveNoHandBonus();
     $cardsInHand = $cards->countCardInLocation("hand", $player_id);
 
     if ($cardsInHand == 0 && $hasNoHandBonus) {
