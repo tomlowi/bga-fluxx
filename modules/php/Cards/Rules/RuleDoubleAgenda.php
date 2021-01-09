@@ -18,11 +18,11 @@ class RuleDoubleAgenda extends RuleCard
 
   public function immediateEffectOnPlay($player)
   {
-    // @TODO : set game state?
+    Utils::getGame()->setGameStateValue("hasDoubleAgenda", 1);
   }
 
   public function immediateEffectOnDiscard($player)
   {
-    // @TODO : unset game state?
+    Utils::getGame()->setGameStateValue("hasDoubleAgenda", 0);
   }
 }

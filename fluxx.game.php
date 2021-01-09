@@ -64,6 +64,8 @@ class fluxx extends Table
       "drawnCards" => 20,
       "playedCards" => 21,
       "lastGoalBeforeDoubleAgenda" => 30,
+      "hasDoubleAgenda" => 31,
+      "activeInflation" => 32,
       "actionToResolve" => 40,
       "anotherTurnMark" => 41,
     ]);
@@ -147,6 +149,8 @@ class fluxx extends Table
     self::setGameStateInitialValue("playedCards", 0);
     self::setGameStateInitialValue("anotherTurnMark", 0);
     self::setGameStateInitialValue("lastGoalBeforeDoubleAgenda", -1);
+    self::setGameStateInitialValue("hasDoubleAgenda", 0);
+    self::setGameStateInitialValue("activeInflation", 0);
 
     // Create cards
     $cards = [];
@@ -577,6 +581,7 @@ class fluxx extends Table
     game state.
      */
 
+  use Fluxx\Game\Utils;
   use Fluxx\States\DrawCardsTrait;
   use Fluxx\States\PlayCardTrait;
   use Fluxx\States\HandLimitTrait;
@@ -589,12 +594,10 @@ class fluxx extends Table
 
   public function st_goalCleaning()
   {
-    $hasDoubleAgenda = count(
-      $this->cards->getCardsOfTypeInLocation("rule", 220, "rules")
-    );
+    $hasDoubleAgenda = Utils::hasActiveDoubleAgenda();
     $existingGoalCount = $this->cards->countCardInLocation("goals");
 
-    $expectedCount = $hasDoubleAgenda + 1;
+    $expectedCount = $hasDoubleAgenda ? 2 : 1;
 
     if ($existingGoalCount <= $expectedCount) {
       // We already have the proper number of goals, proceed to play

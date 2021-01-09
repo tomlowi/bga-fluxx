@@ -13,4 +13,14 @@ class Utils
   {
     throw new \BgaUserException($msg);
   }
+
+  public static function getActiveInflation()
+  {
+    return self::getGame()->getGameStateValue("activeInflation");
+  }
+
+  public static function hasActiveDoubleAgenda()
+  {
+    return 0 != self::getGame()->getGameStateValue("hasDoubleAgenda");
+  }
 }
