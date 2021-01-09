@@ -105,9 +105,10 @@ define([
           "rule",
           "action",
         ]);
-        this.addCardsToStock(this.discardStock, this.gamedatas.discard);
+        this.addCardsToStock(this.discardStock, this.gamedatas.discard, true);
         this.discardStock.setOverlap(0.00001);
         this.discardStock.item_margin = 0;
+        dojo.connect($("discardToggleBtn"), "onclick", this, "onDiscardToggle");
 
         this.deckCounter = new ebg.counter();
         this.deckCounter.create("deckCount");
@@ -389,13 +390,18 @@ define([
         // dojo.place("<p>test</p>", card_div.id);
       },
 
-      addCardsToStock: function (stock, cards) {
+      addCardsToStock: function (stock, cards, keepOrder) {
         for (var card_id in cards) {
           var card = cards[card_id];
           stock.addToStockWithId(card.type_arg, card.id);
+          if (keepOrder) {
+            stock.changeItemsWeight({
+              [card.type_arg]: stock.count(),
+            });
+          }
         }
       },
-      setupNotifications() {
+      setupNotifications: function () {
         console.log("SETUP NOTIFICATIONS", this._notifications);
         this._notifications.forEach((notif) => {
           var functionName = "notif_" + notif[0];
@@ -407,6 +413,22 @@ define([
         });
 
         dojo.subscribe("newScores", this, "notif_newScores");
+      },
+
+      onDiscardToggle: function (ev) {
+        ev.preventDefault();
+
+        if (dojo.hasClass("flxDeckBlock", "flx-discard-visible")) {
+          this.discardStock.setOverlap(0.00001);
+          this.discardStock.item_margin = 0;
+          dojo.removeClass("flxDeckBlock", "flx-discard-visible");
+          $("discardToggleBtn").innerHTML = _("Show discard");
+        } else {
+          this.discardStock.setOverlap(0);
+          this.discardStock.item_margin = 5;
+          dojo.addClass("flxDeckBlock", "flx-discard-visible");
+          $("discardToggleBtn").innerHTML = _("Hide discard");
+        }
       },
 
       notif_newScores: function (notif) {
