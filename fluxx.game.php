@@ -437,7 +437,7 @@ class fluxx extends Table
         $card["location"] != $location ||
         $card["location_arg"] != $location_arg
       ) {
-        Utils::throwInvalidUserAction(
+        BgaUserException(
           self::_("Impossible discard: invalid card ") . $card_id
         );
       }

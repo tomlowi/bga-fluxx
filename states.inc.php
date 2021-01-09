@@ -96,6 +96,7 @@ $machinestates = [
     "transitions" => [
       "handLimitRulePlayed" => STATE_ENFORCE_HAND_LIMIT_OTHERS,
       "keepersLimitRulePlayed" => STATE_ENFORCE_KEEPERS_LIMIT_OTHERS,
+      "keepersExchangeOccured" => STATE_ENFORCE_KEEPERS_LIMIT_OTHERS,
       "endOfTurn" => STATE_ENFORCE_HAND_LIMIT_SELF,
       "doubleAgendaRule" => STATE_GOAL_CLEANING,
 

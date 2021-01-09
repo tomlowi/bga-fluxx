@@ -20,27 +20,25 @@ class ActionShareTheWealth extends ActionCard
     $game = Utils::getGame();
 
     $keepersInPlay = $game->cards->getCardsInLocation("keepers");
-    $players_ordered = $game->getPlayersInOrder();
-    $playerCount = count($players_ordered);
+    $next_player = $game->getNextPlayerTable();
 
     // gather and shuffle all keepers in play
-    $keys = array_keys($keepersInPlay);
-    shuffle($keys);
+    shuffle($keepersInPlay);
 
     // deal them back out, starting with the current player
-    $receivingPlayerIndex = 1;
-    foreach ($keys as $cardId) {
-      $game->cards->moveCard(
-        $cardId,
-        "keepers",
-        $players_ordered[$receivingPlayerIndex - 1]
-      );
+    $current_player_id = $player_id;
 
-      $receivingPlayerIndex++;
-      if ($receivingPlayerIndex > $playerCount) {
-        $receivingPlayerIndex = 1;
+    foreach ($keepersInPlay as $card) {
+      if ($current_player_id != $card["location_arg"]) {
+        $game->cards->moveCard($card["id"], "keepers", $current_player_id);
+        $game->notifyAllPlayers("keepersMoved", "", [
+          "player_id" => $current_player_id,
+          "other_player_id" => $card["location_arg"],
+          "cards" => [$card],
+        ]);
       }
+      $current_player_id = $next_player[$current_player_id];
     }
-    return parent::immediateEffectOnPlay($player_id);
+    return "keepersExchangeOccured";
   }
 }
