@@ -167,6 +167,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
           _("Not implemented, ignore"),
           "onResolveActionButtons"
         );
+        dojo.attr("button_0", "data-value", 0);
       },
     },
 
@@ -241,6 +242,11 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
             otherKeeper = items[0];
           }
         }
+      }
+
+      if (otherKeeper === undefined) {
+        this.showMessage(_("You must select exactly one other player's keeper"), "error");
+        return;
       }
 
       var action = "resolveActionKeepersExchange";
