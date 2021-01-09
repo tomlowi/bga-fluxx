@@ -42,7 +42,7 @@ class ActionTrashAKeeper extends ActionCard
 
     if ($card_location != "keepers") {
       Utils::throwInvalidUserAction(
-        clienttranslate(
+        fluxx::totranslate(
           "You must select a keeper card in front of another player"
         )
       );

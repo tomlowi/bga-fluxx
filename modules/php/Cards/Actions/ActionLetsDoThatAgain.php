@@ -84,7 +84,7 @@ class ActionLetsDoThatAgain extends ActionCard
       !in_array($cardType, ["rule", "action"])
     ) {
       Utils::throwInvalidUserAction(
-        clienttranslate(
+        fluxx::totranslate(
           "You must select an action or rule card in the discard pile"
         )
       );

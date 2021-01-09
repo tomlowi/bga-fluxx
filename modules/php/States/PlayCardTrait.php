@@ -71,7 +71,7 @@ trait PlayCardTrait
 
     if ($card["location"] != "hand" or $card["location_arg"] != $player_id) {
       Utils::throwInvalidUserAction(
-        clienttranslate("You do not have this card in hand")
+        fluxx::totranslate("You do not have this card in hand")
       );
     }
 

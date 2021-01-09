@@ -44,7 +44,7 @@ class ActionZapACard extends ActionCard
 
     if (!in_array($card_location, ["keepers", "rules", "goals"])) {
       Utils::throwInvalidUserAction(
-        clienttranslate("You must select a card in play on the table")
+        fluxx::totranslate("You must select a card in play on the table")
       );
     }
 

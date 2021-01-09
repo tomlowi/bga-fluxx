@@ -46,7 +46,7 @@ class ActionStealAKeeper extends ActionCard
 
     if ($card_location != "keepers" || $other_player_id == $player_id) {
       Utils::throwInvalidUserAction(
-        clienttranslate(
+        fluxx::totranslate(
           "You must select a keeper card in front of another player"
         )
       );
