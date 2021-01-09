@@ -19,6 +19,9 @@ trait KeepersLimitTrait
       return [];
     }
 
+    $addInflation = Utils::getActiveInflation() ? 1 : 0;
+    $keepersLimit += $addInflation;
+
     if ($players_id == null) {
       $players_id = array_keys(self::loadPlayersBasicInfos());
     }
