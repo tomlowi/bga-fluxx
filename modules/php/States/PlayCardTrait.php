@@ -30,6 +30,9 @@ trait PlayCardTrait
     $playRule = $game->getGameStateValue("playRule");
     $cardsPlayed = $game->getGameStateValue("playedCards");
 
+    $partyBonus = Utils::isPartyInPlay() ? 1 : 0;
+    $playRule += $partyBonus;
+
     // still cards in hand?
     $cardsInHand = $game->cards->countCardInLocation("hand", $player_id);
 

@@ -19,10 +19,10 @@ trait DrawCardsTrait
       $game->performDrawCards($player_id, 3);
     }
 
-    $drawRule = $game->getGameStateValue("drawRule");
+    $partyBonus = Utils::isPartyInPlay() ? 1 : 0;
 
     // entering this state, so this player can always draw for current draw rule
-    $game->performDrawCards($player_id, $drawRule);
+    $game->performDrawCards($player_id, $drawRule + $partyBonus);
     $game->setGameStateValue("drawnCards", $drawRule);
 
     $game->gamestate->nextstate("cardsDrawn");

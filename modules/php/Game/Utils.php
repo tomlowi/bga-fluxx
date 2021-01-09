@@ -49,4 +49,14 @@ class Utils
     return 0 != self::getGame()->getGameStateValue("activeFirstPlayRandom");
   }
 
+  public static isPartyInPlay()
+  {
+    $party_keeper = 16;
+    $party_keeper_card = array_values(
+      $cards->getCardsOfType("keeper", $this->party_keeper)
+    )[0];
+
+    return ($party_keeper_card["location"] == "keepers");
+  }
+
 }
