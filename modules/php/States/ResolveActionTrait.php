@@ -112,14 +112,11 @@ trait ResolveActionTrait
     ]);
   }
 
-  public function action_resolveActionCardSelection(
-    $card_id,
-    $card_definition_id
-  ) {
+  public function action_resolveActionCardSelection($card_id)
+  {
     self::checkAction("resolveActionCardSelection");
 
     $game = Utils::getGame();
-
     $card = $game->cards->getCard($card_id);
 
     return self::_action_resolveAction(["card" => $card]);

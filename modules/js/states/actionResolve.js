@@ -195,7 +195,6 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         // Play a card
         this.ajaxAction(action, {
           card_id: items[0].id,
-          card_definition_id: items[0].type,
           lock: true,
         });
       }

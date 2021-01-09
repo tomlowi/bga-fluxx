@@ -59,7 +59,7 @@ trait PlayCardTrait
     return ["count" => $playRule - $played];
   }
 
-  public function action_playCard($card_id, $card_definition_id)
+  public function action_playCard($card_id)
   {
     $game = Utils::getGame();
 
