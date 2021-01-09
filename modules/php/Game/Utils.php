@@ -14,13 +14,39 @@ class Utils
     throw new \BgaUserException($msg);
   }
 
+  public static function hasActiveDoubleAgenda()
+  {
+    return 0 != self::getGame()->getGameStateValue("hasDoubleAgenda");
+  }
+
   public static function getActiveInflation()
   {
     return self::getGame()->getGameStateValue("activeInflation");
   }
 
-  public static function hasActiveDoubleAgenda()
+  public static function getActiveNoHandBonus()
   {
-    return 0 != self::getGame()->getGameStateValue("hasDoubleAgenda");
+    return self::getGame()->getGameStateValue("activeNoHandBonus");
   }
+
+  public static function getActivePartyBonus()
+  {
+    return self::getGame()->getGameStateValue("activePartyBonus");
+  }
+
+  public static function getActivePoorBonus()
+  {
+    return self::getGame()->getGameStateValue("activePoorBonus");
+  }
+
+  public static function getActiveRichBonus()
+  {
+    return self::getGame()->getGameStateValue("activeRichBonus");
+  }
+
+  public static function getActiveFirstPlayRandom()
+  {
+    return self::getGame()->getGameStateValue("activeFirstPlayRandom");
+  }
+
 }

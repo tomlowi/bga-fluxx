@@ -66,12 +66,17 @@ class fluxx extends Table
       "lastGoalBeforeDoubleAgenda" => 30,
       "hasDoubleAgenda" => 31,
       "activeInflation" => 32,
+      "activeNoHandBonus" => 33,
+      "activePartyBonus" => 34,
+      "activePoorBonus" => 35,
+      "activeRichBonus" => 36,
+      "activeFirstPlayRandom" => 37,
       "actionToResolve" => 40,
       "anotherTurnMark" => 41,
     ]);
     $this->cards = self::getNew("module.common.deck");
     $this->cards->init("card");
-    // We want to re-schuffle the discard pile in the deck automatically
+    // We want to re-shuffle the discard pile in the deck automatically
     $this->cards->autoreshuffle = true;
 
     $this->cards->autoreshuffle_trigger = [
@@ -151,6 +156,11 @@ class fluxx extends Table
     self::setGameStateInitialValue("lastGoalBeforeDoubleAgenda", -1);
     self::setGameStateInitialValue("hasDoubleAgenda", 0);
     self::setGameStateInitialValue("activeInflation", 0);
+    self::setGameStateInitialValue("activeNoHandBonus", 0);
+    self::setGameStateInitialValue("activePartyBonus", 0);
+    self::setGameStateInitialValue("activePoorBonus", 0);
+    self::setGameStateInitialValue("activeRichBonus", 0);
+    self::setGameStateInitialValue("activeFirstPlayRandom", 0);
 
     // Create cards
     $cards = [];

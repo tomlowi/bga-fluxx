@@ -18,12 +18,12 @@ class RuleRichBonus extends RuleCard
 
   public function immediateEffectOnPlay($player)
   {
-    // @TODO : set game state?
-    // + allow play extra card if current player is Rich
+    Utils::getGame()->setGameStateValue("activeRichBonus", 1);
+    // @TODO: allow play extra card if current player is Rich
   }
 
   public function immediateEffectOnDiscard($player)
   {
-    // @TODO : unset game state?
+    Utils::getGame()->setGameStateValue("activeRichBonus", 0);
   }
 }

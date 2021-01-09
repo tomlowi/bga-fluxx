@@ -18,11 +18,11 @@ class RuleFirstPlayRandom extends RuleCard
 
   public function immediateEffectOnPlay($player)
   {
-    // @TODO
+    Utils::getGame()->setGameStateValue("activeFirstPlayRandom", 1);
   }
 
   public function immediateEffectOnDiscard($player)
   {
-    // nothing
+    Utils::getGame()->setGameStateValue("activeFirstPlayRandom", 0);
   }
 }

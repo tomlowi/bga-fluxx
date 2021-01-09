@@ -18,12 +18,12 @@ class RulePoorBonus extends RuleCard
 
   public function immediateEffectOnPlay($player)
   {
-    // @TODO : set game state?
-    // + draw extra card if current player is Poor
+    Utils::getGame()->setGameStateValue("activePoorBonus", 1);
+    // @TODO: draw extra card if current player is Poor
   }
 
   public function immediateEffectOnDiscard($player)
   {
-    // @TODO : unset game state?
+    Utils::getGame()->setGameStateValue("activePoorBonus", 0);
   }
 }

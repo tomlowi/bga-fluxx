@@ -18,12 +18,13 @@ class RulePartyBonus extends RuleCard
 
   public function immediateEffectOnPlay($player)
   {
-    // @TODO : set game state?
-    // + draw extra card for current player if Party on the table
+    Utils::getGame()->setGameStateValue("activePartyBonus", 1);
+    // @TODO: if Party on the table, draw extra card for current player 
+    // + allow 1 extra play
   }
 
   public function immediateEffectOnDiscard($player)
   {
-    // @TODO : unset game state?
+    Utils::getGame()->setGameStateValue("activePartyBonus", 0);
   }
 }
