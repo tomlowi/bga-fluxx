@@ -137,7 +137,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         if (card["location_arg"] == 0)
           // RULE_PLAY_RULE
           playRuleCards[card_id] = card;
-        else if (card["location_arg" == 1])
+        else if (card["location_arg"] == 1)
           // RULE_DRAW_RULE
           drawRuleCards[card_id] = card;
         else othersRuleCards[card_id] = card;
