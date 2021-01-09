@@ -64,7 +64,7 @@ class fluxx extends Table
       "drawnCards" => 20,
       "playedCards" => 21,
       "lastGoalBeforeDoubleAgenda" => 30,
-      "hasDoubleAgenda" => 31,
+      "activeDoubleAgenda" => 31,
       "activeInflation" => 32,
       "activeNoHandBonus" => 33,
       "activePartyBonus" => 34,
@@ -154,7 +154,7 @@ class fluxx extends Table
     self::setGameStateInitialValue("playedCards", 0);
     self::setGameStateInitialValue("anotherTurnMark", 0);
     self::setGameStateInitialValue("lastGoalBeforeDoubleAgenda", -1);
-    self::setGameStateInitialValue("hasDoubleAgenda", 0);
+    self::setGameStateInitialValue("activeDoubleAgenda", 0);
     self::setGameStateInitialValue("activeInflation", 0);
     self::setGameStateInitialValue("activeNoHandBonus", 0);
     self::setGameStateInitialValue("activePartyBonus", 0);
@@ -604,7 +604,7 @@ class fluxx extends Table
 
   public function st_goalCleaning()
   {
-    $hasDoubleAgenda = Utils::hasActiveDoubleAgenda();
+    $hasDoubleAgenda = Utils::getActiveDoubleAgenda();
     $existingGoalCount = $this->cards->countCardInLocation("goals");
 
     $expectedCount = $hasDoubleAgenda ? 2 : 1;
