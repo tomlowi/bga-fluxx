@@ -24,6 +24,10 @@ class Goal5Keepers extends GoalCard
     $cards = Utils::getGame()->cards;
 
     $maxkeepers = 5;
+
+    $addInflation = Utils::getActiveInflation() ? 1 : 0;
+    $maxkeepers += $addInflation;
+
     $keeperCounts = [];
     foreach ($players as $player_id => $player) {
       // Count each player keepers
