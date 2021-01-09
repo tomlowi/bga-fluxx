@@ -20,11 +20,13 @@ class ActionEmptyTheTrash extends ActionCard
     $game = Utils::getGame();
 
     $game->cards->moveAllCardsInLocation("discard", "deck");
-    $game->cards->shuffle("deck");
 
     // The current card needs to be put in the new discard pile
     $card_id = self::getCardId();
     $game->cards->playCard($card_id);
+
+    // And then we reshuffle
+    $game->cards->shuffle("deck");
 
     $card = $game->cards->getCard($card_id);
 

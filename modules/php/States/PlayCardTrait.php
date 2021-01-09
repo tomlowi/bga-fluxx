@@ -157,11 +157,14 @@ trait PlayCardTrait
 
     // No double agenda: we simply discard the oldest goal
     if (!$hasDoubleAgenda) {
-      $cards = $game->cards->getCardsInLocation("goals");
-      if ($cards) {
-        $game->cards->moveAllCardsInLocation("goals", "discard");
+      $goals = $game->cards->getCardsInLocation("goals");
+      foreach ($goals as $goal_id => $goal) {
+        $game->cards->playCard($goal_id);
+      }
+
+      if ($goals) {
         $game->notifyAllPlayers("goalsDiscarded", "", [
-          "cards" => $cards,
+          "cards" => $goals,
           "discardCount" => $game->cards->countCardInLocation("discard"),
         ]);
       }

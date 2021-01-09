@@ -414,10 +414,10 @@ class fluxx extends Table
     foreach ($cards as $card_id => $card) {
       $rule = RuleCardFactory::getCard($card_id, $card["type_arg"]);
       $rule->immediateEffectOnDiscard($player_id);
+      $this->cards->playCard($card_id);
     }
 
     if ($cards) {
-      $this->cards->moveAllCardsInLocation("rules", "discard", $location_arg);
       self::notifyAllPlayers("rulesDiscarded", "", [
         "cards" => $cards,
         "discardCount" => $this->cards->countCardInLocation("discard"),
