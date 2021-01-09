@@ -67,8 +67,8 @@ class ActionStealAKeeper extends ActionCard
         "player_name" => $game->getActivePlayerName(),
         "other_player_name" => $other_player_name,
         "card_name" => $card_definition->getName(),
-        "player_id" => $player_id,
-        "other_player_id" => $other_player_id,
+        "destination_player_id" => $player_id,
+        "origin_player_id" => $other_player_id,
         "cards" => [$card],
       ]
     );

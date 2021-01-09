@@ -125,6 +125,17 @@ trait ResolveActionTrait
     return self::_action_resolveAction(["card" => $card]);
   }
 
+  public function action_resolveActionKeepersExchange(
+    $myKeeperId,
+    $otherKeeperId
+  ) {
+    self::checkAction("resolveActionKeepersExchange");
+    return self::_action_resolveAction([
+      "myKeeperId" => $myKeeperId,
+      "otherKeeperId" => $otherKeeperId,
+    ]);
+  }
+
   public function action_resolveActionButtons($value)
   {
     self::checkAction("resolveActionButtons");

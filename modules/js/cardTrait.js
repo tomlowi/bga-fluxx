@@ -219,12 +219,12 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
     },
 
     notif_keepersMoved: function (notif) {
-      var player_id = notif.args.player_id;
-      var other_player_id = notif.args.other_player_id;
+      var destination_player_id = notif.args.destination_player_id;
+      var origin_player_id = notif.args.origin_player_id;
       var cards = notif.args.cards;
 
-      var originStock = this.keepersStock[other_player_id];
-      var destinationStock = this.keepersStock[player_id];
+      var originStock = this.keepersStock[origin_player_id];
+      var destinationStock = this.keepersStock[destination_player_id];
 
       for (var card_id in cards) {
         var card = cards[card_id];
@@ -235,8 +235,10 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         );
         originStock.removeFromStockById(card.id);
       }
-      this.keepersCounter[player_id].toValue(destinationStock.count());
-      this.keepersCounter[other_player_id].toValue(originStock.count());
+      this.keepersCounter[destination_player_id].toValue(
+        destinationStock.count()
+      );
+      this.keepersCounter[origin_player_id].toValue(originStock.count());
     },
 
     notif_handCountUpdate: function (notif) {

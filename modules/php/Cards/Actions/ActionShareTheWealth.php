@@ -32,8 +32,8 @@ class ActionShareTheWealth extends ActionCard
       if ($current_player_id != $card["location_arg"]) {
         $game->cards->moveCard($card["id"], "keepers", $current_player_id);
         $game->notifyAllPlayers("keepersMoved", "", [
-          "player_id" => $current_player_id,
-          "other_player_id" => $card["location_arg"],
+          "destination_player_id" => $current_player_id,
+          "origin_player_id" => $card["location_arg"],
           "cards" => [$card],
         ]);
       }

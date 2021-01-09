@@ -15,11 +15,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
 
       if (this.isCurrentPlayerActive()) {
         method = this.updateActionButtonsActionResolve[args.action_type];
-        if (method !== undefined) {
-          method(this, args.action_args);
-        } else {
-          console.log("TODO");
-        }
+        method(this, args.action_args);
       }
     },
 
@@ -28,17 +24,12 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         for (var player_id in that.keepersStock) {
           var stock = that.keepersStock[player_id];
           stock.setSelectionMode(1);
-
-          if (that._listeners["keepers_" + player_id] !== undefined) {
-            dojo.disconnect(that._listeners["keepers_" + player_id]);
-          }
-          that._listeners["keepers_" + player_id] = dojo.connect(
-            stock,
-            "onChangeSelection",
-            that,
-            "onSelectCardForAction"
-          );
         }
+        that.addActionButton(
+          "button_confirm",
+          _("Done"),
+          "onResolveActionKeepersExchange"
+        );
       },
       keeperSelection: function (that, args) {
         for (var player_id in that.keepersStock) {
@@ -89,7 +80,17 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
           "onResolveActionCardSelection"
         );
       },
-      rulesSelection: function (that, args) {},
+      rulesSelection: function (that, args) {
+        for (var rule_type in that.rulesStock) {
+          var stock = that.rulesStock[rule_type];
+          stock.setSelectionMode(2);
+          that.addActionButton(
+            "button_confirm",
+            _("Done"),
+            "onResolveActionRulesSelection"
+          );
+        }
+      },
       ruleSelection: function (that, args) {
         for (var rule_type in that.rulesStock) {
           var stock = that.rulesStock[rule_type];
@@ -212,6 +213,57 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       if (this.checkAction(action)) {
         this.ajaxAction(action, {
           value: value,
+        });
+      }
+    },
+
+    onResolveActionKeepersExchange: function (ev) {
+      var myKeeper = this.keepersStock[this.player_id].getSelectedItems()[0];
+
+      if (myKeeper === undefined) {
+        this.showMessage(_("You must select one of your keepers"), "error");
+        return;
+      }
+
+      var otherKeeper;
+
+      for (var player_id in this.keepersStock) {
+        if (player_id != this.player_id) {
+          var stock = this.keepersStock[player_id];
+          var items = stock.getSelectedItems();
+
+          if (items.length > 0) {
+            if (otherKeeper !== undefined) {
+              this.showMessage(
+                _("You must select only one other player's keeper"),
+                "error"
+              );
+              return;
+            }
+
+            otherKeeper = items[0];
+          }
+        }
+      }
+
+      var action = "resolveActionKeepersExchange";
+
+      if (this.checkAction(action)) {
+        this.ajaxAction(action, {
+          myKeeperId: myKeeper.id,
+          otherKeeperId: otherKeeper.id,
+        });
+      }
+    },
+
+    onResolveActionRulesSelection: function (ev) {
+      console.log("TODO");
+      var action = "resolveActionButtons";
+      var action = "resolveActionRulesSelection";
+
+      if (this.checkAction(action)) {
+        this.ajaxAction(action, {
+          value: "TODO",
         });
       }
     },
