@@ -30,8 +30,9 @@ trait PlayCardTrait
     $playRule = $game->getGameStateValue("playRule");
     $cardsPlayed = $game->getGameStateValue("playedCards");
 
-    $partyBonus = Utils::isPartyInPlay() ? 1 : 0;
-    $playRule += $partyBonus;
+    $addInflation = Utils::getActiveInflation() ? 1 : 0;
+    $partyBonus = Utils::isPartyInPlay() ? 1 + $addInflation : 0;
+    $playRule += $addInflation + $partyBonus;
 
     // still cards in hand?
     $cardsInHand = $game->cards->countCardInLocation("hand", $player_id);
@@ -59,6 +60,11 @@ trait PlayCardTrait
     if ($playRule == -1) {
       return ["count" => "All but 1"];
     }
+
+    $addInflation = Utils::getActiveInflation() ? 1 : 0;
+    $partyBonus = Utils::isPartyInPlay() ? 1 + $addInflation : 0;
+    $playRule += $addInflation + $partyBonus;
+
     return ["count" => $playRule - $played];
   }
 
