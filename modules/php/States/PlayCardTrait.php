@@ -31,7 +31,10 @@ trait PlayCardTrait
     $cardsPlayed = $game->getGameStateValue("playedCards");
 
     $addInflation = Utils::getActiveInflation() ? 1 : 0;
-    $partyBonus = Utils::isPartyInPlay() ? 1 + $addInflation : 0;
+    $partyBonus =
+      Utils::getActivePartyBonus() && Utils::isPartyInPlay()
+        ? 1 + $addInflation
+        : 0;
     $playRule += $addInflation + $partyBonus;
 
     // still cards in hand?
@@ -62,7 +65,10 @@ trait PlayCardTrait
     }
 
     $addInflation = Utils::getActiveInflation() ? 1 : 0;
-    $partyBonus = Utils::isPartyInPlay() ? 1 + $addInflation : 0;
+    $partyBonus =
+      Utils::getActivePartyBonus() && Utils::isPartyInPlay()
+        ? 1 + $addInflation
+        : 0;
     $playRule += $addInflation + $partyBonus;
 
     return ["count" => $playRule - $played];

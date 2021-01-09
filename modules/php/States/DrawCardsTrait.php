@@ -16,15 +16,21 @@ trait DrawCardsTrait
     $cardsInHand = $cards->countCardInLocation("hand", $player_id);
 
     $addInflation = Utils::getActiveInflation() ? 1 : 0;
-    $partyBonus = Utils::isPartyInPlay() ? 1 + $addInflation : 0;
+    $partyBonus =
+      Utils::getActivePartyBonus() && Utils::isPartyInPlay()
+        ? 1 + $addInflation
+        : 0;
 
     if ($cardsInHand == 0 && $hasNoHandBonus) {
       $drawNoHandBonus = 3 + $addInflation;
       $game->performDrawCards($player_id, $drawNoHandBonus);
     }
-  
+
     // entering this state, so this player can always draw for current draw rule
-    $game->performDrawCards($player_id, $drawRule + $addInflation + $partyBonus);
+    $game->performDrawCards(
+      $player_id,
+      $drawRule + $addInflation + $partyBonus
+    );
     $game->setGameStateValue("drawnCards", $drawRule);
 
     $game->gamestate->nextstate("cardsDrawn");
