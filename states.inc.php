@@ -199,6 +199,7 @@ $machinestates = [
       "resolvedAction" => STATE_PLAY_CARD,
       "handsExchangeOccured" => STATE_ENFORCE_HAND_LIMIT_OTHERS,
       "keepersExchangeOccured" => STATE_ENFORCE_KEEPERS_LIMIT_OTHERS,
+      "rulesChanged" => STATE_GOAL_CLEANING,
       "endGame" => STATE_GAME_END,
     ],
   ],

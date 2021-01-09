@@ -66,6 +66,7 @@ class fluxx extends Table
       "lastGoalBeforeDoubleAgenda" => 30,
       "actionToResolve" => 40,
       "anotherTurnMark" => 41,
+      "forcedCard" => 42,
     ]);
     $this->cards = self::getNew("module.common.deck");
     $this->cards->init("card");
@@ -147,6 +148,7 @@ class fluxx extends Table
     self::setGameStateInitialValue("playedCards", 0);
     self::setGameStateInitialValue("anotherTurnMark", 0);
     self::setGameStateInitialValue("lastGoalBeforeDoubleAgenda", -1);
+    self::setGameStateInitialValue("forcedCard", -1);
 
     // Create cards
     $cards = [];

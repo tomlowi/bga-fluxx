@@ -42,7 +42,9 @@ class ActionTrashANewRule extends ActionCard
 
     if ($card_location != "rules") {
       Utils::throwInvalidUserAction(
-        fluxx::totranslate("You must select a new rule card in play on the table")
+        fluxx::totranslate(
+          "You must select a new rule card in play on the table"
+        )
       );
     }
 
@@ -61,5 +63,7 @@ class ActionTrashANewRule extends ActionCard
         "discardCount" => $game->cards->countCardInLocation("discard"),
       ]
     );
+
+    return "rulesChanged";
   }
 }

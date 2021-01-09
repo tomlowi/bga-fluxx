@@ -419,8 +419,8 @@ define([
         ev.preventDefault();
 
         if (dojo.hasClass("flxDeckBlock", "flx-discard-visible")) {
-          this.discardStock.setOverlap(0.00001);
           this.discardStock.item_margin = 0;
+          this.discardStock.setOverlap(0.00001);
           dojo.removeClass("flxDeckBlock", "flx-discard-visible");
           $("discardToggleBtn").innerHTML = _("Show discard");
         } else {

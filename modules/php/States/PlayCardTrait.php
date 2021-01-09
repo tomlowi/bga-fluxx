@@ -2,6 +2,7 @@
 namespace Fluxx\States;
 
 use Fluxx\Game\Utils;
+use fluxx;
 use Fluxx\Cards\Keepers\KeeperCardFactory;
 use Fluxx\Cards\Goals\GoalCardFactory;
 use Fluxx\Cards\Rules\RuleCardFactory;
@@ -12,6 +13,15 @@ trait PlayCardTrait
   public function st_playCard()
   {
     $game = Utils::getGame();
+
+    // If any card is a force move, play it
+    $forcedCardId = $game->getGameStateValue("forcedCard");
+
+    if ($forcedCardId != -1) {
+      $game->setGameStateValue("forcedCard", -1);
+      self::action_playCard($forcedCardId);
+      return;
+    }
 
     // If any "free action" rule can be played, we cannot move to the next state
     $rules = $game->cards->getCardsInLocation("rules", RULE_OTHERS);
@@ -59,7 +69,7 @@ trait PlayCardTrait
     return ["count" => $playRule - $played];
   }
 
-  public function action_playCard($card_id, $card_definition_id)
+  public function action_playCard($card_id)
   {
     $game = Utils::getGame();
 

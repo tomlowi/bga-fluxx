@@ -39,8 +39,7 @@ class action_fluxx extends APP_GameAction
   {
     self::setAjaxMode();
     $card_id = self::getArg("card_id", AT_posint, true);
-    $card_definition_id = self::getArg("card_definition_id", AT_posint, true);
-    $this->game->action_playCard($card_id, $card_definition_id);
+    $this->game->action_playCard($card_id);
     self::ajaxResponse();
   }
 
@@ -82,8 +81,7 @@ class action_fluxx extends APP_GameAction
   {
     self::setAjaxMode();
     $card_id = self::getArg("card_id", AT_posint, true);
-    $card_definition_id = self::getArg("card_definition_id", AT_posint, true);
-    $this->game->action_discardGoal($card_id, $card_definition_id);
+    $this->game->action_discardGoal($card_id);
     self::ajaxResponse();
   }
 
@@ -111,11 +109,7 @@ class action_fluxx extends APP_GameAction
   {
     self::setAjaxMode();
     $card_id = self::getArg("card_id", AT_posint, true);
-    $card_definition_id = self::getArg("card_definition_id", AT_posint, true);
-    $this->game->action_resolveActionCardSelection(
-      $card_id,
-      $card_definition_id
-    );
+    $this->game->action_resolveActionCardSelection($card_id);
     self::ajaxResponse();
   }
   public function resolveActionCardsSelection()
