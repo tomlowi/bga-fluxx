@@ -396,7 +396,7 @@ define([
           stock.addToStockWithId(card.type_arg, card.id);
           if (keepOrder) {
             stock.changeItemsWeight({
-              [card.type_arg]: stock.count(),
+              [card.type_arg]: parseInt(card.location_arg),
             });
           }
         }
