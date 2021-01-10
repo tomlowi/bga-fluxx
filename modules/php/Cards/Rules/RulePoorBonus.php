@@ -16,14 +16,34 @@ class RulePoorBonus extends RuleCard
     );
   }
 
-  public function immediateEffectOnPlay($player)
+  public function immediateEffectOnPlay($player_id)
   {
     Utils::getGame()->setGameStateValue("activePoorBonus", 1);
-    // @TODO: draw extra card if current player is Poor
+    if (Utils::hasLeastKeepers($player_id))
+    {
+      $addInflation = Utils::getActiveInflation() ? 1 : 0;
+
+      $poorBonus = 1 + $addInflation;
+      RulePoorBonus::notifyActiveFor($player_id);
+      Utils::getGame()->performDrawCards($player_id, $poorBonus);
+    }
   }
 
-  public function immediateEffectOnDiscard($player)
+  public function immediateEffectOnDiscard($player_id)
   {
     Utils::getGame()->setGameStateValue("activePoorBonus", 0);
+  }
+
+  public static function notifyActiveFor($player_id)
+  {
+    $game = Utils::getGame();
+    $game->notifyAllPlayers(
+      "poorBonus",
+      clienttranslate('Poor Bonus active for ${player_name}'),
+      [
+        "player_id" => $player_id,
+        "player_name" => $game->getActivePlayerName(),
+      ]
+    );
   }
 }

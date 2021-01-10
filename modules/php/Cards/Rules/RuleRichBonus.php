@@ -16,14 +16,28 @@ class RuleRichBonus extends RuleCard
     );
   }
 
-  public function immediateEffectOnPlay($player)
+  public function immediateEffectOnPlay($player_id)
   {
     Utils::getGame()->setGameStateValue("activeRichBonus", 1);
-    // @TODO: allow play extra card if current player is Rich
+    // +1 play will be accounted for automatically in PlayCardTrait,
+    // when next checking if player should play more cards
   }
 
-  public function immediateEffectOnDiscard($player)
+  public function immediateEffectOnDiscard($player_id)
   {
     Utils::getGame()->setGameStateValue("activeRichBonus", 0);
+  }
+
+  public static function notifyActiveFor($player_id)
+  {
+    $game = Utils::getGame();
+    $game->notifyAllPlayers(
+      "richBonus",
+      clienttranslate('Rich Bonus active for ${player_name}'),
+      [
+        "player_id" => $player_id,
+        "player_name" => $game->getActivePlayerName(),
+      ]
+    );
   }
 }

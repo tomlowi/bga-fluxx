@@ -6,6 +6,8 @@ use Fluxx\Cards\Keepers\KeeperCardFactory;
 use Fluxx\Cards\Goals\GoalCardFactory;
 use Fluxx\Cards\Rules\RuleCardFactory;
 use Fluxx\Cards\Actions\ActionCardFactory;
+use Fluxx\Cards\Rules\RulePartyBonus;
+use Fluxx\Cards\Rules\RuleRichBonus;
 
 trait PlayCardTrait
 {
@@ -30,12 +32,24 @@ trait PlayCardTrait
     $playRule = $game->getGameStateValue("playRule");
     $cardsPlayed = $game->getGameStateValue("playedCards");
 
+    // check bonus rules
     $addInflation = Utils::getActiveInflation() ? 1 : 0;
     $partyBonus =
       Utils::getActivePartyBonus() && Utils::isPartyInPlay()
         ? 1 + $addInflation
         : 0;
-    $playRule += $addInflation + $partyBonus;
+    if ($partyBonus > 0) {
+      RulePartyBonus::notifyActiveFor($player_id);
+    }
+    $richBonus =
+      Utils::getActiveRichBonus() && Utils::hasMostKeepers($player_id)
+        ? 1 + $addInflation
+        : 0;
+    if ($richBonus > 0) {
+      RuleRichBonus::notifyActiveFor($player_id);
+    }
+    
+    $playRule += $addInflation + $partyBonus + $richBonus;
 
     // still cards in hand?
     $cardsInHand = $game->cards->countCardInLocation("hand", $player_id);

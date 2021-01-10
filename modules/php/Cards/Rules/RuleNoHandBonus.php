@@ -16,12 +16,12 @@ class RuleNoHandBonus extends RuleCard
     );
   }
 
-  public function immediateEffectOnPlay($player)
+  public function immediateEffectOnPlay($player_id)
   {
     Utils::getGame()->setGameStateValue("activeNoHandBonus", 1);
   }
 
-  public function immediateEffectOnDiscard($player)
+  public function immediateEffectOnDiscard($player_id)
   {
     Utils::getGame()->setGameStateValue("activeNoHandBonus", 0);
   }

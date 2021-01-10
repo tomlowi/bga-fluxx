@@ -41,6 +41,7 @@ use Fluxx\Cards\Keepers\KeeperCardFactory;
 use Fluxx\Cards\Goals\GoalCardFactory;
 use Fluxx\Cards\Rules\RuleCardFactory;
 use Fluxx\Cards\Actions\ActionCardFactory;
+use Fluxx\Game\Utils;
 
 class fluxx extends Table
 {
@@ -591,7 +592,6 @@ class fluxx extends Table
     game state.
      */
 
-  use Fluxx\Game\Utils;
   use Fluxx\States\DrawCardsTrait;
   use Fluxx\States\PlayCardTrait;
   use Fluxx\States\HandLimitTrait;

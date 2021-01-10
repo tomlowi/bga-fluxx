@@ -36,6 +36,7 @@ class ActionRandomTax extends ActionCard
 
   private function taxOtherPlayers($player_id, $player_name, $players)
   {
+    $game = Utils::getGame();
     foreach ($players as $from_player_id => $from_player) {
       if ($from_player_id != $player_id) {
         $cards = $game->cards->getCardsInLocation("hand", $from_player_id);

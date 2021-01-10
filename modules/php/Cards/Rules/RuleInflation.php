@@ -16,13 +16,28 @@ class RuleInflation extends RuleCard
     );
   }
 
-  public function immediateEffectOnPlay($player)
+  public function immediateEffectOnPlay($player_id)
   {
     Utils::getGame()->setGameStateValue("activeInflation", 1);
+    // Draw rule is adapted immediately, so current player draws an extra card
+    Utils::getGame()->performDrawCards($player_id, 1);
   }
 
-  public function immediateEffectOnDiscard($player)
+  public function immediateEffectOnDiscard($player_id)
   {
     Utils::getGame()->setGameStateValue("activeInflation", 0);
   }
+
+  public static function notifyActiveFor($player_id)
+  {
+    $game = Utils::getGame();
+    $game->notifyAllPlayers(
+      "inflation",
+      clienttranslate('Inflation active for ${player_name}'),
+      [
+        "player_id" => $player_id,
+        "player_name" => $game->getActivePlayerName(),
+      ]
+    );
+  }  
 }
