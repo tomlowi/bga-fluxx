@@ -195,7 +195,6 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         // Play a card
         this.ajaxAction(action, {
           card_id: items[0].id,
-          card_definition_id: items[0].type,
           lock: true,
         });
       }
@@ -245,7 +244,10 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       }
 
       if (otherKeeper === undefined) {
-        this.showMessage(_("You must select exactly one other player's keeper"), "error");
+        this.showMessage(
+          _("You must select exactly one other player's keeper"),
+          "error"
+        );
         return;
       }
 
@@ -292,9 +294,6 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
 
     onLeavingStateActionResolve: function () {
       console.log("Leaving state: ActionResolve");
-
-      this.discardStock.setSelectionMode(0);
-      this.discardStock.setOverlap(0.00001);
 
       this.handStock.setSelectionMode(0);
       this.goalsStock.setSelectionMode(0);

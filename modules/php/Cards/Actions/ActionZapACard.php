@@ -67,5 +67,9 @@ class ActionZapACard extends ActionCard
         "handCount" => $game->cards->countCardInLocation("hand", $player_id),
       ]
     );
+
+    if ($card["type"] == "rule") {
+      return "rulesChanged";
+    }
   }
 }

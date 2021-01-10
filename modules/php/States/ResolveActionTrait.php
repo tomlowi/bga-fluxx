@@ -64,13 +64,12 @@ trait ResolveActionTrait
       "cardIdsSelected" => $cards_id,
     ]);
 
-    $players = self::loadPlayersBasicInfos();
     self::notifyAllPlayers(
       "actionDone",
       clienttranslate('${player_name} finished action ${action_name}'),
       [
         "player_id" => $player_id,
-        "player_name" => $players[$player_id]["player_name"],
+        "player_name" => self::getActivePlayerName(),
         "action_name" => $actionName,
       ]
     );
@@ -95,7 +94,11 @@ trait ResolveActionTrait
     self::setGameStateValue("actionToResolve", -1);
 
     $game = Utils::getGame();
-    $game->checkWinConditions();
+
+    // If we have a forced move, we cannot win yet
+    if ($game->getGameStateValue("forcedCard") != -1) {
+      $game->checkWinConditions();
+    }
 
     if ($stateTransition != null) {
       $game->gamestate->nextstate($stateTransition);
@@ -112,14 +115,11 @@ trait ResolveActionTrait
     ]);
   }
 
-  public function action_resolveActionCardSelection(
-    $card_id,
-    $card_definition_id
-  ) {
+  public function action_resolveActionCardSelection($card_id)
+  {
     self::checkAction("resolveActionCardSelection");
 
     $game = Utils::getGame();
-
     $card = $game->cards->getCard($card_id);
 
     return self::_action_resolveAction(["card" => $card]);

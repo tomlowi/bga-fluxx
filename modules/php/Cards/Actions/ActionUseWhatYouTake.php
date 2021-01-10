@@ -23,7 +23,7 @@ class ActionUseWhatYouTake extends ActionCard
     $game = Utils::getGame();
     $players = $game->loadPlayersBasicInfos();
 
-    $player_name = $players[$player_id]["player_name"];
+    $player_name = $game->getActivePlayerName();
     $selected_player_id = $args["selected_player_id"];
     $selected_player_name = $players[$selected_player_id]["player_name"];
 
@@ -39,9 +39,9 @@ class ActionUseWhatYouTake extends ActionCard
     $card = array_values($cards)[$i];
     $card_definition = $game->getCardDefinitionFor($card);
 
-    $game->notifyPlayer($player_id, "cardsSentToPlayer", "", [
+    $game->notifyPlayer($selected_player_id, "cardsSentToPlayer", "", [
       "cards" => [$card],
-      "player_id" => $selected_player_id,
+      "player_id" => $player_id,
     ]);
     $game->notifyPlayer($player_id, "cardsReceivedFromPlayer", "", [
       "cards" => [$card],
@@ -60,13 +60,10 @@ class ActionUseWhatYouTake extends ActionCard
     );
     $game->sendHandCountNotifications();
 
-    // @TODO: Use What You Take
-    // Challenges: we need to play the chosen card once we are back to the "playCard"
-    // state
+    // We move this card in the player's hand
+    $game->cards->moveCard($card["id"], "hand", $player_id);
 
-    // Maybe: Add chosen card in the game state, in order to execute it when
-    // back to playCard state?
-
-    // This is similar to "let's do that again", so we shoud probably have a common solution
+    // And we mark it as the next "forcedCard"
+    $game->setGameStateValue("forcedCard", $card["id"]);
   }
 }

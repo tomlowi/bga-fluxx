@@ -90,13 +90,24 @@ class ActionLetsDoThatAgain extends ActionCard
       );
     }
 
-    // @TODO: Let's Do That Again
-    // Challenges: we need to play the chosen card once we are back to the "playCard"
-    // state
+    $game->notifyPlayer($player_id, "cardsDrawn", "", [
+      "cards" => [$card],
+    ]);
+    $game->notifyAllPlayers(
+      "actionDone",
+      clienttranslate(
+        '${player_name} took <b>${card_name}</b> from the discard pile (and must play it)'
+      ),
+      [
+        "card_name" => $card_definition->getName(),
+        "player_name" => $game->getActivePlayerName(),
+      ]
+    );
 
-    // Maybe: Add chosen card in the game state, in order to execute it when
-    // back to playCard state?
+    // We move this card in the player's hand
+    $game->cards->moveCard($card["id"], "hand", $player_id);
 
-    // This is similar to "use what you take", so we shoud probably have a common solution
+    // And we mark it as the next "forcedCard"
+    $game->setGameStateValue("forcedCard", $card["id"]);
   }
 }

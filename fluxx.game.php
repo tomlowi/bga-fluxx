@@ -74,6 +74,7 @@ class fluxx extends Table
       "activeFirstPlayRandom" => 37,
       "actionToResolve" => 40,
       "anotherTurnMark" => 41,
+      "forcedCard" => 42,
     ]);
     $this->cards = self::getNew("module.common.deck");
     $this->cards->init("card");
@@ -162,6 +163,7 @@ class fluxx extends Table
     self::setGameStateInitialValue("activePoorBonus", 0);
     self::setGameStateInitialValue("activeRichBonus", 0);
     self::setGameStateInitialValue("activeFirstPlayRandom", 0);
+    self::setGameStateInitialValue("forcedCard", -1);
 
     // Create cards
     $cards = [];
@@ -429,10 +431,10 @@ class fluxx extends Table
     foreach ($cards as $card_id => $card) {
       $rule = RuleCardFactory::getCard($card_id, $card["type_arg"]);
       $rule->immediateEffectOnDiscard($player_id);
+      $this->cards->playCard($card_id);
     }
 
     if ($cards) {
-      $this->cards->moveAllCardsInLocation("rules", "discard", $location_arg);
       self::notifyAllPlayers("rulesDiscarded", "", [
         "cards" => $cards,
         "discardCount" => $this->cards->countCardInLocation("discard"),

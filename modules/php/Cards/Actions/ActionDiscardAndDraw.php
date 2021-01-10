@@ -22,7 +22,9 @@ class ActionDiscardAndDraw extends ActionCard
     $cards = $game->cards->getCardsInLocation("hand", $player_id);
 
     // discard all cards
-    $game->cards->moveCards(array_keys($cards), "discard");
+    foreach ($cards as $card_id => $card) {
+      $game->cards->playCard($card_id);
+    }
 
     $game->notifyAllPlayers("handDiscarded", "", [
       "player_id" => $player_id,
