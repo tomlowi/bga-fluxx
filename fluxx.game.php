@@ -67,6 +67,7 @@ class fluxx extends Table
       "actionToResolve" => 40,
       "anotherTurnMark" => 41,
       "forcedCard" => 42,
+      "optionCreeperPack" => 101,
     ]);
     $this->cards = self::getNew("module.common.deck");
     $this->cards->init("card");
