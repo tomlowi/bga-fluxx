@@ -49,4 +49,22 @@ $game_options = [
 ),
 
  */
+  101 => [
+    "name" => totranslate("Creeper Pack"),
+    "values" => [
+      0 => [
+        "name" => totranslate("Exclude"),
+        "description" => totranslate("Exclude Creeper Pack expansion"),
+        "tmdisplay" => totranslate("Basic Fluxx (no Creeper Pack)"),
+        "beta" => false,
+      ],
+      1 => [
+        "name" => totranslate("Include"),
+        "description" => totranslate("Include Creeper Pack expansion"),
+        "tmdisplay" => totranslate("Include Creeper Pack"),
+        "beta" => false,
+      ],
+    ],
+    "default" => 0,
+  ],
 ];
