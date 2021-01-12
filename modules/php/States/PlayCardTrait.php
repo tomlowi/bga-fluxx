@@ -58,7 +58,7 @@ trait PlayCardTrait
     if ($richBonus > 0) {
       RuleRichBonus::notifyActiveFor($player_id);
     }
-    
+
     $playRule += $addInflation + $partyBonus + $richBonus;
 
     // still cards in hand?
@@ -78,6 +78,7 @@ trait PlayCardTrait
   public function arg_playCard()
   {
     $game = Utils::getGame();
+    $player_id = $game->getActivePlayerId();
 
     $playRule = $game->getGameStateValue("playRule");
     $played = $game->getGameStateValue("playedCards");
@@ -93,7 +94,12 @@ trait PlayCardTrait
       Utils::getActivePartyBonus() && Utils::isPartyInPlay()
         ? 1 + $addInflation
         : 0;
-    $playRule += $addInflation + $partyBonus;
+    $richBonus =
+      Utils::getActiveRichBonus() && Utils::hasMostKeepers($player_id)
+        ? 1 + $addInflation
+        : 0;
+
+    $playRule += $addInflation + $partyBonus + $richBonus;
 
     return ["count" => $playRule - $played];
   }
