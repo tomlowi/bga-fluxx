@@ -21,7 +21,7 @@ class Utils
 
   public static function getActiveInflation()
   {
-    return 0 != self::getGame()->getGameStateValue("activeInflation");    
+    return 0 != self::getGame()->getGameStateValue("activeInflation");
   }
 
   public static function getActiveNoHandBonus()
@@ -51,12 +51,9 @@ class Utils
 
   public static function isPartyInPlay()
   {
-    $party_keeper = 16;
-    $party_keeper_card = array_values(
-      self::getGame()->cards->getCardsOfType("keeper", $party_keeper)
-    )[0];
-
-    return ($party_keeper_card["location"] == "keepers");
+    $party_keeper_card_id = 16;
+    $party_keeper_card = self::getGame()->cards->getCard($party_keeper_card_id);
+    return $party_keeper_card["location"] == "keepers";
   }
 
   private static function getAllPlayersKeeperCount()
@@ -109,5 +106,4 @@ class Utils
     // no ties, only 1 player should have the most
     return count($mostKeepers) == 1 && $mostKeepers[0] == $active_player_id;
   }
-
 }
