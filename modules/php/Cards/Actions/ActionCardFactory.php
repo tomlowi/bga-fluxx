@@ -16,7 +16,13 @@ class ActionCardFactory extends CardFactory
   public static function listCardDefinitions()
   {
     $actionDefinitions = [];
-    foreach (self::$classes as $definitionId => $class) {
+
+    $cardClasses = self::$classes;
+    if (Utils::useCreeperPackExpansion()) {
+      $cardClasses += self::$classesCreeperPack;
+    }
+    
+    foreach ($cardClasses as $definitionId => $class) {
       $card = self::getCard(0, $definitionId);
 
       $actionDefinitions[$definitionId] = [
@@ -56,4 +62,11 @@ class ActionCardFactory extends CardFactory
     322 => "ActionTakeAnotherTurn",
     323 => "ActionTodaysSpecial",
   ];
+
+  public static $classesCreeperPack = [
+    351 => "ActionStealSomething",
+    352 => "ActionTrashSomething",
+    353 => "ActionCreeperSweeper",
+    354 => "ActionMoveACreeper",
+  ]
 }

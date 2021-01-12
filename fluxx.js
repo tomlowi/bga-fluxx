@@ -65,10 +65,10 @@ define([
             spriteOffset: 19 + 30 + 27,
             materialOffset: 301,
           },
-          creeper: { count: 4, spriteOffset: creeperOffset, materialOffset: 401 },
-          creeperGoal: { count: 6, spriteOffset: creeperOffset + 4, materialOffset: 501 },
-          creeperRule: { count: 2, spriteOffset: creeperOffset + 4 + 6, materialOffset: 601 },
-          creeperAction: { count: 4, spriteOffset: creeperOffset + 4 + 6 + 2, materialOffset: 701 },
+          creeper: { count: 4, spriteOffset: creeperOffset, materialOffset: 51 },
+          creeperGoal: { count: 6, spriteOffset: creeperOffset + 4, materialOffset: 151 },
+          creeperRule: { count: 2, spriteOffset: creeperOffset + 4 + 6, materialOffset: 251 },
+          creeperAction: { count: 4, spriteOffset: creeperOffset + 4 + 6 + 2, materialOffset: 351 },
         };
 
         this._allStocks = [];

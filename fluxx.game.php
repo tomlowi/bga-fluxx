@@ -281,6 +281,8 @@ class fluxx extends Table
         return RuleCardFactory::getCard($card["id"], $card["type_arg"]);
       case "action":
         return ActionCardFactory::getCard($card["id"], $card["type_arg"]);
+      case "creeper":
+        return CreeperCardFactory::getCard($card["id"], $card["type_arg"]);
       default:
         return null;
     }
@@ -296,12 +298,7 @@ class fluxx extends Table
     $goals = GoalCardFactory::listCardDefinitions();
     $rules = RuleCardFactory::listCardDefinitions();
     $actions = ActionCardFactory::listCardDefinitions();
-
-    $creepers = [];
-    if (self::getGameStateValue("optionCreeperPack"))
-    {
-      $creepers = CreeperCardFactory::listCardDefinitions();
-    }
+    $creepers = CreeperCardFactory::listCardDefinitions();
 
     return $keepers + $goals + $rules + $actions + $creepers;
   }

@@ -16,7 +16,13 @@ class RuleCardFactory extends CardFactory
   public static function listCardDefinitions()
   {
     $ruleDefinitions = [];
-    foreach (self::$classes as $definitionId => $class) {
+
+    $cardClasses = self::$classes;
+    if (Utils::useCreeperPackExpansion()) {
+      $cardClasses += self::$classesCreeperPack;
+    }
+
+    foreach ($cardClasses as $definitionId => $class) {
       $card = self::getCard(0, $definitionId);
 
       $ruleDefinitions[$definitionId] = [
@@ -27,6 +33,7 @@ class RuleCardFactory extends CardFactory
         "description" => $card->getDescription(),
       ];
     }
+
     return $ruleDefinitions;
   }
 
@@ -62,4 +69,9 @@ class RuleCardFactory extends CardFactory
     226 => "RuleRecycling",
     227 => "RuleSwapPlaysForDraws",
   ];
+
+  public static $classesCreeperPack = [
+    251 => "RuleSilverLining",
+    252 => "RuleYouAlsoNeedABakedPotato",
+  ];  
 }

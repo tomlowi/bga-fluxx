@@ -18,27 +18,3 @@
  * are available everywhere in your game logic code.
  *
  */
-
- // TODO: completely obsolete ?
-$this->typesDefinitions = [
-  [
-    "label" => "keeper",
-    "name" => self::_("keeper"),
-    "nbCards" => 19,
-  ],
-  [
-    "label" => "goal",
-    "name" => self::_("goal"),
-    "nbCards" => 30,
-  ],
-  [
-    "label" => "rule",
-    "name" => self::_("rule"),
-    "nbCards" => 27,
-  ],
-  [
-    "label" => "action",
-    "name" => self::_("action"),
-    "nbCards" => 23,
-  ],
-];

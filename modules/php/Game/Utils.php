@@ -13,4 +13,9 @@ class Utils
   {
     throw new \BgaUserException($msg);
   }
+
+  public static useCreeperPackExpansion()
+  {
+    return 1 == self::getGame()->getGameStateValue("optionCreeperPack");
+  }
 }

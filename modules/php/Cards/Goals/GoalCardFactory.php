@@ -2,6 +2,7 @@
 
 namespace Fluxx\Cards\Goals;
 use Fluxx\Cards\CardFactory;
+use Fluxx\Game\Utils;
 /*
  * GoalCardFactory: how to create Goal Cards
  */
@@ -16,7 +17,13 @@ class GoalCardFactory extends CardFactory
   public static function listCardDefinitions()
   {
     $goalDefinitions = [];
-    foreach (self::$classes as $definitionId => $class) {
+
+    $cardClasses = self::$classes;
+    if (Utils::useCreeperPackExpansion()) {
+      $cardClasses += self::$classesCreeperPack;
+    }
+
+    foreach ($cardClasses as $definitionId => $class) {
       $card = self::getCard(0, $definitionId);
 
       $goalDefinitions[$definitionId] = [
@@ -25,6 +32,7 @@ class GoalCardFactory extends CardFactory
         "subtitle" => $card->getSubtitle(),
       ];
     }
+
     return $goalDefinitions;
   }
 
@@ -63,4 +71,13 @@ class GoalCardFactory extends CardFactory
     129 => "GoalWinningTheLottery",
     130 => "GoalWorldPeace",
   ];
+
+  public static $classesCreeperPack = [
+    151 => "GoalWarIsDeath",
+    152 => "GoalAllThatIsCertain",
+    153 => "GoalDeathByChocolate",
+    154 => "GoalMoneyNoTaxes",
+    155 => "GoalPeaceNoWar",
+    156 => "GoalYourTaxDollarsAtWar",
+  ]  
 }
