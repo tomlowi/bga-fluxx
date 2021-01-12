@@ -55,6 +55,7 @@ define([
         this.KEEPERS_SPRITES_PATH = g_gamethemeurl + "img/keepers.png";
         this.KEEPERS_SPRITES_PER_ROW = 10;
 
+        var creeperOffset = 19 + 30 + 27 + 23 + 3; // all base game cards + Basic Rules / Back / Front
         this.CARDS_TYPES = {
           keeper: { count: 19, spriteOffset: 0, materialOffset: 1 },
           goal: { count: 30, spriteOffset: 19, materialOffset: 101 },
@@ -64,6 +65,10 @@ define([
             spriteOffset: 19 + 30 + 27,
             materialOffset: 301,
           },
+          creeper: { count: 4, spriteOffset: creeperOffset, materialOffset: 401 },
+          creeperGoal: { count: 6, spriteOffset: creeperOffset + 4, materialOffset: 501 },
+          creeperRule: { count: 2, spriteOffset: creeperOffset + 4 + 6, materialOffset: 601 },
+          creeperAction: { count: 4, spriteOffset: creeperOffset + 4 + 6 + 2, materialOffset: 701 },
         };
 
         this._allStocks = [];

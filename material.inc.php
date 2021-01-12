@@ -19,6 +19,7 @@
  *
  */
 
+ // TODO: completely obsolete ?
 $this->typesDefinitions = [
   [
     "label" => "keeper",
@@ -40,9 +41,4 @@ $this->typesDefinitions = [
     "name" => self::_("action"),
     "nbCards" => 23,
   ],
-  [
-    "label" => "creeper",
-    "name" => self::_("creeper"),
-    "nbCards" => 4,
-  ],  
 ];

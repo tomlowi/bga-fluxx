@@ -297,7 +297,13 @@ class fluxx extends Table
     $rules = RuleCardFactory::listCardDefinitions();
     $actions = ActionCardFactory::listCardDefinitions();
 
-    return $keepers + $goals + $rules + $actions;
+    $creepers = [];
+    if (self::getGameStateValue("optionCreeperPack"))
+    {
+      $creepers = CreeperCardFactory::listCardDefinitions();
+    }
+
+    return $keepers + $goals + $rules + $actions + $creepers;
   }
 
   /*
