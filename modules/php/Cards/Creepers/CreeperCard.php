@@ -15,4 +15,7 @@ class CreeperCard extends Card
     $this->subtitle = $subtitle;
     $this->description = $description;
   }
+
+  // @TODO: some Creepers globally prevent winning
+  // @TODO: some Creepers do have side effects like moving/discarding other Keepers
 }

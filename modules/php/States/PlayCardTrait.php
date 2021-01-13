@@ -7,6 +7,7 @@ use Fluxx\Cards\Keepers\KeeperCardFactory;
 use Fluxx\Cards\Goals\GoalCardFactory;
 use Fluxx\Cards\Rules\RuleCardFactory;
 use Fluxx\Cards\Actions\ActionCardFactory;
+use Fluxx\Cards\Creepers\CreeperCardFactory;
 
 trait PlayCardTrait
 {
@@ -100,6 +101,9 @@ trait PlayCardTrait
       case "action":
         $stateTransition = $this->playActionCard($player_id, $card);
         break;
+      case "creeper":
+        $this->playCreeperCard($player_id, $card);
+        break;
       default:
         die("Not implemented: Card type $card_type does not exist");
         break;
@@ -131,6 +135,29 @@ trait PlayCardTrait
     $game->notifyAllPlayers(
       "keeperPlayed",
       clienttranslate('${player_name} plays keeper <b>${card_name}</b>'),
+      [
+        "i18n" => ["card_name"],
+        "player_name" => $game->getActivePlayerName(),
+        "player_id" => $player_id,
+        "card_name" => $keeperCard->getName(),
+        "card" => $card,
+        "handCount" => $game->cards->countCardInLocation("hand", $player_id),
+      ]
+    );
+  }
+
+  public function playCreeperCard($player_id, $card)
+  {
+    $game = Utils::getGame();
+
+    // creepers go to table on same location as keepers
+    $game->cards->moveCard($card["id"], "keepers", $player_id);
+
+    // Notify all players about the creeper played
+    $keeperCard = CreeperCardFactory::getCard($card["id"], $card["type_arg"]);
+    $game->notifyAllPlayers(
+      "keeperPlayed",
+      clienttranslate('${player_name} plays creeper <b>${card_name}</b>'),
       [
         "i18n" => ["card_name"],
         "player_name" => $game->getActivePlayerName(),

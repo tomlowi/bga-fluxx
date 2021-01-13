@@ -20,6 +20,8 @@ class CreeperCardFactory extends CardFactory
             $creeperDefinitions[$definitionId] = [
                 "type" => "creeper",
                 "name" => $class["name"],
+                "subtitle" => $class["subtitle"],
+                "description" => $class["description"],
             ];
         }
     }

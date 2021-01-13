@@ -2,6 +2,7 @@
 
 namespace Fluxx\Cards\Rules;
 use Fluxx\Cards\CardFactory;
+use Fluxx\Game\Utils;
 /*
  * RuleCardFactory: how to create Rule Cards
  */
@@ -9,7 +10,14 @@ class RuleCardFactory extends CardFactory
 {
   public static function getCardFullClassName($uniqueId)
   {
-    $name = "Fluxx\Cards\Rules\\" . self::$classes[$uniqueId];
+    if (array_key_exists($uniqueId, self::$classesCreeperPack))
+    {
+      $name = "Fluxx\Cards\Rules\\" . self::$classesCreeperPack[$uniqueId];
+    } 
+    else 
+    {
+      $name = "Fluxx\Cards\Rules\\" . self::$classes[$uniqueId];
+    } 
     return $name;
   }
 

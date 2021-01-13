@@ -41,6 +41,7 @@ use Fluxx\Cards\Keepers\KeeperCardFactory;
 use Fluxx\Cards\Goals\GoalCardFactory;
 use Fluxx\Cards\Rules\RuleCardFactory;
 use Fluxx\Cards\Actions\ActionCardFactory;
+use Fluxx\Cards\Creepers\CreeperCardFactory;
 
 class fluxx extends Table
 {
@@ -299,7 +300,7 @@ class fluxx extends Table
     $rules = RuleCardFactory::listCardDefinitions();
     $actions = ActionCardFactory::listCardDefinitions();
     $creepers = CreeperCardFactory::listCardDefinitions();
-
+    
     return $keepers + $goals + $rules + $actions + $creepers;
   }
 

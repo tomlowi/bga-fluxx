@@ -101,6 +101,7 @@ define([
           "goal",
           "rule",
           "action",
+          "creeper", "creeperGoal", "creeperRule", "creeperAction",
         ]);
         this.addCardsToStock(this.handStock, this.gamedatas.hand);
 
@@ -109,6 +110,7 @@ define([
           "goal",
           "rule",
           "action",
+          "creeper", "creeperGoal", "creeperRule", "creeperAction",
         ]);
         this.addCardsToStock(this.discardStock, this.gamedatas.discard, true);
         this.discardStock.setOverlap(0.00001);
@@ -133,7 +135,9 @@ define([
         this.rulesStock.playRule = this.createCardStock("playRuleStock", [
           "rule",
         ]);
-        this.rulesStock.others = this.createCardStock("othersStock", ["rule"]);
+        this.rulesStock.others = this.createCardStock("othersStock", [
+          "rule", "creeperRule",
+        ]);
         this.addCardsToStock(
           this.rulesStock.drawRule,
           this.gamedatas.rules.drawRule
@@ -155,7 +159,7 @@ define([
           this.gamedatas.rules.others
         );
 
-        this.goalsStock = this.createCardStock("goalsStock", ["goal"]);
+        this.goalsStock = this.createCardStock("goalsStock", ["goal", "creeperGoal"]);
         this.addCardsToStock(this.goalsStock, this.gamedatas.goals);
         this.goalsStock.setOverlap(50);
 

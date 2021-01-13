@@ -2,6 +2,7 @@
 
 namespace Fluxx\Cards\Actions;
 use Fluxx\Cards\CardFactory;
+use Fluxx\Game\Utils;
 /*
  * ActionCardFactory: how to create Action Cards
  */
@@ -9,7 +10,14 @@ class ActionCardFactory extends CardFactory
 {
   public static function getCardFullClassName($uniqueId)
   {
-    $name = "Fluxx\Cards\Actions\\" . self::$classes[$uniqueId];
+    if (array_key_exists($uniqueId, self::$classesCreeperPack))
+    {
+      $name = "Fluxx\Cards\Actions\\" . self::$classesCreeperPack[$uniqueId];
+    } 
+    else 
+    {
+      $name = "Fluxx\Cards\Actions\\" . self::$classes[$uniqueId];
+    } 
     return $name;
   }
 
@@ -68,5 +76,5 @@ class ActionCardFactory extends CardFactory
     352 => "ActionTrashSomething",
     353 => "ActionCreeperSweeper",
     354 => "ActionMoveACreeper",
-  ]
+  ];
 }
