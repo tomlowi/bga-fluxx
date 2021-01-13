@@ -37,12 +37,12 @@ class GoalTheBrainNoTV extends GoalCard
       "keepers"
     );
 
-    // Noone needs to have the TV
-    if (count($tv_keeper_card) == 0) {
+    // If anyone has the TV, can't win
+    if (count($tv_keeper_cards) > 0) {
       return null;
     }
 
-    // Then the player with the brain wins
+    // Else the player with the brain wins
     return $brain_keeper_card["location_arg"];
   }
 }

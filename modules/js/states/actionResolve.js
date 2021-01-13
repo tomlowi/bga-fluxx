@@ -31,7 +31,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
           "onResolveActionKeepersExchange"
         );
       },
-      keeperSelection: function (that, args) {
+      keeperSelectionOther: function (that, args) {
         for (var player_id in that.keepersStock) {
           if (player_id != that.player_id) {
             var stock = that.keepersStock[player_id];
@@ -48,6 +48,22 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
             );
           }
         }
+      },
+      keeperSelectionAny: function (that, args) {
+        for (var player_id in that.keepersStock) {
+          var stock = that.keepersStock[player_id];
+          stock.setSelectionMode(1);
+
+          if (that._listeners["keepers_" + player_id] !== undefined) {
+            dojo.disconnect(that._listeners["keepers_" + player_id]);
+          }
+          that._listeners["keepers_" + player_id] = dojo.connect(
+            stock,
+            "onChangeSelection",
+            that,
+            "onResolveActionCardSelection"
+          );        
+        }        
       },
       playerSelection: function (that, args) {
         // @TODO: to be replaced with nice visual way of selecting other players

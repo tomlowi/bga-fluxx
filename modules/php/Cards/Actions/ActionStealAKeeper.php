@@ -16,7 +16,7 @@ class ActionStealAKeeper extends ActionCard
     );
   }
 
-  public $interactionNeeded = "keeperSelection";
+  public $interactionNeeded = "keeperSelectionOther";
 
   public function immediateEffectOnPlay($player_id)
   {
