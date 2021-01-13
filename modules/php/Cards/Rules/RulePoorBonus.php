@@ -19,9 +19,11 @@ class RulePoorBonus extends RuleCard
   public function immediateEffectOnPlay($player_id)
   {
     Utils::getGame()->setGameStateValue("activePoorBonus", 1);
-    if (Utils::hasLeastKeepers($player_id))
-    {
+    if (Utils::hasLeastKeepers($player_id)) {
       $addInflation = Utils::getActiveInflation() ? 1 : 0;
+
+      // @TODO: review how we handle the poor bonus to make sure
+      // it cannot be used twice by the same player in one turn.
 
       $poorBonus = 1 + $addInflation;
       RulePoorBonus::notifyActiveFor($player_id);

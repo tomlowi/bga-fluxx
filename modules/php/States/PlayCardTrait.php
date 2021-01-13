@@ -64,6 +64,10 @@ trait PlayCardTrait
     // still cards in hand?
     $cardsInHand = $game->cards->countCardInLocation("hand", $player_id);
 
+    // @TODO: At the moment, we don't handle play all but 1 properly with Inflation
+    // And we need to review how "rich bonus" is handled, because potentially we
+    // would need a state just for this card
+
     // is Play All But 1 in play ?
     // If not, did the player play enough cards already (or hand empty) ?
     if (
