@@ -348,15 +348,11 @@ define([
         return stock;
       },
 
-      createKeepersStock: function (elem) {
-        var stock = new ebg.stock();
-        this._allStocks[elem] = stock;
-        stock.create(this, $(elem), this.KEEPER_WIDTH, this.KEEPER_HEIGHT);
-        stock.image_items_per_row = this.KEEPERS_SPRITES_PER_ROW;
 
-        var count = this.CARDS_TYPES.keeper.count;
-        var spriteOffset = this.CARDS_TYPES.keeper.spriteOffset;
-        var materialOffset = this.CARDS_TYPES.keeper.materialOffset;
+      addCardsToKeeperStock: function(stock, cardType, spriteOffset) {
+        var count = cardType.count;
+        var spriteOffset = spriteOffset;
+        var materialOffset = cardType.materialOffset;
 
         for (var i = 0; i < count; i++) {
           stock.addItemType(
@@ -366,6 +362,20 @@ define([
             spriteOffset + i
           );
         }
+      },
+
+      createKeepersStock: function (elem) {
+        var stock = new ebg.stock();
+        this._allStocks[elem] = stock;
+        stock.create(this, $(elem), this.KEEPER_WIDTH, this.KEEPER_HEIGHT);
+        stock.image_items_per_row = this.KEEPERS_SPRITES_PER_ROW;
+
+        // small version for keepers played
+        this.addCardsToKeeperStock(stock, this.CARDS_TYPES.keeper, 0);
+
+        // small version for creepers played
+        var smallCreeperSpriteOffset = 1 + this.CARDS_TYPES.keeper.count;
+        this.addCardsToKeeperStock(stock, this.CARDS_TYPES.creeper, smallCreeperSpriteOffset);
 
         stock.setSelectionMode(0);
         stock.onItemCreate = dojo.hitch(this, "setupNewCard");
