@@ -37,12 +37,12 @@ class GoalMoneyNoTaxes extends GoalCard
       "keepers"
     );
 
-    // Noone needs to have taxes
-    if (count($taxes_creeper_cards) == 0) {
+    // If anyone has Taxes, can't win
+    if (count($taxes_creeper_cards) > 0) {
       return null;
     }
 
-    // Then the player with money wins
+    // Else the player with money wins
     return $money_keeper_card["location_arg"];
   }
 }

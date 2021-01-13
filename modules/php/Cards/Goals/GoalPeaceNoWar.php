@@ -37,12 +37,12 @@ class GoalPeaceNoWar extends GoalCard
       "keepers"
     );
 
-    // Noone needs to have war
-    if (count($war_creeper_cards) == 0) {
+    // If anyone has War, can't win
+    if (count($war_creeper_cards) > 0) {
       return null;
     }
 
-    // Then the player with peace wins
+    // Else the player with peace wins
     return $peace_keeper_card["location_arg"];
   }
 }
