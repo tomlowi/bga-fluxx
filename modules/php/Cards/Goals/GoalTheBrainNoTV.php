@@ -38,7 +38,7 @@ class GoalTheBrainNoTV extends GoalCard
     );
 
     // If anyone has the TV, can't win
-    if (count($tv_keeper_card) > 0) {
+    if (count($tv_keeper_cards) > 0) {
       return null;
     }
 
