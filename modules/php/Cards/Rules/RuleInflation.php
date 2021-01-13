@@ -16,13 +16,42 @@ class RuleInflation extends RuleCard
     );
   }
 
-  public function immediateEffectOnPlay($player)
+  public function immediateEffectOnPlay($player_id)
   {
-    // @TODO : set game state?
+    Utils::getGame()->setGameStateValue("activeInflation", 1);
+    // Draw rule is adapted immediately, so current player draws an extra card
+    $extraDrawCount = 1;
+    // If Poor Bonus is active, it should also get inflated
+    $poorBonus = Utils::getActivePoorBonus() && Utils::hasLeastKeepers($player_id);
+    if ($poorBonus)
+    {
+      $extraDrawCount += 1;
+    }      
+    // If Party Bonus is active, it should also get inflated
+    $partyBonus = Utils::getActivePartyBonus() && Utils::isPartyInPlay();
+    if ($partyBonus)
+    {
+      $extraDrawCount += 1;
+    }      
+    // Draw extra cards for this player
+    Utils::getGame()->performDrawCards($player_id, $extraDrawCount);
   }
 
-  public function immediateEffectOnDiscard($player)
+  public function immediateEffectOnDiscard($player_id)
   {
-    // @TODO : unset game state?
+    Utils::getGame()->setGameStateValue("activeInflation", 0);
   }
+
+  public static function notifyActiveFor($player_id)
+  {
+    $game = Utils::getGame();
+    $game->notifyAllPlayers(
+      "inflation",
+      clienttranslate('Inflation active for ${player_name}'),
+      [
+        "player_id" => $player_id,
+        "player_name" => $game->getActivePlayerName(),
+      ]
+    );
+  }  
 }

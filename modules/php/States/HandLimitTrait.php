@@ -18,6 +18,10 @@ trait HandLimitTrait
     if ($handLimit < 0) {
       return [];
     }
+
+    $addInflation = Utils::getActiveInflation() ? 1 : 0;
+    $handLimit += $addInflation;
+
     if ($players_id == null) {
       $players_id = array_keys(self::loadPlayersBasicInfos());
     }

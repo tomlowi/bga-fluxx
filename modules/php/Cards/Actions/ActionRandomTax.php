@@ -23,6 +23,20 @@ class ActionRandomTax extends ActionCard
 
     $players = $game->loadPlayersBasicInfos();
 
+    $addInflation = Utils::getActiveInflation() ? 1 : 0;
+    $taxCount = 1 + $addInflation;
+
+    for ($i = 0; $i < $taxCount; $i++)
+    {
+      $this->taxOtherPlayers($player_id, $player_name, $players);
+    }
+
+    $game->sendHandCountNotifications();
+  }
+
+  private function taxOtherPlayers($player_id, $player_name, $players)
+  {
+    $game = Utils::getGame();
     foreach ($players as $from_player_id => $from_player) {
       if ($from_player_id != $player_id) {
         $cards = $game->cards->getCardsInLocation("hand", $from_player_id);
@@ -62,7 +76,5 @@ class ActionRandomTax extends ActionCard
         }
       }
     }
-
-    $game->sendHandCountNotifications();
   }
 }

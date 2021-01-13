@@ -41,6 +41,7 @@ use Fluxx\Cards\Keepers\KeeperCardFactory;
 use Fluxx\Cards\Goals\GoalCardFactory;
 use Fluxx\Cards\Rules\RuleCardFactory;
 use Fluxx\Cards\Actions\ActionCardFactory;
+use Fluxx\Game\Utils;
 
 class fluxx extends Table
 {
@@ -64,13 +65,20 @@ class fluxx extends Table
       "drawnCards" => 20,
       "playedCards" => 21,
       "lastGoalBeforeDoubleAgenda" => 30,
+      "activeDoubleAgenda" => 31,
+      "activeInflation" => 32,
+      "activeNoHandBonus" => 33,
+      "activePartyBonus" => 34,
+      "activePoorBonus" => 35,
+      "activeRichBonus" => 36,
+      "activeFirstPlayRandom" => 37,
       "actionToResolve" => 40,
       "anotherTurnMark" => 41,
       "forcedCard" => 42,
     ]);
     $this->cards = self::getNew("module.common.deck");
     $this->cards->init("card");
-    // We want to re-schuffle the discard pile in the deck automatically
+    // We want to re-shuffle the discard pile in the deck automatically
     $this->cards->autoreshuffle = true;
 
     $this->cards->autoreshuffle_trigger = [
@@ -148,6 +156,13 @@ class fluxx extends Table
     self::setGameStateInitialValue("playedCards", 0);
     self::setGameStateInitialValue("anotherTurnMark", 0);
     self::setGameStateInitialValue("lastGoalBeforeDoubleAgenda", -1);
+    self::setGameStateInitialValue("activeDoubleAgenda", 0);
+    self::setGameStateInitialValue("activeInflation", 0);
+    self::setGameStateInitialValue("activeNoHandBonus", 0);
+    self::setGameStateInitialValue("activePartyBonus", 0);
+    self::setGameStateInitialValue("activePoorBonus", 0);
+    self::setGameStateInitialValue("activeRichBonus", 0);
+    self::setGameStateInitialValue("activeFirstPlayRandom", 0);
     self::setGameStateInitialValue("forcedCard", -1);
 
     // Create cards
@@ -591,12 +606,10 @@ class fluxx extends Table
 
   public function st_goalCleaning()
   {
-    $hasDoubleAgenda = count(
-      $this->cards->getCardsOfTypeInLocation("rule", 220, "rules")
-    );
+    $hasDoubleAgenda = Utils::getActiveDoubleAgenda();
     $existingGoalCount = $this->cards->countCardInLocation("goals");
 
-    $expectedCount = $hasDoubleAgenda + 1;
+    $expectedCount = $hasDoubleAgenda ? 2 : 1;
 
     if ($existingGoalCount <= $expectedCount) {
       // We already have the proper number of goals, proceed to play

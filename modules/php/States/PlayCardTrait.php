@@ -7,6 +7,8 @@ use Fluxx\Cards\Keepers\KeeperCardFactory;
 use Fluxx\Cards\Goals\GoalCardFactory;
 use Fluxx\Cards\Rules\RuleCardFactory;
 use Fluxx\Cards\Actions\ActionCardFactory;
+use Fluxx\Cards\Rules\RulePartyBonus;
+use Fluxx\Cards\Rules\RuleRichBonus;
 
 trait PlayCardTrait
 {
@@ -40,8 +42,31 @@ trait PlayCardTrait
     $playRule = $game->getGameStateValue("playRule");
     $cardsPlayed = $game->getGameStateValue("playedCards");
 
+    // check bonus rules
+    $addInflation = Utils::getActiveInflation() ? 1 : 0;
+    $partyBonus =
+      Utils::getActivePartyBonus() && Utils::isPartyInPlay()
+        ? 1 + $addInflation
+        : 0;
+    if ($partyBonus > 0) {
+      RulePartyBonus::notifyActiveFor($player_id);
+    }
+    $richBonus =
+      Utils::getActiveRichBonus() && Utils::hasMostKeepers($player_id)
+        ? 1 + $addInflation
+        : 0;
+    if ($richBonus > 0) {
+      RuleRichBonus::notifyActiveFor($player_id);
+    }
+
+    $playRule += $addInflation + $partyBonus + $richBonus;
+
     // still cards in hand?
     $cardsInHand = $game->cards->countCardInLocation("hand", $player_id);
+
+    // @TODO: At the moment, we don't handle play all but 1 properly with Inflation
+    // And we need to review how "rich bonus" is handled, because potentially we
+    // would need a state just for this card
 
     // is Play All But 1 in play ?
     // If not, did the player play enough cards already (or hand empty) ?
@@ -57,6 +82,7 @@ trait PlayCardTrait
   public function arg_playCard()
   {
     $game = Utils::getGame();
+    $player_id = $game->getActivePlayerId();
 
     $playRule = $game->getGameStateValue("playRule");
     $played = $game->getGameStateValue("playedCards");
@@ -66,6 +92,19 @@ trait PlayCardTrait
     if ($playRule == -1) {
       return ["count" => "All but 1"];
     }
+
+    $addInflation = Utils::getActiveInflation() ? 1 : 0;
+    $partyBonus =
+      Utils::getActivePartyBonus() && Utils::isPartyInPlay()
+        ? 1 + $addInflation
+        : 0;
+    $richBonus =
+      Utils::getActiveRichBonus() && Utils::hasMostKeepers($player_id)
+        ? 1 + $addInflation
+        : 0;
+
+    $playRule += $addInflation + $partyBonus + $richBonus;
+
     return ["count" => $playRule - $played];
   }
 
@@ -162,8 +201,7 @@ trait PlayCardTrait
     );
 
     $existingGoalCount = $game->cards->countCardInLocation("goals");
-    $hasDoubleAgenda =
-      count($game->cards->getCardsOfTypeInLocation("rule", 220, "rules")) > 0;
+    $hasDoubleAgenda = Utils::getActiveDoubleAgenda();
 
     // No double agenda: we simply discard the oldest goal
     if (!$hasDoubleAgenda) {

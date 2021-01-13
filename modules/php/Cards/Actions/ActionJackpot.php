@@ -15,6 +15,8 @@ class ActionJackpot extends ActionCard
 
   public function immediateEffectOnPlay($player_id)
   {
-    Utils::getGame()->performDrawCards($player_id, 3);
+    $addInflation = Utils::getActiveInflation() ? 1 : 0;
+    $extraCards = 3 + $addInflation;
+    Utils::getGame()->performDrawCards($player_id, $extraCards);
   }
 }
