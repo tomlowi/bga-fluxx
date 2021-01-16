@@ -2,6 +2,7 @@
 
 namespace Fluxx\Cards\Goals;
 use Fluxx\Cards\CardFactory;
+use Fluxx\Game\Utils;
 /*
  * GoalCardFactory: how to create Goal Cards
  */
@@ -9,14 +10,27 @@ class GoalCardFactory extends CardFactory
 {
   public static function getCardFullClassName($uniqueId)
   {
-    $name = "Fluxx\Cards\Goals\\" . self::$classes[$uniqueId];
+    if (array_key_exists($uniqueId, self::$classesCreeperPack))
+    {
+      $name = "Fluxx\Cards\Goals\\" . self::$classesCreeperPack[$uniqueId];
+    } 
+    else 
+    {
+      $name = "Fluxx\Cards\Goals\\" . self::$classes[$uniqueId];
+    }    
     return $name;
   }
 
   public static function listCardDefinitions()
   {
     $goalDefinitions = [];
-    foreach (self::$classes as $definitionId => $class) {
+
+    $cardClasses = self::$classes;
+    if (Utils::useCreeperPackExpansion()) {
+      $cardClasses += self::$classesCreeperPack;
+    }
+
+    foreach ($cardClasses as $definitionId => $class) {
       $card = self::getCard(0, $definitionId);
 
       $goalDefinitions[$definitionId] = [
@@ -25,6 +39,7 @@ class GoalCardFactory extends CardFactory
         "subtitle" => $card->getSubtitle(),
       ];
     }
+
     return $goalDefinitions;
   }
 
@@ -62,5 +77,14 @@ class GoalCardFactory extends CardFactory
     128 => "GoalTurnItUp",
     129 => "GoalWinningTheLottery",
     130 => "GoalWorldPeace",
+  ];
+
+  public static $classesCreeperPack = [
+    151 => "GoalWarIsDeath",
+    152 => "GoalAllThatIsCertain",
+    153 => "GoalDeathByChocolate",
+    154 => "GoalMoneyNoTaxes",
+    155 => "GoalPeaceNoWar",
+    156 => "GoalYourTaxDollarsAtWar",
   ];
 }
