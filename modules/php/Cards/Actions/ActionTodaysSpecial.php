@@ -32,8 +32,10 @@ class ActionTodaysSpecial extends ActionCard
 
   public function resolvedBy($player_id, $args)
   {
+    $addInflation = Utils::getActiveInflation() ? 1 : 0;
+
     $value = $args["value"];
-    $nrCardsToDraw = 3;
+    $nrCardsToDraw = 0;
 
     switch ($value) {
       case "birthday":
@@ -45,6 +47,8 @@ class ActionTodaysSpecial extends ActionCard
       default:
         $nrCardsToPlay = 1;
     }
+
+    $nrCardsToPlay += $addInflation;
 
     // @TODO: Today’s Special!
     // Challenges: current hand needs to be set aside and player gets special turn with these cards

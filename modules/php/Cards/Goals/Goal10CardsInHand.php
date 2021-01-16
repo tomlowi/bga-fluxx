@@ -24,6 +24,10 @@ class Goal10CardsInHand extends GoalCard
     $cards = Utils::getGame()->cards;
 
     $maxCards = 10;
+
+    $addInflation = Utils::getActiveInflation() ? 1 : 0;
+    $maxCards += $addInflation;
+
     $cardCounts = [];
     foreach ($players as $player_id => $player) {
       // Count each player hand cards
