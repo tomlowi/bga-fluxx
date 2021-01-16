@@ -19,15 +19,9 @@ class RulePartyBonus extends RuleCard
   public function immediateEffectOnPlay($player_id)
   {
     Utils::getGame()->setGameStateValue("activePartyBonus", 1);
-    // if Party already on the table, draw extra card for current player
-    if (Utils::isPartyInPlay())
-    {
-      $addInflation = Utils::getActiveInflation() ? 1 : 0;
 
-      $partyBonus = 1 + $addInflation;
-      RulePartyBonus::notifyActiveFor($player_id);
-      Utils::getGame()->performDrawCards($player_id, $partyBonus);
-    }
+    // if Party already on the table, immediately draw extra
+    Utils::recheckForPartyBonus($player_id);
 
     // +1 play will be accounted for automatically in PlayCardTrait,
     // when next checking if player should play more cards

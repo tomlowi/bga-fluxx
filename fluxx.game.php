@@ -75,6 +75,8 @@ class fluxx extends Table
       "actionToResolve" => 40,
       "anotherTurnMark" => 41,
       "forcedCard" => 42,
+      "playerTurnUsedPartyBonus" => 43,
+      "playerTurnUsedPoorBonus" => 44,
     ]);
     $this->cards = self::getNew("module.common.deck");
     $this->cards->init("card");
@@ -148,10 +150,10 @@ class fluxx extends Table
     /************ Start the game initialization *****/
 
     // Init global values with their initial values
-    self::setGameStateInitialValue("drawRule", 1); // TODO: compute from table
-    self::setGameStateInitialValue("playRule", 1); // TODO: compute from table
-    self::setGameStateInitialValue("handLimit", -1); // TODO: compute from table
-    self::setGameStateInitialValue("keepersLimit", -1); // TODO: compute from table
+    self::setGameStateInitialValue("drawRule", 1);
+    self::setGameStateInitialValue("playRule", 1);
+    self::setGameStateInitialValue("handLimit", -1);
+    self::setGameStateInitialValue("keepersLimit", -1);
     self::setGameStateInitialValue("drawnCards", 0);
     self::setGameStateInitialValue("playedCards", 0);
     self::setGameStateInitialValue("anotherTurnMark", 0);
@@ -164,6 +166,8 @@ class fluxx extends Table
     self::setGameStateInitialValue("activeRichBonus", 0);
     self::setGameStateInitialValue("activeFirstPlayRandom", 0);
     self::setGameStateInitialValue("forcedCard", -1);
+    self::setGameStateInitialValue("playerTurnUsedPartyBonus", -1);
+    self::setGameStateInitialValue("playerTurnUsedPoorBonus", -1);    
 
     // Create cards
     $cards = [];
@@ -474,6 +478,12 @@ class fluxx extends Table
     ]);
   }
 
+  public function checkBonusConditions($player_id)
+  {
+    Utils::recheckForPartyBonus($player_id);
+    Utils::recheckForPoorBonus($player_id);
+  }
+
   public function checkWinConditions()
   {
     $winnerInfo = $this->checkCurrentGoalsWinner();
@@ -650,6 +660,9 @@ class fluxx extends Table
 
     // reset everything for turn of next player
     self::setGameStateValue("playedCards", 0);
+    self::setGameStateValue("playerTurnUsedPartyBonus", 0);
+    self::setGameStateValue("playerTurnUsedPoorBonus", 0);
+
     self::giveExtraTime($player_id);
     $this->gamestate->nextState("");
   }

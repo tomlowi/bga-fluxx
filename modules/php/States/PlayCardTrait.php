@@ -149,6 +149,9 @@ trait PlayCardTrait
     // A card has been played: do we have a new winner?
     $game->checkWinConditions();
 
+    // if not, maybe the card played had effect for any of the bonus conditions?
+    $game->checkBonusConditions($player_id);
+
     if ($stateTransition != null) {
       // player must resolve something before continuing to play more cards
       $game->gamestate->nextstate($stateTransition);

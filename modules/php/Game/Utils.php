@@ -106,4 +106,43 @@ class Utils
     }
     return true;
   }
+
+  public static function playerHasNotYetPartiedInTurn()
+  {
+      // Party bonus can only be scored once by the same player in one turn.
+      return (0 == Utils::getGame()->getGameStateValue("playerTurnUsedPartyBonus"));
+  }
+
+  public static function playerHasNotYetBeenPoorInTurn()
+  {
+      // Poor bonus can only be scored once by the same player in one turn.
+      return (0 == Utils::getGame()->getGameStateValue("playerTurnUsedPoorBonus"));
+  }  
+
+  public static function recheckForPartyBonus($player_id)
+  {
+    if (Utils::playerHasNotYetPartiedInTurn() && Utils::isPartyInPlay()) {
+      $addInflation = Utils::getActiveInflation() ? 1 : 0;
+
+      $partyBonus = 1 + $addInflation;
+      RulePartyBonus::notifyActiveFor($player_id);
+      Utils::getGame()->performDrawCards($player_id, $partyBonus);
+      Utils::getGame()->setGameStateValue("playerTurnUsedPartyBonus", 1);
+    }
+  }
+
+  public static function recheckForPoorBonus($player_id)
+  {
+    if (
+      Utils::playerHasNotYetBeenPoorInTurn() &&
+      Utils::hasLeastKeepers($player_id)
+    ) {
+      $addInflation = Utils::getActiveInflation() ? 1 : 0;
+
+      $poorBonus = 1 + $addInflation;
+      RulePoorBonus::notifyActiveFor($player_id);
+      Utils::getGame()->performDrawCards($player_id, $poorBonus);
+      Utils::getGame()->setGameStateValue("playerTurnUsedPoorBonus", 1);
+    }    
+  }  
 }

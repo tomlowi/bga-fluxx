@@ -30,18 +30,24 @@ trait DrawCardsTrait
       RuleInflation::notifyActiveFor($player_id);
     }
     $partyBonus =
-      Utils::getActivePartyBonus() && Utils::isPartyInPlay()
+      Utils::getActivePartyBonus()
+      && Utils::playerHasNotYetPartiedInTurn()
+      && Utils::isPartyInPlay()
         ? 1 + $addInflation
         : 0;
     if ($partyBonus > 0) {
       RulePartyBonus::notifyActiveFor($player_id);
+      Utils::getGame()->setGameStateValue("playerTurnUsedPartyBonus", 1);
     }
-    $poorBonus =
-      Utils::getActivePoorBonus() && Utils::hasLeastKeepers($player_id)
+    $poorBonus = 
+      Utils::getActivePoorBonus() 
+      && Utils::playerHasNotYetBeenPoorInTurn()
+      && Utils::hasLeastKeepers($player_id)
         ? 1 + $addInflation
         : 0;
     if ($poorBonus > 0) {
       RulePoorBonus::notifyActiveFor($player_id);
+      Utils::getGame()->setGameStateValue("playerTurnUsedPoorBonus", 1);
     }
 
     // entering this state, so this player can always draw for current draw rule
