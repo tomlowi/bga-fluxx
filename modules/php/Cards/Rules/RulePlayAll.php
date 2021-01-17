@@ -14,5 +14,5 @@ class RulePlayAll extends RulePlay
     $this->description = clienttranslate("Play all your cards per turn.");
   }
 
-  protected $playCount = 200; // 104 cards in play, so all
+  protected $playCount = PLAY_COUNT_ALL;
 }

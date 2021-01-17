@@ -273,8 +273,8 @@ class fluxx extends Table
   public function getGameProgression()
   {
     // @TODO: compute and return the game progression
-
-    return 0;
+    // with Fluxx, that's always something of a 50/50 chance ?
+    return 50;
   }
 
   //////////////////////////////////////////////////////////////////////////////

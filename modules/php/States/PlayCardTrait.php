@@ -39,41 +39,18 @@ trait PlayCardTrait
 
     $player_id = $game->getActivePlayerId();
 
-    // current rule and nb of cards already played
-    $playRule = $game->getGameStateValue("playRule");
-    $cardsPlayed = $game->getGameStateValue("playedCards");
-
-    // check bonus rules
-    $addInflation = Utils::getActiveInflation() ? 1 : 0;
-    $partyBonus =
-      Utils::getActivePartyBonus() && Utils::isPartyInPlay()
-        ? 1 + $addInflation
-        : 0;
-    if ($partyBonus > 0) {
-      RulePartyBonus::notifyActiveFor($player_id, false);
-    }
-    $richBonus =
-      Utils::getActiveRichBonus() && Utils::hasMostKeepers($player_id)
-        ? 1 + $addInflation
-        : 0;
-    if ($richBonus > 0) {
-      RuleRichBonus::notifyActiveFor($player_id);
-    }
-
-    $playRule += $addInflation + $partyBonus + $richBonus;
+    $alreadyPlayed = $game->getGameStateValue("playedCards");
+    $mustPlay = $this->calculateCardsLeftToPlayFor($player_id, false);
 
     // still cards in hand?
     $cardsInHand = $game->cards->countCardInLocation("hand", $player_id);
 
-    // @TODO: At the moment, we don't handle play all but 1 properly with Inflation
-    // And we need to review how "rich bonus" is handled, because potentially we
-    // would need a state just for this card
-
-    // is Play All But 1 in play ?
-    // If not, did the player play enough cards already (or hand empty) ?
     if (
-      ($playRule == -1 && $cardsInHand == 1) ||
-      ($playRule != -1 && $cardsPlayed >= $playRule) ||
+      // Play All but 1, and player has only so much cards left      
+      ($mustPlay < 0 && $cardsInHand <= $mustPlay) ||
+      // Normal Play Rule, and player has already played enough cards
+      ($mustPlay >= 0 && $alreadyPlayed >= $mustPlay) ||
+      // Player cannot play if no more cards in hand
       $cardsInHand == 0
     ) {
       $game->gamestate->nextstate("endOfTurn");
@@ -85,28 +62,62 @@ trait PlayCardTrait
     $game = Utils::getGame();
     $player_id = $game->getActivePlayerId();
 
-    $playRule = $game->getGameStateValue("playRule");
-    $played = $game->getGameStateValue("playedCards");
-    if ($playRule > 100) {
-      return ["count" => "All"];
+    $alreadyPlayed = $game->getGameStateValue("playedCards");
+    $mustPlay = $this->calculateCardsLeftToPlayFor($player_id, true);
+
+    if ($mustPlay >= PLAY_COUNT_ALL) {
+      return ["count" => clienttranslate("All")];
     }
-    if ($playRule == -1) {
-      return ["count" => "All but 1"];
+    else if ($mustPlay < 0) {
+      return ["count" => clienttranslate("All but") . " " . $mustPlay];
     }
 
+    return ["count" => $mustPlay - $alreadyPlayed];
+  }
+
+  private function calculateCardsLeftToPlayFor($player_id, $withNotifications)
+  {
+    $game = Utils::getGame();
+    // current basic Play rule
+    $playRule = $game->getGameStateValue("playRule");
+
+    // Play All = always Play All
+    if ($playRule >= PLAY_COUNT_ALL) return $playRule;
+
     $addInflation = Utils::getActiveInflation() ? 1 : 0;
+    // check bonus rules
     $partyBonus =
       Utils::getActivePartyBonus() && Utils::isPartyInPlay()
         ? 1 + $addInflation
         : 0;
+    if ($partyBonus > 0 && $withNotifications) {
+      RulePartyBonus::notifyActiveFor($player_id, false);
+    }
     $richBonus =
       Utils::getActiveRichBonus() && Utils::hasMostKeepers($player_id)
         ? 1 + $addInflation
         : 0;
+    if ($richBonus > 0 && $withNotifications) {
+      RuleRichBonus::notifyActiveFor($player_id);
+    }
 
-    $playRule += $addInflation + $partyBonus + $richBonus;
+    // Play All but 1 is also affected by Inflation and Bonus rules
+    if ($playRule < 0) 
+    {
+      $playRule -= $addInflation;
+      // if "Play All but ..." + bonus plays becomes >= 0, it actually becomes "Play All"
+      if ($playRule + $partyBonus + $richBonus >= 0)
+        return PLAY_COUNT_ALL;
+      // else it stays "Play All but ..."
+      return $playRule + $partyBonus + $richBonus;
+    }
+    // Normal Play Rule 
+    else
+    {
+      $playRule += $addInflation + $partyBonus + $richBonus;
+    }
 
-    return ["count" => $playRule - $played];
+    return $playRule;
   }
 
   public function action_playCard($card_id)
