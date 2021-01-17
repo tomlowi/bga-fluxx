@@ -82,8 +82,8 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         dojo.place('<div id="tmpDiscardStock"></div>', "tmpHand", "first");
 
         that.tmpDiscardStock = that.createCardStock("tmpDiscardStock", [
-          "rule",
-          "action",
+          "rule", "creeperRule",
+          "action", "creeperAction",
         ]);
 
         that.addCardsToStock(that.tmpDiscardStock, args.discard);

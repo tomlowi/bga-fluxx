@@ -41,6 +41,7 @@ use Fluxx\Cards\Keepers\KeeperCardFactory;
 use Fluxx\Cards\Goals\GoalCardFactory;
 use Fluxx\Cards\Rules\RuleCardFactory;
 use Fluxx\Cards\Actions\ActionCardFactory;
+use Fluxx\Cards\Creepers\CreeperCardFactory;
 use Fluxx\Game\Utils;
 
 class fluxx extends Table
@@ -77,6 +78,7 @@ class fluxx extends Table
       "forcedCard" => 42,
       "playerTurnUsedPartyBonus" => 43,
       "playerTurnUsedPoorBonus" => 44,
+      "optionCreeperPack" => 101,
     ]);
     $this->cards = self::getNew("module.common.deck");
     $this->cards->init("card");
@@ -299,6 +301,8 @@ class fluxx extends Table
         return RuleCardFactory::getCard($card["id"], $card["type_arg"]);
       case "action":
         return ActionCardFactory::getCard($card["id"], $card["type_arg"]);
+      case "creeper":
+        return CreeperCardFactory::getCard($card["id"], $card["type_arg"]);
       default:
         return null;
     }
@@ -314,8 +318,9 @@ class fluxx extends Table
     $goals = GoalCardFactory::listCardDefinitions();
     $rules = RuleCardFactory::listCardDefinitions();
     $actions = ActionCardFactory::listCardDefinitions();
-
-    return $keepers + $goals + $rules + $actions;
+    $creepers = CreeperCardFactory::listCardDefinitions();
+    
+    return $keepers + $goals + $rules + $actions + $creepers;
   }
 
   /*

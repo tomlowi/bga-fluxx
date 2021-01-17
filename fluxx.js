@@ -55,15 +55,20 @@ define([
         this.KEEPERS_SPRITES_PATH = g_gamethemeurl + "img/keepers.png";
         this.KEEPERS_SPRITES_PER_ROW = 10;
 
-        this.CARDS_TYPES = {
+        var creeperPackOffset = 19 + 30 + 27 + 23 + 3; // all base game cards + Basic Rules / Back / Front
+        this.CARDS_TYPES_BASEGAME = {
           keeper: { count: 19, spriteOffset: 0, materialOffset: 1 },
+          creeper: { count: 0 },
           goal: { count: 30, spriteOffset: 19, materialOffset: 101 },
           rule: { count: 27, spriteOffset: 19 + 30, materialOffset: 201 },
-          action: {
-            count: 23,
-            spriteOffset: 19 + 30 + 27,
-            materialOffset: 301,
-          },
+          action: { count: 23, spriteOffset: 19 + 30 + 27, materialOffset: 301 },
+        };
+        this.CARDS_TYPES_CREEPERPACK = {
+          keeper: { count: 0 },
+          creeper: { count: 4, spriteOffset: creeperPackOffset, materialOffset: 51 },
+          goal: { count: 6, spriteOffset: creeperPackOffset + 4, materialOffset: 151 },
+          rule: { count: 2, spriteOffset: creeperPackOffset + 4 + 6, materialOffset: 251 },
+          action: { count: 4, spriteOffset: creeperPackOffset + 4 + 6 + 2, materialOffset: 351 },
         };
 
         this._allStocks = [];
@@ -96,6 +101,7 @@ define([
           "goal",
           "rule",
           "action",
+          "creeper",
         ]);
         this.addCardsToStock(this.handStock, this.gamedatas.hand);
 
@@ -104,6 +110,7 @@ define([
           "goal",
           "rule",
           "action",
+          "creeper",
         ]);
         this.addCardsToStock(this.discardStock, this.gamedatas.discard, true);
         this.discardStock.setOverlap(0.00001);
@@ -128,7 +135,9 @@ define([
         this.rulesStock.playRule = this.createCardStock("playRuleStock", [
           "rule",
         ]);
-        this.rulesStock.others = this.createCardStock("othersStock", ["rule"]);
+        this.rulesStock.others = this.createCardStock("othersStock", [
+          "rule",
+        ]);
         this.addCardsToStock(
           this.rulesStock.drawRule,
           this.gamedatas.rules.drawRule
@@ -317,6 +326,21 @@ define([
         );
       },
 
+      addCardsOfTypeFromGameSet: function(stock, type, gameSet) {
+        var count = gameSet[type].count;
+        var spriteOffset = gameSet[type].spriteOffset;
+        var materialOffset = gameSet[type].materialOffset;
+
+        for (var i = 0; i < count; i++) {
+          stock.addItemType(
+            materialOffset + i,
+            materialOffset + i,
+            this.CARDS_SPRITES_PATH,
+            spriteOffset + i
+          );
+        }
+      },
+
       createCardStock: function (elem, types) {
         var stock = new ebg.stock();
         this._allStocks[elem] = stock;
@@ -324,18 +348,8 @@ define([
         stock.image_items_per_row = this.CARDS_SPRITES_PER_ROW;
 
         for (var type of types) {
-          var count = this.CARDS_TYPES[type].count;
-          var spriteOffset = this.CARDS_TYPES[type].spriteOffset;
-          var materialOffset = this.CARDS_TYPES[type].materialOffset;
-
-          for (var i = 0; i < count; i++) {
-            stock.addItemType(
-              materialOffset + i,
-              materialOffset + i,
-              this.CARDS_SPRITES_PATH,
-              spriteOffset + i
-            );
-          }
+          this.addCardsOfTypeFromGameSet(stock, type, this.CARDS_TYPES_BASEGAME);
+          this.addCardsOfTypeFromGameSet(stock, type, this.CARDS_TYPES_CREEPERPACK);
         }
 
         stock.setSelectionMode(0);
@@ -343,15 +357,11 @@ define([
         return stock;
       },
 
-      createKeepersStock: function (elem) {
-        var stock = new ebg.stock();
-        this._allStocks[elem] = stock;
-        stock.create(this, $(elem), this.KEEPER_WIDTH, this.KEEPER_HEIGHT);
-        stock.image_items_per_row = this.KEEPERS_SPRITES_PER_ROW;
 
-        var count = this.CARDS_TYPES.keeper.count;
-        var spriteOffset = this.CARDS_TYPES.keeper.spriteOffset;
-        var materialOffset = this.CARDS_TYPES.keeper.materialOffset;
+      addCardsToKeeperStock: function(stock, cardType, spriteOffset) {
+        var count = cardType.count;
+        var spriteOffset = spriteOffset;
+        var materialOffset = cardType.materialOffset;
 
         for (var i = 0; i < count; i++) {
           stock.addItemType(
@@ -361,6 +371,20 @@ define([
             spriteOffset + i
           );
         }
+      },
+
+      createKeepersStock: function (elem) {
+        var stock = new ebg.stock();
+        this._allStocks[elem] = stock;
+        stock.create(this, $(elem), this.KEEPER_WIDTH, this.KEEPER_HEIGHT);
+        stock.image_items_per_row = this.KEEPERS_SPRITES_PER_ROW;
+
+        // small version for keepers played
+        this.addCardsToKeeperStock(stock, this.CARDS_TYPES_BASEGAME.keeper, 0);
+
+        // small version for creepers played
+        var smallCreeperSpriteOffset = 1 + this.CARDS_TYPES_BASEGAME.keeper.count;
+        this.addCardsToKeeperStock(stock, this.CARDS_TYPES_CREEPERPACK.creeper, smallCreeperSpriteOffset);
 
         stock.setSelectionMode(0);
         stock.onItemCreate = dojo.hitch(this, "setupNewCard");

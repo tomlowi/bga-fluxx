@@ -14,6 +14,11 @@ class Utils
     throw new \BgaUserException($msg);
   }
 
+  public static function useCreeperPackExpansion()
+  {
+    return 1 == self::getGame()->getGameStateValue("optionCreeperPack");
+  }
+  
   public static function getActiveDoubleAgenda()
   {
     return 0 != self::getGame()->getGameStateValue("activeDoubleAgenda");
