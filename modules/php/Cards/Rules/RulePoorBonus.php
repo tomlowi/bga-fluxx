@@ -34,7 +34,7 @@ class RulePoorBonus extends RuleCard
     $game = Utils::getGame();
     $game->notifyAllPlayers(
       "poorBonus",
-      clienttranslate('Poor Bonus active for ${player_name}'),
+      clienttranslate('Poor Bonus draw for ${player_name}'),
       [
         "player_id" => $player_id,
         "player_name" => $game->getActivePlayerName(),

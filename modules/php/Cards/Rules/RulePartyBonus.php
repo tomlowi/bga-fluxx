@@ -32,12 +32,17 @@ class RulePartyBonus extends RuleCard
     Utils::getGame()->setGameStateValue("activePartyBonus", 0);
   }
 
-  public static function notifyActiveFor($player_id)
+  public static function notifyActiveFor($player_id, $onDraw)
   {
+    $msg = $onDraw
+      ? clienttranslate('Party Bonus draw for ${player_name}')
+      : clienttranslate('Party Bonus play for ${player_name}')
+      ;
+
     $game = Utils::getGame();
     $game->notifyAllPlayers(
       "partyBonus",
-      clienttranslate('Party Bonus active for ${player_name}'),
+      $msg,
       [
         "player_id" => $player_id,
         "player_name" => $game->getActivePlayerName(),

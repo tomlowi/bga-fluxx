@@ -36,7 +36,7 @@ trait DrawCardsTrait
         ? 1 + $addInflation
         : 0;
     if ($partyBonus > 0) {
-      RulePartyBonus::notifyActiveFor($player_id);
+      RulePartyBonus::notifyActiveFor($player_id, true);
       Utils::getGame()->setGameStateValue("playerTurnUsedPartyBonus", 1);
     }
     $poorBonus = 
