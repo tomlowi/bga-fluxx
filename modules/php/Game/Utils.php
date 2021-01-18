@@ -1,5 +1,7 @@
 <?php
 namespace Fluxx\Game;
+use Fluxx\Cards\Rules\RulePartyBonus;
+use Fluxx\Cards\Rules\RulePoorBonus;
 use fluxx;
 
 class Utils
@@ -18,7 +20,7 @@ class Utils
   {
     return 1 == self::getGame()->getGameStateValue("optionCreeperPack");
   }
-  
+
   public static function getActiveDoubleAgenda()
   {
     return 0 != self::getGame()->getGameStateValue("activeDoubleAgenda");
@@ -57,7 +59,9 @@ class Utils
   public static function isPartyInPlay()
   {
     $party_keeper_card_id = 16;
-    $party_keeper_card = self::getGame()->cards->getCard($party_keeper_card_id);
+    $party_keeper_card = array_values(
+      self::getGame()->cards->getCardsOfType("keeper", $party_keeper_card_id)
+    )[0];
     return $party_keeper_card["location"] == "keepers";
   }
 
@@ -110,5 +114,73 @@ class Utils
       }
     }
     return true;
+  }
+
+  public static function playerHasNotYetPartiedInTurn()
+  {
+    // Party bonus can only be scored once by the same player in one turn.
+    return 0 == Utils::getGame()->getGameStateValue("playerTurnUsedPartyBonus");
+  }
+
+  public static function playerHasNotYetBeenPoorInTurn()
+  {
+    // Poor bonus can only be scored once by the same player in one turn.
+    return 0 == Utils::getGame()->getGameStateValue("playerTurnUsedPoorBonus");
+  }
+
+  public static function calculatePartyBonus($player_id)
+  {
+    $partyBonus = 0;
+
+    if (
+      Utils::getActivePartyBonus() &&
+      Utils::playerHasNotYetPartiedInTurn() &&
+      Utils::isPartyInPlay()
+    ) {
+      $addInflation = Utils::getActiveInflation() ? 1 : 0;
+
+      $partyBonus = 1 + $addInflation;
+      RulePartyBonus::notifyActiveFor($player_id, true);      
+      Utils::getGame()->setGameStateValue("playerTurnUsedPartyBonus", 1);
+    }
+
+    return $partyBonus;
+  }
+
+  public static function checkForPartyBonus($player_id)
+  {
+    $partyBonus = Utils::calculatePartyBonus($player_id);
+    if ($partyBonus > 0)
+    {
+      Utils::getGame()->performDrawCards($player_id, $partyBonus);
+    }
+  }
+
+  public static function calculatePoorBonus($player_id)
+  {
+    $poorBonus = 0;
+
+    if (
+      Utils::getActivePoorBonus() &&
+      Utils::playerHasNotYetBeenPoorInTurn() &&
+      Utils::hasLeastKeepers($player_id)
+    ) {
+      $addInflation = Utils::getActiveInflation() ? 1 : 0;
+
+      $poorBonus = 1 + $addInflation;
+      RulePoorBonus::notifyActiveFor($player_id);
+      Utils::getGame()->setGameStateValue("playerTurnUsedPoorBonus", 1);
+    }
+
+    return $poorBonus;
+  }
+
+  public static function checkForPoorBonus($player_id)
+  {
+    $poorBonus = Utils::calculatePoorBonus($player_id);
+    if ($poorBonus > 0)
+    {
+      Utils::getGame()->performDrawCards($player_id, $poorBonus);
+    }
   }
 }

@@ -18,7 +18,6 @@ abstract class CardFactory extends \APP_GameClass
 
   public static function getCardUniqueId($card)
   {
-    //return ($card['type'] * 100) + ($card['type_arg']-0);
     return $card["type_arg"];
   }
 

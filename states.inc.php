@@ -154,10 +154,10 @@ $machinestates = [
   STATE_ENFORCE_KEEPERS_LIMIT_SELF => [
     "name" => "enforceKeepersLimitForSelf",
     "description" => clienttranslate(
-      '${actplayer} must remove keepers(s) for Keepers Limit ${limit}'
+      '${actplayer} must remove keepers(s) for Keeper Limit ${limit}'
     ),
     "descriptionmyturn" => clienttranslate(
-      '${you} must remove ${_private.count} keeper(s) for Keepers Limit ${limit}'
+      '${you} must remove ${_private.count} keeper(s) for Keeper Limit ${limit}'
     ),
     "type" => "activeplayer",
     "args" => "arg_enforceKeepersLimitForSelf",

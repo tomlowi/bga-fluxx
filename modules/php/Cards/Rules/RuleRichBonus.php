@@ -33,7 +33,7 @@ class RuleRichBonus extends RuleCard
     $game = Utils::getGame();
     $game->notifyAllPlayers(
       "richBonus",
-      clienttranslate('Rich Bonus active for ${player_name}'),
+      clienttranslate('Rich Bonus play for ${player_name}'),
       [
         "player_id" => $player_id,
         "player_name" => $game->getActivePlayerName(),

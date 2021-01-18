@@ -29,20 +29,8 @@ trait DrawCardsTrait
     if ($addInflation > 0) {
       RuleInflation::notifyActiveFor($player_id);
     }
-    $partyBonus =
-      Utils::getActivePartyBonus() && Utils::isPartyInPlay()
-        ? 1 + $addInflation
-        : 0;
-    if ($partyBonus > 0) {
-      RulePartyBonus::notifyActiveFor($player_id);
-    }
-    $poorBonus =
-      Utils::getActivePoorBonus() && Utils::hasLeastKeepers($player_id)
-        ? 1 + $addInflation
-        : 0;
-    if ($poorBonus > 0) {
-      RulePoorBonus::notifyActiveFor($player_id);
-    }
+    $partyBonus = Utils::calculatePartyBonus($player_id);
+    $poorBonus = Utils::calculatePoorBonus($player_id);
 
     // entering this state, so this player can always draw for current draw rule
     $game->performDrawCards(
