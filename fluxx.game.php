@@ -168,8 +168,8 @@ class fluxx extends Table
     self::setGameStateInitialValue("activeRichBonus", 0);
     self::setGameStateInitialValue("activeFirstPlayRandom", 0);
     self::setGameStateInitialValue("forcedCard", -1);
-    self::setGameStateInitialValue("playerTurnUsedPartyBonus", -1);
-    self::setGameStateInitialValue("playerTurnUsedPoorBonus", -1);    
+    self::setGameStateInitialValue("playerTurnUsedPartyBonus", 0);
+    self::setGameStateInitialValue("playerTurnUsedPoorBonus", 0);    
 
     // Create cards
     $cards = [];
