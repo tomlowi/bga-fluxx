@@ -21,7 +21,7 @@ class RulePoorBonus extends RuleCard
     Utils::getGame()->setGameStateValue("activePoorBonus", 1);
 
     // if player is poor, immediately draw extra
-    Utils::recheckForPoorBonus($player_id);
+    Utils::checkForPoorBonus($player_id);
   }
 
   public function immediateEffectOnDiscard($player_id)

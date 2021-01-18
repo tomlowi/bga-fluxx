@@ -128,7 +128,7 @@ class Utils
     return 0 == Utils::getGame()->getGameStateValue("playerTurnUsedPoorBonus");
   }
 
-  public static function recheckForPartyBonus($player_id)
+  public static function checkForPartyBonus($player_id)
   {
     if (
       Utils::getActivePartyBonus() &&
@@ -144,7 +144,7 @@ class Utils
     }
   }
 
-  public static function recheckForPoorBonus($player_id)
+  public static function checkForPoorBonus($player_id)
   {
     if (
       Utils::getActivePoorBonus() &&

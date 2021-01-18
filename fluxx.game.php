@@ -485,8 +485,8 @@ class fluxx extends Table
 
   public function checkBonusConditions($player_id)
   {
-    Utils::recheckForPartyBonus($player_id);
-    Utils::recheckForPoorBonus($player_id);
+    Utils::checkForPartyBonus($player_id);
+    Utils::checkForPoorBonus($player_id);
   }
 
   public function checkWinConditions()
