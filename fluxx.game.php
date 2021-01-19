@@ -192,6 +192,8 @@ class fluxx extends Table
     self::setGameStateInitialValue("rpsChallengerWins", 0);
     self::setGameStateInitialValue("rpsDefenderWins", 0);
 
+    self::initStat("table", "turns_number", 0);
+
     // Create cards
     $cards = [];
 
@@ -302,9 +304,13 @@ class fluxx extends Table
      */
   public function getGameProgression()
   {
-    // @TODO: compute and return the game progression
-    // with Fluxx, that's always something of a 50/50 chance ?
-    return 50;
+    // With Fluxx, there is no way to know when the game ends.
+    // This ensures that:
+    // - game progression is >50% after the 4th round
+    // - it tends to 100% but never goes above it
+
+    $turns = self::getStat("turns_number");
+    return round(100 - 100 / exp($turns / 5));
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -743,6 +749,7 @@ class fluxx extends Table
     // special case: current player received another turn
     $anotherTurnMark = self::getGameStateValue("anotherTurnMark");
     $player_id = -1;
+    $active_player = self::getActivePlayerId();
     if ($anotherTurnMark == 1) {
       // Take Another Turn can only be used once (two turns in a row)
       self::setGameStateValue("anotherTurnMark", 2);
@@ -751,7 +758,7 @@ class fluxx extends Table
         "turnFinished",
         clienttranslate('${player_name} can take another turn!'),
         [
-          "player_id" => self::getActivePlayerId(),
+          "player_id" => $active_player,
           "player_name" => self::getCurrentPlayerName(),
         ]
       );
@@ -761,11 +768,20 @@ class fluxx extends Table
         "turnFinished",
         clienttranslate('${player_name} finished their turn.'),
         [
-          "player_id" => self::getActivePlayerId(),
+          "player_id" => $active_player,
           "player_name" => self::getActivePlayerName(),
         ]
       );
       $player_id = self::activeNextPlayer();
+      self::incStat(1, "turns_number", $active_player);
+
+      $players = self::loadPlayersBasicInfos();
+      reset($players);
+      $first_player = key($players);
+      if ($first_player == $active_player) {
+        // Turns played during the game
+        self::incStat(1, "turns_number");
+      }
     }
 
     // reset everything for turn of next player
