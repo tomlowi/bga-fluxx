@@ -61,6 +61,7 @@ if (!defined("STATE_GAME_SETUP")) {
   define("STATE_ENFORCE_KEEPERS_LIMIT_SELF", 24);
   define("STATE_GOAL_CLEANING", 25);
   define("STATE_RESOLVE_ACTION", 30);
+  define("STATE_RESOLVE_ROCKPAPERSCISSORS", 31);
   define("STATE_NEXT_PLAYER", 90);
 }
 
@@ -201,6 +202,25 @@ $machinestates = [
       "keepersExchangeOccured" => STATE_ENFORCE_KEEPERS_LIMIT_OTHERS,
       "rulesChanged" => STATE_GOAL_CLEANING,
       "endGame" => STATE_GAME_END,
+      "specialActionRockPaperScissors" => STATE_RESOLVE_ROCKPAPERSCISSORS,
+    ],
+  ],
+
+  STATE_RESOLVE_ROCKPAPERSCISSORS => [
+    "name" => "actionResolveRockPaperScissors",
+    "description" => clienttranslate(
+      'Players must play Rock Paper Scissors (${challenger_wins} - ${challenged_wins})'
+    ),
+    "descriptionmyturn" => clienttranslate(
+      '${you} must play Rock Paper Scissors (${challenger_wins} - ${challenged_wins})'
+    ),
+    "type" => "multipleactiveplayer",
+    "args" => "arg_rockPaperScissorsShowdown",
+    "action" => "st_rockPaperScissorsShowdown",
+    "possibleactions" => ["resolveActionButtonsRockPaperScissors"],
+    "transitions" => [
+      "rockPaperScissorsCheckNextRound" => STATE_RESOLVE_ROCKPAPERSCISSORS,
+      "rockPaperScissorsFinished" => STATE_PLAY_CARD
     ],
   ],
 

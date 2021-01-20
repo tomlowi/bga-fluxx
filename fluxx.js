@@ -236,6 +236,7 @@ define([
             break;
 
           case "actionResolve":
+          case "actionResolveRockPaperScissors":
             this.onEnteringStateActionResolve(args);
             break;
 
@@ -270,6 +271,7 @@ define([
             break;
 
           case "actionResolve":
+          case "actionResolveRockPaperScissors":
             this.onLeavingStateActionResolve();
             break;
 
@@ -301,6 +303,9 @@ define([
               this.onUpdateActionButtonsGoalCleaning(args);
               break;
             case "actionResolve":
+              this.onUpdateActionButtonsActionResolve(args);
+              break;
+            case "actionResolveRockPaperScissors":
               this.onUpdateActionButtonsActionResolve(args);
               break;
           }

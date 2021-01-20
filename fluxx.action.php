@@ -141,4 +141,12 @@ class action_fluxx extends APP_GameAction
     $this->game->action_resolveActionButtons($value);
     self::ajaxResponse();
   }
+
+  public function resolveActionButtonsRockPaperScissors()
+  {
+    self::setAjaxMode();
+    $value = self::getArg("value", AT_alphanum, true);
+    $this->game->action_resolveActionButtonsRockPaperScissors($value);
+    self::ajaxResponse();
+  }
 }
