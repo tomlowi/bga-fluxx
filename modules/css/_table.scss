@@ -1,26 +1,90 @@
 .flx-table {
-  display: flex;
-  flex-wrap: wrap;
+  position: relative;
   justify-content: center;
 
-  .flx-deck {
-    flex: 1 0;
-    padding-top: 42px;
-    margin-right: 10px;
-
-    .flx-card-count {
-      padding: 5px;
-    }
+  .flx-card,
+  .flx-discard {
+    width: 132px;
+    height: 205px;
   }
 
   .flx-goal {
-    flex: 1 0;
-    margin-right: 10px;
+    height: 255px;
+    width: 280px;
+    position: relative;
+  }
+
+  .flx-deck {
+    height: 255px;
+    width: 280px;
+    position: relative;
+    padding-top: 40px;
+
+    .flx-deck-card {
+      position: absolute;
+
+      background-image: url("img/cards.png");
+      background-position: -1500% -500%;
+
+      &.flx-deck-empty {
+        background-position: -1600% -500%;
+      }
+    }
+
+    .flx-discard {
+      transition: left 1s;
+      position: absolute;
+      left: 150px;
+      border: 1px;
+    }
+
+    .flx-card-count {
+      position: absolute;
+      z-index: 200;
+      bottom: 5px;
+      right: 5px;
+      text-align: center;
+
+      font-size: 19px;
+      font-weight: bold;
+
+      width: 30px;
+      height: 25px;
+      line-height: 25px;
+      background: #fff8;
+    }
+
+    #discardToggleBtn {
+      position: absolute;
+      bottom: 10px;
+    }
+  }
+
+  .flx-discard-visible {
+    .flx-deck {
+      width: 100%;
+      height: auto;
+
+      .flx-discard {
+        position: relative;
+        top: 0px;
+        left: 0px;
+        width: 100%;
+        height: auto;
+      }
+
+      .flx-card-count {
+        display: none;
+      }
+
+      #discardToggleBtn {
+        position: initial;
+        padding-top: 10px;
+      }
+    }
   }
 
   .flx-rules {
-    flex: 1 0;
-
     .flx-card-stack {
       position: relative;
       margin: auto;
@@ -44,24 +108,9 @@
     }
   }
 
-  .flx-card {
-    width: 166px;
-    height: 258px;
-  }
-  .flx-deck-card {
-    background-image: url("img/cards.png");
-    background-position: -1500% -500%;
-
-    &.flx-deck-empty {
-      background-position: -1600% -500%;
-    }
-  }
-  #discardStock {
-    border: 1px;
-  }
   #baseRuleCard {
-    width: 166px;
-    height: 258px;
+    width: 132px;
+    height: 205px;
     background-image: url("img/cards.png");
     background-position: -1400% -500%;
   }

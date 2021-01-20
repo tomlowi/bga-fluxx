@@ -19,47 +19,46 @@
     <h3>{MY_HAND}</h3>
     <div id="handStock"></div>
   </div>
-
-  <div class="whiteblock flx-keepers">
-    <h3 style="color: #{CURRENT_PLAYER_COLOR}">{MY_KEEPERS}</h3>
-    <div id="keepersStock{CURRENT_PLAYER_ID}"></div>
-  </div>
 </div>
 
-<div id="flxTable" class="flx-table">
-  <div id="flxDeckBlock" class="whiteblock flx-deck">
-    <div id="deckCard" class="flx-card flx-deck-card"></div>
-    <div id="deckCount" class="flx-card-count"></div>
-    <div id="discardStock"></div>
-    <div id="discardCount" class="flx-card-count"></div>
-    <a id="discardToggleBtn" href="#">{SHOW_DISCARD}</a>
-  </div>
-
-  <div class="whiteblock flx-goal">
-    <h3>{GOAL}</h3>
-    <div id="goalsStock"></div>
-  </div>
-
-  <div class="whiteblock flx-rules">
-    <h3>{RULES}</h3>
-    <div class="flx-card-stack">
-      <div id="baseRuleCard" class="flx-card-stack-center"></div>
-      <div id="drawRuleStock" class="flx-card-stack-left"></div>
-      <div id="playRuleStock" class="flx-card-stack-right"></div>
-    </div>
-    <div id="keepersLimitStock"></div>
-    <div id="handLimitStock"></div>
-    <div id="othersStock"></div>
-  </div>
-</div>
-
-<div class="flx-other-players">
+<div id="flxTable" class="flx-table flx-table-{PLAYERS_COUNT}players">
   <!-- BEGIN keepers -->
-  <div class="whiteblock flx-keepers">
+  <div class="whiteblock flx-keepers flx-keepers-{PLAYER_RANK}">
     <h3 style="color: #{PLAYER_COLOR}">{PLAYER_NAME}</h3>
     <div id="keepersStock{PLAYER_ID}"></div>
   </div>
   <!-- END keepers -->
+
+  <div id="flxTableCenter" class="whiteblock flx-center">
+    <div class="flx-goal">
+      <h3>{GOAL}</h3>
+      <div id="goalsStock"></div>
+    </div>
+
+    <div class="flx-deck">
+      <div id="deckCard" class="flx-card flx-deck-card">
+        <div id="deckCount" class="flx-card-count"></div>
+      </div>
+      <div class="flx-discard">
+        <div id="discardCount" class="flx-card-count"></div>
+        <div id="discardStock"></div>
+      </div>
+
+      <a id="discardToggleBtn" href="#">{SHOW_DISCARD}</a>
+    </div>
+
+    <div class="flx-rules">
+      <h3>{RULES}</h3>
+      <div class="flx-card-stack">
+        <div id="baseRuleCard" class="flx-card-stack-center"></div>
+        <div id="drawRuleStock" class="flx-card-stack-left"></div>
+        <div id="playRuleStock" class="flx-card-stack-right"></div>
+      </div>
+      <div id="keepersLimitStock"></div>
+      <div id="handLimitStock"></div>
+      <div id="othersStock"></div>
+    </div>
+  </div>
 </div>
 
 <script>

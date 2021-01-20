@@ -35,15 +35,10 @@ class view_fluxx_fluxx extends game_view
   public function build_page($viewArgs)
   {
     $template = self::getGameName() . "_" . self::getGameName();
-
-    // Get current player ID & all players info
-    global $g_user;
-    $current_player_id = $g_user->get_id();
     $players = $this->game->loadPlayersBasicInfos();
 
     // Translations
     $this->tpl["MY_HAND"] = clienttranslate("My hand");
-    $this->tpl["MY_KEEPERS"] = clienttranslate("My keepers");
     $this->tpl["HAND_COUNT"] = clienttranslate("# cards in hand");
     $this->tpl["KEEPERS_COUNT"] = clienttranslate("# keepers on table");
     $this->tpl["RULES"] = clienttranslate("Rules");
@@ -51,23 +46,20 @@ class view_fluxx_fluxx extends game_view
     $this->tpl["SHOW_DISCARD"] = clienttranslate("Show discard");
 
     // This will inflate players keepers block
-    $player_info = $players[$current_player_id];
-    $this->tpl["CURRENT_PLAYER_ID"] = $current_player_id;
-    $this->tpl["CURRENT_PLAYER_COLOR"] = $player_info["player_color"];
-
     $this->page->begin_block($template, "keepers");
 
     $players_in_order = $this->game->getPlayersInOrder();
 
-    foreach ($players_in_order as $player_id) {
-      if ($player_id != $current_player_id) {
-        $player_info = $players[$player_id];
-        $this->page->insert_block("keepers", [
-          "PLAYER_ID" => $player_id,
-          "PLAYER_NAME" => $player_info["player_name"],
-          "PLAYER_COLOR" => $player_info["player_color"],
-        ]);
-      }
+    $this->tpl["PLAYERS_COUNT"] = count($players_in_order);
+
+    foreach ($players_in_order as $player_rank => $player_id) {
+      $player_info = $players[$player_id];
+      $this->page->insert_block("keepers", [
+        "PLAYER_ID" => $player_id,
+        "PLAYER_NAME" => $player_info["player_name"],
+        "PLAYER_COLOR" => $player_info["player_color"],
+        "PLAYER_RANK" => $player_rank,
+      ]);
     }
   }
 }

@@ -1,0 +1,208 @@
+.flx-table {
+  display: grid;
+  grid-template-columns: 2fr 2fr 1fr 2fr 2fr;
+  grid-gap: 10px;
+
+  .flx-keepers {
+    max-width: 500px;
+  }
+
+  .flx-center {
+    grid-column: 2 / 5;
+    grid-row: 2 / 5;
+
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    grid-gap: 10px;
+
+    .flx-goal {
+      grid-column: 1;
+      grid-row: 1;
+    }
+
+    .flx-deck {
+      grid-column: 1;
+      grid-row: 2;
+    }
+
+    .flx-rules {
+      grid-column: 2;
+      grid-row: 1 / 3;
+    }
+
+    &.flx-goal-cleaning {
+      .flx-goal {
+        grid-column: 1 / 3;
+        grid-row: 1;
+        width: auto;
+      }
+
+      .flx-deck {
+        grid-column: 1;
+        grid-row: 2;
+      }
+
+      .flx-rules {
+        grid-column: 2;
+        grid-row: 2;
+      }
+    }
+
+    &.flx-discard-visible {
+      .flx-goal {
+        grid-column: 1;
+        grid-row: 2;
+      }
+
+      .flx-deck {
+        grid-column: 1 / 3;
+        grid-row: 1;
+      }
+
+      .flx-rules {
+        grid-column: 2;
+        grid-row: 2;
+      }
+    }
+  }
+
+  &.flx-table-2players {
+    .flx-keepers-0 {
+      grid-column: 1 / 3;
+      grid-row: 1;
+      width: 100%;
+      margin: auto;
+    }
+    .flx-keepers-1 {
+      grid-column: 4 / 6;
+      grid-row: 1;
+      width: 100%;
+      margin: auto;
+    }
+    .flx-center {
+      grid-column: 1 / 6;
+      grid-row: 2 / 5;
+    }
+  }
+
+  &.flx-table-3players {
+    .flx-keepers-0 {
+      // Current player
+      grid-column: 2 / 5;
+      grid-row: 1;
+      width: 100%;
+      margin: auto;
+    }
+
+    .flx-keepers-1 {
+      grid-column: 5;
+      grid-row: 2 / 5;
+      margin: auto 0;
+    }
+    .flx-keepers-2 {
+      grid-column: 1;
+      grid-row: 2 / 5;
+    }
+    .flx-keepers-1,
+    .flx-keepers-2 {
+      margin: auto 0;
+    }
+  }
+
+  &.flx-table-4players {
+    .flx-keepers-0 {
+      grid-column: 2 / 5;
+      grid-row: 1;
+    }
+    .flx-keepers-1 {
+      grid-column: 5;
+      grid-row: 2 / 5;
+    }
+    .flx-keepers-2 {
+      grid-column: 2 / 5;
+      grid-row: 5;
+    }
+    .flx-keepers-3 {
+      grid-column: 1;
+      grid-row: 2 / 5;
+    }
+    .flx-keepers-0,
+    .flx-keepers-2 {
+      width: 100%;
+      margin: auto;
+    }
+    .flx-keepers-1,
+    .flx-keepers-3 {
+      margin: auto 0;
+    }
+  }
+  &.flx-table-5players {
+    .flx-keepers-0 {
+      grid-column: 2 / 5;
+      grid-row: 1;
+    }
+    .flx-keepers-1 {
+      grid-column: 5;
+      grid-row: 1 / 4;
+    }
+    .flx-keepers-2 {
+      grid-column: 4 / 6;
+      grid-row: 5;
+    }
+    .flx-keepers-3 {
+      grid-column: 1 / 3;
+      grid-row: 5;
+    }
+    .flx-keepers-4 {
+      grid-column: 1;
+      grid-row: 1 / 4;
+    }
+    .flx-keepers-0,
+    .flx-keepers-2,
+    .flx-keepers-3 {
+      width: 100%;
+      margin: auto;
+    }
+    .flx-keepers-1,
+    .flx-keepers-4 {
+      margin: auto 0;
+    }
+  }
+  &.flx-table-6players {
+    .flx-keepers-0 {
+      grid-column: 1 / 3;
+      grid-row: 1;
+    }
+    .flx-keepers-1 {
+      grid-column: 4 / 6;
+      grid-row: 1;
+    }
+    .flx-keepers-2 {
+      grid-column: 5;
+      grid-row: 2 / 5;
+    }
+    .flx-keepers-3 {
+      grid-column: 4 / 6;
+      grid-row: 5;
+    }
+    .flx-keepers-4 {
+      grid-column: 1 / 3;
+      grid-row: 5;
+    }
+    .flx-keepers-5 {
+      grid-column: 1;
+      grid-row: 2 / 5;
+    }
+    .flx-keepers-0,
+    .flx-keepers-1,
+    .flx-keepers-3,
+    .flx-keepers-4 {
+      width: 100%;
+      margin: auto;
+    }
+    .flx-keepers-2,
+    .flx-keepers-5 {
+      margin: auto 0;
+    }
+  }
+}

@@ -45,30 +45,45 @@ define([
     ],
     {
       constructor: function () {
-        this.CARD_WIDTH = 166;
-        this.CARD_HEIGHT = 258;
+        this.CARD_WIDTH = 132;
+        this.CARD_HEIGHT = 205;
         this.CARDS_SPRITES_PATH = g_gamethemeurl + "img/cards.png";
         this.CARDS_SPRITES_PER_ROW = 17;
 
-        this.KEEPER_WIDTH = 83;
-        this.KEEPER_HEIGHT = 129;
-        this.KEEPERS_SPRITES_PATH = g_gamethemeurl + "img/keepers.png";
-        this.KEEPERS_SPRITES_PER_ROW = 10;
-
-        var creeperPackOffset = 19 + 30 + 27 + 23 + 3; // all base game cards + Basic Rules / Back / Front
         this.CARDS_TYPES_BASEGAME = {
           keeper: { count: 19, spriteOffset: 0, materialOffset: 1 },
           creeper: { count: 0 },
           goal: { count: 30, spriteOffset: 19, materialOffset: 101 },
           rule: { count: 27, spriteOffset: 19 + 30, materialOffset: 201 },
-          action: { count: 23, spriteOffset: 19 + 30 + 27, materialOffset: 301 },
+          action: {
+            count: 23,
+            spriteOffset: 19 + 30 + 27,
+            materialOffset: 301,
+          },
         };
+        var creeperPackOffset = 19 + 30 + 27 + 23 + 3; // all base game cards + Basic Rules / Back / Front
         this.CARDS_TYPES_CREEPERPACK = {
           keeper: { count: 0 },
-          creeper: { count: 4, spriteOffset: creeperPackOffset, materialOffset: 51 },
-          goal: { count: 6, spriteOffset: creeperPackOffset + 4, materialOffset: 151 },
-          rule: { count: 2, spriteOffset: creeperPackOffset + 4 + 6, materialOffset: 251 },
-          action: { count: 4, spriteOffset: creeperPackOffset + 4 + 6 + 2, materialOffset: 351 },
+          creeper: {
+            count: 4,
+            spriteOffset: creeperPackOffset,
+            materialOffset: 51,
+          },
+          goal: {
+            count: 6,
+            spriteOffset: creeperPackOffset + 4,
+            materialOffset: 151,
+          },
+          rule: {
+            count: 2,
+            spriteOffset: creeperPackOffset + 4 + 6,
+            materialOffset: 251,
+          },
+          action: {
+            count: 4,
+            spriteOffset: creeperPackOffset + 4 + 6 + 2,
+            materialOffset: 351,
+          },
         };
 
         this._allStocks = [];
@@ -135,9 +150,7 @@ define([
         this.rulesStock.playRule = this.createCardStock("playRuleStock", [
           "rule",
         ]);
-        this.rulesStock.others = this.createCardStock("othersStock", [
-          "rule",
-        ]);
+        this.rulesStock.others = this.createCardStock("othersStock", ["rule"]);
         this.addCardsToStock(
           this.rulesStock.drawRule,
           this.gamedatas.rules.drawRule
@@ -168,14 +181,15 @@ define([
         this.keepersCounter = {};
         for (var player_id in gamedatas.players) {
           // Setting up player keepers stocls
-          this.keepersStock[player_id] = this.createKeepersStock(
+          this.keepersStock[player_id] = this.createCardStock(
             "keepersStock" + player_id,
-            0
+            ["keeper", "creeper"]
           );
           this.addCardsToStock(
             this.keepersStock[player_id],
             this.gamedatas.keepers[player_id]
           );
+          this.keepersStock[player_id].setOverlap(80);
 
           // Setting up player boards
           var player_board_div = $("player_board_" + player_id);
@@ -326,7 +340,7 @@ define([
         );
       },
 
-      addCardsOfTypeFromGameSet: function(stock, type, gameSet) {
+      addCardsOfTypeFromGameSet: function (stock, type, gameSet) {
         var count = gameSet[type].count;
         var spriteOffset = gameSet[type].spriteOffset;
         var materialOffset = gameSet[type].materialOffset;
@@ -348,43 +362,17 @@ define([
         stock.image_items_per_row = this.CARDS_SPRITES_PER_ROW;
 
         for (var type of types) {
-          this.addCardsOfTypeFromGameSet(stock, type, this.CARDS_TYPES_BASEGAME);
-          this.addCardsOfTypeFromGameSet(stock, type, this.CARDS_TYPES_CREEPERPACK);
-        }
-
-        stock.setSelectionMode(0);
-        stock.onItemCreate = dojo.hitch(this, "setupNewCard");
-        return stock;
-      },
-
-
-      addCardsToKeeperStock: function(stock, cardType, spriteOffset) {
-        var count = cardType.count;
-        var spriteOffset = spriteOffset;
-        var materialOffset = cardType.materialOffset;
-
-        for (var i = 0; i < count; i++) {
-          stock.addItemType(
-            materialOffset + i,
-            materialOffset + i,
-            this.KEEPERS_SPRITES_PATH,
-            spriteOffset + i
+          this.addCardsOfTypeFromGameSet(
+            stock,
+            type,
+            this.CARDS_TYPES_BASEGAME
+          );
+          this.addCardsOfTypeFromGameSet(
+            stock,
+            type,
+            this.CARDS_TYPES_CREEPERPACK
           );
         }
-      },
-
-      createKeepersStock: function (elem) {
-        var stock = new ebg.stock();
-        this._allStocks[elem] = stock;
-        stock.create(this, $(elem), this.KEEPER_WIDTH, this.KEEPER_HEIGHT);
-        stock.image_items_per_row = this.KEEPERS_SPRITES_PER_ROW;
-
-        // small version for keepers played
-        this.addCardsToKeeperStock(stock, this.CARDS_TYPES_BASEGAME.keeper, 0);
-
-        // small version for creepers played
-        var smallCreeperSpriteOffset = 1 + this.CARDS_TYPES_BASEGAME.keeper.count;
-        this.addCardsToKeeperStock(stock, this.CARDS_TYPES_CREEPERPACK.creeper, smallCreeperSpriteOffset);
 
         stock.setSelectionMode(0);
         stock.onItemCreate = dojo.hitch(this, "setupNewCard");
@@ -442,16 +430,18 @@ define([
       onDiscardToggle: function (ev) {
         ev.preventDefault();
 
-        if (dojo.hasClass("flxDeckBlock", "flx-discard-visible")) {
+        if (dojo.hasClass("flxTableCenter", "flx-discard-visible")) {
+          dojo.removeClass("flxTableCenter", "flx-discard-visible");
+          $("discardToggleBtn").innerHTML = _("Show discard");
           this.discardStock.item_margin = 0;
           this.discardStock.setOverlap(0.00001);
-          dojo.removeClass("flxDeckBlock", "flx-discard-visible");
-          $("discardToggleBtn").innerHTML = _("Show discard");
+          this.discardStock.resetItemsPosition();
         } else {
+          dojo.addClass("flxTableCenter", "flx-discard-visible");
+          $("discardToggleBtn").innerHTML = _("Hide discard");
           this.discardStock.setOverlap(0);
           this.discardStock.item_margin = 5;
-          dojo.addClass("flxDeckBlock", "flx-discard-visible");
-          $("discardToggleBtn").innerHTML = _("Hide discard");
+          this.discardStock.resetItemsPosition();
         }
       },
 

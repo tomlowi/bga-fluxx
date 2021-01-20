@@ -18,6 +18,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
           this,
           "onSelectCardGoalCleaning"
         );
+        dojo.addClass("flxTableCenter", "flx-goal-cleaning");
       }
     },
 
@@ -30,6 +31,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       }
       this.goalsStock.setSelectionMode(0);
       this.goalsStock.setOverlap(50);
+      dojo.removeClass("flxTableCenter", "flx-goal-cleaning");
     },
     onUpdateActionButtonsGoalCleaning: function (args) {
       console.log("Update Action Buttons: GoalCleaning");
