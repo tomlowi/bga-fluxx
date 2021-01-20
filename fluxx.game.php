@@ -168,8 +168,8 @@ class fluxx extends Table
     self::setGameStateInitialValue("activeRichBonus", 0);
     self::setGameStateInitialValue("activeFirstPlayRandom", 0);
     self::setGameStateInitialValue("forcedCard", -1);
-    self::setGameStateInitialValue("playerTurnUsedPartyBonus", -1);
-    self::setGameStateInitialValue("playerTurnUsedPoorBonus", -1);
+    self::setGameStateInitialValue("playerTurnUsedPartyBonus", 0);
+    self::setGameStateInitialValue("playerTurnUsedPoorBonus", 0);
 
     self::initStat("table", "turns_number", 0);
 
@@ -491,8 +491,8 @@ class fluxx extends Table
 
   public function checkBonusConditions($player_id)
   {
-    Utils::recheckForPartyBonus($player_id);
-    Utils::recheckForPoorBonus($player_id);
+    Utils::checkForPartyBonus($player_id);
+    Utils::checkForPoorBonus($player_id);
   }
 
   public function checkWinConditions()

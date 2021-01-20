@@ -128,8 +128,10 @@ class Utils
     return 0 == Utils::getGame()->getGameStateValue("playerTurnUsedPoorBonus");
   }
 
-  public static function recheckForPartyBonus($player_id)
+  public static function calculatePartyBonus($player_id)
   {
+    $partyBonus = 0;
+
     if (
       Utils::getActivePartyBonus() &&
       Utils::playerHasNotYetPartiedInTurn() &&
@@ -138,14 +140,26 @@ class Utils
       $addInflation = Utils::getActiveInflation() ? 1 : 0;
 
       $partyBonus = 1 + $addInflation;
-      RulePartyBonus::notifyActiveFor($player_id, true);
-      Utils::getGame()->performDrawCards($player_id, $partyBonus);
+      RulePartyBonus::notifyActiveFor($player_id, true);      
       Utils::getGame()->setGameStateValue("playerTurnUsedPartyBonus", 1);
+    }
+
+    return $partyBonus;
+  }
+
+  public static function checkForPartyBonus($player_id)
+  {
+    $partyBonus = Utils::calculatePartyBonus($player_id);
+    if ($partyBonus > 0)
+    {
+      Utils::getGame()->performDrawCards($player_id, $partyBonus);
     }
   }
 
-  public static function recheckForPoorBonus($player_id)
+  public static function calculatePoorBonus($player_id)
   {
+    $poorBonus = 0;
+
     if (
       Utils::getActivePoorBonus() &&
       Utils::playerHasNotYetBeenPoorInTurn() &&
@@ -155,8 +169,18 @@ class Utils
 
       $poorBonus = 1 + $addInflation;
       RulePoorBonus::notifyActiveFor($player_id);
-      Utils::getGame()->performDrawCards($player_id, $poorBonus);
       Utils::getGame()->setGameStateValue("playerTurnUsedPoorBonus", 1);
+    }
+
+    return $poorBonus;
+  }
+
+  public static function checkForPoorBonus($player_id)
+  {
+    $poorBonus = Utils::calculatePoorBonus($player_id);
+    if ($poorBonus > 0)
+    {
+      Utils::getGame()->performDrawCards($player_id, $poorBonus);
     }
   }
 }

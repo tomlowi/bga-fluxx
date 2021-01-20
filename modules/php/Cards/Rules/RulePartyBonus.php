@@ -21,7 +21,7 @@ class RulePartyBonus extends RuleCard
     Utils::getGame()->setGameStateValue("activePartyBonus", 1);
 
     // if Party already on the table, immediately draw extra
-    Utils::recheckForPartyBonus($player_id);
+    Utils::checkForPartyBonus($player_id);
 
     // +1 play will be accounted for automatically in PlayCardTrait,
     // when next checking if player should play more cards
