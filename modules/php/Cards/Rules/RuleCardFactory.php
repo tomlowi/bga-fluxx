@@ -10,14 +10,11 @@ class RuleCardFactory extends CardFactory
 {
   public static function getCardFullClassName($uniqueId)
   {
-    if (array_key_exists($uniqueId, self::$classesCreeperPack))
-    {
+    if (array_key_exists($uniqueId, self::$classesCreeperPack)) {
       $name = "Fluxx\Cards\Rules\\" . self::$classesCreeperPack[$uniqueId];
-    } 
-    else 
-    {
+    } else {
       $name = "Fluxx\Cards\Rules\\" . self::$classes[$uniqueId];
-    } 
+    }
     return $name;
   }
 
@@ -81,5 +78,5 @@ class RuleCardFactory extends CardFactory
   public static $classesCreeperPack = [
     251 => "RuleSilverLining",
     252 => "RuleYouAlsoNeedABakedPotato",
-  ];  
+  ];
 }

@@ -21,9 +21,13 @@ class ActionMoveACreeper extends ActionCard
   public function immediateEffectOnPlay($player_id)
   {
     $game = Utils::getGame();
-    
+
     $creeperCards = $game->cards->getCardsOfTypeInLocation(
-      "creeper", null, "keepers", null);
+      "creeper",
+      null,
+      "keepers",
+      null
+    );
     if (count($creeperCards) == 0) {
       // no creepers on the table for any player, this action does nothing
       return;
@@ -45,9 +49,7 @@ class ActionMoveACreeper extends ActionCard
 
     if ($card_location != "keepers" || $card_type != "creeper") {
       Utils::throwInvalidUserAction(
-        fluxx::totranslate(
-          "You must select a creeper card in play"
-        )
+        fluxx::totranslate("You must select a creeper card in play")
       );
     }
 

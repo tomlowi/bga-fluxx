@@ -22,17 +22,16 @@ class RuleInflation extends RuleCard
     // Draw rule is adapted immediately, so current player draws an extra card
     $extraDrawCount = 1;
     // If Poor Bonus is active, it should also get inflated
-    $poorBonus = Utils::getActivePoorBonus() && Utils::hasLeastKeepers($player_id);
-    if ($poorBonus)
-    {
+    $poorBonus =
+      Utils::getActivePoorBonus() && Utils::hasLeastKeepers($player_id);
+    if ($poorBonus) {
       $extraDrawCount += 1;
-    }      
+    }
     // If Party Bonus is active, it should also get inflated
     $partyBonus = Utils::getActivePartyBonus() && Utils::isPartyInPlay();
-    if ($partyBonus)
-    {
+    if ($partyBonus) {
       $extraDrawCount += 1;
-    }      
+    }
     // Draw extra cards for this player
     Utils::getGame()->performDrawCards($player_id, $extraDrawCount);
   }
@@ -53,5 +52,5 @@ class RuleInflation extends RuleCard
         "player_name" => $game->getActivePlayerName(),
       ]
     );
-  }  
+  }
 }

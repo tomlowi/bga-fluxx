@@ -220,7 +220,7 @@ $machinestates = [
     "action" => "st_actionResolveRockPaperScissors",
     "possibleactions" => ["resolveActionButtonsRockPaperScissors"],
     "transitions" => [
-      "rockPaperScissorsCheckNextRound" => STATE_ROCKPAPERSCISSORS_NEXTROUND
+      "rockPaperScissorsCheckNextRound" => STATE_ROCKPAPERSCISSORS_NEXTROUND,
     ],
   ],
 
@@ -232,7 +232,7 @@ $machinestates = [
     "updateGameProgression" => false,
     "transitions" => [
       "rockPaperScissorsContinue" => STATE_ROCKPAPERSCISSORS_RESOLVE,
-      "rockPaperScissorsFinished" => STATE_PLAY_CARD
+      "rockPaperScissorsFinished" => STATE_PLAY_CARD,
     ],
   ],
 

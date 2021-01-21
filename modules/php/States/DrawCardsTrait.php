@@ -26,7 +26,7 @@ trait DrawCardsTrait
     }
 
     $drawRule = $game->getGameStateValue("drawRule");
-    // Check for other draw bonuses    
+    // Check for other draw bonuses
     if ($addInflation > 0) {
       RuleInflation::notifyActiveFor($player_id);
     }

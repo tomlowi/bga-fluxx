@@ -331,7 +331,7 @@ class fluxx extends Table
     $rules = RuleCardFactory::listCardDefinitions();
     $actions = ActionCardFactory::listCardDefinitions();
     $creepers = CreeperCardFactory::listCardDefinitions();
-    
+
     return $keepers + $goals + $rules + $actions + $creepers;
   }
 

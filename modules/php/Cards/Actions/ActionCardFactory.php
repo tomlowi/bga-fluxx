@@ -10,14 +10,11 @@ class ActionCardFactory extends CardFactory
 {
   public static function getCardFullClassName($uniqueId)
   {
-    if (array_key_exists($uniqueId, self::$classesCreeperPack))
-    {
+    if (array_key_exists($uniqueId, self::$classesCreeperPack)) {
       $name = "Fluxx\Cards\Actions\\" . self::$classesCreeperPack[$uniqueId];
-    } 
-    else 
-    {
+    } else {
       $name = "Fluxx\Cards\Actions\\" . self::$classes[$uniqueId];
-    } 
+    }
     return $name;
   }
 
@@ -29,7 +26,7 @@ class ActionCardFactory extends CardFactory
     if (Utils::useCreeperPackExpansion()) {
       $cardClasses += self::$classesCreeperPack;
     }
-    
+
     foreach ($cardClasses as $definitionId => $class) {
       $card = self::getCard(0, $definitionId);
 

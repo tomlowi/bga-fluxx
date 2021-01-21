@@ -16,7 +16,7 @@ class ActionEverybodyGets1 extends ActionCard
   }
 
   public function immediateEffectOnPlay($player_id)
-  {    
+  {
     $addInflation = Utils::getActiveInflation() ? 1 : 0;
     $extraCards = 1 + $addInflation;
 
