@@ -18,14 +18,15 @@ trait DrawCardsTrait
     $hasNoHandBonus = Utils::getActiveNoHandBonus();
     $cardsInHand = $cards->countCardInLocation("hand", $player_id);
 
+    $addInflation = Utils::getActiveInflation() ? 1 : 0;
+
     if ($cardsInHand == 0 && $hasNoHandBonus) {
       $drawNoHandBonus = 3 + $addInflation;
       $game->performDrawCards($player_id, $drawNoHandBonus);
     }
 
     $drawRule = $game->getGameStateValue("drawRule");
-    // Check for other draw bonuses
-    $addInflation = Utils::getActiveInflation() ? 1 : 0;
+    // Check for other draw bonuses    
     if ($addInflation > 0) {
       RuleInflation::notifyActiveFor($player_id);
     }
