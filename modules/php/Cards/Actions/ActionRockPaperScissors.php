@@ -18,15 +18,6 @@ class ActionRockPaperScissors extends ActionCard
 
   public $interactionNeeded = "playerSelection";
 
-  // public function resolveArgs()
-  // {
-  //   return [
-  //     ["value" => "rock", "label" => clienttranslate("Rock")],
-  //     ["value" => "paper", "label" => clienttranslate("Paper")],
-  //     ["value" => "scissors", "label" => clienttranslate("Scissors")],
-  //   ];
-  // }
-
   public function immediateEffectOnPlay($player_id)
   {
     // nothing now, needs to go to resolve action state
