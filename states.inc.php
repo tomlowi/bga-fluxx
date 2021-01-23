@@ -63,6 +63,7 @@ if (!defined("STATE_GAME_SETUP")) {
   define("STATE_RESOLVE_ACTION", 30);
   define("STATE_ROCKPAPERSCISSORS_RESOLVE", 31);
   define("STATE_ROCKPAPERSCISSORS_NEXTROUND", 32);
+  define("STATE_RESOLVE_FREE_RULE", 33);
   define("STATE_NEXT_PLAYER", 90);
 }
 
@@ -89,12 +90,12 @@ $machinestates = [
 
   STATE_PLAY_CARD => [
     "name" => "playCard",
-    "description" => clienttranslate('${actplayer} must play ${count} card(s)'),
-    "descriptionmyturn" => clienttranslate('${you} must play ${count} card(s)'),
+    "description" => clienttranslate('${actplayer} must play ${count} card(s) or use Free Rule'),
+    "descriptionmyturn" => clienttranslate('${you} must play ${count} card(s) or use Free Rule'),
     "type" => "activeplayer",
     "action" => "st_playCard",
     "args" => "arg_playCard",
-    "possibleactions" => ["playCard", "pass"],
+    "possibleactions" => ["playCard", "freeRule", "finishTurn"],
     "transitions" => [
       "handLimitRulePlayed" => STATE_ENFORCE_HAND_LIMIT_OTHERS,
       "keepersLimitRulePlayed" => STATE_ENFORCE_KEEPERS_LIMIT_OTHERS,
@@ -103,6 +104,7 @@ $machinestates = [
       "doubleAgendaRule" => STATE_GOAL_CLEANING,
 
       "resolveActionCard" => STATE_RESOLVE_ACTION,
+      "resolveFreeRule" => STATE_RESOLVE_FREE_RULE,
       "continuePlay" => STATE_PLAY_CARD,
       "endGame" => STATE_GAME_END,
     ],
@@ -235,6 +237,29 @@ $machinestates = [
       "rockPaperScissorsFinished" => STATE_PLAY_CARD,
     ],
   ],
+
+  STATE_RESOLVE_FREE_RULE => [
+    "name" => "freeRuleResolve",
+    "description" => clienttranslate(
+      '${actplayer} must resolve their free rule: ${action_name}'
+    ),
+    "descriptionmyturn" => clienttranslate(
+      '${you} must resolve your free rule: ${action_name}'
+    ),
+    "type" => "activeplayer",
+    "args" => "arg_resolveFreeRule",
+    //"action" => "st_resolveFreeRule",
+    "possibleactions" => [
+      "resolveFreeRule",
+      "resolveFreeRuleKeeperSelection",
+      "resolveFreeRuleCardsSelection",
+      "resolveFreeRuleButtons",
+    ],
+    "transitions" => [
+      "resolvedFreeRule" => STATE_PLAY_CARD,
+      "endGame" => STATE_GAME_END,
+    ],
+  ],  
 
   STATE_NEXT_PLAYER => [
     "name" => "nextPlayer",

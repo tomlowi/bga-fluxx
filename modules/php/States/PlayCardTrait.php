@@ -26,18 +26,14 @@ trait PlayCardTrait
       return;
     }
 
-    // If any "free action" rule can be played, we cannot move to the next state
-    $rules = $game->cards->getCardsInLocation("rules", RULE_OTHERS);
-
-    foreach ($rules as $rule_id => $rule) {
-      $ruleCard = RuleCardFactory::getCard($rule["id"], $rule["type_arg"]);
-
-      if ($ruleCard->canBeUsedByPlayer) {
-        return;
-      }
-    }
-
     $player_id = $game->getActivePlayerId();
+
+    // If any "free action" rule can be played, we cannot end turn automatically
+    // Player must finish its turn by explicitly deciding not to use any of the free rules
+    $freeRulesAvailable = $this->getFreeRulesAvailable();
+    if (count($freeRulesAvailable) > 0) {
+      return;
+    }
 
     $alreadyPlayed = $game->getGameStateValue("playedCards");
     $mustPlay = $this->calculateCardsLeftToPlayFor($player_id, false);
@@ -65,13 +61,36 @@ trait PlayCardTrait
     $alreadyPlayed = $game->getGameStateValue("playedCards");
     $mustPlay = $this->calculateCardsLeftToPlayFor($player_id, true);
 
+    $countCardsToPlay = 0;
     if ($mustPlay >= PLAY_COUNT_ALL) {
-      return ["count" => clienttranslate("All")];
+      $countCardsToPlay = clienttranslate("All");
     } elseif ($mustPlay < 0) {
-      return ["count" => clienttranslate("All but") . " " . $mustPlay];
+      $countCardsToPlay = clienttranslate("All but");
+    } else {
+      $countCardsToPlay = $mustPlay - $alreadyPlayed;
     }
 
-    return ["count" => $mustPlay - $alreadyPlayed];
+    $freeRulesAvailable = $this->getFreeRulesAvailable();
+    
+    return [
+      "count" => $countCardsToPlay,
+      "freeRules" => $freeRulesAvailable,
+    ];
+  }
+
+  private function getFreeRulesAvailable($player_id)
+  {
+    $freeRulesAvailable = [];
+
+    $game = Utils::getGame();
+    $rulesInPlay = $game->cards->getCardsInLocation("rules", RULE_OTHERS);
+    foreach ($rulesInPlay as $card_id => $rule) {
+      $ruleCard = RuleCardFactory::getCard($rule["id"], $rule["type_arg"]);
+
+      if ($ruleCard->canBeUsedByPlayer($player_id)) {
+        $freeRulesAvailable[] = $card_id;
+      }
+    }    
   }
 
   private function calculateCardsLeftToPlayFor($player_id, $withNotifications)
@@ -272,6 +291,7 @@ trait PlayCardTrait
   {
     $game = Utils::getGame();
 
+    $game->setGameStateValue("freeRuleToResolve", -1);
     $ruleCard = RuleCardFactory::getCard($card["id"], $card["type_arg"]);
     $ruleType = $ruleCard->getRuleType();
 

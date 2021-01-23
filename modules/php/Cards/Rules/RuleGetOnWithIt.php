@@ -9,8 +9,6 @@ class RuleGetOnWithIt extends RuleCard
   {
     parent::__construct($cardId, $uniqueId);
 
-    $canBeUsedByPlayer = true;
-
     $this->name = clienttranslate("Get On With It!");
     $this->subtitle = clienttranslate("Free Action");
     $this->description = clienttranslate(
@@ -18,6 +16,11 @@ class RuleGetOnWithIt extends RuleCard
     );
   }
 
+  public function canBeUsedInPlayerTurn($player_id)
+  {
+    return true;
+  }
+  
   public function immediateEffectOnPlay($player)
   {
     // @TODO

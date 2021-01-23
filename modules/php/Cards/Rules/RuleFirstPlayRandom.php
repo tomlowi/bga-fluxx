@@ -19,6 +19,7 @@ class RuleFirstPlayRandom extends RuleCard
   public function immediateEffectOnPlay($player_id)
   {
     Utils::getGame()->setGameStateValue("activeFirstPlayRandom", 1);
+    // @TODO: enforce this rule
   }
 
   public function immediateEffectOnDiscard($player_id)

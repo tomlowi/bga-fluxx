@@ -9,8 +9,6 @@ class RuleRecycling extends RuleCard
   {
     parent::__construct($cardId, $uniqueId);
 
-    $canBeUsedByPlayer = true;
-
     $this->name = clienttranslate("Recycling");
     $this->subtitle = clienttranslate("Free Action");
     $this->description = clienttranslate(
@@ -18,13 +16,31 @@ class RuleRecycling extends RuleCard
     );
   }
 
+  public $interactionNeeded = "keeperSelectionSelf";
+
+  public function canBeUsedInPlayerTurn($player_id)
+  {
+    return Utils::playerHasNotYetUsedRecycling();
+  }
+
   public function immediateEffectOnPlay($player)
   {
-    // @TODO
+    // nothing
   }
 
   public function immediateEffectOnDiscard($player)
   {
-    // @TODO
+    // nothing
+  }
+
+  public function resolvedBy($player_id, $args)
+  {
+    self::setGameStateValue("playerTurnUsedRecycling", 1);
+
+    // @TODO: Validate args contains 1 card, 
+    // and it is a Keeper in play for this player
+    // Discard it
+    // Draw 3 cards (+ inflation bonus)
+    // Notify to show discard and draws
   }
 }

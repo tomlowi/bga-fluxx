@@ -9,13 +9,16 @@ class RuleSwapPlaysForDraws extends RuleCard
   {
     parent::__construct($cardId, $uniqueId);
 
-    $canBeUsedByPlayer = true;
-
     $this->name = clienttranslate("Swap Plays for Draws");
     $this->subtitle = clienttranslate("Takes Instant Effect");
     $this->description = clienttranslate(
       "During your yurn, you may decide to play no more cards and instead draw as many cards as you have plays remaining. If Play All, draw as many cards as you hold."
     );
+  }
+
+  public function canBeUsedInPlayerTurn($player_id)
+  {
+    return true;
   }
 
   public function immediateEffectOnPlay($player)

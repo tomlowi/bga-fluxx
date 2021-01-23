@@ -9,8 +9,6 @@ class RuleGoalMill extends RuleCard
   {
     parent::__construct($cardId, $uniqueId);
 
-    $canBeUsedByPlayer = true;
-
     $this->name = clienttranslate("Goal Mill");
     $this->subtitle = clienttranslate("Free Action");
     $this->description = clienttranslate(
@@ -18,13 +16,30 @@ class RuleGoalMill extends RuleCard
     );
   }
 
+  public $interactionNeeded = "handCardsSelection";
+
+  public function canBeUsedInPlayerTurn($player_id)
+  {    
+    return Utils::playerHasNotYetUsedGoalMill();
+  }
+
   public function immediateEffectOnPlay($player)
   {
-    // @TODO
+    // nothing
   }
 
   public function immediateEffectOnDiscard($player)
   {
     // nothing
+  }
+
+  public function resolvedBy($player_id, $args)
+  {
+    self::setGameStateValue("playerTurnUsedGoalMill", 1);
+
+    // @TODO: validate all cards are goals in hand of player
+    // discard them
+    // draw equal number
+    // notify about discard and draws
   }
 }

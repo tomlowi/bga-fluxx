@@ -308,6 +308,9 @@ define([
             case "actionResolveRockPaperScissors":
               this.onUpdateActionButtonsActionResolve(args);
               break;
+            case "freeRuleResolve":
+              this.onUpdateActionButtonsFreeRuleResolve(args);
+              break;
           }
         }
       },

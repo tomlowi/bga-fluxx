@@ -183,4 +183,22 @@ class Utils
       Utils::getGame()->performDrawCards($player_id, $poorBonus);
     }
   }
+
+  public static function playerHasNotYetUsedGoalMill()
+  {
+    // Goal Mill can only be used once by the same player in one turn.
+    return 0 == Utils::getGame()->getGameStateValue("playerTurnUsedGoalMill");
+  }
+
+  public static function playerHasNotYetUsedMysteryPlay()
+  {
+    // Mystery Play can only be used once by the same player in one turn.
+    return 0 == Utils::getGame()->getGameStateValue("playerTurnUsedMysteryPlay");
+  }
+
+  public static function playerHasNotYetUsedRecycling()
+  {
+    // Recycling can only be used once by the same player in one turn.
+    return 0 == Utils::getGame()->getGameStateValue("playerTurnUsedRecycling");
+  }  
 }
