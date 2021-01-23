@@ -18,7 +18,8 @@ class RuleGetOnWithIt extends RuleCard
 
   public function canBeUsedInPlayerTurn($player_id)
   {
-    return true;
+    $game = Utils::getGame();
+    return $game->cards->countCardInLocation("hand", $player_id) > 0;
   }
   
   public function immediateEffectOnPlay($player)
@@ -33,10 +34,27 @@ class RuleGetOnWithIt extends RuleCard
 
   public function freePlayInPlayerTurn($player_id)
   {
-    // @TODO:
-    // discard entire hand
-    // draw 3 cards (+ inflation)
-    // force end of turn (set count cards played to 999)
+    $game = Utils::getGame();
+    // Discard entire hand
+    $cards = $game->cards->getCardsInLocation("hand", $player_id);
+    foreach ($cards as $card_id => $card) {
+      $game->cards->playCard($card_id);
+    }
+
+    $game->notifyAllPlayers("handDiscarded", "", [
+      "player_id" => $player_id,
+      "cards" => $cards,
+      "discardCount" => $game->cards->countCardInLocation("discard"),
+      "handCount" => $game->cards->countCardInLocation("hand", $player_id),
+    ]);    
+    // Draw 3 cards (+ inflation)    
+    $addInflation = Utils::getActiveInflation() ? 1 : 0;
+    $drawCount = 3 + $addInflation;
+    $game->performDrawCards($player_id, $drawCount);
+
+    // Force end of turn (set count cards played above 999)
+    $game->setGameStateValue("playedCards", PLAY_COUNT_ALL + 1);
+
     return null;
   }
 }

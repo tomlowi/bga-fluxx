@@ -251,7 +251,7 @@ $machinestates = [
     //"action" => "st_resolveFreeRule",
     "possibleactions" => [
       "resolveFreeRule",
-      "resolveFreeRuleKeeperSelection",
+      "resolveFreeRuleCardSelection",
       "resolveFreeRuleCardsSelection",
       "resolveFreeRuleButtons",
     ],

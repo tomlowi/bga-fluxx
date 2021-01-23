@@ -33,10 +33,25 @@ class RuleSwapPlaysForDraws extends RuleCard
 
   public function freePlayInPlayerTurn($player_id)
   {
-    // @TODO:
+    $game = Utils::getGame();
     // calculate how many cards player should still play
-    // draw as many cards
-    // force end of turn (set count cards played to 999)
+    $leftToPlay = Utils::calculateCardsLeftToPlayFor($player_id, false);
+    $drawCount = $leftToPlay;
+    if ($leftToPlay >= PLAY_COUNT_ALL)
+    { // Play All > draw as many as cards in hand
+      $drawCount = $game->cards->countCardInLocation("hand", $player_id);
+    } 
+    elseif ($leftToPlay < 0)
+    { // Play All but 1 > draw as many as cards in hand minus the leftover
+      $handCount = $game->cards->countCardInLocation("hand", $player_id);
+      $drawCount = $handCount + $leftToPlay; // ok, $leftToPlay is negative here
+    }
+    // draw as many cards as we could have still played
+    $game->performDrawCards($player_id, $drawCount);
+
+    // force end of turn (set count cards played above 999)
+    $game->setGameStateValue("playedCards", PLAY_COUNT_ALL + 1);
+
     return null;
   }
 }

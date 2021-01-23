@@ -44,7 +44,7 @@ trait PlayCardTrait
   {
     $game = Utils::getGame();
     $alreadyPlayed = $game->getGameStateValue("playedCards");
-    $mustPlay = $this->calculateCardsLeftToPlayFor($player_id, false);
+    $mustPlay = Utils::calculateCardsLeftToPlayFor($player_id, false);
 
     // still cards in hand?
     $cardsInHand = $game->cards->countCardInLocation("hand", $player_id);
@@ -69,7 +69,7 @@ trait PlayCardTrait
     $player_id = $game->getActivePlayerId();
 
     $alreadyPlayed = $game->getGameStateValue("playedCards");
-    $mustPlay = $this->calculateCardsLeftToPlayFor($player_id, true);
+    $mustPlay = Utils::calculateCardsLeftToPlayFor($player_id, true);
 
     $countCardsToPlay = 0;
     if ($mustPlay >= PLAY_COUNT_ALL) {
@@ -106,52 +106,6 @@ trait PlayCardTrait
     }
 
     return $freeRulesAvailable;
-  }
-
-  private function calculateCardsLeftToPlayFor($player_id, $withNotifications)
-  {
-    $game = Utils::getGame();
-    // current basic Play rule
-    $playRule = $game->getGameStateValue("playRule");
-
-    // Play All = always Play All
-    if ($playRule >= PLAY_COUNT_ALL) {
-      return $playRule;
-    }
-
-    $addInflation = Utils::getActiveInflation() ? 1 : 0;
-    // check bonus rules
-    $partyBonus =
-      Utils::getActivePartyBonus() && Utils::isPartyInPlay()
-        ? 1 + $addInflation
-        : 0;
-    if ($partyBonus > 0 && $withNotifications) {
-      RulePartyBonus::notifyActiveFor($player_id, false);
-    }
-    $richBonus =
-      Utils::getActiveRichBonus() && Utils::hasMostKeepers($player_id)
-        ? 1 + $addInflation
-        : 0;
-    if ($richBonus > 0 && $withNotifications) {
-      RuleRichBonus::notifyActiveFor($player_id);
-    }
-
-    // Play All but 1 is also affected by Inflation and Bonus rules
-    if ($playRule < 0) {
-      $playRule -= $addInflation;
-      // if "Play All but ..." + bonus plays becomes >= 0, it actually becomes "Play All"
-      if ($playRule + $partyBonus + $richBonus >= 0) {
-        return PLAY_COUNT_ALL;
-      }
-      // else it stays "Play All but ..."
-      return $playRule + $partyBonus + $richBonus;
-    }
-    // Normal Play Rule
-    else {
-      $playRule += $addInflation + $partyBonus + $richBonus;
-    }
-
-    return $playRule;
   }
 
   public function action_finishTurn()

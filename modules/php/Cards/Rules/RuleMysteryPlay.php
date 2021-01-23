@@ -36,9 +36,11 @@ class RuleMysteryPlay extends RuleCard
     $game = Utils::getGame();
     $game->setGameStateValue("playerTurnUsedMysteryPlay", 1);
 
-    // @TODO: 
-    // draw top card
-    // mark it as a forced play
-    // notify
+    // draw top card (this is moved to hand automatically)
+    $topCard = $this->cards->pickCard("deck", $player_id);  
+
+    // And we mark it as the next "forcedCard" to play
+    $game->setGameStateValue("forcedCard", $card["id"]);
+    
   }
 }

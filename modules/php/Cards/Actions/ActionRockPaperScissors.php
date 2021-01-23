@@ -30,7 +30,7 @@ class ActionRockPaperScissors extends ActionCard
     $game = Utils::getGame();
     $challenged_player_id = $args["selected_player_id"];
 
-    // @TODO: Rock-Paper-Scissors Showdown
+    // Rock-Paper-Scissors Showdown
     // winner takes over hand cards from loser
     // Challenges: this will probably require an entirely separate state?
     // and after all is done, current player needs to continue its turn

@@ -282,7 +282,7 @@ define([
             break;
 
           case "freeRuleResolve":
-            this.onLeavingStateFreeRuleResolve(args);
+            this.onLeavingStateFreeRuleResolve();
             break;
 
           case "dummmy":

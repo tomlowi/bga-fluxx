@@ -164,4 +164,21 @@ class action_fluxx extends APP_GameAction
     $this->game->action_resolveActionButtonsRockPaperScissors($value);
     self::ajaxResponse();
   }
+
+  public function resolveFreeRuleCardSelection()
+  {
+    self::setAjaxMode();
+    $card_id = self::getArg("card_id", AT_posint, true);
+    $this->game->action_resolveFreeRuleCardSelection($card_id);
+    self::ajaxResponse();
+  }
+  public function resolveFreeRuleCardsSelection()
+  {
+    self::setAjaxMode();
+    $cards_id = self::getArg("cards_id", AT_numberlist, true); // ids of card to discard
+    $this->game->action_resolveFreeRuleCardsSelection(
+      $this->stripListOfCardIds($cards_id)
+    );
+    self::ajaxResponse();
+  }  
 }

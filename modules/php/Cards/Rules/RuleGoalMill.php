@@ -42,9 +42,35 @@ class RuleGoalMill extends RuleCard
 
   public function resolvedBy($player_id, $args)
   {
-    // @TODO: validate all cards are goals in hand of player
-    // discard them
-    // draw equal number
-    // notify about discard and draws
+    // validate all cards are goals in hand of player
+    $cards = $args["cards"];
+    foreach ($cards as $card_id => $card) {      
+      if (
+        $card["location"] != "hand" ||
+        $card["location_arg"] != $player_id ||
+        $card["type"] != "goal"
+      ) {
+        Utils::throwInvalidUserAction(
+          fluxx::totranslate(
+            "You can only discard Goals from your hand for the Goal Mill"
+          )
+        );
+      }
+    }
+    // discard the selected goals from hand
+    foreach ($cards as $card_id => $card) {      
+      $game->cards->playCard($card_id);
+    }
+
+    $game->notifyAllPlayers("handDiscarded", "", [
+      "player_id" => $player_id,
+      "cards" => $cards,
+      "discardCount" => $game->cards->countCardInLocation("discard"),
+      "handCount" => $game->cards->countCardInLocation("hand", $player_id),
+    ]);
+    // draw equal number of cards
+    $drawCount = count($cards);
+    $game->performDrawCards($player_id, $drawCount);
+
   }
 }

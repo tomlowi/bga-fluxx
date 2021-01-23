@@ -200,5 +200,51 @@ class Utils
   {
     // Recycling can only be used once by the same player in one turn.
     return 0 == Utils::getGame()->getGameStateValue("playerTurnUsedRecycling");
-  }  
+  }
+
+  public static function calculateCardsLeftToPlayFor($player_id, $withNotifications)
+  {
+    $game = Utils::getGame();
+    // current basic Play rule
+    $playRule = $game->getGameStateValue("playRule");
+
+    // Play All = always Play All
+    if ($playRule >= PLAY_COUNT_ALL) {
+      return $playRule;
+    }
+
+    $addInflation = Utils::getActiveInflation() ? 1 : 0;
+    // check bonus rules
+    $partyBonus =
+      Utils::getActivePartyBonus() && Utils::isPartyInPlay()
+        ? 1 + $addInflation
+        : 0;
+    if ($partyBonus > 0 && $withNotifications) {
+      RulePartyBonus::notifyActiveFor($player_id, false);
+    }
+    $richBonus =
+      Utils::getActiveRichBonus() && Utils::hasMostKeepers($player_id)
+        ? 1 + $addInflation
+        : 0;
+    if ($richBonus > 0 && $withNotifications) {
+      RuleRichBonus::notifyActiveFor($player_id);
+    }
+
+    // Play All but 1 is also affected by Inflation and Bonus rules
+    if ($playRule < 0) {
+      $playRule -= $addInflation;
+      // if "Play All but ..." + bonus plays becomes >= 0, it actually becomes "Play All"
+      if ($playRule + $partyBonus + $richBonus >= 0) {
+        return PLAY_COUNT_ALL;
+      }
+      // else it stays "Play All but ..."
+      return $playRule + $partyBonus + $richBonus;
+    }
+    // Normal Play Rule
+    else {
+      $playRule += $addInflation + $partyBonus + $richBonus;
+    }
+
+    return $playRule;
+  }
 }
