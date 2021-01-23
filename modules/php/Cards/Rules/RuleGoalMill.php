@@ -2,6 +2,7 @@
 namespace Fluxx\Cards\Rules;
 
 use Fluxx\Game\Utils;
+use fluxx;
 
 class RuleGoalMill extends RuleCard
 {
@@ -19,8 +20,15 @@ class RuleGoalMill extends RuleCard
   public $interactionNeeded = "handCardsSelection";
 
   public function canBeUsedInPlayerTurn($player_id)
-  {    
-    return Utils::playerHasNotYetUsedGoalMill();
+  {
+    $alreadyUsed = !Utils::playerHasNotYetUsedGoalMill();
+    if ($alreadyUsed) return false;
+    
+    $game = Utils::getGame();
+    $goalCardsInHand 
+      = $game->cards->getCardsOfTypeInLocation( "goal", null, "hand", $player_id);    
+
+    return count($goalCardsInHand) > 0;
   }
 
   public function immediateEffectOnPlay($player)
@@ -42,6 +50,7 @@ class RuleGoalMill extends RuleCard
 
   public function resolvedBy($player_id, $args)
   {
+    $game = Utils::getGame();
     // validate all cards are goals in hand of player
     $cards = $args["cards"];
     foreach ($cards as $card_id => $card) {      

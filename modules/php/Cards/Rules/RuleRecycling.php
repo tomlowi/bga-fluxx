@@ -2,6 +2,7 @@
 namespace Fluxx\Cards\Rules;
 
 use Fluxx\Game\Utils;
+use fluxx;
 
 class RuleRecycling extends RuleCard
 {
@@ -59,9 +60,11 @@ class RuleRecycling extends RuleCard
       );
     }
 
+    $game = Utils::getGame();
+    $card = $myKeeper;
     $card_definition = $game->getCardDefinitionFor($card);
     // Discard it
-    $game->cards->playCard($card["id"]);
+    $game->cards->playCard($myKeeper["id"]);
 
     $game->notifyAllPlayers(
       "keepersDiscarded",

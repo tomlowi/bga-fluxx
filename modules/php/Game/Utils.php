@@ -2,6 +2,7 @@
 namespace Fluxx\Game;
 use Fluxx\Cards\Rules\RulePartyBonus;
 use Fluxx\Cards\Rules\RulePoorBonus;
+use Fluxx\Cards\Rules\RuleRichBonus;
 use fluxx;
 
 class Utils
@@ -202,7 +203,28 @@ class Utils
     return 0 == Utils::getGame()->getGameStateValue("playerTurnUsedRecycling");
   }
 
-  public static function calculateCardsLeftToPlayFor($player_id, $withNotifications)
+  public static function calculateCardsLeftToPlayFor($player_id)
+  {
+    $game = Utils::getGame();
+    // calculate how many cards player should still play
+    $alreadyPlayed = $game->getGameStateValue("playedCards");
+    $mustPlay = Utils::calculateCardsMustPlayFor($player_id, false);
+
+    $leftCount = $mustPlay - $alreadyPlayed;
+    if ($mustPlay >= PLAY_COUNT_ALL)
+    { // Play All > left as many as cards in hand
+      $leftCount = $game->cards->countCardInLocation("hand", $player_id);
+    } 
+    elseif ($mustPlay < 0)
+    { // Play All but 1 > left as many as cards in hand minus the leftover
+      $handCount = $game->cards->countCardInLocation("hand", $player_id);
+      $leftCount = $handCount + $mustPlay; // ok, $mustPlay is negative here
+    }
+
+    return $leftCount;
+  }
+
+  public static function calculateCardsMustPlayFor($player_id, $withNotifications)
   {
     $game = Utils::getGame();
     // current basic Play rule

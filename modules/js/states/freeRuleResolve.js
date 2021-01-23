@@ -40,7 +40,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         }
       },
       handCardsSelection: function (that, args) {
-        that.handStock.setSelectionMode(1);
+        that.handStock.setSelectionMode(2);
 
         that.addActionButton(
           "button_confirm",

@@ -8,8 +8,6 @@ use Fluxx\Cards\Goals\GoalCardFactory;
 use Fluxx\Cards\Rules\RuleCardFactory;
 use Fluxx\Cards\Actions\ActionCardFactory;
 use Fluxx\Cards\Creepers\CreeperCardFactory;
-use Fluxx\Cards\Rules\RulePartyBonus;
-use Fluxx\Cards\Rules\RuleRichBonus;
 
 trait PlayCardTrait
 {
@@ -30,8 +28,10 @@ trait PlayCardTrait
 
     // If any "free action" rule can be played, we cannot end turn automatically
     // Player must finish its turn by explicitly deciding not to use any of the free rules
+    // Unless one of the rules has been used that forces a turn end (played > 999)
+    $alreadyPlayed = $game->getGameStateValue("playedCards");
     $freeRulesAvailable = $this->getFreeRulesAvailable($player_id);
-    if (count($freeRulesAvailable) > 0) {
+    if (count($freeRulesAvailable) > 0 && $alreadyPlayed < PLAY_COUNT_ALL) {
       return;
     }
 
@@ -44,14 +44,16 @@ trait PlayCardTrait
   {
     $game = Utils::getGame();
     $alreadyPlayed = $game->getGameStateValue("playedCards");
-    $mustPlay = Utils::calculateCardsLeftToPlayFor($player_id, false);
+    $mustPlay = Utils::calculateCardsMustPlayFor($player_id, false);
 
     // still cards in hand?
     $cardsInHand = $game->cards->countCardInLocation("hand", $player_id);
 
     if (
+      // Force end turn due to Free Rule
+      ($alreadyPlayed >= PLAY_COUNT_ALL) || 
       // Play All but 1, and player has only so much cards left
-      ($mustPlay < 0 && $cardsInHand <= $mustPlay) ||
+      ($mustPlay < 0 && $cardsInHand <= -$mustPlay) ||
       // Normal Play Rule, and player has already played enough cards
       ($mustPlay >= 0 && $alreadyPlayed >= $mustPlay) ||
       // Player cannot play if no more cards in hand
@@ -69,7 +71,7 @@ trait PlayCardTrait
     $player_id = $game->getActivePlayerId();
 
     $alreadyPlayed = $game->getGameStateValue("playedCards");
-    $mustPlay = Utils::calculateCardsLeftToPlayFor($player_id, true);
+    $mustPlay = Utils::calculateCardsMustPlayFor($player_id, true);
 
     $countCardsToPlay = 0;
     if ($mustPlay >= PLAY_COUNT_ALL) {
@@ -143,6 +145,18 @@ trait PlayCardTrait
     }
 
     $ruleCard = RuleCardFactory::getCard($card_id, $card["type_arg"]);
+
+    $game->notifyAllPlayers(
+      "freeRulePlayed",
+      clienttranslate('${player_name} uses free rule <b>${card_name}</b>'),
+      [
+        "i18n" => ["card_name"],
+        "player_name" => $game->getActivePlayerName(),
+        "player_id" => $player_id,
+        "card_name" => $ruleCard->getName(),
+      ]
+    );    
+
     $stateTransition = $ruleCard->freePlayInPlayerTurn($player_id);
     if ($stateTransition != null) {
       // player must resolve something before continuing to play more cards

@@ -19,7 +19,8 @@ class RuleGetOnWithIt extends RuleCard
   public function canBeUsedInPlayerTurn($player_id)
   {
     $game = Utils::getGame();
-    return $game->cards->countCardInLocation("hand", $player_id) > 0;
+    return $game->cards->countCardInLocation("hand", $player_id) > 0
+      && Utils::calculateCardsLeftToPlayFor($player_id) > 0;
   }
   
   public function immediateEffectOnPlay($player)

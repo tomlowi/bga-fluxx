@@ -18,7 +18,8 @@ class RuleSwapPlaysForDraws extends RuleCard
 
   public function canBeUsedInPlayerTurn($player_id)
   {
-    return true;
+    $drawCount = $this->countSwapPlaysForDraws($player_id);
+    return $drawCount > 0;
   }
 
   public function immediateEffectOnPlay($player)
@@ -31,24 +32,24 @@ class RuleSwapPlaysForDraws extends RuleCard
     // nothing
   }
 
+  private function countSwapPlaysForDraws($player_id)
+  {
+    $game = Utils::getGame();
+    // calculate how many cards player should still play
+    $drawCount = Utils::calculateCardsLeftToPlayFor($player_id);
+    return $drawCount;
+  }
+
   public function freePlayInPlayerTurn($player_id)
   {
     $game = Utils::getGame();
     // calculate how many cards player should still play
-    $leftToPlay = Utils::calculateCardsLeftToPlayFor($player_id, false);
-    $drawCount = $leftToPlay;
-    if ($leftToPlay >= PLAY_COUNT_ALL)
-    { // Play All > draw as many as cards in hand
-      $drawCount = $game->cards->countCardInLocation("hand", $player_id);
-    } 
-    elseif ($leftToPlay < 0)
-    { // Play All but 1 > draw as many as cards in hand minus the leftover
-      $handCount = $game->cards->countCardInLocation("hand", $player_id);
-      $drawCount = $handCount + $leftToPlay; // ok, $leftToPlay is negative here
-    }
+    $drawCount = $this->countSwapPlaysForDraws($player_id);
     // draw as many cards as we could have still played
-    $game->performDrawCards($player_id, $drawCount);
-
+    if ($drawCount > 0)
+    {
+      $game->performDrawCards($player_id, $drawCount);
+    }
     // force end of turn (set count cards played above 999)
     $game->setGameStateValue("playedCards", PLAY_COUNT_ALL + 1);
 

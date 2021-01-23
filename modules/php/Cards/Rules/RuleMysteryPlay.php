@@ -37,10 +37,16 @@ class RuleMysteryPlay extends RuleCard
     $game->setGameStateValue("playerTurnUsedMysteryPlay", 1);
 
     // draw top card (this is moved to hand automatically)
-    $topCard = $this->cards->pickCard("deck", $player_id);  
+    $card = $game->cards->pickCard("deck", $player_id);
+    $game->notifyPlayer($player_id, "cardsDrawn", "", [
+      "cards" => [$card],
+    ]);
 
     // And we mark it as the next "forcedCard" to play
     $game->setGameStateValue("forcedCard", $card["id"]);
-    
+
+    // But Mystery Play should not really be counted for play rule
+    $alreadyPlayed = $game->getGameStateValue("playedCards");
+    $game->setGameStateValue("playedCards", $alreadyPlayed - 1);
   }
 }
