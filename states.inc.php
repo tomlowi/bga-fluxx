@@ -90,12 +90,12 @@ $machinestates = [
 
   STATE_PLAY_CARD => [
     "name" => "playCard",
-    "description" => clienttranslate('${actplayer} must play ${count} card(s) or use Free Rule'),
-    "descriptionmyturn" => clienttranslate('${you} must play ${count} card(s) or use Free Rule'),
+    "description" => clienttranslate('${actplayer} must play ${count} card(s)'),
+    "descriptionmyturn" => clienttranslate('${you} must play ${count} card(s)'),
     "type" => "activeplayer",
     "action" => "st_playCard",
     "args" => "arg_playCard",
-    "possibleactions" => ["playCard", "freeRule", "finishTurn"],
+    "possibleactions" => ["playCard", "playFreeRule", "finishTurn"],
     "transitions" => [
       "handLimitRulePlayed" => STATE_ENFORCE_HAND_LIMIT_OTHERS,
       "keepersLimitRulePlayed" => STATE_ENFORCE_KEEPERS_LIMIT_OTHERS,

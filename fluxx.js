@@ -31,6 +31,7 @@ define([
   g_gamethemeurl + "modules/js/states/enforceKeepersLimit.js",
   g_gamethemeurl + "modules/js/states/goalCleaning.js",
   g_gamethemeurl + "modules/js/states/actionResolve.js",
+  g_gamethemeurl + "modules/js/states/freeRuleResolve.js",
 ], function (dojo, declare) {
   return declare(
     "bgagame.fluxx",
@@ -42,6 +43,7 @@ define([
       fluxx.states.enforceKeepersLimit,
       fluxx.states.goalCleaning,
       fluxx.states.actionResolve,
+      fluxx.states.freeRuleResolve,
     ],
     {
       constructor: function () {
@@ -240,6 +242,10 @@ define([
             this.onEnteringStateActionResolve(args);
             break;
 
+          case "freeRuleResolve":
+            this.onEnteringStateFreeRuleResolve(args);
+            break;
+
           case "dummmy":
             break;
         }
@@ -273,6 +279,10 @@ define([
           case "actionResolve":
           case "actionResolveRockPaperScissors":
             this.onLeavingStateActionResolve();
+            break;
+
+          case "freeRuleResolve":
+            this.onLeavingStateFreeRuleResolve(args);
             break;
 
           case "dummmy":

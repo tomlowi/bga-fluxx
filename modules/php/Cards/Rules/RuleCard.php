@@ -28,8 +28,8 @@ class RuleCard extends Card
   // null indicated that this can be handled without client-side interaction
   public $interactionNeeded = null;
 
-  // Implements the immediate effect when this rule is played
-  public function immediateEffectOnPlay($player_id)
+  // Implements the immediate effect when this rule is used in player turn
+  public function freePlayInPlayerTurn($player_id)
   {
     if ($this->interactionNeeded != null) {
       Utils::getGame()->setGameStateValue(
@@ -39,5 +39,10 @@ class RuleCard extends Card
       return "resolveFreeRule";
     }
     return null;
+  }
+
+  public function resolveArgs()
+  {
+    return [];
   }
 }

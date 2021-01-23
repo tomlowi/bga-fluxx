@@ -30,11 +30,19 @@ trait PlayCardTrait
 
     // If any "free action" rule can be played, we cannot end turn automatically
     // Player must finish its turn by explicitly deciding not to use any of the free rules
-    $freeRulesAvailable = $this->getFreeRulesAvailable();
+    $freeRulesAvailable = $this->getFreeRulesAvailable($player_id);
     if (count($freeRulesAvailable) > 0) {
       return;
     }
 
+    if (!$this->activePlayerMustPlayMoreCards($player_id)) {
+      $game->gamestate->nextstate("endOfTurn");
+    }
+  }
+
+  private function activePlayerMustPlayMoreCards($player_id)
+  {
+    $game = Utils::getGame();
     $alreadyPlayed = $game->getGameStateValue("playedCards");
     $mustPlay = $this->calculateCardsLeftToPlayFor($player_id, false);
 
@@ -49,8 +57,10 @@ trait PlayCardTrait
       // Player cannot play if no more cards in hand
       $cardsInHand == 0
     ) {
-      $game->gamestate->nextstate("endOfTurn");
+      return false;
     }
+
+    return true;
   }
 
   public function arg_playCard()
@@ -70,7 +80,7 @@ trait PlayCardTrait
       $countCardsToPlay = $mustPlay - $alreadyPlayed;
     }
 
-    $freeRulesAvailable = $this->getFreeRulesAvailable();
+    $freeRulesAvailable = $this->getFreeRulesAvailable($player_id);
     
     return [
       "count" => $countCardsToPlay,
@@ -87,10 +97,15 @@ trait PlayCardTrait
     foreach ($rulesInPlay as $card_id => $rule) {
       $ruleCard = RuleCardFactory::getCard($rule["id"], $rule["type_arg"]);
 
-      if ($ruleCard->canBeUsedByPlayer($player_id)) {
-        $freeRulesAvailable[] = $card_id;
+      if ($ruleCard->canBeUsedInPlayerTurn($player_id)) {
+        $freeRulesAvailable[] = [
+          "card_id" => $card_id,
+          "name" => $ruleCard->getName(),
+        ];
       }
-    }    
+    }
+
+    return $freeRulesAvailable;
   }
 
   private function calculateCardsLeftToPlayFor($player_id, $withNotifications)
@@ -137,6 +152,52 @@ trait PlayCardTrait
     }
 
     return $playRule;
+  }
+
+  public function action_finishTurn()
+  {
+    $game = Utils::getGame();
+    // Check that this is the player's turn and that it is a "possible action" at this game state (see states.inc.php)
+    $game->checkAction("finishTurn");
+
+    $player_id = $game->getActivePlayerId();
+    if ($this->activePlayerMustPlayMoreCards($player_id)) {
+      Utils::throwInvalidUserAction(
+        fluxx::totranslate(
+          "You cannot finish your turn if you still need to play cards"
+        )
+      );
+    }
+
+    $game->gamestate->nextstate("endOfTurn");
+  }
+
+  public function action_playFreeRule($card_id)
+  {
+    $game = Utils::getGame();
+
+    // Check that this is the player's turn and that it is a "possible action" at this game state (see states.inc.php)
+    $game->checkAction("playFreeRule");
+
+    $player_id = $game->getActivePlayerId();
+    $card = $game->cards->getCard($card_id);
+
+    if ($card["location"] != "rules") {
+      Utils::throwInvalidUserAction(
+        fluxx::totranslate("This is not an active Rule")
+      );      
+    }
+
+    $ruleCard = RuleCardFactory::getCard($card_id, $card["type_arg"]);
+    $stateTransition = $ruleCard->freePlayInPlayerTurn($player_id);
+    if ($stateTransition != null) {
+      // player must resolve something before continuing to play more cards
+      $game->gamestate->nextstate($stateTransition);
+    } else {
+      // else: just let player continue playing cards
+      // but explicitly set state again to force args refresh
+      $game->gamestate->nextstate("continuePlay");
+    }
   }
 
   public function action_playCard($card_id)

@@ -33,10 +33,15 @@ class RuleRecycling extends RuleCard
     // nothing
   }
 
+  public function freePlayInPlayerTurn($player_id)
+  {
+    $game = Utils::getGame();
+    $game->setGameStateValue("playerTurnUsedRecycling", 1);    
+    return parent::freePlayInPlayerTurn($player_id);
+  }
+
   public function resolvedBy($player_id, $args)
   {
-    self::setGameStateValue("playerTurnUsedRecycling", 1);
-
     // @TODO: Validate args contains 1 card, 
     // and it is a Keeper in play for this player
     // Discard it

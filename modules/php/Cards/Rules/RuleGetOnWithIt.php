@@ -23,11 +23,20 @@ class RuleGetOnWithIt extends RuleCard
   
   public function immediateEffectOnPlay($player)
   {
-    // @TODO
+    // nothing
   }
 
   public function immediateEffectOnDiscard($player)
   {
     // nothing
+  }
+
+  public function freePlayInPlayerTurn($player_id)
+  {
+    // @TODO:
+    // discard entire hand
+    // draw 3 cards (+ inflation)
+    // force end of turn (set count cards played to 999)
+    return null;
   }
 }

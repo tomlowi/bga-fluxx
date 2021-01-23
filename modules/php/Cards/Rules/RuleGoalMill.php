@@ -33,10 +33,15 @@ class RuleGoalMill extends RuleCard
     // nothing
   }
 
+  public function freePlayInPlayerTurn($player_id)
+  {
+    $game = Utils::getGame();
+    $game->setGameStateValue("playerTurnUsedGoalMill", 1);    
+    return parent::freePlayInPlayerTurn($player_id);
+  }
+
   public function resolvedBy($player_id, $args)
   {
-    self::setGameStateValue("playerTurnUsedGoalMill", 1);
-
     // @TODO: validate all cards are goals in hand of player
     // discard them
     // draw equal number

@@ -43,6 +43,21 @@ class action_fluxx extends APP_GameAction
     self::ajaxResponse();
   }
 
+  public function playFreeRule()
+  {
+    self::setAjaxMode();
+    $card_id = self::getArg("card_id", AT_posint, true);
+    $this->game->action_playFreeRule($card_id);
+    self::ajaxResponse();
+  }
+  
+  public function finishTurn()
+  {
+    self::setAjaxMode();
+    $this->game->action_finishTurn();
+    self::ajaxResponse();
+  }  
+
   public function stripListOfCardIds($card_ids_raw)
   {
     // Removing last ';' if exists

@@ -31,9 +31,10 @@ class RuleMysteryPlay extends RuleCard
     // nothing
   }
 
-  public function resolvedBy($player_id, $args)
+  public function freePlayInPlayerTurn($player_id)
   {
-    self::setGameStateValue("playerTurnUsedMysteryPlay", 1);
+    $game = Utils::getGame();
+    $game->setGameStateValue("playerTurnUsedMysteryPlay", 1);
 
     // @TODO: 
     // draw top card

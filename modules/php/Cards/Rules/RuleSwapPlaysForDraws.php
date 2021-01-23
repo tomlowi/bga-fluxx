@@ -23,11 +23,20 @@ class RuleSwapPlaysForDraws extends RuleCard
 
   public function immediateEffectOnPlay($player)
   {
-    // @TODO
+    // nothing
   }
 
   public function immediateEffectOnDiscard($player)
   {
     // nothing
+  }
+
+  public function freePlayInPlayerTurn($player_id)
+  {
+    // @TODO:
+    // calculate how many cards player should still play
+    // draw as many cards
+    // force end of turn (set count cards played to 999)
+    return null;
   }
 }

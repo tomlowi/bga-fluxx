@@ -1,7 +1,7 @@
 define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
   return declare("fluxx.states.freeRuleResolve", null, {
     constructor() {
-      this._notifications.push(["freeRuleResolved", null]);
+      //this._notifications.push(["freeRuleResolved", null]);
 
       this._listeners = [];
     },
