@@ -678,7 +678,7 @@ class fluxx extends Table
         clienttranslate('${player_name} finished their turn.'),
         [
           "player_id" => self::getActivePlayerId(),
-          "player_name" => self::getCurrentPlayerName(),
+          "player_name" => self::getActivePlayerName(),
         ]
       );
       $player_id = self::activeNextPlayer();
