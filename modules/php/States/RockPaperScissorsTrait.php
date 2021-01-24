@@ -99,8 +99,14 @@ trait RockPaperScissorsTrait
       ]
     );
 
-    // as long as neither has won the best of 3, keep playing (next round)
-    if ($maxWins < 2) {
+    // default = best of 3-round tournament, so need 2 wins
+    // but inflation would make this best of 4, which could lead to 2-2 ties
+    // so then need to win 3 rounds
+    $addInflation = Utils::getActiveInflation() ? 1 : 0;
+    $roundsToWin = 2 + $addInflation;     
+
+    // as long as neither has won the best of, keep playing (next round)
+    if ($maxWins < $roundsToWin) {
       $this->gamestate->nextstate("rockPaperScissorsContinue");
       return;
     }
