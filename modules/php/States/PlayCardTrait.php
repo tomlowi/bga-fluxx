@@ -42,27 +42,9 @@ trait PlayCardTrait
 
   private function activePlayerMustPlayMoreCards($player_id)
   {
-    $game = Utils::getGame();
-    $alreadyPlayed = $game->getGameStateValue("playedCards");
-    $mustPlay = Utils::calculateCardsMustPlayFor($player_id, false);
+    $leftToPlay = Utils::calculateCardsLeftToPlayFor($player_id);
 
-    // still cards in hand?
-    $cardsInHand = $game->cards->countCardInLocation("hand", $player_id);
-
-    if (
-      // Force end turn due to Free Rule
-      ($alreadyPlayed >= PLAY_COUNT_ALL) || 
-      // Play All but 1, and player has only so much cards left
-      ($mustPlay < 0 && $cardsInHand <= -$mustPlay) ||
-      // Normal Play Rule, and player has already played enough cards
-      ($mustPlay >= 0 && $alreadyPlayed >= $mustPlay) ||
-      // Player cannot play if no more cards in hand
-      $cardsInHand == 0
-    ) {
-      return false;
-    }
-
-    return true;
+    return $leftToPlay > 0;
   }
 
   public function arg_playCard()
@@ -73,22 +55,21 @@ trait PlayCardTrait
     $alreadyPlayed = $game->getGameStateValue("playedCards");
     $mustPlay = Utils::calculateCardsMustPlayFor($player_id, true);
 
-    $countCardsToPlay = 0;
+    $leftToPlay = Utils::calculateCardsLeftToPlayFor($player_id);
+    
     if ($mustPlay >= PLAY_COUNT_ALL) {
-      $countCardsToPlay = clienttranslate("All");
+      $countLabel = clienttranslate("All");
     } elseif ($mustPlay < 0) {
-      $countCardsToPlay = clienttranslate("All but");
+      $countLabel = clienttranslate("All but") . " " . -$mustPlay;
     } else {
-      $countCardsToPlay = $mustPlay - $alreadyPlayed;
-      // could become < 0 if rules for already used bonus plays get discarded
-      // in that case player should not play any more cards
-      if ($countCardsToPlay < 0) $countCardsToPlay = 0;
+      $countLabel = $leftToPlay;
     }
 
     $freeRulesAvailable = $this->getFreeRulesAvailable($player_id);
     
     return [
-      "count" => $countCardsToPlay,
+      "countLabel" => $countLabel,
+      "count" => $leftToPlay,
       "freeRules" => $freeRulesAvailable,
     ];
   }

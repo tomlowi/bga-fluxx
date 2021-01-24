@@ -90,8 +90,8 @@ $machinestates = [
 
   STATE_PLAY_CARD => [
     "name" => "playCard",
-    "description" => clienttranslate('${actplayer} must play ${count} card(s)'),
-    "descriptionmyturn" => clienttranslate('${you} must play ${count} card(s)'),
+    "description" => clienttranslate('${actplayer} must play ${countLabel} card(s)'),
+    "descriptionmyturn" => clienttranslate('${you} must play ${countLabel} card(s)'),
     "type" => "activeplayer",
     "action" => "st_playCard",
     "args" => "arg_playCard",

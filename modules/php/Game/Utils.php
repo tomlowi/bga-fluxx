@@ -208,6 +208,12 @@ class Utils
     $game = Utils::getGame();
     // calculate how many cards player should still play
     $alreadyPlayed = $game->getGameStateValue("playedCards");
+
+    // Forced end turn due to Free Rule
+    if ($alreadyPlayed >= PLAY_COUNT_ALL) {
+      return 0;
+    }
+
     $mustPlay = Utils::calculateCardsMustPlayFor($player_id, false);
 
     $leftCount = $mustPlay - $alreadyPlayed;
@@ -220,6 +226,10 @@ class Utils
       $handCount = $game->cards->countCardInLocation("hand", $player_id);
       $leftCount = $handCount + $mustPlay; // ok, $mustPlay is negative here
     }
+
+    // could become < 0 if rules for already used bonus plays get discarded
+    // in that case player should not play any more cards
+    if ($leftCount < 0) $leftCount = 0;
 
     return $leftCount;
   }
