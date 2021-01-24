@@ -260,6 +260,10 @@ trait PlayCardTrait
 
     // Notify all players about the goal played
     $goalCard = GoalCardFactory::getCard($card["id"], $card["type_arg"]);
+    
+    // this goal card is still in hand at this time
+    $handCount = $game->cards->countCardInLocation("hand", $player_id) - 1;
+
     $game->notifyAllPlayers(
       "goalPlayed",
       clienttranslate('${player_name} sets a new goal <b>${card_name}</b>'),
@@ -269,7 +273,7 @@ trait PlayCardTrait
         "player_id" => $player_id,
         "card_name" => $goalCard->getName(),
         "card" => $card,
-        "handCount" => $game->cards->countCardInLocation("hand", $player_id),
+        "handCount" => $$handCount,
       ]
     );
 
