@@ -273,7 +273,7 @@ trait PlayCardTrait
         "player_id" => $player_id,
         "card_name" => $goalCard->getName(),
         "card" => $card,
-        "handCount" => $$handCount,
+        "handCount" => $handCount,
       ]
     );
 
