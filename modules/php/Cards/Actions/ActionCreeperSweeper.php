@@ -26,13 +26,13 @@ class ActionCreeperSweeper extends ActionCard
     );
 
     foreach ($creeperCards as $card_id => $card) {
-      $this->cards->playCard($card_id);
+      $game->cards->playCard($card_id);
     }
 
     if ($creeperCards) {
-      self::notifyAllPlayers("keepersDiscarded", "", [
+      $game->notifyAllPlayers("keepersDiscarded", "", [
         "cards" => $creeperCards,
-        "discardCount" => $this->cards->countCardInLocation("discard"),
+        "discardCount" => $game->cards->countCardInLocation("discard"),
       ]);
     }
   }
