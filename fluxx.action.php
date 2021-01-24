@@ -100,18 +100,6 @@ class action_fluxx extends APP_GameAction
     self::ajaxResponse();
   }
 
-  public function resolveActionWithCards()
-  {
-    self::setAjaxMode();
-    $option = self::getArg("option", AT_posint, true); // option button chosen
-    $card_ids_raw = self::getArg("card_ids", AT_numberlist, true); // ids of card to use
-    $result = $this->game->action_resolveActionWithCards(
-      $option,
-      $this->stripListOfCardIds($card_ids_raw)
-    );
-    self::ajaxResponse();
-  }
-
   public function resolveActionPlayerSelection()
   {
     self::setAjaxMode();
