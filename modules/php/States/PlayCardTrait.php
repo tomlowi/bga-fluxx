@@ -80,6 +80,9 @@ trait PlayCardTrait
       $countCardsToPlay = clienttranslate("All but");
     } else {
       $countCardsToPlay = $mustPlay - $alreadyPlayed;
+      // could become < 0 if rules for already used bonus plays get discarded
+      // in that case player should not play any more cards
+      if ($countCardsToPlay < 0) $countCardsToPlay = 0;
     }
 
     $freeRulesAvailable = $this->getFreeRulesAvailable($player_id);
