@@ -32,6 +32,7 @@ define([
   g_gamethemeurl + "modules/js/states/goalCleaning.js",
   g_gamethemeurl + "modules/js/states/actionResolve.js",
   g_gamethemeurl + "modules/js/states/freeRuleResolve.js",
+  g_gamethemeurl + "modules/js/states/playRockPaperScissors.js",
 ], function (dojo, declare) {
   return declare(
     "bgagame.fluxx",
@@ -44,6 +45,7 @@ define([
       fluxx.states.goalCleaning,
       fluxx.states.actionResolve,
       fluxx.states.freeRuleResolve,
+      fluxx.states.playRockPaperScissors,
     ],
     {
       constructor: function () {
@@ -63,14 +65,34 @@ define([
           creeper: { count: 0 },
           goal: { count: 30, spriteOffset: 19, materialOffset: 101 },
           rule: { count: 27, spriteOffset: 19 + 30, materialOffset: 201 },
-          action: { count: 23, spriteOffset: 19 + 30 + 27, materialOffset: 301 },
+          action: {
+            count: 23,
+            spriteOffset: 19 + 30 + 27,
+            materialOffset: 301,
+          },
         };
         this.CARDS_TYPES_CREEPERPACK = {
           keeper: { count: 0 },
-          creeper: { count: 4, spriteOffset: creeperPackOffset, materialOffset: 51 },
-          goal: { count: 6, spriteOffset: creeperPackOffset + 4, materialOffset: 151 },
-          rule: { count: 2, spriteOffset: creeperPackOffset + 4 + 6, materialOffset: 251 },
-          action: { count: 4, spriteOffset: creeperPackOffset + 4 + 6 + 2, materialOffset: 351 },
+          creeper: {
+            count: 4,
+            spriteOffset: creeperPackOffset,
+            materialOffset: 51,
+          },
+          goal: {
+            count: 6,
+            spriteOffset: creeperPackOffset + 4,
+            materialOffset: 151,
+          },
+          rule: {
+            count: 2,
+            spriteOffset: creeperPackOffset + 4 + 6,
+            materialOffset: 251,
+          },
+          action: {
+            count: 4,
+            spriteOffset: creeperPackOffset + 4 + 6 + 2,
+            materialOffset: 351,
+          },
         };
 
         this._allStocks = [];
@@ -137,9 +159,7 @@ define([
         this.rulesStock.playRule = this.createCardStock("playRuleStock", [
           "rule",
         ]);
-        this.rulesStock.others = this.createCardStock("othersStock", [
-          "rule",
-        ]);
+        this.rulesStock.others = this.createCardStock("othersStock", ["rule"]);
         this.addCardsToStock(
           this.rulesStock.drawRule,
           this.gamedatas.rules.drawRule
@@ -237,8 +257,10 @@ define([
             this.onEnteringStateGoalCleaning(args);
             break;
 
+          case "playRockPaperScissors":
+            this.onEnteringStatePlayRockPaperScissors(args);
+
           case "actionResolve":
-          case "actionResolveRockPaperScissors":
             this.onEnteringStateActionResolve(args);
             break;
 
@@ -277,9 +299,10 @@ define([
             break;
 
           case "actionResolve":
-          case "actionResolveRockPaperScissors":
             this.onLeavingStateActionResolve();
-            break;
+
+          case "playRockPaperScissors":
+            this.onLeavingStatePlayRockPaperScissors();
 
           case "freeRuleResolve":
             this.onLeavingStateFreeRuleResolve();
@@ -315,8 +338,8 @@ define([
             case "actionResolve":
               this.onUpdateActionButtonsActionResolve(args);
               break;
-            case "actionResolveRockPaperScissors":
-              this.onUpdateActionButtonsActionResolve(args);
+            case "playRockPaperScissors":
+              this.onUpdateActionButtonsPlayRockPaperScissors(args);
               break;
             case "freeRuleResolve":
               this.onUpdateActionButtonsFreeRuleResolve(args);
@@ -344,7 +367,7 @@ define([
         );
       },
 
-      addCardsOfTypeFromGameSet: function(stock, type, gameSet) {
+      addCardsOfTypeFromGameSet: function (stock, type, gameSet) {
         var count = gameSet[type].count;
         var spriteOffset = gameSet[type].spriteOffset;
         var materialOffset = gameSet[type].materialOffset;
@@ -366,8 +389,16 @@ define([
         stock.image_items_per_row = this.CARDS_SPRITES_PER_ROW;
 
         for (var type of types) {
-          this.addCardsOfTypeFromGameSet(stock, type, this.CARDS_TYPES_BASEGAME);
-          this.addCardsOfTypeFromGameSet(stock, type, this.CARDS_TYPES_CREEPERPACK);
+          this.addCardsOfTypeFromGameSet(
+            stock,
+            type,
+            this.CARDS_TYPES_BASEGAME
+          );
+          this.addCardsOfTypeFromGameSet(
+            stock,
+            type,
+            this.CARDS_TYPES_CREEPERPACK
+          );
         }
 
         stock.setSelectionMode(0);
@@ -375,8 +406,7 @@ define([
         return stock;
       },
 
-
-      addCardsToKeeperStock: function(stock, cardType, spriteOffset) {
+      addCardsToKeeperStock: function (stock, cardType, spriteOffset) {
         var count = cardType.count;
         var spriteOffset = spriteOffset;
         var materialOffset = cardType.materialOffset;
@@ -401,8 +431,13 @@ define([
         this.addCardsToKeeperStock(stock, this.CARDS_TYPES_BASEGAME.keeper, 0);
 
         // small version for creepers played
-        var smallCreeperSpriteOffset = 1 + this.CARDS_TYPES_BASEGAME.keeper.count;
-        this.addCardsToKeeperStock(stock, this.CARDS_TYPES_CREEPERPACK.creeper, smallCreeperSpriteOffset);
+        var smallCreeperSpriteOffset =
+          1 + this.CARDS_TYPES_BASEGAME.keeper.count;
+        this.addCardsToKeeperStock(
+          stock,
+          this.CARDS_TYPES_CREEPERPACK.creeper,
+          smallCreeperSpriteOffset
+        );
 
         stock.setSelectionMode(0);
         stock.onItemCreate = dojo.hitch(this, "setupNewCard");

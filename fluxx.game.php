@@ -83,11 +83,11 @@ class fluxx extends Table
       "playerTurnUsedMysteryPlay" => 47,
       "playerTurnUsedRecycling" => 48,
       "rpsChallengerId" => 90,
-      "rpsChallengedId" => 91,
+      "rpsDefenderId" => 91,
       "rpsChallengerChoice" => 92,
-      "rpsChallengedChoice" => 93,
+      "rpsDefenderChoice" => 93,
       "rpsChallengerWins" => 94,
-      "rpsChallengedWins" => 95,
+      "rpsDefenderWins" => 95,
       "optionCreeperPack" => 101,
     ]);
     $this->cards = self::getNew("module.common.deck");
@@ -184,11 +184,11 @@ class fluxx extends Table
     self::setGameStateInitialValue("playerTurnUsedMysteryPlay", 0);
     self::setGameStateInitialValue("playerTurnUsedRecycling", 0);
     self::setGameStateInitialValue("rpsChallengerId", -1);
-    self::setGameStateInitialValue("rpsChallengedId", -1);
-    self::setGameStateInitialValue("rpsChallengerChoice", 0);
-    self::setGameStateInitialValue("rpsChallengedChoice", 0);
+    self::setGameStateInitialValue("rpsDefenderId", -1);
+    self::setGameStateInitialValue("rpsChallengerChoice", -1);
+    self::setGameStateInitialValue("rpsDefenderChoice", -1);
     self::setGameStateInitialValue("rpsChallengerWins", 0);
-    self::setGameStateInitialValue("rpsChallengedWins", 0);
+    self::setGameStateInitialValue("rpsDefenderWins", 0);
 
     // Create cards
     $cards = [];

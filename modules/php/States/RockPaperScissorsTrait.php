@@ -3,197 +3,213 @@ namespace Fluxx\States;
 
 use Fluxx\Game\Utils;
 
-if (!defined("RPS_OPTION_NONE")) {
-  define("RPS_OPTION_NONE", 0);
-  define("RPS_OPTION_ROCK", 1);
-  define("RPS_OPTION_PAPER", 2);
-  define("RPS_OPTION_SCISSORS", 3);
+if (!defined("RPS_OPTION_ROCK")) {
+  define("RPS_OPTION_ROCK", 0);
+  define("RPS_OPTION_PAPER", 1);
+  define("RPS_OPTION_SCISSORS", 2);
 }
 
 trait RockPaperScissorsTrait
 {
-  private function getOptionLabels()
+  private function getWinnerChoice($challenger, $defender)
   {
-    $options = [];
-
-    $options[RPS_OPTION_ROCK] = clienttranslate("Rock");
-    $options[RPS_OPTION_PAPER] = clienttranslate("Paper");
-    $options[RPS_OPTION_SCISSORS] = clienttranslate("Scissors");
-
-    return $options;
-  }
-
-  private function checkChallengerWins($challenger, $challenged)
-  {
-    // Rock beats Scissors
-    if ($challenger == RPS_OPTION_ROCK && $challenged == RPS_OPTION_SCISSORS) {
-      return true;
-    }
-    // Scissors beats Paper
-    if ($challenger == RPS_OPTION_SCISSORS && $challenged == RPS_OPTION_PAPER) {
-      return true;
-    }
-    // Paper beats Rock
-    if ($challenger == RPS_OPTION_PAPER && $challenged == RPS_OPTION_ROCK) {
-      return true;
+    // Same choice: no winner
+    if ($challenger == $defender) {
+      return null;
     }
 
-    return false;
+    if (
+      // Rock beats Scissors
+      ($challenger == RPS_OPTION_ROCK && $defender == RPS_OPTION_SCISSORS) ||
+      // Scissors beats Paper
+      ($challenger == RPS_OPTION_SCISSORS && $defender == RPS_OPTION_PAPER) ||
+      // Paper beats Rock
+      ($challenger == RPS_OPTION_PAPER && $defender == RPS_OPTION_ROCK)
+    ) {
+      return $challenger;
+    }
+    return $defender;
   }
 
   public function st_nextRoundRockPaperScissors()
   {
-    $options = $this->getOptionLabels();
+    $options = [
+      RPS_OPTION_ROCK => clienttranslate("Rock"),
+      RPS_OPTION_PAPER => clienttranslate("Paper"),
+      RPS_OPTION_SCISSORS => clienttranslate("Scissors"),
+    ];
+
     $challenger_choice = self::getGameStateValue("rpsChallengerChoice");
-    $challenged_choice = self::getGameStateValue("rpsChallengedChoice");
+    $defender_choice = self::getGameStateValue("rpsDefenderChoice");
+
+    // determine the winner and loser
+    $winner_choice = $this->getWinnerChoice(
+      $challenger_choice,
+      $defender_choice
+    );
 
     // need distinct player choices, otherwies tie
-    if ($challenger_choice == $challenged_choice) {
+    if ($winner_choice == null) {
       self::notifyAllPlayers(
-        "rockPaperScissorsRound",
-        clienttranslate(
-          'Tie: ${challenger_choice} challenged ${challenged_choice}, try again'
-        ),
+        "resultRockPaperScissors",
+        clienttranslate('Tie: both players picked ${choice}, try again.'),
         [
-          "challenger_choice" => $options[$challenger_choice],
-          "challenged_choice" => $options[$challenged_choice],
+          "choice" => $options[$challenger_choice],
         ]
       );
 
-      $this->gamestate->nextstate("rockPaperScissorsContinue");
+      $this->gamestate->nextstate("continue");
       return;
     }
 
-    $challenger_player_id = self::getGameStateValue("rpsChallengerId");
-    $challenged_player_id = self::getGameStateValue("rpsChallengedId");
+    $challenger_id = self::getGameStateValue("rpsChallengerId");
+    $defender_id = self::getGameStateValue("rpsDefenderId");
 
-    $maxWins = 0;
-    $winning_player_id = -1;
-    $losing_player_id = -1;
-    // determine the winner and loser
-    $challengerWins = $this->checkChallengerWins(
-      $challenger_choice,
-      $challenged_choice
-    );
-    if ($challengerWins) {
+    if ($winner_choice == $challenger_choice) {
       $maxWins = self::incGameStateValue("rpsChallengerWins", 1);
-      $winning_player_id = $challenger_player_id;
-      $losing_player_id = $challenged_player_id;
+      $winner_id = $challenger_id;
+      $loser_id = $challenged_id;
     } else {
-      $maxWins = self::incGameStateValue("rpsChallengedWins", 1);
-      $winning_player_id = $challenged_player_id;
-      $losing_player_id = $challenger_player_id;
+      $maxWins = self::incGameStateValue("rpsDefenderWins", 1);
+      $winner_id = $challenged_id;
+      $loser_id = $challenger_id;
     }
 
     $players = self::loadPlayersBasicInfos();
     self::notifyAllPlayers(
-      "rockPaperScissorsRound",
+      "resultRockPaperScissors",
       clienttranslate(
-        '${player_name} wins: ${challenger_choice} challenged ${challenged_choice}'
+        '${player_name} wins this round: ${challenger_choice} beats ${defender_choice}'
       ),
       [
-        "player_id" => $winning_player_id,
-        "player_name" => $players[$winning_player_id]["player_name"],
+        "player_name" => $players[$winner_id]["player_name"],
         "challenger_choice" => $options[$challenger_choice],
-        "challenged_choice" => $options[$challenged_choice],
+        "defender_choice" => $options[$defender_choice],
       ]
     );
 
     // default = best of 3-round tournament, so need 2 wins
     // but inflation would make this best of 4, which could lead to 2-2 ties
     // so then need to win 3 rounds
+    // https://faq.looneylabs.com/fluxx-games/unthemed-fluxx#q-for-rock-paper-scissors-showdown-do-we-throw-three-times-and-if-its-a-tie-then-nobody-loses-cards
     $addInflation = Utils::getActiveInflation() ? 1 : 0;
-    $roundsToWin = 2 + $addInflation;     
+    $roundsToWin = 2 + $addInflation;
 
     // as long as neither has won the best of, keep playing (next round)
     if ($maxWins < $roundsToWin) {
-      $this->gamestate->nextstate("rockPaperScissorsContinue");
+      $this->gamestate->nextstate("continue");
       return;
     }
 
-    // it's done! give all hand cards of loser to winner
+    // We have a winner! give all hand cards of loser to winner
     self::notifyAllPlayers(
-      "rockPaperScissorsRound",
+      "resultRockPaperScissors",
       clienttranslate('${player_name} wins the Rock-Paper-Scissors showdown'),
       [
-        "player_id" => $winning_player_id,
-        "player_name" => $players[$winning_player_id]["player_name"],
+        "player_id" => $winner_id,
+        "player_name" => $players[$winner_id]["player_name"],
       ]
     );
 
     // move all cards from loser hand to winner hand
     $game = Utils::getGame();
-    $loserHand = $game->cards->getCardsInLocation("hand", $losing_player_id);
+    $loser_hand = $game->cards->getCardsInLocation("hand", $loser_id);
 
-    $game->notifyPlayer($losing_player_id, "cardsSentToPlayer", "", [
-      "cards" => $loserHand,
-      "player_id" => $winning_player_id,
+    $game->notifyPlayer($loser_id, "cardsSentToPlayer", "", [
+      "cards" => $loser_hand,
+      "player_id" => $winner_id,
     ]);
-    $game->notifyPlayer($winning_player_id, "cardsReceivedFromPlayer", "", [
-      "cards" => $loserHand,
-      "player_id" => $losing_player_id,
+    $game->notifyPlayer($winner_id, "cardsReceivedFromPlayer", "", [
+      "cards" => $loser_hand,
+      "player_id" => $loser_id,
     ]);
-    $game->cards->moveCards(array_keys($loserHand), "hand", $winning_player_id);
+    $game->cards->moveCards(array_keys($loser_hand), "hand", $winner_id);
 
     $game->sendHandCountNotifications();
 
     // done, go back to normal play cards state
-    $this->gamestate->nextstate("rockPaperScissorsFinished");
+    $this->gamestate->nextstate("done");
   }
 
-  public function st_actionResolveRockPaperScissors()
+  public function st_playRockPaperScissors()
   {
     // activate the 2 players that need to battle it out
     $challenger_player_id = self::getGameStateValue("rpsChallengerId");
-    $challenged_player_id = self::getGameStateValue("rpsChallengedId");
+    $challenged_player_id = self::getGameStateValue("rpsDefenderId");
 
     $this->gamestate->setPlayersMultiactive(
       [$challenger_player_id, $challenged_player_id],
-      "rockPaperScissorsContinue",
+      "continue",
       true
     );
   }
 
-  public function arg_actionResolveRockPaperScissors()
+  public function arg_playRockPaperScissors()
   {
     $challenger_wins = self::getGameStateValue("rpsChallengerWins");
-    $challenged_wins = self::getGameStateValue("rpsChallengedWins");
+    $defender_wins = self::getGameStateValue("rpsDefenderWins");
+    $challenger_id = self::getGameStateValue("rpsChallengerId");
+    $defender_id = self::getGameStateValue("rpsDefenderId");
 
-    $action_args = [];
-    foreach ($this->getOptionLabels() as $option_value => $option_label) {
-      $action_args[] = ["value" => $option_value, "label" => $option_label];
-    }
+    $players = self::loadPlayersBasicInfos();
+    $challenger_name = $players[$challenger_id]["player_name"];
+    $defender_name = $players[$defender_id]["player_name"];
 
     return [
       "challenger_wins" => $challenger_wins,
-      "challenged_wins" => $challenged_wins,
-      "action_type" => "buttonsRockPaperScissors",
-      "action_args" => $action_args,
+      "challenger_name" => $challenger_name,
+      "defender_wins" => $defender_wins,
+      "defender_name" => $defender_name,
+      "_private" => [
+        $challenger_id => [
+          "opponent_name" => $defender_name,
+          "my_wins" => $challenger_wins,
+          "opponent_wins" => $defender_wins,
+        ],
+        $defender_id => [
+          "opponent_name" => $challenger_name,
+          "my_wins" => $defender_wins,
+          "opponent_wins" => $challenger_wins,
+        ],
+      ],
     ];
   }
 
   /*
    * Player made their choice for the current RockPaperScissors round
    */
-  public function action_resolveActionButtonsRockPaperScissors($option)
+  public function action_selectRockPaperScissors($choice)
   {
-    self::checkAction("resolveActionButtonsRockPaperScissors");
+    self::checkAction("selectRockPaperScissors");
     $player_id = self::getCurrentPlayerId();
 
-    $challenger_player_id = self::getGameStateValue("rpsChallengerId");
-    $challenged_player_id = self::getGameStateValue("rpsChallengedId");
+    $challenger_id = self::getGameStateValue("rpsChallengerId");
+    $defender_id = self::getGameStateValue("rpsDefenderId");
 
-    // register the choice and wait for other player
-    if ($player_id == $challenger_player_id) {
-      self::setGameStateValue("rpsChallengerChoice", $option);
-    } elseif ($player_id == $challenged_player_id) {
-      self::setGameStateValue("rpsChallengedChoice", $option);
+    switch ($choice) {
+      case "rock":
+        $option = RPS_OPTION_ROCK;
+        break;
+      case "paper":
+        $option = RPS_OPTION_PAPER;
+        break;
+      case "scissors":
+        $option = RPS_OPTION_SCISSORS;
+        break;
+      default:
+        throw new BgaUserException(self::_("This is not a valid choice"));
     }
 
-    // if both players made their choice, go to state to check continue/winner
-    $this->gamestate->setPlayerNonMultiactive(
-      $player_id,
-      "rockPaperScissorsCheckNextRound"
-    );
+    // register the choice and wait for other player
+    if ($player_id == $challenger_id) {
+      self::setGameStateValue("rpsChallengerChoice", $option);
+    } elseif ($player_id == $defender_id) {
+      self::setGameStateValue("rpsDefenderChoice", $option);
+    }
+
+    //@TODO: is it possible to allow the current player to change is mind?
+
+    // once both players will have made their choice, state will move to check winner state
+    $this->gamestate->setPlayerNonMultiactive($player_id, "");
   }
 }
