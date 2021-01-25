@@ -68,10 +68,10 @@ trait RockPaperScissorsTrait
     if ($winner_choice == $challenger_choice) {
       $maxWins = self::incGameStateValue("rpsChallengerWins", 1);
       $winner_id = $challenger_id;
-      $loser_id = $challenged_id;
+      $loser_id = $defender_id;
     } else {
       $maxWins = self::incGameStateValue("rpsDefenderWins", 1);
-      $winner_id = $challenged_id;
+      $winner_id = $defender_id;
       $loser_id = $challenger_id;
     }
 
