@@ -62,8 +62,8 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
             "onChangeSelection",
             that,
             "onResolveActionCardSelection"
-          );        
-        }        
+          );
+        }
       },
       playerSelection: function (that, args) {
         // @TODO: to be replaced with nice visual way of selecting other players
@@ -176,16 +176,6 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
           dojo.attr("button_" + choice.value, "data-value", choice.value);
         }
       },
-      buttonsRockPaperScissors: function (that, args) {
-        for (var choice of args) {
-          that.addActionButton(
-            "button_" + choice.value,
-            choice.label,
-            "onResolveActionButtonsRockPaperScissors"
-          );
-          dojo.attr("button_" + choice.value, "data-value", choice.value);
-        }
-      },
 
       TODO: function (that, args) {
         that.addActionButton(
@@ -232,18 +222,6 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       var value = ev.target.getAttribute("data-value");
 
       var action = "resolveActionButtons";
-
-      if (this.checkAction(action)) {
-        this.ajaxAction(action, {
-          value: value,
-        });
-      }
-    },
-
-    onResolveActionButtonsRockPaperScissors: function (ev) {
-      var value = ev.target.getAttribute("data-value");
-
-      var action = "resolveActionButtonsRockPaperScissors";
 
       if (this.checkAction(action)) {
         this.ajaxAction(action, {

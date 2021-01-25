@@ -28,20 +28,15 @@ class ActionRockPaperScissors extends ActionCard
   {
     //$choice = $args["value"];
     $game = Utils::getGame();
-    $challenged_player_id = $args["selected_player_id"];
-
-    // @TODO: Rock-Paper-Scissors Showdown
-    // winner takes over hand cards from loser
-    // Challenges: this will probably require an entirely separate state?
-    // and after all is done, current player needs to continue its turn
+    $selected_player_id = $args["selected_player_id"];
 
     $game->setGameStateValue("rpsChallengerId", $player_id);
-    $game->setGameStateValue("rpsChallengedId", $challenged_player_id);
-    $game->setGameStateValue("rpsChallengerChoice", 0);
-    $game->setGameStateValue("rpsChallengedChoice", 0);
+    $game->setGameStateValue("rpsDefenderId", $selected_player_id);
+    $game->setGameStateValue("rpsChallengerChoice", -1);
+    $game->setGameStateValue("rpsDefenderChoice", -1);
     $game->setGameStateValue("rpsChallengerWins", 0);
-    $game->setGameStateValue("rpsChallengedWins", 0);
+    $game->setGameStateValue("rpsDefenderWins", 0);
 
-    return "specialActionRockPaperScissors";
+    return "playRockPaperScissors";
   }
 }

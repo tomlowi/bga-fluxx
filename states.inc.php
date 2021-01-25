@@ -61,7 +61,7 @@ if (!defined("STATE_GAME_SETUP")) {
   define("STATE_ENFORCE_KEEPERS_LIMIT_SELF", 24);
   define("STATE_GOAL_CLEANING", 25);
   define("STATE_RESOLVE_ACTION", 30);
-  define("STATE_ROCKPAPERSCISSORS_RESOLVE", 31);
+  define("STATE_ROCKPAPERSCISSORS", 31);
   define("STATE_ROCKPAPERSCISSORS_NEXTROUND", 32);
   define("STATE_NEXT_PLAYER", 90);
 }
@@ -203,24 +203,24 @@ $machinestates = [
       "keepersExchangeOccured" => STATE_ENFORCE_KEEPERS_LIMIT_OTHERS,
       "rulesChanged" => STATE_GOAL_CLEANING,
       "endGame" => STATE_GAME_END,
-      "specialActionRockPaperScissors" => STATE_ROCKPAPERSCISSORS_RESOLVE,
+      "playRockPaperScissors" => STATE_ROCKPAPERSCISSORS,
     ],
   ],
 
-  STATE_ROCKPAPERSCISSORS_RESOLVE => [
-    "name" => "actionResolveRockPaperScissors",
+  STATE_ROCKPAPERSCISSORS => [
+    "name" => "playRockPaperScissors",
     "description" => clienttranslate(
-      'Players must resolve Rock Paper Scissors (${challenger_wins} - ${challenged_wins})'
+      '${challenger_name} and ${defender_name} are playing Rock Paper Scissors (${challenger_wins} - ${defender_wins})'
     ),
     "descriptionmyturn" => clienttranslate(
-      '${you} must resolve Rock Paper Scissors (${challenger_wins} - ${challenged_wins})'
+      '${you} are playing Rock Paper Scissors against ${_private.opponent_name} (${_private.my_wins} - ${_private.opponent_wins})'
     ),
     "type" => "multipleactiveplayer",
-    "args" => "arg_actionResolveRockPaperScissors",
-    "action" => "st_actionResolveRockPaperScissors",
-    "possibleactions" => ["resolveActionButtonsRockPaperScissors"],
+    "args" => "arg_playRockPaperScissors",
+    "action" => "st_playRockPaperScissors",
+    "possibleactions" => ["selectRockPaperScissors"],
     "transitions" => [
-      "rockPaperScissorsCheckNextRound" => STATE_ROCKPAPERSCISSORS_NEXTROUND,
+      "" => STATE_ROCKPAPERSCISSORS_NEXTROUND,
     ],
   ],
 
@@ -231,8 +231,8 @@ $machinestates = [
     "action" => "st_nextRoundRockPaperScissors",
     "updateGameProgression" => false,
     "transitions" => [
-      "rockPaperScissorsContinue" => STATE_ROCKPAPERSCISSORS_RESOLVE,
-      "rockPaperScissorsFinished" => STATE_PLAY_CARD,
+      "continue" => STATE_ROCKPAPERSCISSORS,
+      "done" => STATE_PLAY_CARD,
     ],
   ],
 
