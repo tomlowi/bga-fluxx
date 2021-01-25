@@ -62,8 +62,8 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
             "onChangeSelection",
             that,
             "onResolveActionCardSelection"
-          );        
-        }        
+          );
+        }
       },
       playerSelection: function (that, args) {
         // @TODO: to be replaced with nice visual way of selecting other players

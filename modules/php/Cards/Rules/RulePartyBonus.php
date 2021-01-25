@@ -36,17 +36,12 @@ class RulePartyBonus extends RuleCard
   {
     $msg = $onDraw
       ? clienttranslate('Party Bonus draw for ${player_name}')
-      : clienttranslate('Party Bonus play for ${player_name}')
-      ;
+      : clienttranslate('Party Bonus play for ${player_name}');
 
     $game = Utils::getGame();
-    $game->notifyAllPlayers(
-      "partyBonus",
-      $msg,
-      [
-        "player_id" => $player_id,
-        "player_name" => $game->getActivePlayerName(),
-      ]
-    );
+    $game->notifyAllPlayers("partyBonus", $msg, [
+      "player_id" => $player_id,
+      "player_name" => $game->getActivePlayerName(),
+    ]);
   }
 }

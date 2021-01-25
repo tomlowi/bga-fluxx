@@ -8,8 +8,13 @@ use Fluxx\Game\Utils;
  */
 class CreeperCard extends Card
 {
-  public function __construct($cardId, $uniqueId, $cardName, $subtitle, $description)
-  {
+  public function __construct(
+    $cardId,
+    $uniqueId,
+    $cardName,
+    $subtitle,
+    $description
+  ) {
     parent::__construct($cardId, $uniqueId);
     $this->name = $cardName;
     $this->subtitle = $subtitle;

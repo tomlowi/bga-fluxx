@@ -46,7 +46,7 @@ trait PlayCardTrait
     $cardsInHand = $game->cards->countCardInLocation("hand", $player_id);
 
     if (
-      // Play All but 1, and player has only so much cards left      
+      // Play All but 1, and player has only so much cards left
       ($mustPlay < 0 && $cardsInHand <= $mustPlay) ||
       // Normal Play Rule, and player has already played enough cards
       ($mustPlay >= 0 && $alreadyPlayed >= $mustPlay) ||
@@ -67,8 +67,7 @@ trait PlayCardTrait
 
     if ($mustPlay >= PLAY_COUNT_ALL) {
       return ["count" => clienttranslate("All")];
-    }
-    else if ($mustPlay < 0) {
+    } elseif ($mustPlay < 0) {
       return ["count" => clienttranslate("All but") . " " . $mustPlay];
     }
 
@@ -82,7 +81,9 @@ trait PlayCardTrait
     $playRule = $game->getGameStateValue("playRule");
 
     // Play All = always Play All
-    if ($playRule >= PLAY_COUNT_ALL) return $playRule;
+    if ($playRule >= PLAY_COUNT_ALL) {
+      return $playRule;
+    }
 
     $addInflation = Utils::getActiveInflation() ? 1 : 0;
     // check bonus rules
@@ -102,18 +103,17 @@ trait PlayCardTrait
     }
 
     // Play All but 1 is also affected by Inflation and Bonus rules
-    if ($playRule < 0) 
-    {
+    if ($playRule < 0) {
       $playRule -= $addInflation;
       // if "Play All but ..." + bonus plays becomes >= 0, it actually becomes "Play All"
-      if ($playRule + $partyBonus + $richBonus >= 0)
+      if ($playRule + $partyBonus + $richBonus >= 0) {
         return PLAY_COUNT_ALL;
+      }
       // else it stays "Play All but ..."
       return $playRule + $partyBonus + $richBonus;
     }
-    // Normal Play Rule 
-    else
-    {
+    // Normal Play Rule
+    else {
       $playRule += $addInflation + $partyBonus + $richBonus;
     }
 

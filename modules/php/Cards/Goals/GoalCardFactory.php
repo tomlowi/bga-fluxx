@@ -10,14 +10,11 @@ class GoalCardFactory extends CardFactory
 {
   public static function getCardFullClassName($uniqueId)
   {
-    if (array_key_exists($uniqueId, self::$classesCreeperPack))
-    {
+    if (array_key_exists($uniqueId, self::$classesCreeperPack)) {
       $name = "Fluxx\Cards\Goals\\" . self::$classesCreeperPack[$uniqueId];
-    } 
-    else 
-    {
+    } else {
       $name = "Fluxx\Cards\Goals\\" . self::$classes[$uniqueId];
-    }    
+    }
     return $name;
   }
 

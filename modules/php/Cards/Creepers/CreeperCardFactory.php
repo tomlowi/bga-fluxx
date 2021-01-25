@@ -14,16 +14,15 @@ class CreeperCardFactory extends CardFactory
   {
     $creeperDefinitions = [];
 
-    if (Utils::useCreeperPackExpansion())
-    {
-        foreach (self::getClasses() as $definitionId => $class) {
-            $creeperDefinitions[$definitionId] = [
-                "type" => "creeper",
-                "name" => $class["name"],
-                "subtitle" => $class["subtitle"],
-                "description" => $class["description"],
-            ];
-        }
+    if (Utils::useCreeperPackExpansion()) {
+      foreach (self::getClasses() as $definitionId => $class) {
+        $creeperDefinitions[$definitionId] = [
+          "type" => "creeper",
+          "name" => $class["name"],
+          "subtitle" => $class["subtitle"],
+          "description" => $class["description"],
+        ];
+      }
     }
 
     return $creeperDefinitions;
@@ -32,10 +31,12 @@ class CreeperCardFactory extends CardFactory
   public static function getCard($cardId, $cardDefinitionId)
   {
     $cardDefinition = self::getClasses()[$cardDefinitionId];
-    return new CreeperCard($cardId, $cardDefinitionId, 
-        $cardDefinition["name"],
-        $cardDefinition["subtitle"],
-        $cardDefinition["description"]
+    return new CreeperCard(
+      $cardId,
+      $cardDefinitionId,
+      $cardDefinition["name"],
+      $cardDefinition["subtitle"],
+      $cardDefinition["description"]
     );
   }
 
@@ -50,22 +51,30 @@ class CreeperCardFactory extends CardFactory
         51 => [
           "name" => clienttranslate("War"),
           "subtitle" => clienttranslate("Place Immediately + Redraw"),
-          "description" => clienttranslate("You cannot win if you have this, unless the Goal says otherwise. If you have Peace, you must move it to another player."),
+          "description" => clienttranslate(
+            "You cannot win if you have this, unless the Goal says otherwise. If you have Peace, you must move it to another player."
+          ),
         ],
         52 => [
           "name" => clienttranslate("Taxes"),
           "subtitle" => clienttranslate("Place Immediately + Redraw"),
-          "description" => clienttranslate("You cannot win if you have this, unless the Goal says otherwise. If you have Money in play, you can discard it and this."),
+          "description" => clienttranslate(
+            "You cannot win if you have this, unless the Goal says otherwise. If you have Money in play, you can discard it and this."
+          ),
         ],
         53 => [
           "name" => clienttranslate("Death"),
           "subtitle" => clienttranslate("Place Immediately + Redraw"),
-          "description" => clienttranslate("You cannot win if you have this, unless the Goal says otherwise. If you have this at the start of your turn, discard something else you have in play (a Keeper or Creeper). You may discard this anytime it stands alone."),
+          "description" => clienttranslate(
+            "You cannot win if you have this, unless the Goal says otherwise. If you have this at the start of your turn, discard something else you have in play (a Keeper or Creeper). You may discard this anytime it stands alone."
+          ),
         ],
         54 => [
           "name" => clienttranslate("Radioactive Potato"),
           "subtitle" => clienttranslate("Place Immediately + Redraw"),
-          "description" => clienttranslate("You cannot win if you have this card. Any time the Goal changes, move this card in the counter-turn direction."),
+          "description" => clienttranslate(
+            "You cannot win if you have this card. Any time the Goal changes, move this card in the counter-turn direction."
+          ),
         ],
       ];
     }

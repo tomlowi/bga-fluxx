@@ -26,8 +26,7 @@ class ActionRandomTax extends ActionCard
     $addInflation = Utils::getActiveInflation() ? 1 : 0;
     $taxCount = 1 + $addInflation;
 
-    for ($i = 0; $i < $taxCount; $i++)
-    {
+    for ($i = 0; $i < $taxCount; $i++) {
       $this->taxOtherPlayers($player_id, $player_name, $players);
     }
 
