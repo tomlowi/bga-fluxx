@@ -19,7 +19,7 @@ class GoalCreeperWithKeeper extends GoalCard
     return $winner_id;
   }
 
-  function checkCreeperWithKeeper($first_creeper, $second_keeper)
+  function checkCreeperWithKeeper($creeper, $keeper)
   {
     $cards = Utils::getGame()->cards;
 
