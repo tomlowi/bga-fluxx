@@ -32,19 +32,11 @@ class RuleSwapPlaysForDraws extends RuleCard
     // nothing
   }
 
-  private function countSwapPlaysForDraws($player_id)
-  {
-    $game = Utils::getGame();
-    // calculate how many cards player should still play
-    $drawCount = Utils::calculateCardsLeftToPlayFor($player_id);
-    return $drawCount;
-  }
-
   public function freePlayInPlayerTurn($player_id)
   {
     $game = Utils::getGame();
     // calculate how many cards player should still play
-    $drawCount = $this->countSwapPlaysForDraws($player_id);
+    $drawCount = Utils::calculateCardsLeftToPlayFor($player_id);
     // draw as many cards as we could have still played
     if ($drawCount > 0)
     {
