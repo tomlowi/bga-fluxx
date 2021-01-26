@@ -3,7 +3,7 @@ namespace Fluxx\Cards\Goals;
 
 use Fluxx\Game\Utils;
 
-class GoalYourTaxDollarsAtWar extends GoalTwoKeepers
+class GoalYourTaxDollarsAtWar extends GoalTwoCreepers
 {
   public function __construct($cardId, $uniqueId)
   {
@@ -12,7 +12,7 @@ class GoalYourTaxDollarsAtWar extends GoalTwoKeepers
     $this->name = clienttranslate("Your Tax Dollars at War");
     $this->subtitle = clienttranslate("Taxes + War");
 
-    $this->keeper1 = 52;
-    $this->keeper2 = 51;
+    $this->creeper1 = 52;
+    $this->creeper2 = 51;
   }
 }
