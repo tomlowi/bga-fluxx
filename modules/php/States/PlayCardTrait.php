@@ -20,7 +20,8 @@ trait PlayCardTrait
 
     if ($forcedCardId != -1) {
       $game->setGameStateValue("forcedCard", -1);
-      self::action_playCard($forcedCardId);
+      // But forced play cards should not really be counted for play rule
+      self::action_forced_playCard($forcedCardId);
       return;
     }
 
@@ -152,6 +153,16 @@ trait PlayCardTrait
 
   public function action_playCard($card_id)
   {
+    self::_action_playCard($card_id, true);
+  }
+
+  public function action_forced_playCard($card_id)
+  {
+    self::_action_playCard($card_id, false);
+  }
+
+  private function _action_playCard($card_id, $incrementPlayedCards)
+  {
     $game = Utils::getGame();
 
     // Check that this is the player's turn and that it is a "possible action" at this game state (see states.inc.php)
@@ -189,7 +200,9 @@ trait PlayCardTrait
         break;
     }
 
-    $game->incGameStateValue("playedCards", 1);
+    if ($incrementPlayedCards) {
+      $game->incGameStateValue("playedCards", 1);
+    }
 
     // A card has been played: do we have a new winner?
     $game->checkWinConditions();
