@@ -28,10 +28,8 @@ trait PlayCardTrait
 
     // If any "free action" rule can be played, we cannot end turn automatically
     // Player must finish its turn by explicitly deciding not to use any of the free rules
-    // Unless one of the rules has been used that forces a turn end (played > 999)
-    $alreadyPlayed = $game->getGameStateValue("playedCards");
     $freeRulesAvailable = $this->getFreeRulesAvailable($player_id);
-    if (count($freeRulesAvailable) > 0 && $alreadyPlayed < PLAY_COUNT_ALL) {
+    if (count($freeRulesAvailable) > 0) {
       return;
     }
 

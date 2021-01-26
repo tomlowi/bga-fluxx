@@ -42,9 +42,8 @@ class RuleSwapPlaysForDraws extends RuleCard
     {
       $game->performDrawCards($player_id, $drawCount);
     }
-    // force end of turn (set count cards played above 999)
-    $game->setGameStateValue("playedCards", PLAY_COUNT_ALL + 1);
-
-    return null;
+    
+    // Force end of turn
+    return "endOfTurn";
   }
 }

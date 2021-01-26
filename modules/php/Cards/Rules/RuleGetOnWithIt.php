@@ -53,9 +53,7 @@ class RuleGetOnWithIt extends RuleCard
     $drawCount = 3 + $addInflation;
     $game->performDrawCards($player_id, $drawCount);
 
-    // Force end of turn (set count cards played above 999)
-    $game->setGameStateValue("playedCards", PLAY_COUNT_ALL + 1);
-
-    return null;
+    // Force end of turn
+    return "endOfTurn";
   }
 }
