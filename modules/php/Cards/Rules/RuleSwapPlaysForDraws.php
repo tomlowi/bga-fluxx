@@ -18,7 +18,7 @@ class RuleSwapPlaysForDraws extends RuleCard
 
   public function canBeUsedInPlayerTurn($player_id)
   {
-    $drawCount = $this->countSwapPlaysForDraws($player_id);
+    $drawCount = Utils::calculateCardsLeftToPlayFor($player_id);
     return $drawCount > 0;
   }
 
