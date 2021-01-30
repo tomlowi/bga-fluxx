@@ -153,20 +153,35 @@ trait PlayCardTrait
 
   public function action_playCard($card_id)
   {
+    // Check that this is the player's turn and that it is a "possible action" at this game state (see states.inc.php)
+    $game = Utils::getGame();
+    $game->checkAction("playCard");
+
+    // and Check that the active player is actually allowed to play more cards!
+    // (maybe turn is still active only because they have free rules left to play)
+    $player_id = $game->getActivePlayerId();
+    if (!$this->activePlayerMustPlayMoreCards($player_id)) {
+      Utils::throwInvalidUserAction(
+        fluxx::totranslate("You don't have any card plays left")
+      );
+    }
+
+    // play the card from active player's hand
     self::_action_playCard($card_id, true);
   }
 
   public function action_forced_playCard($card_id)
   {
+    // Check that this is the player's turn and that it is a "possible action" at this game state (see states.inc.php)
+    $game = Utils::getGame();
+    $game->checkAction("playCard");
+    // play the card from active player's hand, but don't count it for nr played cards    
     self::_action_playCard($card_id, false);
   }
 
   private function _action_playCard($card_id, $incrementPlayedCards)
   {
     $game = Utils::getGame();
-
-    // Check that this is the player's turn and that it is a "possible action" at this game state (see states.inc.php)
-    $game->checkAction("playCard");
 
     $player_id = $game->getActivePlayerId();
     $card = $game->cards->getCard($card_id);
