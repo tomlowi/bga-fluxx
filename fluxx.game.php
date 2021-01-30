@@ -556,8 +556,20 @@ class fluxx extends Table
       $goalCard = GoalCardFactory::getCard($card["id"], $card["type_arg"]);
 
       $goalReachedByPlayerId = $goalCard->goalReachedByPlayer();
-      if ($goalCard->isWinPreventedByCreepers($goalReachedByPlayerId)) {
-        // @TODO: notify that win is prevented?
+      if ($goalReachedByPlayerId != null
+          && $goalCard->isWinPreventedByCreepers($goalReachedByPlayerId, $goalCard)) {                
+        // notify that player could have won but was prevented by creeper
+        $players = self::loadPlayersBasicInfos();
+        $unlucky_player_name = $players[$goalReachedByPlayerId]["player_name"];
+        self::notifyAllPlayers("winPreventedByCreeper", 
+          clienttranslate(
+            'Creepers prevent <b>${unlucky_player_name}</b> from winning with <b>${goal_name}</b>'
+          ), [
+          "goal_name" => $goalCard->getName(),
+          "unlucky_player_name" => $unlucky_player_name,
+          ]
+        );
+        // sorry, but you can't win yet
         $goalReachedByPlayerId = null;
       }
       if ($goalReachedByPlayerId != null) {

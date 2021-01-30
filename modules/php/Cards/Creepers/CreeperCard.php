@@ -10,17 +10,15 @@ class CreeperCard extends Card
 {
   public function __construct(
     $cardId,
-    $uniqueId,
-    $cardName,
-    $subtitle,
-    $description
+    $uniqueId
   ) {
     parent::__construct($cardId, $uniqueId);
-    $this->name = $cardName;
-    $this->subtitle = $subtitle;
-    $this->description = $description;
   }
 
-  // @TODO: some Creepers globally prevent winning
-  // @TODO: some Creepers do have side effects like moving/discarding other Keepers
+  // Creepers in play globally prevent the player winning with almost all basic Goals
+  public function preventsWinForGoal($goalCard) {
+    return true;
+  }
+
+  // @TODO: some Creepers have special side effects like moving/discarding other Keepers
 }
