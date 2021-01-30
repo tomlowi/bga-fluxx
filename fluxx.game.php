@@ -73,6 +73,8 @@ class fluxx extends Table
       "activePoorBonus" => 35,
       "activeRichBonus" => 36,
       "activeFirstPlayRandom" => 37,
+      "activeSilverLining" => 38,
+      "activeBakedPotato" => 39,
       "actionToResolve" => 40,
       "anotherTurnMark" => 41,
       "forcedCard" => 42,
@@ -554,13 +556,17 @@ class fluxx extends Table
       $goalCard = GoalCardFactory::getCard($card["id"], $card["type_arg"]);
 
       $goalReachedByPlayerId = $goalCard->goalReachedByPlayer();
+      if ($goalCard->isWinPreventedByCreepers($goalReachedByPlayerId)) {
+        // @TODO: notify that win is prevented?
+        $goalReachedByPlayerId = null;
+      }
       if ($goalReachedByPlayerId != null) {
         // some player reached this goal
         if ($winnerId != null && $goalReachedByPlayerId != $winnerId) {
           // if multiple goals reached by different players, keep playing
           return;
         }
-        // this player is the winner, unless someone else also reached a next goal
+        // this player is the winner, unless someone else also reached another goal
         $winnerId = $goalReachedByPlayerId;
         $winningGoalCard = $goalCard->getName();
       }

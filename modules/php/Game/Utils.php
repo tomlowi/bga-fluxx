@@ -57,6 +57,16 @@ class Utils
     return 0 != self::getGame()->getGameStateValue("activeFirstPlayRandom");
   }
 
+  public static function getActiveSilverLining()
+  {
+    return 0 != self::getGame()->getGameStateValue("activeSilverLining");
+  }
+
+  public static function getActiveBakedPotato()
+  {
+    return 0 != self::getGame()->getGameStateValue("activeBakedPotato");
+  }
+
   public static function isPartyInPlay()
   {
     $party_keeper_card_id = 16;

@@ -18,4 +18,13 @@ class GoalCard extends Card
   {
     return null;
   }
+
+  public function isWinPreventedByCreepers($player_id)
+  {
+    // @TODO: get creepers for player
+    // @TODO: check Silver Lining active
+    // @TODO: check Baked Potato active & Radioactive Potato in play somewhere
+    // @TODO: override in special Creeper Goals for specific Creepers
+    return false;
+  }
 }
