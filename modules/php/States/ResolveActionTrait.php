@@ -73,6 +73,19 @@ trait ResolveActionTrait
     ]);
   }
 
+  public function action_resolveActionCardAndPlayerSelection($card_id, $selected_player_id)
+  {
+    self::checkAction("resolveActionPlayerSelection");
+
+    $game = Utils::getGame();
+    $card = $game->cards->getCard($card_id);
+
+    return self::_action_resolveAction([
+      "card" => $card,
+      "selected_player_id" => $selected_player_id,
+    ]);
+  }
+
   public function action_resolveActionCardSelection($card_id)
   {
     self::checkAction("resolveActionCardSelection");
