@@ -31,7 +31,8 @@ class Goal5Keepers extends GoalCard
     $keeperCounts = [];
     foreach ($players as $player_id => $player) {
       // Count each player keepers
-      $nbKeepers = $cards->countCardInLocation("keepers", $player_id);
+      $nbKeepers 
+        = count($cards->getCardsOfTypeInLocation("keeper", null, "keepers", $player_id));
       if ($nbKeepers > $maxkeepers) {
         $keeperCounts = [$player_id];
         $maxkeepers = $nbKeepers;

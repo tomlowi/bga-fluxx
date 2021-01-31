@@ -19,7 +19,7 @@ class ActionShareTheWealth extends ActionCard
   {
     $game = Utils::getGame();
 
-    $keepersInPlay = $game->cards->getCardsInLocation("keepers");
+    $keepersInPlay = $game->cards->getCardsOfTypeInLocation("keeper", null, "keepers", null);
     $next_player = $game->getNextPlayerTable();
 
     // gather and shuffle all keepers in play

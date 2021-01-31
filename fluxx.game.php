@@ -516,7 +516,7 @@ class fluxx extends Table
     }
   }
 
-  public function discardCardsFromLocation($cards_id, $location, $location_arg)
+  public function discardCardsFromLocation($cards_id, $location, $location_arg, $expected_type)
   {
     $cards = [];
     foreach ($cards_id as $card_id) {
@@ -525,10 +525,16 @@ class fluxx extends Table
       if (
         $card == null ||
         $card["location"] != $location ||
-        $card["location_arg"] != $location_arg
+        $card["location_arg"] != $location_arg        
       ) {
-        BgaUserException(
+        throw new BgaUserException(
           self::_("Impossible discard: invalid card ") . $card_id
+        );
+      }
+      // and of the expected type to be discarded (if specified)
+      if ($expected_type != null && $expected_type != $card["type"]){
+        throw new BgaUserException(
+          self::_("Illegal discard: card must be of type ") . $expected_type
         );
       }
 

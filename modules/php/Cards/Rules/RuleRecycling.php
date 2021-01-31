@@ -22,8 +22,12 @@ class RuleRecycling extends RuleCard
   public function canBeUsedInPlayerTurn($player_id)
   {
     $game = Utils::getGame();
+
+    $playersKeepersInPlay 
+      = count($game->cards->getCardsOfTypeInLocation("keeper", null, "keepers", $player_id));
+
     return Utils::playerHasNotYetUsedRecycling()
-      && $game->cards->countCardInLocation("keepers", $player_id) > 0;
+      && $playersKeepersInPlay > 0;
   }
 
   public function immediateEffectOnPlay($player)
@@ -50,6 +54,7 @@ class RuleRecycling extends RuleCard
     $myKeeper = $args["card"];
 
     if (
+      $myKeeper["type"] != "keeper" ||
       $myKeeper["location"] != "keepers" ||
       $myKeeper["location_arg"] != $player_id
     ) {

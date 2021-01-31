@@ -21,14 +21,13 @@ class ActionExchangeKeepers extends ActionCard
   public function immediateEffectOnPlay($player_id)
   {
     $game = Utils::getGame();
-    $keepersInPlay = $game->cards->countCardInLocation("keepers");
-    $playersKeepersInPlay = $game->cards->countCardInLocation(
-      "keepers",
-      $player_id
-    );
+    $totalKeepersInPlay 
+      = count($game->cards->getCardsOfTypeInLocation("keeper", null, "keepers", null));
+    $playersKeepersInPlay 
+      = count($game->cards->getCardsOfTypeInLocation("keeper", null, "keepers", $player_id));
     if (
       $playersKeepersInPlay == 0 ||
-      $keepersInPlay - $playersKeepersInPlay == 0
+      $totalKeepersInPlay - $playersKeepersInPlay == 0
     ) {
       // no keepers on my side or
       // no keepers on the table for others, this action does nothing
@@ -49,7 +48,9 @@ class ActionExchangeKeepers extends ActionCard
 
     if (
       $myKeeper["location"] != "keepers" ||
+      $myKeeper["type"] != "keeper" ||
       $otherKeeper["location"] != "keepers" ||
+      $otherKeeper["type"] != "keeper" ||
       $myKeeper["location_arg"] != $player_id ||
       $other_player_id == $player_id
     ) {

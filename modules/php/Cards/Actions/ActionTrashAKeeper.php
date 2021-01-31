@@ -21,8 +21,9 @@ class ActionTrashAKeeper extends ActionCard
   public function immediateEffectOnPlay($player_id)
   {
     $game = Utils::getGame();
-    $keepersInPlay = $game->cards->countCardInLocation("keepers");
-    if ($keepersInPlay == 0) {
+    $totalKeepersInPlay 
+      = count($game->cards->getCardsOfTypeInLocation("keeper", null, "keepers", null));
+    if ($totalKeepersInPlay == 0) {
       // no keepers on the table, this action does nothing
       return;
     }
@@ -37,10 +38,12 @@ class ActionTrashAKeeper extends ActionCard
     $card = $args["card"];
     $card_definition = $game->getCardDefinitionFor($card);
 
+    $card_type = $card["type"];
     $card_location = $card["location"];
     $origin_player_id = $card["location_arg"];
 
-    if ($card_location != "keepers") {
+    if ($card_type != "keeper" ||
+        $card_location != "keepers") {
       Utils::throwInvalidUserAction(
         fluxx::totranslate(
           "You must select a keeper card in front of another player"

@@ -86,7 +86,9 @@ class Utils
     $keeperCounts = [];
     foreach ($players as $player_id => $player) {
       // Count each player keepers
-      $nbKeepers = $cards->countCardInLocation("keepers", $player_id);
+      $nbKeepers = count(
+        $cards->getCardsOfTypeInLocation("keeper", null, "keepers", $player_id)
+      );
       $keeperCounts[$player_id] = $nbKeepers;
     }
 

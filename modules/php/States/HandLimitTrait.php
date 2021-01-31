@@ -115,7 +115,7 @@ trait HandLimitTrait
       );
     }
 
-    $cards = self::discardCardsFromLocation($cards_id, "hand", $player_id);
+    $cards = self::discardCardsFromLocation($cards_id, "hand", $player_id, null);
 
     $game->notifyAllPlayers("handDiscarded", "", [
       "player_id" => $player_id,
