@@ -622,6 +622,22 @@ class fluxx extends Table
         // sorry, but you can't win yet
         $goalReachedByPlayerId = null;
       }
+      if ($goalReachedByPlayerId != null
+          && $goalCard->isWinPreventedByBakedPotato($goalReachedByPlayerId, $goalCard)) {     
+        // notify that player could have won but also needs the Radioactive Potato
+        $players = self::loadPlayersBasicInfos();
+        $unlucky_player_name = $players[$goalReachedByPlayerId]["player_name"];
+        self::notifyAllPlayers("winPreventedByBakedPotato", 
+          clienttranslate(
+            'Baked Potato prevents <b>${unlucky_player_name}</b> from winning with <b>${goal_name}</b>'
+          ), [
+          "goal_name" => $goalCard->getName(),
+          "unlucky_player_name" => $unlucky_player_name,
+          ]
+        );
+        // sorry, but you can't win yet
+        $goalReachedByPlayerId = null;
+      }
       if ($goalReachedByPlayerId != null) {
         // some player reached this goal
         if ($winnerId != null && $goalReachedByPlayerId != $winnerId) {
