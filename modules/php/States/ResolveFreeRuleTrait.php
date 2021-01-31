@@ -45,7 +45,7 @@ trait ResolveFreeRuleTrait
     $game = Utils::getGame();
 
     // If we have a forced move, we cannot win yet
-    if ($game->getGameStateValue("forcedCard") != -1) {
+    if ($game->getGameStateValue("forcedCard") == -1) {
       // An action has been resolved: do we have a new winner?
       $game->checkWinConditions();
       // if not, maybe the card played had effect for any of the bonus conditions?

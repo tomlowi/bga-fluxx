@@ -44,23 +44,26 @@ class GoalCard extends Card
 
   public function isWinPreventedByBakedPotato($player_id, $goalCard)
   {
-    // check Baked Potato active & Radioactive Potato in play somewhere else
-    if (Utils::getActiveBakedPotato()) {
-      // Baked Potato rule is active: if the Radioactive Potato is in play,
-      // the player that satisfies the goal must also have the Potato
-      $potato_creeper = 54;
-      $potato_creeper_cards = $game->cards->getCardsOfTypeInLocation(
-        "creeper", $potato_creeper, "keepers"
-      );
+    // check Baked Potato active
+    if (!Utils::getActiveBakedPotato())
+      return false;
 
-      self::dump("===potato===", $potato_creeper_cards);
-      die("baked potato check");
+    // check Radioactive Potato in play somewhere else
+    $game = Utils::getGame();
+    // Baked Potato rule is active: if the Radioactive Potato is in play,
+    // the player that satisfies the goal must also have the Potato
+    $potato_creeper = 54;
+    $potato_creeper_cards = $game->cards->getCardsOfTypeInLocation(
+      "creeper", $potato_creeper, "keepers"
+    );
 
-      if (count($potato_creeper_cards) > 0) {
-        return $potato_creeper_cards[0]["location_arg"] != $player_id;
-      }
-      // else: the Potato is not in play, so it is not needed to win (see the FAQ)
+    self::dump("===potato===", $potato_creeper_cards);
+
+    if (count($potato_creeper_cards) > 0) {
+      $potato_player_id = reset($potato_creeper_cards)["location_arg"];
+      return $potato_player_id != $player_id;
     }
+    // else: the Potato is not in play, so it is not needed to win (see the FAQ)    
     
     return false;
   }
