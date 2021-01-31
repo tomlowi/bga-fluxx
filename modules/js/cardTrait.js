@@ -5,6 +5,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         ["cardsDrawn", null],
         ["cardsDrawnOther", null],
         ["keeperPlayed", 500],
+        ["creeperPlayed", 500],
         ["goalsDiscarded", 500],
         ["goalPlayed", null],
         ["rulesDiscarded", 500],
@@ -22,7 +23,9 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
     },
 
     playCard: function (player_id, card, destinationStock) {
-      if (this.isCurrentPlayerActive()) {
+      // forced plays (like creepers) can happen during "game" type states,
+      // in which case isCurrentPlayerActive is not set
+      if (player_id == this.player_id) {
         destinationStock.addToStockWithId(
           card.type_arg,
           card.id,
@@ -105,7 +108,16 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       }
     },
 
-    notif_keeperPlayed: function (notif) {
+    notif_keeperPlayed: function (notif) {      
+      var player_id = notif.args.player_id;
+      this.playCard(player_id, notif.args.card, this.keepersStock[player_id]);
+      this.handCounter[player_id].toValue(notif.args.handCount);
+      this.keepersCounter[player_id].toValue(
+        this.keepersStock[player_id].count()
+      );
+    },
+
+    notif_creeperPlayed: function (notif) {      
       var player_id = notif.args.player_id;
       this.playCard(player_id, notif.args.card, this.keepersStock[player_id]);
       this.handCounter[player_id].toValue(notif.args.handCount);

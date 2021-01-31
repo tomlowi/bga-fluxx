@@ -384,9 +384,44 @@ class fluxx extends Table
     return $result;
   }
 
+  private function pickCardsWithCreeperCheck($player_id, $drawCount) 
+  {
+    $cardsDrawn = [];
+    // If any creepers are drawn, they must be placed immediately,
+    // and replaced by a new draw.
+    // Since that can trigger a win, they must be drawn 1 by 1
+    for ($i = 0; $i < $drawCount; $i++) {
+      $nextCard = $this->cards->pickCard("deck", $player_id);
+      while ($nextCard != null && $nextCard["type"] == "creeper") {
+        // notify so card is shown in hand and can be played
+        self::notifyPlayer($player_id, "cardsDrawn", "", [
+          "cards" => [$nextCard],
+        ]);
+        // play card without "checkAction": can be in any state here
+        // and don't add this to "play count"
+        self::_action_playCard($nextCard["id"], false);
+        // re-draw for another card
+        $nextCard = $this->cards->pickCard("deck", $player_id);
+      }
+
+      if ($nextCard != null) {
+        $cardsDrawn[] = $nextCard;
+      }
+    }
+
+    return $cardsDrawn;
+  }
+
   public function performDrawCards($player_id, $drawCount)
   {
-    $cardsDrawn = $this->cards->pickCards($drawCount, "deck", $player_id);
+    $cardsDrawn = [];
+    if (Utils::useCreeperPackExpansion()) {
+      // check for creepers while drawing
+      $cardsDrawn = $this->pickCardsWithCreeperCheck($player_id, $drawCount);
+    } else {
+      // No creepers: we can just draw 
+      $cardsDrawn = $this->cards->pickCards($drawCount, "deck", $player_id);
+    }
 
     // don't increment drawn counter here, extra cards drawn from actions etc
     // do not count

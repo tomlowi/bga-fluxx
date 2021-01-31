@@ -194,6 +194,7 @@ trait PlayCardTrait
 
     $card_type = $card["type"];
     $stateTransition = null;
+    $continuePlayTransition = "continuePlay";
     switch ($card_type) {
       case "keeper":
         $this->playKeeperCard($player_id, $card);
@@ -209,6 +210,9 @@ trait PlayCardTrait
         break;
       case "creeper":
         $this->playCreeperCard($player_id, $card);
+        // Creepers are played automatically when drawn in any state,
+        // so we must stay in whatever the current state is
+        $continuePlayTransition = null;
         break;
       default:
         die("Not implemented: Card type $card_type does not exist");
@@ -228,10 +232,10 @@ trait PlayCardTrait
     if ($stateTransition != null) {
       // player must resolve something before continuing to play more cards
       $game->gamestate->nextstate($stateTransition);
-    } else {
+    } else if ($continuePlayTransition != null) {
       // else: just let player continue playing cards
       // but explicitly set state again to force args refresh
-      $game->gamestate->nextstate("continuePlay");
+      $game->gamestate->nextstate($continuePlayTransition);
     }
   }
 
@@ -267,8 +271,8 @@ trait PlayCardTrait
     // Notify all players about the creeper played
     $keeperCard = CreeperCardFactory::getCard($card["id"], $card["type_arg"]);
     $game->notifyAllPlayers(
-      "keeperPlayed",
-      clienttranslate('${player_name} plays creeper <b>${card_name}</b>'),
+      "creeperPlayed",
+      clienttranslate('${player_name} must place creeper <b>${card_name}</b>'),
       [
         "i18n" => ["card_name"],
         "player_name" => $game->getActivePlayerName(),
