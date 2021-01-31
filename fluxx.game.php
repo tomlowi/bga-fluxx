@@ -211,17 +211,26 @@ class fluxx extends Table
     $this->cards->shuffle("deck");
 
     // Each player starts the game with 3 cards
+
+    // Check who should be the first active player
+    $this->activeNextPlayer();
+    $first_player_id = $this->getActivePlayerId();
+
+    // If creepers are included, they must already be played when drawn:
+    // so we need activated players for that!
     foreach ($players as $player_id => $player) {
-      $cards = $this->cards->pickCards(3, "deck", $player_id);
+      $this->gamestate->changeActivePlayer($player_id);
+      $this->performDrawCards($player_id, 3);
     }
+
+    // reset to start with correct first active player
+    $this->gamestate->changeActivePlayer($first_player_id);
 
     // @TODO: Init game statistics
     // (note: statistics used in this file must be defined in your stats.inc.php file)
     //self::initStat( 'table', 'table_teststat1', 0 );    // Init a table statistics
     //self::initStat( 'player', 'player_teststat1', 0 );  // Init a player statistics (for all players)
-
-    // Activate first player
-    $this->activeNextPlayer();
+    
   }
 
   /*
