@@ -45,17 +45,20 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
           );
           dojo.attr("button_rule_" + card_id, "data-rule-id", card_id);
         }
-        // if no more cards must be played, but free rules available
-        // => player should have possibility to explicitly end turn
-        if (args.count == 0)
-        {
-          this.addActionButton(
-            "button_finish",
-            _("Finish Turn"),
-            "onPlayFinishTurn"
-          );
-        }
       }
+      // if no more cards must be played, but free rules available
+      // => player should have possibility to explicitly end turn
+      // otherwise turn should have passed automatically, but in special cases
+      // (e.g. last action = forced play we might still get in this state with count=0)
+      if (args.count == 0)
+      {
+        this.addActionButton(
+          "button_finish",
+          _("Finish Turn"),
+          "onPlayFinishTurn"
+        );
+      }
+    
     },
 
     onSelectCardPlayCard: function () {
