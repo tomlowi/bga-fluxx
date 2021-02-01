@@ -57,8 +57,6 @@ class GoalCard extends Card
       "creeper", $potato_creeper, "keepers"
     );
 
-    self::dump("===potato===", $potato_creeper_cards);
-
     if (count($potato_creeper_cards) > 0) {
       $potato_player_id = reset($potato_creeper_cards)["location_arg"];
       return $potato_player_id != $player_id;

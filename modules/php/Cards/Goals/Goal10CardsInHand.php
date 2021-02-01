@@ -30,6 +30,12 @@ class Goal10CardsInHand extends GoalCard
 
     $cardCounts = [];
     foreach ($players as $player_id => $player) {
+      // Ruling from the designer: any player with creepers in play cannot win this goal,
+      // and if several players are tied for max then only one without creepers can win
+      // (and should win if all other have creepers in play)
+      if ($this->isWinPreventedByCreepers($player_id, $this))
+        continue;
+      
       // Count each player hand cards
       $nbCards = $cards->countCardInLocation("hand", $player_id);
       // this player has max (and more than 10)
