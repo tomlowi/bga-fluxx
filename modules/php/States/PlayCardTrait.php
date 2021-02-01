@@ -344,6 +344,9 @@ trait PlayCardTrait
 
     // Notify all players about the new rule
     // (this needs to be done before the effect, otherwise the history is confusing)
+    // and so the hand count must be corrected accordingly
+    $handCount = $game->cards->countCardInLocation("hand", $player_id) - 1;
+
     $game->notifyAllPlayers(
       "rulePlayed",
       clienttranslate('${player_name} placed a new rule: <b>${card_name}</b>'),
@@ -354,7 +357,7 @@ trait PlayCardTrait
         "player_id" => $player_id,
         "ruleType" => $ruleType,
         "card" => $card,
-        "handCount" => $game->cards->countCardInLocation("hand", $player_id),
+        "handCount" => $handCount,
       ]
     );
 
@@ -377,6 +380,10 @@ trait PlayCardTrait
 
     // Notify all players about the action played
     // (this needs to be done before the effect, otherwise the history is confusing)
+    // and so the hand + discard count must be corrected accordingly
+    $handCount = $game->cards->countCardInLocation("hand", $player_id) - 1;
+    $discardCount = $game->cards->countCardInLocation("discard") + 1;
+
     $game->notifyAllPlayers(
       "actionPlayed",
       clienttranslate('${player_name} plays an action: <b>${card_name}</b>'),
@@ -386,8 +393,8 @@ trait PlayCardTrait
         "player_id" => $player_id,
         "card_name" => $actionCard->getName(),
         "card" => $card,
-        "handCount" => $game->cards->countCardInLocation("hand", $player_id),
-        "discardCount" => $game->cards->countCardInLocation("discard"),
+        "handCount" => $handCount,
+        "discardCount" => $discardCount,
       ]
     );
 
