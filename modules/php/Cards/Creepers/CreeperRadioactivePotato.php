@@ -17,6 +17,11 @@ class CreeperRadioactivePotato extends CreeperCard
     }
 
     public function preventsWinForGoal($goalCard) {
+
+        // when Baked Potato in play, this never prevents win here
+        if (Utils::getActiveBakedPotato())
+            return false;
+
         return parent::preventsWinForGoal($goalCard);
     }
 }
