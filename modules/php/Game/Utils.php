@@ -95,6 +95,18 @@ class Utils
     return $keeperCounts;
   }
 
+  public static function getPlayerCreeperCount($player_id)
+  {
+    if (!self::useCreeperPackExpansion())
+      return 0;
+
+    $cards = Utils::getGame()->cards;
+    $nbCreepers = count(
+      $cards->getCardsOfTypeInLocation("creeper", null, "keepers", $player_id)
+    );
+    return $nbCreepers;
+  }
+
   public static function hasLeastKeepers($active_player_id)
   {
     $keepersCounts = self::getAllPlayersKeeperCount();

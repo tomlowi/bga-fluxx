@@ -81,6 +81,8 @@ class ActionMoveACreeper extends ActionCard
         "destination_player_id" => $selected_player_id,
         "origin_player_id" => $other_player_id,
         "cards" => [$card],
+        "destination_creeperCount" => Utils::getPlayerCreeperCount($selected_player_id),
+        "origin_creeperCount" => Utils::getPlayerCreeperCount($other_player_id),
       ]
     );
   }

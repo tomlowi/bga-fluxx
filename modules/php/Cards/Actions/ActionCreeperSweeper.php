@@ -41,6 +41,7 @@ class ActionCreeperSweeper extends ActionCard
         "player_id" => $player_id,
         "cards" => $discards_for_player,
         "discardCount" => $game->cards->countCardInLocation("discard"),
+        "creeperCount" => 0
       ]);
     }
   }

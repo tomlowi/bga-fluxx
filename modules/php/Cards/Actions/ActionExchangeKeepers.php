@@ -64,10 +64,15 @@ class ActionExchangeKeepers extends ActionCard
     // switch the keeper locations
     $game->cards->moveCard($myKeeper["id"], "keepers", $other_player_id);
 
+    $player_creeperCount = Utils::getPlayerCreeperCount($player_id);
+    $other_player_creeperCount = Utils::getPlayerCreeperCount($other_player_id);
+
     $game->notifyAllPlayers("keepersMoved", "", [
       "origin_player_id" => $player_id,
       "destination_player_id" => $other_player_id,
       "cards" => [$myKeeper],
+      "destination_creeperCount" => $other_player_creeperCount,
+      "origin_creeperCount" => $player_creeperCount,
     ]);
 
     $game->cards->moveCard($otherKeeper["id"], "keepers", $player_id);
@@ -75,6 +80,8 @@ class ActionExchangeKeepers extends ActionCard
       "origin_player_id" => $other_player_id,
       "destination_player_id" => $player_id,
       "cards" => [$otherKeeper],
+      "destination_creeperCount" => $player_creeperCount,
+      "origin_creeperCount" => $other_player_creeperCount,
     ]);
 
     $players = $game->loadPlayersBasicInfos();

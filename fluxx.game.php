@@ -256,6 +256,7 @@ class fluxx extends Table
     $result = [
       "players" => $players,
       "cardsDefinitions" => $this->getAllCardsDefinitions(),
+      "creeperPack" => Utils::useCreeperPackExpansion(),
       "hand" => $this->cards->getCardsInLocation("hand", $current_player_id),
       "rules" => [
         "drawRule" => $this->cards->getCardsInLocation("rules", RULE_DRAW_RULE),
@@ -272,6 +273,7 @@ class fluxx extends Table
       ],
       "goals" => $this->cards->getCardsInLocation("goals"),
       "keepers" => [],
+      "creepersCount" => [],
       "handsCount" => [],
       "discard" => $this->cards->getCardsInLocation("discard"),
       "deckCount" => $this->cards->countCardInLocation("deck"),
@@ -283,6 +285,7 @@ class fluxx extends Table
         "keepers",
         $player_id
       );
+      $result["creepersCount"][$player_id] = Utils::getPlayerCreeperCount($player_id);
       $result["handsCount"][$player_id] = $this->cards->countCardInLocation(
         "hand",
         $player_id

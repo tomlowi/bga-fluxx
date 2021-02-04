@@ -46,6 +46,7 @@ class view_fluxx_fluxx extends game_view
     $this->tpl["MY_KEEPERS"] = clienttranslate("My keepers");
     $this->tpl["HAND_COUNT"] = clienttranslate("# cards in hand");
     $this->tpl["KEEPERS_COUNT"] = clienttranslate("# keepers on table");
+    $this->tpl["CREEPERS_COUNT"] = clienttranslate("# creepers on table");
     $this->tpl["RULES"] = clienttranslate("Rules");
     $this->tpl["GOAL"] = clienttranslate("Goal");
     $this->tpl["SHOW_DISCARD"] = clienttranslate("Show discard");

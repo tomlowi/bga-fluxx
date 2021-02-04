@@ -80,6 +80,7 @@ class RuleRecycling extends RuleCard
         "cards" => [$card],
         "player_id" => $player_id,
         "discardCount" => $game->cards->countCardInLocation("discard"),
+        "creeperCount" => Utils::getPlayerCreeperCount($player_id),
       ]
     );
 

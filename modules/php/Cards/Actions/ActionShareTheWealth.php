@@ -35,6 +35,8 @@ class ActionShareTheWealth extends ActionCard
           "destination_player_id" => $current_player_id,
           "origin_player_id" => $card["location_arg"],
           "cards" => [$card],
+          "destination_creeperCount" => Utils::getPlayerCreeperCount($player_id),
+          "origin_creeperCount" => Utils::getPlayerCreeperCount($other_player_id),
         ]);
       }
       $current_player_id = $next_player[$current_player_id];

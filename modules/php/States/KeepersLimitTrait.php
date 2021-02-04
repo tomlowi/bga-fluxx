@@ -122,6 +122,7 @@ trait KeepersLimitTrait
       "player_id" => $player_id,
       "cards" => $cards,
       "discardCount" => $game->cards->countCardInLocation("discard"),
+      "creeperCount" => Utils::getPlayerCreeperCount($player_id),
     ]);
 
     $state = $game->gamestate->state();

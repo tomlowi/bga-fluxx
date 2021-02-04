@@ -69,7 +69,9 @@ class ActionStealSomething extends ActionCard
         "card_name" => $card_definition->getName(),
         "destination_player_id" => $player_id,
         "origin_player_id" => $other_player_id,
-        "cards" => [$card],
+        "cards" => [$card],        
+        "destination_creeperCount" => Utils::getPlayerCreeperCount($player_id),
+        "origin_creeperCount" => Utils::getPlayerCreeperCount($other_player_id),
       ]
     );
   }

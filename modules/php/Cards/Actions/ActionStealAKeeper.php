@@ -72,6 +72,8 @@ class ActionStealAKeeper extends ActionCard
         "destination_player_id" => $player_id,
         "origin_player_id" => $other_player_id,
         "cards" => [$card],
+        "destination_creeperCount" => Utils::getPlayerCreeperCount($player_id),
+        "origin_creeperCount" => Utils::getPlayerCreeperCount($other_player_id),
       ]
     );
   }

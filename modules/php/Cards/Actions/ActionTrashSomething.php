@@ -60,6 +60,7 @@ class ActionTrashSomething extends ActionCard
         "cards" => [$card],
         "player_id" => $origin_player_id,
         "discardCount" => $game->cards->countCardInLocation("discard"),
+        "creeperCount" => Utils::getPlayerCreeperCount($player_id),
       ]
     );
   }

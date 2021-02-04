@@ -257,6 +257,7 @@ trait PlayCardTrait
         "card_name" => $keeperCard->getName(),
         "card" => $card,
         "handCount" => $game->cards->countCardInLocation("hand", $player_id),
+        "creeperCount" => Utils::getPlayerCreeperCount($player_id),
       ]
     );
   }
@@ -269,7 +270,7 @@ trait PlayCardTrait
     $game->cards->moveCard($card["id"], "keepers", $player_id);
 
     // Notify all players about the creeper played
-    $keeperCard = CreeperCardFactory::getCard($card["id"], $card["type_arg"]);
+    $creeperCard = CreeperCardFactory::getCard($card["id"], $card["type_arg"]);
     $game->notifyAllPlayers(
       "creeperPlayed",
       clienttranslate('${player_name} must place creeper <b>${card_name}</b>'),
@@ -277,9 +278,10 @@ trait PlayCardTrait
         "i18n" => ["card_name"],
         "player_name" => $game->getActivePlayerName(),
         "player_id" => $player_id,
-        "card_name" => $keeperCard->getName(),
+        "card_name" => $creeperCard->getName(),
         "card" => $card,
         "handCount" => $game->cards->countCardInLocation("hand", $player_id),
+        "creeperCount" => Utils::getPlayerCreeperCount($player_id),
       ]
     );
   }
@@ -364,7 +366,7 @@ trait PlayCardTrait
     $location_arg = $game->getLocationArgForRuleType($ruleType);
 
     // Execute the immediate rule effect
-    $stateTransition = $ruleCard->immediateEffectOnPlay($player_id);
+    $stateTransition = $ruleCard->immediateEffectOnPlay($player_id);    
 
     $game->cards->moveCard($card["id"], "rules", $location_arg);
 
