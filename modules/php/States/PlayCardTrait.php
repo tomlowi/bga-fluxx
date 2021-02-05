@@ -367,8 +367,14 @@ trait PlayCardTrait
 
     // Execute the immediate rule effect
     $stateTransition = $ruleCard->immediateEffectOnPlay($player_id);    
-
+    // Move card from hand to correct rules section
     $game->cards->moveCard($card["id"], "rules", $location_arg);
+    // If the Rules card played resulted in any cards drawn,
+    // the hand counter is incorrect (because this card was still in hand)
+    // But changing order of effect/move here breaks the game play
+    // Easiest fix seems to push the correct hand counters again
+    $this->sendHandCountNotifications();
+
 
     return $stateTransition;
   }
