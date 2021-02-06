@@ -26,4 +26,20 @@ class CreeperDeath extends CreeperCard
 
         return parent::preventsWinForGoal($goalCard);
     }
+
+    public $interactionNeeded = "keeperSelectionAny";
+
+    public function onTurnStart()
+    {
+        // TODO: check if Death is in play
+        // => activate this player to resolve Death
+        // by selecting another keeper or creeper
+        // if no others, discard Death immediately
+        return null;
+    }
+
+    public function resolvedBy($player_id, $args)
+    {
+        return null;
+    }
 }

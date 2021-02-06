@@ -795,6 +795,9 @@ class fluxx extends Table
     self::setGameStateValue("playerTurnUsedMysteryPlay", 0);
     self::setGameStateValue("playerTurnUsedRecycling", 0);
 
+    // Check for any Creeper abilities on turn start
+    CreeperCardFactory::onTurnStart();
+
     self::giveExtraTime($player_id);
     $this->gamestate->nextState("");
   }

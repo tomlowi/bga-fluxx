@@ -20,5 +20,26 @@ class CreeperCard extends Card
     return true;
   }
 
-  // @TODO: some Creepers have special side effects like moving/discarding other Keepers
+  // Creepers can have special side effects to be triggered on various times
+  // All these can return a state transition if further player interaction is needed
+
+  public function onGoalChange()
+  {
+    return null;
+  }
+
+  public function onTurnStart()
+  {
+    return null;
+  }
+
+  public function onCheckResolveKeepersAndCreepers()
+  {
+    return null;
+  }
+
+  // Indicates which interaction is expected by this Creeper
+  // null indicated that this action can be handled without client-side interaction
+  public $interactionNeeded = null;
+
 }

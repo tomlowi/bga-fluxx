@@ -26,4 +26,20 @@ class CreeperWar extends CreeperCard
 
         return parent::preventsWinForGoal($goalCard);
     }
+
+    public $interactionNeeded = "playerSelection";
+
+    public function onCheckResolveKeepersAndCreepers()
+    {
+        // TODO : check if also Peace in same hand
+        // => activate this player to resolve War
+        return null;
+    }
+
+    public function resolvedBy($player_id, $args)
+    {
+        // TODO: args should contain other player id
+        // > move Peace keeper to that player        
+        return null;
+    }    
 }

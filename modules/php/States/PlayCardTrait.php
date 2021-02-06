@@ -223,6 +223,9 @@ trait PlayCardTrait
       $game->incGameStateValue("playedCards", 1);
     }
 
+    // Check for any Creeper abilities after keepers/creepers played or moved
+    CreeperCardFactory::onCheckResolveKeepersAndCreepers();
+
     // A card has been played: do we have a new winner?
     $game->checkWinConditions();
 
@@ -329,6 +332,13 @@ trait PlayCardTrait
 
     // We play the new goal
     $game->cards->moveCard($card["id"], "goals");
+
+    // Fluxx FAQ:
+    // Goal change and Potato move are considered to be simultaneous.
+    // Basically, do both of the things (play the Goal and move the Creeper) 
+    // and only THEN take a look at the situation to see if you win or not.
+    // So no separate win conditions check before the Potato moves.
+    CreeperCardFactory::onGoalChange();
 
     if ($hasDoubleAgenda && $existingGoalCount > 1) {
       $game->setGameStateValue("lastGoalBeforeDoubleAgenda", $card["id"]);

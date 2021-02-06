@@ -44,4 +44,43 @@ class CreeperCardFactory extends CardFactory
     53 => "CreeperDeath",
     54 => "CreeperRadioactivePotato",
   ];
+
+  /* trigger all Creepers in play that have a special ability when Goal changes */
+  public static function onGoalChange()
+  {
+    if (!Utils::useCreeperPackExpansion())
+      return;
+
+    foreach (self::$classes as $definitionId => $class) {
+      $card = self::getCard(0, $definitionId);
+
+      $card->onGoalChange();
+    }
+  }
+
+  /* trigger all Creepers in play that have a special ability on start of turn */
+  public static function onTurnStart()
+  {
+    if (!Utils::useCreeperPackExpansion())
+      return;
+
+    foreach (self::$classes as $definitionId => $class) {
+      $card = self::getCard(0, $definitionId);
+
+      $card->onTurnStart();
+    }
+  }
+
+  /* trigger all Creepers in play that have a special ability to be checked after every change */
+  public static function onCheckResolveKeepersAndCreepers()
+  {
+    if (!Utils::useCreeperPackExpansion())
+      return;
+
+    foreach (self::$classes as $definitionId => $class) {
+      $card = self::getCard(0, $definitionId);
+
+      $card->onCheckResolveKeepersAndCreepers();
+    }
+  }
 }
