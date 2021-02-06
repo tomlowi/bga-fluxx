@@ -30,13 +30,14 @@ class ActionShareTheWealth extends ActionCard
 
     foreach ($keepersInPlay as $card) {
       if ($current_player_id != $card["location_arg"]) {
+        $origin_player_id = $card["location_arg"];
         $game->cards->moveCard($card["id"], "keepers", $current_player_id);
         $game->notifyAllPlayers("keepersMoved", "", [
           "destination_player_id" => $current_player_id,
-          "origin_player_id" => $card["location_arg"],
+          "origin_player_id" => $origin_player_id,
           "cards" => [$card],
-          "destination_creeperCount" => Utils::getPlayerCreeperCount($player_id),
-          "origin_creeperCount" => Utils::getPlayerCreeperCount($other_player_id),
+          "destination_creeperCount" => Utils::getPlayerCreeperCount($current_player_id),
+          "origin_creeperCount" => Utils::getPlayerCreeperCount($origin_player_id),
         ]);
       }
       $current_player_id = $next_player[$current_player_id];
