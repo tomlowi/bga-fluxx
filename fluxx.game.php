@@ -84,6 +84,9 @@ class fluxx extends Table
       "playerTurnUsedGoalMill" => 46,
       "playerTurnUsedMysteryPlay" => 47,
       "playerTurnUsedRecycling" => 48,
+      "creeperToResolveCardId" => 49,
+      "creeperToResolvePlayerId" => 50,
+      "creeperTurnStartDeathExecuted" => 51,
       "rpsChallengerId" => 90,
       "rpsDefenderId" => 91,
       "rpsChallengerChoice" => 92,
@@ -191,6 +194,11 @@ class fluxx extends Table
     self::setGameStateInitialValue("rpsDefenderChoice", -1);
     self::setGameStateInitialValue("rpsChallengerWins", 0);
     self::setGameStateInitialValue("rpsDefenderWins", 0);
+    self::setGameStateInitialValue("actionToResolve", -1);
+    self::setGameStateInitialValue("freeRuleToResolve", -1);
+    self::setGameStateInitialValue("creeperToResolveCardId", -1);
+    self::setGameStateInitialValue("creeperToResolvePlayerId", -1);
+    self::setGameStateInitialValue("creeperTurnStartDeathExecuted", 0);
 
     self::initStat("table", "turns_number", 0);
 
@@ -569,6 +577,16 @@ class fluxx extends Table
     Utils::checkForPoorBonus($player_id);
   }
 
+  public function checkCreeperResolveNeeded($lastPlayedCard)
+  {
+    // Check for any Creeper abilities after keepers/creepers played or moved
+    $stateTransition = CreeperCardFactory::onCheckResolveKeepersAndCreepers($lastPlayedCard);
+    if ($stateTransition != null) {
+      $this->gamestate->nextState($stateTransition);      
+    }
+    return $stateTransition != null;
+  }
+
   public function checkWinConditions()
   {
     $winnerInfo = $this->checkCurrentGoalsWinner();
@@ -728,6 +746,7 @@ class fluxx extends Table
   use Fluxx\States\ResolveActionTrait;
   use Fluxx\States\RockPaperScissorsTrait;
   use Fluxx\States\ResolveFreeRuleTrait;
+  use Fluxx\States\ResolveCreeperTrait;
 
   //////////////////////////////////////////////////////////////////////////////
   //////////// Game state actions
@@ -794,10 +813,7 @@ class fluxx extends Table
     self::setGameStateValue("playerTurnUsedGoalMill", 0);
     self::setGameStateValue("playerTurnUsedMysteryPlay", 0);
     self::setGameStateValue("playerTurnUsedRecycling", 0);
-
-    // Check for any Creeper abilities on turn start
-    CreeperCardFactory::onTurnStart();
-
+    
     self::giveExtraTime($player_id);
     $this->gamestate->nextState("");
   }

@@ -18,16 +18,13 @@ trait ResolveActionTrait
     $game = Utils::getGame();
     $actionCardId = self::getGameStateValue("actionToResolve");
     $card = $game->cards->getCard($actionCardId);
-    return ActionCardFactory::getCard($card["id"], $card["type_arg"]);
+    return $card;
   }
 
   public function arg_resolveAction()
   {
-    // $game = Utils::getGame();
-
-    $actionCardId = self::getGameStateValue("actionToResolve");
-    // $card = $game->cards->getCard($actionCardId);
-    $actionCard = self::getCurrentResolveActionCard();
+    $card = self::getCurrentResolveActionCard();
+    $actionCard = ActionCardFactory::getCard($card["id"], $card["type_arg"]);
 
     return [
       "action_id" => $actionCard->getCardId(),
@@ -41,7 +38,8 @@ trait ResolveActionTrait
   {
     $player_id = self::getActivePlayerId();
 
-    $actionCard = self::getCurrentResolveActionCard();
+    $card = self::getCurrentResolveActionCard();
+    $actionCard = ActionCardFactory::getCard($card["id"], $card["type_arg"]);
     $actionName = $actionCard->getName();
 
     $stateTransition = $actionCard->resolvedBy($player_id, $args);
@@ -52,7 +50,12 @@ trait ResolveActionTrait
 
     // If we have a forced move, we cannot win yet
     if ($game->getGameStateValue("forcedCard") == -1) {
-      // An action has been resolved: do we have a new winner?
+      // An action has been resolved: several things might be changed
+
+      // creeper abilities to trigger (need to check this before victory)
+      if ($game->checkCreeperResolveNeeded($card))
+        return;
+      //  do we have a new winner?
       $game->checkWinConditions();
       // if not, maybe the card played had effect for any of the bonus conditions?
       $game->checkBonusConditions($player_id);

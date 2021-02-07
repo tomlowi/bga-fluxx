@@ -32,6 +32,7 @@ define([
   g_gamethemeurl + "modules/js/states/goalCleaning.js",
   g_gamethemeurl + "modules/js/states/actionResolve.js",
   g_gamethemeurl + "modules/js/states/freeRuleResolve.js",
+  g_gamethemeurl + "modules/js/states/creeperResolve.js",
   g_gamethemeurl + "modules/js/states/playRockPaperScissors.js",
 ], function (dojo, declare) {
   return declare(
@@ -45,6 +46,7 @@ define([
       fluxx.states.goalCleaning,
       fluxx.states.actionResolve,
       fluxx.states.freeRuleResolve,
+      fluxx.states.creeperResolve,
       fluxx.states.playRockPaperScissors,
     ],
     {
@@ -281,6 +283,11 @@ define([
             this.onEnteringStateFreeRuleResolve(args);
             break;
 
+          case "creeperResolveInPlay":
+          case "creeperResolveTurnStart":
+            this.onEnteringStateCreeperResolve(args);
+            break;
+
           case "dummmy":
             break;
         }
@@ -321,6 +328,11 @@ define([
             this.onLeavingStateFreeRuleResolve();
             break;
 
+          case "creeperResolveInPlay":
+          case "creeperResolveTurnStart":
+                this.onLeavingStateCreeperResolve();
+            break;            
+
           case "dummmy":
             break;
         }
@@ -357,7 +369,10 @@ define([
             case "freeRuleResolve":
               this.onUpdateActionButtonsFreeRuleResolve(args);
               break;
-          }
+            case "creeperResolveInPlay":
+            case "creeperResolveTurnStart":
+              this.onUpdateActionButtonsCreeperResolve(args);
+              break;          }
         }
       },
 

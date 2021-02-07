@@ -67,12 +67,15 @@ class CreeperCardFactory extends CardFactory
     foreach (self::$classes as $definitionId => $class) {
       $card = self::getCard(0, $definitionId);
 
-      $card->onTurnStart();
+      $stateTransition = $card->onTurnStart();
+      if ($stateTransition != null)
+        return $stateTransition;
+      // TODO: what if multiple Creeper abilities need to be resolved?
     }
   }
 
   /* trigger all Creepers in play that have a special ability to be checked after every change */
-  public static function onCheckResolveKeepersAndCreepers()
+  public static function onCheckResolveKeepersAndCreepers($lastPlayedCard)
   {
     if (!Utils::useCreeperPackExpansion())
       return;
@@ -80,7 +83,10 @@ class CreeperCardFactory extends CardFactory
     foreach (self::$classes as $definitionId => $class) {
       $card = self::getCard(0, $definitionId);
 
-      $card->onCheckResolveKeepersAndCreepers();
+      $stateTransition = $card->onCheckResolveKeepersAndCreepers($lastPlayedCard);
+      if ($stateTransition != null)
+        return $stateTransition;
     }
+    
   }
 }

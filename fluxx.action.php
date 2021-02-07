@@ -169,6 +169,7 @@ class action_fluxx extends APP_GameAction
     $this->game->action_resolveFreeRuleCardSelection($card_id);
     self::ajaxResponse();
   }
+
   public function resolveFreeRuleCardsSelection()
   {
     self::setAjaxMode();
@@ -177,5 +178,29 @@ class action_fluxx extends APP_GameAction
       $this->stripListOfCardIds($cards_id)
     );
     self::ajaxResponse();
-  }  
+  }
+
+  public function resolveCreeperCardSelection()
+  {
+    self::setAjaxMode();
+    $card_id = self::getArg("card_id", AT_posint, true);
+    $this->game->action_resolveCreeperCardSelection($card_id);
+    self::ajaxResponse();
+  }
+
+  public function resolveCreeperPlayerSelection()
+  {
+    self::setAjaxMode();
+    $player_id = self::getArg("player_id", AT_posint, true);
+    $this->game->action_resolveCreeperPlayerSelection($player_id);
+    self::ajaxResponse();
+  }
+
+  public function resolveCreeperButtons()
+  {
+    self::setAjaxMode();
+    $value = self::getArg("value", AT_alphanum, true);
+    $this->game->action_resolveCreeperButtons($value);
+    self::ajaxResponse();
+  }
 }

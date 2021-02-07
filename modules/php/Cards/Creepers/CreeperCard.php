@@ -33,13 +33,21 @@ class CreeperCard extends Card
     return null;
   }
 
-  public function onCheckResolveKeepersAndCreepers()
+  public function onCheckResolveKeepersAndCreepers($lastPlayedCard)
   {
-    return null;
+    if ($this->interactionNeeded != null) {
+      return "resolveCreeper";
+    }
+    return null;  
   }
 
   // Indicates which interaction is expected by this Creeper
   // null indicated that this action can be handled without client-side interaction
   public $interactionNeeded = null;
+
+  public function resolveArgs()
+  {
+    return [];
+  }
 
 }

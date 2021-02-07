@@ -223,8 +223,11 @@ trait PlayCardTrait
       $game->incGameStateValue("playedCards", 1);
     }
 
-    // Check for any Creeper abilities after keepers/creepers played or moved
-    CreeperCardFactory::onCheckResolveKeepersAndCreepers();
+    // check creeper abilities to resolve (unless we still need to resolve the card played)
+    if ($stateTransition == null) {      
+      if ($game->checkCreeperResolveNeeded($card))
+        return;
+    }
 
     // A card has been played: do we have a new winner?
     $game->checkWinConditions();
