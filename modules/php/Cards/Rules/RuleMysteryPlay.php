@@ -44,6 +44,5 @@ class RuleMysteryPlay extends RuleCard
 
     // And we mark it as the next "forcedCard" to play
     $game->setGameStateValue("forcedCard", $card["id"]);
-
   }
 }

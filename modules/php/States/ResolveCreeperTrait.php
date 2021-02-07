@@ -9,7 +9,7 @@ trait ResolveCreeperTrait
   function st_resolveCreeperInPlay()
   {
     $player_id = self::getGameStateValue("creeperToResolvePlayerId");
-    if ($player_id > 0){
+    if ($player_id > 0) {
       $gamestate = Utils::getGame()->gamestate;
       $gamestate->setPlayersMultiactive([$player_id], "", true);
       return;
@@ -18,7 +18,6 @@ trait ResolveCreeperTrait
 
   function st_resolveCreeperTurnStart()
   {
-            
   }
 
   function st_nextPlayerTurnStartCreepers()
@@ -40,9 +39,10 @@ trait ResolveCreeperTrait
   {
     $game = Utils::getGame();
     $creeperCardId = self::getGameStateValue("creeperToResolveCardId");
-    if ($creeperCardId <= 0)
+    if ($creeperCardId <= 0) {
       return null;
-    
+    }
+
     $card = $game->cards->getCard($creeperCardId);
     return $card;
   }
@@ -80,15 +80,16 @@ trait ResolveCreeperTrait
       // An action has been resolved: several things might be changed
 
       // creeper abilities to trigger (need to check this before victory)
-      if ($game->checkCreeperResolveNeeded($card))
+      if ($game->checkCreeperResolveNeeded($card)) {
         return;
+      }
       //  do we have a new winner?
       $game->checkWinConditions();
       // if not, maybe the card played had effect for any of the bonus conditions?
       $game->checkBonusConditions($player_id);
     }
 
-    // reset these only after checkCreeperResolveNeeded, 
+    // reset these only after checkCreeperResolveNeeded,
     // so they can still be checked to prevent checking the same again
     self::setGameStateValue("creeperToResolveCardId", -1);
     self::setGameStateValue("creeperToResolvePlayerId", -1);
@@ -109,9 +110,9 @@ trait ResolveCreeperTrait
     if ($card_id > 0) {
       $card = $game->cards->getCard($card_id);
     }
-    
+
     $player_id = self::getCurrentPlayerId();
-    
+
     return self::_action_resolveCreeper(["card" => $card]);
   }
 
@@ -128,5 +129,4 @@ trait ResolveCreeperTrait
     self::checkAction("resolveCreeperButtons");
     return self::_action_resolveCreeper(["value" => $value]);
   }
-
 }

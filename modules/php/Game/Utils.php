@@ -97,8 +97,9 @@ class Utils
 
   public static function getPlayerCreeperCount($player_id)
   {
-    if (!self::useCreeperPackExpansion())
+    if (!self::useCreeperPackExpansion()) {
       return 0;
+    }
 
     $cards = Utils::getGame()->cards;
     $nbCreepers = count(
@@ -165,7 +166,7 @@ class Utils
       $addInflation = Utils::getActiveInflation() ? 1 : 0;
 
       $partyBonus = 1 + $addInflation;
-      RulePartyBonus::notifyActiveFor($player_id, true);      
+      RulePartyBonus::notifyActiveFor($player_id, true);
       Utils::getGame()->setGameStateValue("playerTurnUsedPartyBonus", 1);
     }
 
@@ -175,8 +176,7 @@ class Utils
   public static function checkForPartyBonus($player_id)
   {
     $partyBonus = Utils::calculatePartyBonus($player_id);
-    if ($partyBonus > 0)
-    {
+    if ($partyBonus > 0) {
       Utils::getGame()->performDrawCards($player_id, $partyBonus);
     }
   }
@@ -203,8 +203,7 @@ class Utils
   public static function checkForPoorBonus($player_id)
   {
     $poorBonus = Utils::calculatePoorBonus($player_id);
-    if ($poorBonus > 0)
-    {
+    if ($poorBonus > 0) {
       Utils::getGame()->performDrawCards($player_id, $poorBonus);
     }
   }
@@ -218,7 +217,8 @@ class Utils
   public static function playerHasNotYetUsedMysteryPlay()
   {
     // Mystery Play can only be used once by the same player in one turn.
-    return 0 == Utils::getGame()->getGameStateValue("playerTurnUsedMysteryPlay");
+    return 0 ==
+      Utils::getGame()->getGameStateValue("playerTurnUsedMysteryPlay");
   }
 
   public static function playerHasNotYetUsedRecycling()
@@ -236,25 +236,28 @@ class Utils
     $mustPlay = Utils::calculateCardsMustPlayFor($player_id, false);
 
     $leftCount = $mustPlay - $alreadyPlayed;
-    if ($mustPlay >= PLAY_COUNT_ALL)
-    { // Play All > left as many as cards in hand
+    if ($mustPlay >= PLAY_COUNT_ALL) {
+      // Play All > left as many as cards in hand
       $leftCount = $game->cards->countCardInLocation("hand", $player_id);
-    } 
-    elseif ($mustPlay < 0)
-    { // Play All but 1 > left as many as cards in hand minus the leftover
+    } elseif ($mustPlay < 0) {
+      // Play All but 1 > left as many as cards in hand minus the leftover
       $handCount = $game->cards->countCardInLocation("hand", $player_id);
       $leftCount = $handCount + $mustPlay; // ok, $mustPlay is negative here
     }
 
     // could become < 0 if rules for already used bonus plays get discarded
     // in that case player should not play any more cards
-    if ($leftCount < 0) $leftCount = 0;
+    if ($leftCount < 0) {
+      $leftCount = 0;
+    }
 
     return $leftCount;
   }
 
-  public static function calculateCardsMustPlayFor($player_id, $withNotifications)
-  {
+  public static function calculateCardsMustPlayFor(
+    $player_id,
+    $withNotifications
+  ) {
     $game = Utils::getGame();
     // current basic Play rule
     $playRule = $game->getGameStateValue("playRule");

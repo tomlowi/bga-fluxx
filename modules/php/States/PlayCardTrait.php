@@ -55,7 +55,7 @@ trait PlayCardTrait
     $mustPlay = Utils::calculateCardsMustPlayFor($player_id, true);
 
     $leftToPlay = Utils::calculateCardsLeftToPlayFor($player_id);
-    
+
     if ($mustPlay >= PLAY_COUNT_ALL) {
       $countLabel = clienttranslate("All");
     } elseif ($mustPlay < 0) {
@@ -65,7 +65,7 @@ trait PlayCardTrait
     }
 
     $freeRulesAvailable = $this->getFreeRulesAvailable($player_id);
-    
+
     return [
       "countLabel" => $countLabel,
       "count" => $leftToPlay,
@@ -124,7 +124,7 @@ trait PlayCardTrait
     if ($card["location"] != "rules") {
       Utils::throwInvalidUserAction(
         fluxx::totranslate("This is not an active Rule")
-      );      
+      );
     }
 
     $ruleCard = RuleCardFactory::getCard($card_id, $card["type_arg"]);
@@ -138,7 +138,7 @@ trait PlayCardTrait
         "player_id" => $player_id,
         "card_name" => $ruleCard->getName(),
       ]
-    );    
+    );
 
     $stateTransition = $ruleCard->freePlayInPlayerTurn($player_id);
     if ($stateTransition != null) {
@@ -175,7 +175,7 @@ trait PlayCardTrait
     // Check that this is the player's turn and that it is a "possible action" at this game state (see states.inc.php)
     $game = Utils::getGame();
     $game->checkAction("playCard");
-    // play the card from active player's hand, but don't count it for nr played cards    
+    // play the card from active player's hand, but don't count it for nr played cards
     self::_action_playCard($card_id, false);
   }
 
@@ -224,9 +224,10 @@ trait PlayCardTrait
     }
 
     // check creeper abilities to resolve (unless we still need to resolve the card played)
-    if ($stateTransition == null) {      
-      if ($game->checkCreeperResolveNeeded($card))
+    if ($stateTransition == null) {
+      if ($game->checkCreeperResolveNeeded($card)) {
         return;
+      }
     }
 
     // A card has been played: do we have a new winner?
@@ -238,7 +239,7 @@ trait PlayCardTrait
     if ($stateTransition != null) {
       // player must resolve something before continuing to play more cards
       $game->gamestate->nextstate($stateTransition);
-    } else if ($continuePlayTransition != null) {
+    } elseif ($continuePlayTransition != null) {
       // else: just let player continue playing cards
       // but explicitly set state again to force args refresh
       $game->gamestate->nextstate($continuePlayTransition);
@@ -298,7 +299,7 @@ trait PlayCardTrait
 
     // Notify all players about the goal played
     $goalCard = GoalCardFactory::getCard($card["id"], $card["type_arg"]);
-    
+
     // this goal card is still in hand at this time
     $handCount = $game->cards->countCardInLocation("hand", $player_id) - 1;
 
@@ -338,7 +339,7 @@ trait PlayCardTrait
 
     // Fluxx FAQ:
     // Goal change and Potato move are considered to be simultaneous.
-    // Basically, do both of the things (play the Goal and move the Creeper) 
+    // Basically, do both of the things (play the Goal and move the Creeper)
     // and only THEN take a look at the situation to see if you win or not.
     // So no separate win conditions check before the Potato moves.
     CreeperCardFactory::onGoalChange();
@@ -379,7 +380,7 @@ trait PlayCardTrait
     $location_arg = $game->getLocationArgForRuleType($ruleType);
 
     // Execute the immediate rule effect
-    $stateTransition = $ruleCard->immediateEffectOnPlay($player_id);    
+    $stateTransition = $ruleCard->immediateEffectOnPlay($player_id);
     // Move card from hand to correct rules section
     $game->cards->moveCard($card["id"], "rules", $location_arg);
     // If the Rules card played resulted in any cards drawn,
@@ -387,7 +388,6 @@ trait PlayCardTrait
     // But changing order of effect/move here breaks the game play
     // Easiest fix seems to push the correct hand counters again
     $this->sendHandCountNotifications();
-
 
     return $stateTransition;
   }

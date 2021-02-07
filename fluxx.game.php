@@ -240,7 +240,6 @@ class fluxx extends Table
     // (note: statistics used in this file must be defined in your stats.inc.php file)
     //self::initStat( 'table', 'table_teststat1', 0 );    // Init a table statistics
     //self::initStat( 'player', 'player_teststat1', 0 );  // Init a player statistics (for all players)
-    
   }
 
   /*
@@ -293,7 +292,9 @@ class fluxx extends Table
         "keepers",
         $player_id
       );
-      $result["creepersCount"][$player_id] = Utils::getPlayerCreeperCount($player_id);
+      $result["creepersCount"][$player_id] = Utils::getPlayerCreeperCount(
+        $player_id
+      );
       $result["handsCount"][$player_id] = $this->cards->countCardInLocation(
         "hand",
         $player_id
@@ -410,7 +411,7 @@ class fluxx extends Table
     return $result;
   }
 
-  private function pickCardsWithCreeperCheck($player_id, $drawCount) 
+  private function pickCardsWithCreeperCheck($player_id, $drawCount)
   {
     $cardsDrawn = [];
     // If any creepers are drawn, they must be placed immediately,
@@ -445,7 +446,7 @@ class fluxx extends Table
       // check for creepers while drawing
       $cardsDrawn = $this->pickCardsWithCreeperCheck($player_id, $drawCount);
     } else {
-      // No creepers: we can just draw 
+      // No creepers: we can just draw
       $cardsDrawn = $this->cards->pickCards($drawCount, "deck", $player_id);
     }
 
@@ -533,8 +534,12 @@ class fluxx extends Table
     }
   }
 
-  public function discardCardsFromLocation($cards_id, $location, $location_arg, $expected_type)
-  {
+  public function discardCardsFromLocation(
+    $cards_id,
+    $location,
+    $location_arg,
+    $expected_type
+  ) {
     $cards = [];
     foreach ($cards_id as $card_id) {
       // Verify card is in the right location
@@ -542,14 +547,14 @@ class fluxx extends Table
       if (
         $card == null ||
         $card["location"] != $location ||
-        $card["location_arg"] != $location_arg        
+        $card["location_arg"] != $location_arg
       ) {
         throw new BgaUserException(
           self::_("Impossible discard: invalid card ") . $card_id
         );
       }
       // and of the expected type to be discarded (if specified)
-      if ($expected_type != null && $expected_type != $card["type"]){
+      if ($expected_type != null && $expected_type != $card["type"]) {
         throw new BgaUserException(
           self::_("Illegal discard: card must be of type ") . $expected_type
         );
@@ -580,9 +585,11 @@ class fluxx extends Table
   public function checkCreeperResolveNeeded($lastPlayedCard)
   {
     // Check for any Creeper abilities after keepers/creepers played or moved
-    $stateTransition = CreeperCardFactory::onCheckResolveKeepersAndCreepers($lastPlayedCard);
+    $stateTransition = CreeperCardFactory::onCheckResolveKeepersAndCreepers(
+      $lastPlayedCard
+    );
     if ($stateTransition != null) {
-      $this->gamestate->nextState($stateTransition);      
+      $this->gamestate->nextState($stateTransition);
     }
     return $stateTransition != null;
   }
@@ -633,33 +640,44 @@ class fluxx extends Table
       $goalCard = GoalCardFactory::getCard($card["id"], $card["type_arg"]);
 
       $goalReachedByPlayerId = $goalCard->goalReachedByPlayer();
-      if ($goalReachedByPlayerId != null
-          && $goalCard->isWinPreventedByCreepers($goalReachedByPlayerId, $goalCard)) {                
+      if (
+        $goalReachedByPlayerId != null &&
+        $goalCard->isWinPreventedByCreepers($goalReachedByPlayerId, $goalCard)
+      ) {
         // notify that player could have won but was prevented by creeper
         $players = self::loadPlayersBasicInfos();
         $unlucky_player_name = $players[$goalReachedByPlayerId]["player_name"];
-        self::notifyAllPlayers("winPreventedByCreeper", 
+        self::notifyAllPlayers(
+          "winPreventedByCreeper",
           clienttranslate(
             'Creepers prevent <b>${unlucky_player_name}</b> from winning with <b>${goal_name}</b>'
-          ), [
-          "goal_name" => $goalCard->getName(),
-          "unlucky_player_name" => $unlucky_player_name,
+          ),
+          [
+            "goal_name" => $goalCard->getName(),
+            "unlucky_player_name" => $unlucky_player_name,
           ]
         );
         // sorry, but you can't win yet
         $goalReachedByPlayerId = null;
       }
-      if ($goalReachedByPlayerId != null
-          && $goalCard->isWinPreventedByBakedPotato($goalReachedByPlayerId, $goalCard)) {     
+      if (
+        $goalReachedByPlayerId != null &&
+        $goalCard->isWinPreventedByBakedPotato(
+          $goalReachedByPlayerId,
+          $goalCard
+        )
+      ) {
         // notify that player could have won but also needs the Radioactive Potato
         $players = self::loadPlayersBasicInfos();
         $unlucky_player_name = $players[$goalReachedByPlayerId]["player_name"];
-        self::notifyAllPlayers("winPreventedByBakedPotato", 
+        self::notifyAllPlayers(
+          "winPreventedByBakedPotato",
           clienttranslate(
             'Baked Potato prevents <b>${unlucky_player_name}</b> from winning with <b>${goal_name}</b>'
-          ), [
-          "goal_name" => $goalCard->getName(),
-          "unlucky_player_name" => $unlucky_player_name,
+          ),
+          [
+            "goal_name" => $goalCard->getName(),
+            "unlucky_player_name" => $unlucky_player_name,
           ]
         );
         // sorry, but you can't win yet
@@ -813,7 +831,7 @@ class fluxx extends Table
     self::setGameStateValue("playerTurnUsedGoalMill", 0);
     self::setGameStateValue("playerTurnUsedMysteryPlay", 0);
     self::setGameStateValue("playerTurnUsedRecycling", 0);
-    
+
     self::giveExtraTime($player_id);
     $this->gamestate->nextState("");
   }

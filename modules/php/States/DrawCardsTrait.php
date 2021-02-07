@@ -51,13 +51,14 @@ trait DrawCardsTrait
   private function checkFirstPlayRandom()
   {
     $game = Utils::getGame();
-    $firstPlayRandom = (0 != $game->getGameStateValue("activeFirstPlayRandom"));
+    $firstPlayRandom = 0 != $game->getGameStateValue("activeFirstPlayRandom");
     $playRule = $game->getGameStateValue("playRule");
 
     // Ignore this rule if the current Rule card allow you to play only one card
-    if (!$firstPlayRandom || $playRule <= 1)
+    if (!$firstPlayRandom || $playRule <= 1) {
       return;
-    
+    }
+
     // select random card from player hand (always something there, just drew cards)
     $player_id = $game->getActivePlayerId();
     $cardsInHand = $game->cards->getCardsInLocation("hand", $player_id);
@@ -80,9 +81,8 @@ trait DrawCardsTrait
     // so "checkAction" would thrown "It is not your turn" to the current player
     // when trying to play the card for the active player
 
-        // first card is a forced play, but in this case
+    // first card is a forced play, but in this case
     // it does count for the number of cards played
     $this->_action_playCard($card["id"], true);
-    
   }
 }

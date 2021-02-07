@@ -8,15 +8,14 @@ use Fluxx\Game\Utils;
  */
 class CreeperCard extends Card
 {
-  public function __construct(
-    $cardId,
-    $uniqueId
-  ) {
+  public function __construct($cardId, $uniqueId)
+  {
     parent::__construct($cardId, $uniqueId);
   }
 
   // Creepers in play globally prevent the player winning with almost all basic Goals
-  public function preventsWinForGoal($goalCard) {
+  public function preventsWinForGoal($goalCard)
+  {
     return true;
   }
 
@@ -38,7 +37,7 @@ class CreeperCard extends Card
     if ($this->interactionNeeded != null) {
       return "resolveCreeper";
     }
-    return null;  
+    return null;
   }
 
   // Indicates which interaction is expected by this Creeper
@@ -49,5 +48,4 @@ class CreeperCard extends Card
   {
     return [];
   }
-
 }

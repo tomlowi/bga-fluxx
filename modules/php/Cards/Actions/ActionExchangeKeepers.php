@@ -21,10 +21,17 @@ class ActionExchangeKeepers extends ActionCard
   public function immediateEffectOnPlay($player_id)
   {
     $game = Utils::getGame();
-    $totalKeepersInPlay 
-      = count($game->cards->getCardsOfTypeInLocation("keeper", null, "keepers", null));
-    $playersKeepersInPlay 
-      = count($game->cards->getCardsOfTypeInLocation("keeper", null, "keepers", $player_id));
+    $totalKeepersInPlay = count(
+      $game->cards->getCardsOfTypeInLocation("keeper", null, "keepers", null)
+    );
+    $playersKeepersInPlay = count(
+      $game->cards->getCardsOfTypeInLocation(
+        "keeper",
+        null,
+        "keepers",
+        $player_id
+      )
+    );
     if (
       $playersKeepersInPlay == 0 ||
       $totalKeepersInPlay - $playersKeepersInPlay == 0

@@ -16,7 +16,7 @@ trait ResolveFreeRuleTrait
     $game = Utils::getGame();
     $freeRuleCardId = self::getGameStateValue("freeRuleToResolve");
     $card = $game->cards->getCard($freeRuleCardId);
-    return $card;    
+    return $card;
   }
 
   public function arg_resolveFreeRule()
@@ -51,8 +51,9 @@ trait ResolveFreeRuleTrait
       // An action has been resolved: several things might be changed
 
       // creeper abilities to trigger (need to check this before victory)
-      if ($game->checkCreeperResolveNeeded($card))
+      if ($game->checkCreeperResolveNeeded($card)) {
         return;
+      }
       //  do we have a new winner?
       $game->checkWinConditions();
       // if not, maybe the card played had effect for any of the bonus conditions?
@@ -88,5 +89,4 @@ trait ResolveFreeRuleTrait
     }
     return self::_action_resolveFreeRule(["cards" => $cards]);
   }
-
 }

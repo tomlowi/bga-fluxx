@@ -10,7 +10,7 @@ class CreeperCardFactory extends CardFactory
 {
   public static function getCardFullClassName($uniqueId)
   {
-    $name = "Fluxx\Cards\Creepers\\" . self::$classes[$uniqueId];    
+    $name = "Fluxx\Cards\Creepers\\" . self::$classes[$uniqueId];
     return $name;
   }
 
@@ -48,8 +48,9 @@ class CreeperCardFactory extends CardFactory
   /* trigger all Creepers in play that have a special ability when Goal changes */
   public static function onGoalChange()
   {
-    if (!Utils::useCreeperPackExpansion())
+    if (!Utils::useCreeperPackExpansion()) {
       return;
+    }
 
     foreach (self::$classes as $definitionId => $class) {
       $card = self::getCard(0, $definitionId);
@@ -61,15 +62,17 @@ class CreeperCardFactory extends CardFactory
   /* trigger all Creepers in play that have a special ability on start of turn */
   public static function onTurnStart()
   {
-    if (!Utils::useCreeperPackExpansion())
+    if (!Utils::useCreeperPackExpansion()) {
       return;
+    }
 
     foreach (self::$classes as $definitionId => $class) {
       $card = self::getCard(0, $definitionId);
 
       $stateTransition = $card->onTurnStart();
-      if ($stateTransition != null)
+      if ($stateTransition != null) {
         return $stateTransition;
+      }
       // TODO: what if multiple Creeper abilities need to be resolved?
     }
   }
@@ -77,16 +80,19 @@ class CreeperCardFactory extends CardFactory
   /* trigger all Creepers in play that have a special ability to be checked after every change */
   public static function onCheckResolveKeepersAndCreepers($lastPlayedCard)
   {
-    if (!Utils::useCreeperPackExpansion())
+    if (!Utils::useCreeperPackExpansion()) {
       return;
+    }
 
     foreach (self::$classes as $definitionId => $class) {
       $card = self::getCard(0, $definitionId);
 
-      $stateTransition = $card->onCheckResolveKeepersAndCreepers($lastPlayedCard);
-      if ($stateTransition != null)
+      $stateTransition = $card->onCheckResolveKeepersAndCreepers(
+        $lastPlayedCard
+      );
+      if ($stateTransition != null) {
         return $stateTransition;
+      }
     }
-    
   }
 }

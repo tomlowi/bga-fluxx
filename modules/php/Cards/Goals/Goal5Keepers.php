@@ -33,12 +33,14 @@ class Goal5Keepers extends GoalCard
       // Ruling from the designer: any player with creepers in play cannot win this goal,
       // and if several players are tied for max then only one without creepers can win
       // (and should win if all other have creepers in play)
-      if ($this->isWinPreventedByCreepers($player_id, $this))
+      if ($this->isWinPreventedByCreepers($player_id, $this)) {
         continue;
-      
+      }
+
       // Count each player keepers
-      $nbKeepers 
-        = count($cards->getCardsOfTypeInLocation("keeper", null, "keepers", $player_id));
+      $nbKeepers = count(
+        $cards->getCardsOfTypeInLocation("keeper", null, "keepers", $player_id)
+      );
       if ($nbKeepers > $maxkeepers) {
         $keeperCounts = [$player_id];
         $maxkeepers = $nbKeepers;

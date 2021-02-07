@@ -26,7 +26,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
           that.addActionButton(
             "button_" + player_id,
             that.players[player_id]["name"],
-            onResolveMethodName,
+            onResolveMethodName
           );
           dojo.attr("button_" + player_id, "data-player-id", player_id);
         }
@@ -34,7 +34,6 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
     },
 
     updateActionButtonsCreeperResolve: {
-
       keeperSelectionSelf: function (that, args) {
         for (var player_id in that.keepersStock) {
           if (player_id == that.player_id) {
@@ -60,11 +59,15 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
               );
             }
           }
-        }        
-      },      
+        }
+      },
       playerSelection: function (that, args) {
-        that.addPlayerSelectionButtons(that, args, 
-          "onResolveCreeperPlayerSelection", false);
+        that.addPlayerSelectionButtons(
+          that,
+          args,
+          "onResolveCreeperPlayerSelection",
+          false
+        );
       },
       buttons: function (that, args) {
         for (var choice of args) {
@@ -76,7 +79,6 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
           dojo.attr("button_" + choice.value, "data-value", choice.value);
         }
       },
-
     },
 
     onResolveCreeperCardSelectionNothing: function () {
@@ -85,7 +87,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       if (this.checkAction(action)) {
         // Play a card
         this.ajaxAction(action, {
-          card_id: card_id
+          card_id: card_id,
         });
       }
     },
@@ -98,11 +100,10 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
 
       if (items.length == 0) return;
 
-      if (this.checkAction(action)) 
-      {
+      if (this.checkAction(action)) {
         // Play a card
         this.ajaxAction(action, {
-          card_id:  items[0].id
+          card_id: items[0].id,
         });
       }
 
@@ -153,11 +154,10 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         dojo.disconnect(this._listeners[listener_id]);
         delete this._listeners[listener_id];
       }
-
     },
 
-    // notif_creeperResolved: function (notif) {            
-    //   // nothing really needed?      
+    // notif_creeperResolved: function (notif) {
+    //   // nothing really needed?
     // },
   });
 });

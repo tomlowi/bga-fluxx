@@ -19,7 +19,12 @@ class ActionShareTheWealth extends ActionCard
   {
     $game = Utils::getGame();
 
-    $keepersInPlay = $game->cards->getCardsOfTypeInLocation("keeper", null, "keepers", null);
+    $keepersInPlay = $game->cards->getCardsOfTypeInLocation(
+      "keeper",
+      null,
+      "keepers",
+      null
+    );
     $next_player = $game->getNextPlayerTable();
 
     // gather and shuffle all keepers in play
@@ -36,8 +41,12 @@ class ActionShareTheWealth extends ActionCard
           "destination_player_id" => $current_player_id,
           "origin_player_id" => $origin_player_id,
           "cards" => [$card],
-          "destination_creeperCount" => Utils::getPlayerCreeperCount($current_player_id),
-          "origin_creeperCount" => Utils::getPlayerCreeperCount($origin_player_id),
+          "destination_creeperCount" => Utils::getPlayerCreeperCount(
+            $current_player_id
+          ),
+          "origin_creeperCount" => Utils::getPlayerCreeperCount(
+            $origin_player_id
+          ),
         ]);
       }
       $current_player_id = $next_player[$current_player_id];

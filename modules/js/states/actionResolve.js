@@ -26,7 +26,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
           that.addActionButton(
             "button_" + player_id,
             that.players[player_id]["name"],
-            onResolveMethodName,
+            onResolveMethodName
           );
           dojo.attr("button_" + player_id, "data-player-id", player_id);
         }
@@ -85,12 +85,20 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
           stock.setSelectionMode(1);
         }
 
-        that.addPlayerSelectionButtons(that, args, 
-          "onResolveActionKeeperAndPlayerSelection", true);
+        that.addPlayerSelectionButtons(
+          that,
+          args,
+          "onResolveActionKeeperAndPlayerSelection",
+          true
+        );
       },
       playerSelection: function (that, args) {
-        that.addPlayerSelectionButtons(that, args, 
-          "onResolveActionPlayerSelection", false);
+        that.addPlayerSelectionButtons(
+          that,
+          args,
+          "onResolveActionPlayerSelection",
+          false
+        );
       },
       discardSelection: function (that, args) {
         dojo.place('<div id="tmpDiscardStock"></div>', "tmpHand", "first");
@@ -224,7 +232,10 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         var stock = this.keepersStock[player_id];
         var items = stock.getSelectedItems();
 
-        if (items.length > 1 || (items.length > 0 && selectedKeeper !== undefined)) {
+        if (
+          items.length > 1 ||
+          (items.length > 0 && selectedKeeper !== undefined)
+        ) {
           this.showMessage(
             _("You must select exactly 1 item from 1 player's keeper section"),
             "error"
@@ -234,7 +245,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
 
         if (items.length > 0) {
           selectedKeeper = items[0];
-        }              
+        }
       }
 
       if (selectedKeeper === undefined) {

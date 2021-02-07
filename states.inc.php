@@ -93,8 +93,12 @@ $machinestates = [
 
   STATE_PLAY_CARD => [
     "name" => "playCard",
-    "description" => clienttranslate('${actplayer} must play ${countLabel} card(s)'),
-    "descriptionmyturn" => clienttranslate('${you} must play ${countLabel} card(s)'),
+    "description" => clienttranslate(
+      '${actplayer} must play ${countLabel} card(s)'
+    ),
+    "descriptionmyturn" => clienttranslate(
+      '${you} must play ${countLabel} card(s)'
+    ),
     "type" => "activeplayer",
     "action" => "st_playCard",
     "args" => "arg_playCard",
@@ -172,7 +176,7 @@ $machinestates = [
     "action" => "st_enforceKeepersLimitForSelf",
     "possibleactions" => ["discardKeepers"],
     "transitions" => [
-      "" => STATE_NEXT_PLAYER
+      "" => STATE_NEXT_PLAYER,
     ],
   ],
 
@@ -309,9 +313,9 @@ $machinestates = [
       "resolveCreeperButtons",
     ],
     "transitions" => [
-      "resolvedCreeper" => STATE_NEXT_PLAYER_TURNSTART_CREEPERS
+      "resolvedCreeper" => STATE_NEXT_PLAYER_TURNSTART_CREEPERS,
     ],
-  ], 
+  ],
 
   STATE_NEXT_PLAYER_TURNSTART_CREEPERS => [
     "name" => "nextPlayerTurnStartCreepers",
@@ -321,7 +325,7 @@ $machinestates = [
     "updateGameProgression" => false,
     "transitions" => [
       "resolveCreeper" => STATE_RESOLVE_CREEPER_TURNSTART,
-      "finishedTurnStartCreepers" => STATE_DRAW_CARDS
+      "finishedTurnStartCreepers" => STATE_DRAW_CARDS,
     ],
   ],
 
@@ -332,7 +336,7 @@ $machinestates = [
     "action" => "st_nextPlayer",
     "updateGameProgression" => true,
     "transitions" => [
-      "" => STATE_NEXT_PLAYER_TURNSTART_CREEPERS
+      "" => STATE_NEXT_PLAYER_TURNSTART_CREEPERS,
     ],
   ],
 

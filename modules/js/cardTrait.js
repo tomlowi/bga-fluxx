@@ -108,7 +108,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       }
     },
 
-    notif_keeperPlayed: function (notif) {      
+    notif_keeperPlayed: function (notif) {
       var player_id = notif.args.player_id;
       this.playCard(player_id, notif.args.card, this.keepersStock[player_id]);
       this.handCounter[player_id].toValue(notif.args.handCount);
@@ -118,11 +118,11 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       this.creepersCounter[player_id].toValue(notif.args.creeperCount);
     },
 
-    notif_creeperPlayed: function (notif) {      
+    notif_creeperPlayed: function (notif) {
       var player_id = notif.args.player_id;
       this.playCard(player_id, notif.args.card, this.keepersStock[player_id]);
       this.handCounter[player_id].toValue(notif.args.handCount);
-      this.creepersCounter[player_id].toValue(notif.args.creeperCount);     
+      this.creepersCounter[player_id].toValue(notif.args.creeperCount);
     },
 
     notif_goalsDiscarded: function (notif) {
@@ -265,9 +265,13 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       );
       this.keepersCounter[origin_player_id].toValue(
         originStock.count() - notif.args.origin_creeperCount
-        );
-      this.creepersCounter[destination_player_id].toValue(notif.args.destination_creeperCount);
-      this.creepersCounter[origin_player_id].toValue(notif.args.origin_creeperCount);
+      );
+      this.creepersCounter[destination_player_id].toValue(
+        notif.args.destination_creeperCount
+      );
+      this.creepersCounter[origin_player_id].toValue(
+        notif.args.origin_creeperCount
+      );
     },
 
     notif_handCountUpdate: function (notif) {
@@ -348,7 +352,9 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         this.keepersCounter[card.location_arg].toValue(
           this.keepersStock[card.location_arg].count() - notif.args.creeperCount
         );
-        this.creepersCounter[card.location_arg].toValue(notif.args.creeperCount);
+        this.creepersCounter[card.location_arg].toValue(
+          notif.args.creeperCount
+        );
       }
     },
   });

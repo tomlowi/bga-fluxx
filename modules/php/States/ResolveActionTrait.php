@@ -53,8 +53,9 @@ trait ResolveActionTrait
       // An action has been resolved: several things might be changed
 
       // creeper abilities to trigger (need to check this before victory)
-      if ($game->checkCreeperResolveNeeded($card))
+      if ($game->checkCreeperResolveNeeded($card)) {
         return;
+      }
       //  do we have a new winner?
       $game->checkWinConditions();
       // if not, maybe the card played had effect for any of the bonus conditions?
@@ -76,8 +77,10 @@ trait ResolveActionTrait
     ]);
   }
 
-  public function action_resolveActionCardAndPlayerSelection($card_id, $selected_player_id)
-  {
+  public function action_resolveActionCardAndPlayerSelection(
+    $card_id,
+    $selected_player_id
+  ) {
     self::checkAction("resolveActionPlayerSelection");
 
     $game = Utils::getGame();

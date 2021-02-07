@@ -116,7 +116,12 @@ trait KeepersLimitTrait
 
     // verify these are all actually keeper cards in hand of player
 
-    $cards = self::discardCardsFromLocation($cards_id, "keepers", $player_id, "keeper");
+    $cards = self::discardCardsFromLocation(
+      $cards_id,
+      "keepers",
+      $player_id,
+      "keeper"
+    );
 
     self::notifyAllPlayers("keepersDiscarded", "", [
       "player_id" => $player_id,

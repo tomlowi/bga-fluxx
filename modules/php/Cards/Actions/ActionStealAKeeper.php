@@ -21,10 +21,17 @@ class ActionStealAKeeper extends ActionCard
   public function immediateEffectOnPlay($player_id)
   {
     $game = Utils::getGame();
-    $totalKeepersInPlay 
-      = count($game->cards->getCardsOfTypeInLocation("keeper", null, "keepers", null));
-    $playersKeepersInPlay 
-      = count($game->cards->getCardsOfTypeInLocation("keeper", null, "keepers", $player_id));
+    $totalKeepersInPlay = count(
+      $game->cards->getCardsOfTypeInLocation("keeper", null, "keepers", null)
+    );
+    $playersKeepersInPlay = count(
+      $game->cards->getCardsOfTypeInLocation(
+        "keeper",
+        null,
+        "keepers",
+        $player_id
+      )
+    );
     if ($totalKeepersInPlay - $playersKeepersInPlay == 0) {
       // no keepers on the table for others, this action does nothing
       return;
@@ -44,9 +51,11 @@ class ActionStealAKeeper extends ActionCard
     $card_location = $card["location"];
     $other_player_id = $card["location_arg"];
 
-    if ($card_type != "keeper" || 
-        $card_location != "keepers" ||
-        $other_player_id == $player_id) {
+    if (
+      $card_type != "keeper" ||
+      $card_location != "keepers" ||
+      $other_player_id == $player_id
+    ) {
       Utils::throwInvalidUserAction(
         fluxx::totranslate(
           "You must select a keeper card in front of another player"
