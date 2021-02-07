@@ -236,12 +236,13 @@ class Utils
     $mustPlay = Utils::calculateCardsMustPlayFor($player_id, false);
 
     $leftCount = $mustPlay - $alreadyPlayed;
+    $handCount = $game->cards->countCardInLocation("hand", $player_id);
+
     if ($mustPlay >= PLAY_COUNT_ALL) {
       // Play All > left as many as cards in hand
-      $leftCount = $game->cards->countCardInLocation("hand", $player_id);
+      $leftCount = $handCount;
     } elseif ($mustPlay < 0) {
-      // Play All but 1 > left as many as cards in hand minus the leftover
-      $handCount = $game->cards->countCardInLocation("hand", $player_id);
+      // Play All but 1 > left as many as cards in hand minus the leftover      
       $leftCount = $handCount + $mustPlay; // ok, $mustPlay is negative here
     }
 
@@ -249,6 +250,10 @@ class Utils
     // in that case player should not play any more cards
     if ($leftCount < 0) {
       $leftCount = 0;
+    } else 
+    // can't play more cards than in hand
+    if ($leftCount > $handCount) {
+      $leftCount = $handCount;
     }
 
     return $leftCount;
