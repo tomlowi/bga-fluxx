@@ -262,6 +262,7 @@ class fluxx extends Table
 
     $result = [
       "players" => $players,
+      "cardTypesDefinitions" => $this->getAllCardTypesDefinitions(),
       "cardsDefinitions" => $this->getAllCardsDefinitions(),
       "creeperPack" => Utils::useCreeperPackExpansion(),
       "hand" => $this->cards->getCardsInLocation("hand", $current_player_id),
@@ -354,6 +355,17 @@ class fluxx extends Table
       default:
         return null;
     }
+  }
+
+  function getAllCardTypesDefinitions()
+  {
+    return [
+      "action" => clienttranslate("Actie"),
+      "creeper" => clienttranslate("Creeper"),
+      "goal" => clienttranslate("Doel"),
+      "keeper" => clienttranslate("Thema"),
+      "rule" => clienttranslate("Regel"),
+    ];
   }
 
   /*

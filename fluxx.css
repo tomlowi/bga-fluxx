@@ -128,6 +128,83 @@
   display: none !important;
 }
 
+.flx-card-tooltip {
+  display: block;
+}
+
+.flx-card-tooltip .card-name {
+  display: inline-block;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.flx-card-tooltip .card-type {
+  display: inline-block;
+  margin-left: 20px;
+  font-weight: bolder;  
+  font-size: 16px;
+  font-style: italic;
+}
+
+.flx-card-tooltip .card-subtitle {
+  font-weight: bolder;
+  font-size: 14px;
+}
+
+.flx-card-tooltip .card-description {
+  font-weight: normal;
+  font-size: 14px;
+}
+
+.card-overlay {
+  margin-right: 10px;
+  display: block;
+  max-width: 115px;
+  max-height: 200px;  
+  overflow-y: auto;
+  background-color: yellow;
+  opacity: 50%; 
+}
+
+.flx-keepers .card-overlay {
+  display: none;
+}
+
+.flx-card-action {
+  margin-left: 42px;
+  margin-top: 50px;
+}
+
+.flx-card-goal {
+  margin-left: 42px;
+  margin-top: 45px;
+}
+
+.flx-card-keeper {
+  margin-left: 42px;
+  margin-top: 215px;
+}
+
+.flx-card-rule {
+  margin-left: 42px;
+  margin-top: 165px;
+}
+
+.flx-card-overlay .card-name {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.flx-card-overlay .card-subtitle {
+  font-weight: bolder;
+  font-size: 14px;  
+}
+
+.flx-card-overlay .card-description {
+  font-weight: normal;
+  font-size: 14px;  
+}
+
 /**
  *------
  * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>

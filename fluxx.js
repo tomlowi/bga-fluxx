@@ -118,6 +118,7 @@ define([
         this.players = gamedatas.players;
 
         // Save card metadata that we will use for UI & metadata
+        this.cardTypesDefinitions = this.gamedatas.cardTypesDefinitions;
         this.cardsDefinitions = this.gamedatas.cardsDefinitions;
         //console.log("Cards definitions", this.cardsDefinitions);
 
@@ -480,6 +481,7 @@ define([
           subtitle: cardDefinition.subtitle || "",
           description: cardDefinition.description || "",
           type: cardDefinition.type,
+          typeName: this.cardTypesDefinitions[cardDefinition.type],
           id: card_type_id,
         };
 
@@ -488,11 +490,12 @@ define([
           card_div.id,
           this.format_block("jstpl_cardTooltip", card)
         );
+        // Overlay the card image with translated descriptions
+        var cardOverlay = this.format_block("jstpl_cardOverlay", card);        
+        dojo.place(cardOverlay, card_div.id);
 
         // Note that "card_type_id" contains the type of the item, so you can do special actions depending on the item type
 
-        // Add some custom HTML content INSIDE the Stock item:
-        // dojo.place("<p>test</p>", card_div.id);
       },
 
       addCardsToStock: function (stock, cards, keepOrder) {

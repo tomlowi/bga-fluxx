@@ -81,16 +81,27 @@
 </div>';
 
   var jstpl_cardTooltip = `<div class="flx-card-tooltip">
-		<div class=">flx-card" id="flx-card-tooltip-\${id}">
+		<div class="flx-card" id="flx-card-tooltip-\${id}">
 			<div class="card-front">
 				<div class="card-name">\${name}</div>
+        <div class="card-type">\${typeName}</div>
 				<div class="card-subtitle">\${subtitle}</div>
-				<div class="card-description">\${description}</div>
-				<div class="card-type">\${type}</div>
+				<div class="card-description">\${description}</div>				
 				<div class="card-background"></div>
 			</div>
 		</div>
 </div>`;
+
+  var jstpl_cardOverlay = `<div class="flx-card-overlay">
+		<div class="flx-card flx-card-\${type}" id="flx-card-overlay-\${id}">
+			<div class="card-overlay">
+        <div class="card-name">\${name}</div>
+        <div class="card-subtitle">\${subtitle}</div>
+				<div class="card-description">\${description}</div>
+			</div>
+		</div>
+</div>`;
+
 </script>
 
 {OVERALL_GAME_FOOTER}
