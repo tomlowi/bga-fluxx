@@ -491,7 +491,9 @@ define([
           this.format_block("jstpl_cardTooltip", card)
         );
         // Overlay the card image with translated descriptions
-        var cardOverlay = this.format_block("jstpl_cardOverlay", card);        
+        var cardOverlayTitle = this.format_block("jstpl_cardOverlay_title", card);
+        var cardOverlay = this.format_block("jstpl_cardOverlay_text", card);
+        dojo.place(cardOverlayTitle, card_div.id);
         dojo.place(cardOverlay, card_div.id);
 
         // Note that "card_type_id" contains the type of the item, so you can do special actions depending on the item type

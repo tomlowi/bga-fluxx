@@ -81,8 +81,11 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
     },
 
     notif_cardsDrawn: function (notif) {
+      const markerClass = "newDrawnCard";
+      dojo.query( '.' + markerClass ).removeClass( markerClass );
       for (var card of notif.args.cards) {
         this.handStock.addToStockWithId(card.type_arg, card.id, "deckCard");
+        dojo.addClass('handStock_item_' + card.id, markerClass);
       }
     },
 

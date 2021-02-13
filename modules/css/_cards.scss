@@ -1,77 +1,172 @@
+$font-stack-default: "Helvetica Neue",Helvetica;
+$font-stack-title-base: Brown,Futura,sans-serif;
+$font-stack-title-creepers: "Bernard MT Condensed",Futura;
+$card-height: 258px;
+$card-width: 166px;
+$card-height-title: 28px;
+$card-margin-left: 41px;
+$card-margin-right: 10px;
+$card-margin-top: ($card-height/16);
+$card-margin-bottom: ($card-height/16);
+$card-width-inner: $card-width - $card-margin-left - $card-margin-right;
+$card-height-inner: $card-height - $card-height-title - $card-margin-top - $card-margin-bottom;
+$color-cardwhite: #EFF0F0;
+$color-keeper: #9DC139;
+$color-creeper: #000000;
+$color-action: #0099CD;
+$color-goal: #D23F7F;
+$color-rule: #D7B424;
+
+.newDrawnCard {
+  outline-color: darkslategray;
+  outline-style: solid;
+  outline-width: medium;    
+}
+
 .flx-card-tooltip {
-    display: block;
-  }
-  
-  .flx-card-tooltip .card-name {
+  display: block;
+
+  .card-name {
     display: inline-block;
     font-weight: bold;
-    font-size: 18px;
+    font-size: 20px;
   }
   
-  .flx-card-tooltip .card-type {
+  .card-type {
     display: inline-block;
     margin-left: 20px;
     font-weight: bolder;  
-    font-size: 16px;
+    font-size: 18px;
     font-style: italic;
   }
   
-  .flx-card-tooltip .card-subtitle {
+  .card-subtitle {
     font-weight: bolder;
-    font-size: 14px;
+    font-size: 16px;
   }
   
-  .flx-card-tooltip .card-description {
+  .card-description {
     font-weight: normal;
     font-size: 14px;
   }
-  
-  .card-overlay {
-    margin-right: 10px;
-    display: block;
-    max-width: 115px;
-    max-height: 200px;  
-    overflow-y: auto;
-    background-color: yellow;
-    opacity: 50%; 
+}
+
+.flx-card-tooltip-keeper {
+  .card-type {
+    color: $color-keeper;
+  }
+}
+
+.flx-card-tooltip-creeper {
+  .card-type {
+    color: $color-creeper;
+  }
+}
+
+.flx-card-tooltip-action {
+  .card-type {
+    color: $color-action;
+  }
+}
+
+.flx-card-tooltip-goal {
+  .card-type {
+    color: $color-goal;
+  }
+}
+
+.flx-card-tooltip-rule {
+  .card-type {
+    color: $color-rule;
+  }
+}
+
+.flx-card-title {
+  font-family: $font-stack-title-base;
+}
+.flx-card-title-creeper {
+  font-family: font-stack-title-creepers;
+}
+
+.card-overlay-title {
+  display: block;
+  margin-left: $card-margin-left;
+  margin-right: $card-margin-right;
+  width: $card-width-inner;
+  height: $card-height-title;
+  background-color: $color-cardwhite;
+
+  .card-type {
+    font-weight: bold;
+    font-size: 20px;
+    text-transform: uppercase;
+    margin-top: $card-margin-top;    
+  }
+}
+
+.flx-card {
+  font-family: $font-stack-default;
+}
+
+.card-overlay {
+  display: block;
+  margin-left: $card-margin-left;
+  margin-right: $card-margin-right;
+  width: $card-width-inner;
+  background-color: $color-cardwhite;
+
+  .card-name {
+    font-weight: bold;
+    font-size: 15px;
   }
   
-  .flx-keepers .card-overlay {
+  .card-subtitle {
+    font-weight: bolder;
+    font-size: 11px;
+    margin-bottom: 2px;
+  }
+  
+  .card-description {
+    font-weight: normal;
+    font-size: 9px;  
+  }
+}
+
+.flx-keepers {
+  .card-overlay-title {
     display: none;
   }
-  
-  .flx-card-action {
-    margin-left: 42px;
-    margin-top: 50px;
+  .card-overlay {
+    display: none;
   }
-  
-  .flx-card-goal {
-    margin-left: 42px;
-    margin-top: 45px;
+}
+
+.flx-card-action {
+  .card-overlay {
+    height: $card-height-inner;
+  } 
+  .card-name {
+    margin-top: 5px;    
   }
-  
-  .flx-card-keeper {
-    margin-left: 42px;
-    margin-top: 215px;
+}
+
+.flx-card-goal {
+  .card-name {
+    margin-top: 5px;
   }
-  
-  .flx-card-rule {
-    margin-left: 42px;
-    margin-top: 165px;
+}
+
+.flx-card-keeper {
+  .card-name {
+    margin-top: $card-height-inner - 20px;    
   }
-  
-  .flx-card-overlay .card-name {
-    font-weight: bold;
-    font-size: 18px;
+}
+
+.flx-card-rule {
+  .card-overlay {
+    height: $card-height-inner / 2;
+  }  
+  .card-name {
+    margin-top: $card-height-inner / 2;    
   }
-  
-  .flx-card-overlay .card-subtitle {
-    font-weight: bolder;
-    font-size: 14px;  
-  }
-  
-  .flx-card-overlay .card-description {
-    font-weight: normal;
-    font-size: 14px;  
-  }
-  
+}

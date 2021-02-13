@@ -360,11 +360,11 @@ class fluxx extends Table
   function getAllCardTypesDefinitions()
   {
     return [
-      "action" => clienttranslate("Actie"),
+      "action" => clienttranslate("Action"),
       "creeper" => clienttranslate("Creeper"),
-      "goal" => clienttranslate("Doel"),
-      "keeper" => clienttranslate("Thema"),
-      "rule" => clienttranslate("Regel"),
+      "goal" => clienttranslate("Goal"),
+      "keeper" => clienttranslate("Keeper"),
+      "rule" => clienttranslate("New Rule"),
     ];
   }
 

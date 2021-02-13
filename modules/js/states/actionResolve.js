@@ -226,7 +226,6 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
 
       var action = "resolveActionCardAndPlayerSelection";
 
-      debugger;
       var selectedKeeper = undefined;
       for (var player_id in this.keepersStock) {
         var stock = this.keepersStock[player_id];

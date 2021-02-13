@@ -1,75 +1,154 @@
 @charset "UTF-8";
+/**
+ *------
+ * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
+ * fluxx implementation : © Alexandre Spaeth <alexandre.spaeth@hey.com> & Julien Rossignol <tacotaco.dev@gmail.com>
+ *
+ * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
+ * See http://en.boardgamearena.com/#!doc/Studio for more information.
+ * -----
+ *
+ * fluxx.css
+ *
+ * fluxx stylesheet
+ *
+ */
+/*
+    This is the CSS stylesheet of your game User Interface.
+    
+    Styles defined on this file will be applied to the HTML elements you define in your
+    HTML template (fluxx_fluxx.tpl), and to HTML elements you create dynamically
+    (in fluxx.js).
+    
+    Usually, you are using CSS to:
+    
+    1°) define the overall layout of your game
+        (ex: place the board on the top left, place player's hand beside, place the deck on the right, ...).
+
+    2°) create your CSS-sprites:
+        All images of your games should be gathered into a small number of image files. Then, using
+        background-image and background-position CSS properties, you create HTML blocks that can 
+        display these images correctly (see example below).
+    
+    3°) ... anything else:
+        It is really easy to add and remove CSS classes dynamically from your Javascript with
+        dojo.addClass and dojo.removeClass. It is also easy to check if an element has a class
+        (dojo.hasClass) or to get all elements with a specific class (dojo.query). This is why,
+        very often, using CSS classes for the logic of your user interface allow you to do complex
+        thing easily.
+        
+        
+     Note: on the production platform, this file will be compressed and comments will be removed.
+           Consequently, don't hesitate to put as many comments as necessary.
+*/
+/* Note: you must not use any @import directive */
+/********* You can start writing your CSS below this line: **********/
 #tmpHand:empty {
   display: none;
 }
 
 .flx-player {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
 }
+
 .flx-player .flx-hand {
   margin-right: 10px;
-  flex: 3 0;
+  -webkit-box-flex: 3;
+      -ms-flex: 3 0;
+          flex: 3 0;
 }
+
 .flx-player .flx-keepers {
-  flex: 1 0;
+  -webkit-box-flex: 1;
+      -ms-flex: 1 0;
+          flex: 1 0;
 }
 
 .flx-table {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
 }
+
 .flx-table .flx-deck {
-  flex: 1 0;
+  -webkit-box-flex: 1;
+      -ms-flex: 1 0;
+          flex: 1 0;
   padding-top: 42px;
   margin-right: 10px;
 }
+
 .flx-table .flx-deck .flx-card-count {
   padding: 5px;
 }
+
 .flx-table .flx-goal {
-  flex: 1 0;
+  -webkit-box-flex: 1;
+      -ms-flex: 1 0;
+          flex: 1 0;
   margin-right: 10px;
 }
+
 .flx-table .flx-rules {
-  flex: 1 0;
+  -webkit-box-flex: 1;
+      -ms-flex: 1 0;
+          flex: 1 0;
 }
+
 .flx-table .flx-rules .flx-card-stack {
   position: relative;
   margin: auto;
   width: 350px;
   height: 415px;
 }
+
 .flx-table .flx-rules .flx-card-stack .flx-card-stack-center {
   position: absolute;
   left: 90px;
 }
+
 .flx-table .flx-rules .flx-card-stack .flx-card-stack-left {
   position: absolute;
   top: 153px;
   left: 0px;
 }
+
 .flx-table .flx-rules .flx-card-stack .flx-card-stack-right {
   position: absolute;
   top: 153px;
   left: 180px;
 }
+
 .flx-table .flx-card {
   width: 166px;
   height: 258px;
 }
+
 .flx-table .flx-deck-card {
   background-image: url("img/cards.png");
   background-position: -1500% -500%;
 }
+
 .flx-table .flx-deck-card.flx-deck-empty {
   background-position: -1600% -500%;
 }
+
 .flx-table #discardStock {
   border: 1px;
 }
+
 .flx-table #baseRuleCard {
   width: 166px;
   height: 258px;
@@ -78,14 +157,23 @@
 }
 
 .flx-other-players {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
 }
+
 .flx-other-players .flx-keepers {
-  flex: 1 0;
+  -webkit-box-flex: 1;
+      -ms-flex: 1 0;
+          flex: 1 0;
   margin-right: 10px;
 }
+
 .flx-other-players .flx-keepers:last-child {
   margin-right: 0px;
 }
@@ -100,13 +188,13 @@
 .flx-icons-hand {
   width: 23px;
   height: 33px;
-  background-position: 0px 0px;
+  background-position: -0px -0px;
 }
 
 .flx-icons-keeper {
   width: 22px;
   height: 33px;
-  background-position: -23px 0px;
+  background-position: -23px -0px;
 }
 
 .flx-icons-creeper {
@@ -128,6 +216,12 @@
   display: none !important;
 }
 
+.newDrawnCard {
+  outline-color: darkslategray;
+  outline-style: solid;
+  outline-width: medium;
+}
+
 .flx-card-tooltip {
   display: block;
 }
@@ -135,20 +229,20 @@
 .flx-card-tooltip .card-name {
   display: inline-block;
   font-weight: bold;
-  font-size: 18px;
+  font-size: 20px;
 }
 
 .flx-card-tooltip .card-type {
   display: inline-block;
   margin-left: 20px;
-  font-weight: bolder;  
-  font-size: 16px;
+  font-weight: bolder;
+  font-size: 18px;
   font-style: italic;
 }
 
 .flx-card-tooltip .card-subtitle {
   font-weight: bolder;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .flx-card-tooltip .card-description {
@@ -156,96 +250,107 @@
   font-size: 14px;
 }
 
-.card-overlay {
-  margin-right: 10px;
+.flx-card-tooltip-keeper .card-type {
+  color: #9DC139;
+}
+
+.flx-card-tooltip-creeper .card-type {
+  color: #000000;
+}
+
+.flx-card-tooltip-action .card-type {
+  color: #0099CD;
+}
+
+.flx-card-tooltip-goal .card-type {
+  color: #D23F7F;
+}
+
+.flx-card-tooltip-rule .card-type {
+  color: #D7B424;
+}
+
+.flx-card-title {
+  font-family: Brown, Futura, sans-serif;
+}
+
+.flx-card-title-creeper {
+  font-family: font-stack-title-creepers;
+}
+
+.card-overlay-title {
   display: block;
-  max-width: 115px;
-  max-height: 200px;  
-  overflow-y: auto;
-  background-color: yellow;
-  opacity: 50%; 
+  margin-left: 41px;
+  margin-right: 10px;
+  width: 115px;
+  height: 28px;
+  background-color: #EFF0F0;
+}
+
+.card-overlay-title .card-type {
+  font-weight: bold;
+  font-size: 20px;
+  text-transform: uppercase;
+  margin-top: 16.125px;
+}
+
+.flx-card {
+  font-family: "Helvetica Neue", Helvetica;
+}
+
+.card-overlay {
+  display: block;
+  margin-left: 41px;
+  margin-right: 10px;
+  width: 115px;
+  background-color: #EFF0F0;
+}
+
+.card-overlay .card-name {
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.card-overlay .card-subtitle {
+  font-weight: bolder;
+  font-size: 11px;
+  margin-bottom: 2px;
+}
+
+.card-overlay .card-description {
+  font-weight: normal;
+  font-size: 9px;
+}
+
+.flx-keepers .card-overlay-title {
+  display: none;
 }
 
 .flx-keepers .card-overlay {
   display: none;
 }
 
-.flx-card-action {
-  margin-left: 42px;
-  margin-top: 50px;
+.flx-card-action .card-overlay {
+  height: 197.75px;
 }
 
-.flx-card-goal {
-  margin-left: 42px;
-  margin-top: 45px;
+.flx-card-action .card-name {
+  margin-top: 5px;
 }
 
-.flx-card-keeper {
-  margin-left: 42px;
-  margin-top: 215px;
+.flx-card-goal .card-name {
+  margin-top: 5px;
 }
 
-.flx-card-rule {
-  margin-left: 42px;
-  margin-top: 165px;
+.flx-card-keeper .card-name {
+  margin-top: 177.75px;
 }
 
-.flx-card-overlay .card-name {
-  font-weight: bold;
-  font-size: 18px;
+.flx-card-rule .card-overlay {
+  height: 98.875px;
 }
 
-.flx-card-overlay .card-subtitle {
-  font-weight: bolder;
-  font-size: 14px;  
+.flx-card-rule .card-name {
+  margin-top: 98.875px;
 }
-
-.flx-card-overlay .card-description {
-  font-weight: normal;
-  font-size: 14px;  
-}
-
-/**
- *------
- * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
- * fluxx implementation : © Alexandre Spaeth <alexandre.spaeth@hey.com> & Julien Rossignol <tacotaco.dev@gmail.com>
- *
- * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
- * See http://en.boardgamearena.com/#!doc/Studio for more information.
- * -----
- *
- * fluxx.css
- *
- * fluxx stylesheet
- *
- */
-/*
-    This is the CSS stylesheet of your game User Interface.
-
-    Styles defined on this file will be applied to the HTML elements you define in your
-    HTML template (fluxx_fluxx.tpl), and to HTML elements you create dynamically
-    (in fluxx.js).
-
-    Usually, you are using CSS to:
-
-    1°) define the overall layout of your game
-        (ex: place the board on the top left, place player's hand beside, place the deck on the right, ...).
-
-    2°) create your CSS-sprites:
-        All images of your games should be gathered into a small number of image files. Then, using
-        background-image and background-position CSS properties, you create HTML blocks that can 
-        display these images correctly (see example below).
-
-    3°) ... anything else:
-        It is really easy to add and remove CSS classes dynamically from your Javascript with
-        dojo.addClass and dojo.removeClass. It is also easy to check if an element has a class
-        (dojo.hasClass) or to get all elements with a specific class (dojo.query). This is why,
-        very often, using CSS classes for the logic of your user interface allow you to do complex
-        thing easily.
-
-
-     Note: on the production platform, this file will be compressed and comments will be removed.
-           Consequently, don't hesitate to put as many comments as necessary.
-*/
-/* Note: you must not use any @import directive */
-/********* You can start writing your CSS below this line: **********/
+/*# sourceMappingURL=fluxx.css.map */

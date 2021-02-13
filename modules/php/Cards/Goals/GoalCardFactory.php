@@ -34,6 +34,7 @@ class GoalCardFactory extends CardFactory
         "type" => "goal",
         "name" => $card->getName(),
         "subtitle" => $card->getSubtitle(),
+        "description" => $card->getDescription(),
       ];
     }
 
