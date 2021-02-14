@@ -9,6 +9,7 @@ class GoalPeaceNoWar extends GoalCard
   {
     parent::__construct($cardId, $uniqueId);
 
+    $this->set = "creeperpack";
     $this->name = clienttranslate("Peace (No War)");
     $this->description = clienttranslate(
       "If no one has War on the table, the player with Peace on the table wins."

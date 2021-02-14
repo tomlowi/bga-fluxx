@@ -1,13 +1,13 @@
 $font-stack-default: "Helvetica Neue",Helvetica;
 $font-stack-title-base: Brown,Futura,sans-serif;
-$font-stack-title-creepers: "Bernard MT Condensed",Futura;
+$font-stack-title-creepers: "Bernard MT Condensed",Impact;
 $card-height: 258px;
 $card-width: 166px;
 $card-height-title: 28px;
 $card-margin-left: 41px;
 $card-margin-right: 10px;
-$card-margin-top: ($card-height/16);
-$card-margin-bottom: ($card-height/16);
+$card-margin-top: 16px;
+$card-margin-bottom: 14px;
 $card-width-inner: $card-width - $card-margin-left - $card-margin-right;
 $card-height-inner: $card-height - $card-height-title - $card-margin-top - $card-margin-bottom;
 $color-cardwhite: #EFF0F0;
@@ -81,11 +81,11 @@ $color-rule: #D7B424;
   }
 }
 
-.flx-card-title {
+.flx-card-title-base {
   font-family: $font-stack-title-base;
 }
-.flx-card-title-creeper {
-  font-family: font-stack-title-creepers;
+.flx-card-title-creeperpack {
+  font-family: $font-stack-title-creepers;
 }
 
 .card-overlay-title {
@@ -143,7 +143,7 @@ $color-rule: #D7B424;
 
 .flx-card-action {
   .card-overlay {
-    height: $card-height-inner;
+    height: $card-height-inner - 5px;
   } 
   .card-name {
     margin-top: 5px;    
@@ -164,9 +164,9 @@ $color-rule: #D7B424;
 
 .flx-card-rule {
   .card-overlay {
-    height: $card-height-inner / 2;
+    height: $card-height-inner * 0.55;
   }  
   .card-name {
-    margin-top: $card-height-inner / 2;    
+    margin-top: $card-height-inner * 0.45;
   }
 }

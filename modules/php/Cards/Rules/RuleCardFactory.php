@@ -33,6 +33,7 @@ class RuleCardFactory extends CardFactory
       $ruleDefinitions[$definitionId] = [
         "type" => "rule",
         "ruleType" => $card->getRuleType(),
+        "set" => $card->getCardSet(),
         "name" => $card->getName(),
         "subtitle" => $card->getSubtitle(),
         "description" => $card->getDescription(),

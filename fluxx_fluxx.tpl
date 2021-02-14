@@ -93,14 +93,16 @@
 </div>`;
 
 var jstpl_cardOverlay_title = `<div class="flx-card-overlay-title">
-		<div class="flx-card-title flx-card-title-\${type}" id="flx-card-overlay-title-\${id}">
+		<div class="flx-card-title flx-card-title-\${set} flx-card-title-\${type}" 
+          id="flx-card-overlay-title-\${id}">
 			<div class="card-overlay-title">
         <div class="card-type">\${typeName}</div>
 			</div>
 		</div>
 </div>`;
 var jstpl_cardOverlay_text = `<div class="flx-card-overlay">
-		<div class="flx-card flx-card-\${type}" id="flx-card-overlay-\${id}">
+		<div class="flx-card flx-card-\${set} flx-card-\${type}" 
+          id="flx-card-overlay-\${id}">
 			<div class="card-overlay">
         <div class="card-name">\${name}</div>
         <div class="card-subtitle">\${subtitle}</div>

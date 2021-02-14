@@ -15,6 +15,7 @@ class KeeperCardFactory extends CardFactory
     foreach (self::getClasses() as $definitionId => $class) {
       $keeperDefinitions[$definitionId] = [
         "type" => "keeper",
+        "set" => "base",
         "name" => $class["name"],
       ];
     }

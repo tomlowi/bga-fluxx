@@ -8,6 +8,8 @@ class GoalTwoCreepers extends GoalCard
   public function __construct($cardId, $uniqueId)
   {
     parent::__construct($cardId, $uniqueId);
+
+    $this->set = "creeperpack";
     $this->creeper1 = -1;
     $this->creeper2 = -1;
   }

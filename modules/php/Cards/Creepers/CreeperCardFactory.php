@@ -24,6 +24,7 @@ class CreeperCardFactory extends CardFactory
 
         $creeperDefinitions[$definitionId] = [
           "type" => "creeper",
+          "set" => $card->getCardSet(),
           "name" => $card->getName(),
           "subtitle" => $card->getSubtitle(),
           "description" => $card->getDescription(),

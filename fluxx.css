@@ -270,12 +270,12 @@
   color: #D7B424;
 }
 
-.flx-card-title {
+.flx-card-title-base {
   font-family: Brown, Futura, sans-serif;
 }
 
-.flx-card-title-creeper {
-  font-family: font-stack-title-creepers;
+.flx-card-title-creeperpack {
+  font-family: "Bernard MT Condensed", Impact;
 }
 
 .card-overlay-title {
@@ -291,7 +291,7 @@
   font-weight: bold;
   font-size: 20px;
   text-transform: uppercase;
-  margin-top: 16.125px;
+  margin-top: 16px;
 }
 
 .flx-card {
@@ -331,7 +331,7 @@
 }
 
 .flx-card-action .card-overlay {
-  height: 197.75px;
+  height: 195px;
 }
 
 .flx-card-action .card-name {
@@ -343,14 +343,14 @@
 }
 
 .flx-card-keeper .card-name {
-  margin-top: 177.75px;
+  margin-top: 180px;
 }
 
 .flx-card-rule .card-overlay {
-  height: 98.875px;
+  height: 110px;
 }
 
 .flx-card-rule .card-name {
-  margin-top: 98.875px;
+  margin-top: 90px;
 }
 /*# sourceMappingURL=fluxx.css.map */

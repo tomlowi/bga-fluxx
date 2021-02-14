@@ -477,6 +477,7 @@ define([
         var cardDefinition = this.cardsDefinitions[card_type_id];
 
         var card = {
+          set: cardDefinition.set,
           name: cardDefinition.name,
           subtitle: cardDefinition.subtitle || "",
           description: cardDefinition.description || "",

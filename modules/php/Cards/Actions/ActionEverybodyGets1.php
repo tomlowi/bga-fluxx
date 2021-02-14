@@ -9,7 +9,7 @@ class ActionEverybodyGets1 extends ActionCard
   {
     parent::__construct($cardId, $uniqueId);
 
-    $this->name = clienttranslate("Everybody gets 1");
+    $this->name = clienttranslate("Everybody Gets 1");
     $this->description = clienttranslate(
       "Set your hand aside. Count the number of players in the game (including yourself). Draw enough cards to give 1 to each player, and then distribute them evenly amongst all the players. You decide who gets what."
     );

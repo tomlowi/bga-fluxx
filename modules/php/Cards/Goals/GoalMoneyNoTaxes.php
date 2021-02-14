@@ -9,6 +9,7 @@ class GoalMoneyNoTaxes extends GoalCard
   {
     parent::__construct($cardId, $uniqueId);
 
+    $this->set = "creeperpack";
     $this->name = clienttranslate("Money (No Taxes)");
     $this->description = clienttranslate(
       "If no one has Taxes on the table, the player with Money on the table wins."

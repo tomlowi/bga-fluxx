@@ -10,6 +10,7 @@ class ActionCreeperSweeper extends ActionCard
   {
     parent::__construct($cardId, $uniqueId);
 
+    $this->set = "creeperpack";
     $this->name = clienttranslate("Creeper Sweeper");
     $this->description = clienttranslate("All Creepers in play are discarded.");
   }

@@ -10,6 +10,7 @@ class ActionStealSomething extends ActionCard
   {
     parent::__construct($cardId, $uniqueId);
 
+    $this->set = "creeperpack";
     $this->name = clienttranslate("Steal Something");
     $this->description = clienttranslate(
       "Take your choice of any Keeper or Creeper from in front of another player and put it in front of you."

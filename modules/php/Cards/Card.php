@@ -10,6 +10,7 @@ abstract class Card extends \APP_GameClass
   {
     $this->cardId = $cardId;
     $this->uniqueId = $uniqueId;
+    $this->set = "base";
     $this->name = clienttranslate("Not Implemented");
     $this->subtitle = null;
     $this->description = null;
@@ -31,6 +32,10 @@ abstract class Card extends \APP_GameClass
   public function getUniqueId()
   {
     return $this->uniqueId;
+  }
+  public function getCardSet()
+  {
+    return $this->set;
   }
   public function getName()
   {

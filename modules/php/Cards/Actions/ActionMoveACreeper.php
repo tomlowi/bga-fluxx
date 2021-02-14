@@ -10,6 +10,7 @@ class ActionMoveACreeper extends ActionCard
   {
     parent::__construct($cardId, $uniqueId);
 
+    $this->set = "creeperpack";
     $this->name = clienttranslate("Move a Creeper");
     $this->description = clienttranslate(
       "Choose any Creeper in front of any player and move it to some other player."
