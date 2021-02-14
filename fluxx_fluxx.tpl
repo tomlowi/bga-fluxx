@@ -30,9 +30,9 @@
   <div id="flxDeckBlock" class="whiteblock flx-deck">
     <div id="deckCard" class="flx-card flx-deck-card"></div>
     <div id="deckCount" class="flx-card-count"></div>
+    <a id="discardToggleBtn" href="#">{SHOW_DISCARD}</a>
     <div id="discardStock"></div>
     <div id="discardCount" class="flx-card-count"></div>
-    <a id="discardToggleBtn" href="#">{SHOW_DISCARD}</a>
   </div>
 
   <div class="whiteblock flx-goal">

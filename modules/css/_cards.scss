@@ -165,8 +165,20 @@ $color-rule: #D7B424;
 .flx-card-rule {
   .card-overlay {
     height: $card-height-inner * 0.55;
-  }  
+  }
   .card-name {
     margin-top: $card-height-inner * 0.45;
+  }
+}
+
+.flx-card-creeper {
+  .card-overlay {
+    background-color: transparent;
+  }
+  .card-name {
+    margin-top: 5px;
+  }
+  .card-description {
+    margin-top: $card-height-inner * 0.40;    
   }
 }

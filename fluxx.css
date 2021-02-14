@@ -353,4 +353,16 @@
 .flx-card-rule .card-name {
   margin-top: 90px;
 }
+
+.flx-card-creeper .card-overlay {
+  background-color: transparent;
+}
+
+.flx-card-creeper .card-name {
+  margin-top: 5px;
+}
+
+.flx-card-creeper .card-description {
+  margin-top: 80px;
+}
 /*# sourceMappingURL=fluxx.css.map */
