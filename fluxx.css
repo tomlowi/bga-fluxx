@@ -271,11 +271,11 @@
 }
 
 .flx-card-title-base {
-  font-family: Brown, Futura, sans-serif;
+  font-family: "Brown", "Futura", sans-serif;
 }
 
 .flx-card-title-creeperpack {
-  font-family: "Bernard MT Condensed", Impact;
+  font-family: "Bernard MT Condensed", "Impact", sans-serif-condensed;
 }
 
 .card-overlay-title {
@@ -295,7 +295,7 @@
 }
 
 .flx-card {
-  font-family: "Helvetica Neue", Helvetica;
+  font-family: "Helvetica Neue", "Helvetica";
 }
 
 .card-overlay {
