@@ -293,6 +293,7 @@ $machinestates = [
     "transitions" => [
       "resolveCreeper" => STATE_RESOLVE_CREEPER_INPLAY,
       "resolvedCreeper" => STATE_PLAY_CARD,
+      "continuePlay" => STATE_PLAY_CARD,
       "endGame" => STATE_GAME_END,
     ],
   ],
