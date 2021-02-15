@@ -411,7 +411,7 @@ class fluxx extends Table
     return $result;
   }
 
-  private function pickCardsWithCreeperCheck($player_id, $drawCount)
+  private function pickCardsWithCreeperCheck($player_id, $drawCount, $postponeCreeperResolve)
   {
     $cardsDrawn = [];
     // If any creepers are drawn, they must be placed immediately,
@@ -425,8 +425,8 @@ class fluxx extends Table
           "cards" => [$nextCard],
         ]);
         // play card without "checkAction": can be in any state here
-        // and don't add this to "play count"
-        self::_action_playCard($nextCard["id"], false);
+        // and don't add this to "play count", and postpone 
+        self::_action_playCard($nextCard["id"], false, $postponeCreeperResolve);
         // re-draw for another card
         $nextCard = $this->cards->pickCard("deck", $player_id);
       }
@@ -439,12 +439,12 @@ class fluxx extends Table
     return $cardsDrawn;
   }
 
-  public function performDrawCards($player_id, $drawCount)
+  public function performDrawCards($player_id, $drawCount, $postponeCreeperResolve = false)
   {
     $cardsDrawn = [];
     if (Utils::useCreeperPackExpansion()) {
       // check for creepers while drawing
-      $cardsDrawn = $this->pickCardsWithCreeperCheck($player_id, $drawCount);
+      $cardsDrawn = $this->pickCardsWithCreeperCheck($player_id, $drawCount, $postponeCreeperResolve);
     } else {
       // No creepers: we can just draw
       $cardsDrawn = $this->cards->pickCards($drawCount, "deck", $player_id);
