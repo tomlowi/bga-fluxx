@@ -25,6 +25,10 @@ trait PlayCardTrait
       return;
     }
 
+    // check if the first play random rule is active
+    // if so, the first card is already played automatically
+    $this->checkFirstPlayRandom();
+
     $player_id = $game->getActivePlayerId();
 
     // If any "free action" rule can be played, we cannot end turn automatically
@@ -151,7 +155,7 @@ trait PlayCardTrait
     }
   }
 
-  public function action_playCard($card_id)
+  public function action_playCard($card_id, $postponeCreeperResolve = false)
   {
     // Check that this is the player's turn and that it is a "possible action" at this game state (see states.inc.php)
     $game = Utils::getGame();
@@ -167,7 +171,7 @@ trait PlayCardTrait
     }
 
     // play the card from active player's hand
-    self::_action_playCard($card_id, true);
+    self::_action_playCard($card_id, true, $postponeCreeperResolve);
   }
 
   public function action_forced_playCard($card_id)
@@ -179,7 +183,7 @@ trait PlayCardTrait
     self::_action_playCard($card_id, false);
   }
 
-  private function _action_playCard($card_id, $incrementPlayedCards)
+  private function _action_playCard($card_id, $incrementPlayedCards, $postponeCreeperResolve = false)
   {
     $game = Utils::getGame();
 
@@ -224,7 +228,7 @@ trait PlayCardTrait
     }
 
     // check creeper abilities to resolve (unless we still need to resolve the card played)
-    if ($stateTransition == null) {
+    if ($stateTransition == null && !$postponeCreeperResolve) {
       if ($game->checkCreeperResolveNeeded($card)) {
         return;
       }
@@ -427,4 +431,43 @@ trait PlayCardTrait
 
     return $stateTransition;
   }
+
+  private function checkFirstPlayRandom()
+  {
+    $game = Utils::getGame();
+    $firstPlayRandom = 0 != $game->getGameStateValue("activeFirstPlayRandom");
+    $playRule = $game->getGameStateValue("playRule");
+    $alreadyPlayed = $game->getGameStateValue("playedCards");
+
+    // Ignore this rule if the current Rule card allow you to play only one card
+    if (!$firstPlayRandom || $playRule <= 1 || $alreadyPlayed > 0) {
+      return;
+    }
+
+    // select random card from player hand (always something there, just drew cards)
+    $player_id = $game->getActivePlayerId();
+    $cardsInHand = $game->cards->getCardsInLocation("hand", $player_id);
+
+    $i = bga_rand(0, count($cardsInHand) - 1);
+    $card = array_values($cardsInHand)[$i];
+
+    $game->notifyAllPlayers(
+      "firstPlayRandom",
+      clienttranslate('${player_name} must play first card random'),
+      [
+        "player_name" => $game->getActivePlayerName(),
+        "player_id" => $player_id,
+      ]
+    );
+
+    // note: be aware we can't have "checkAction" running here!
+    // the *active* player has already changed, but the *current* player
+    // is still the previous player that triggered its turn end
+    // so "checkAction" would thrown "It is not your turn" to the current player
+    // when trying to play the card for the active player
+
+    // first card is a forced play, but in this case
+    // it does count for the number of cards played
+    $this->_action_playCard($card["id"], true);
+  }  
 }
