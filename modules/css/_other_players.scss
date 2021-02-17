@@ -1,7 +1,8 @@
+
 .flx-other-players {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: center;  
 
   .flx-keepers {
     flex: 1 0;
@@ -11,4 +12,13 @@
   .flx-keepers:last-child {
     margin-right: 0px;
   }
+
+  .flx-keepers-my {
+    min-width: 320px;
+  } 
+
+  .flx-keepers-other {
+    min-width: 320px;
+    max-width: 440px;
+  } 
 }

@@ -52,10 +52,8 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
     onResolveFreeRuleHandCardsSelection: function (ev) {
       var selectedCards = [];
 
-      for (var rule_type in this.rulesStock) {
-        var stock = this.handStock;
-        selectedCards = stock.getSelectedItems();
-      }
+      var stock = this.handStock;
+      selectedCards = stock.getSelectedItems();
 
       var action = "resolveFreeRuleCardsSelection";
       var cards_id = selectedCards.map(function (card) {

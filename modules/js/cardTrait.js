@@ -144,6 +144,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
 
       var drawRuleCards = {};
       var playRuleCards = {};
+      var limitsRuleCards = {};
       var othersRuleCards = {};
 
       for (var card_id in cards) {
@@ -154,11 +155,18 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         else if (card["location_arg"] == 1)
           // RULE_DRAW_RULE
           drawRuleCards[card_id] = card;
+        else if (card["location_arg"] == 2)
+          // RULE_HAND_LIMIT
+          limitsRuleCards[card_id] = card;
+        else if (card["location_arg"] == 3)
+          // RULE_KEEPERS_LIMIT
+          limitsRuleCards[card_id] = card;
         else othersRuleCards[card_id] = card;
       }
 
       this.discardCards(playRuleCards, this.rulesStock.playRule);
       this.discardCards(drawRuleCards, this.rulesStock.drawRule);
+      this.discardCards(limitsRuleCards, this.rulesStock.limits);
       this.discardCards(othersRuleCards, this.rulesStock.others);
       this.discardCounter.toValue(notif.args.discardCount);
     },
@@ -167,7 +175,9 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       var player_id = notif.args.player_id;
 
       var ruleType = notif.args.ruleType;
-      if (ruleType != "drawRule" && ruleType != "playRule") {
+      if (ruleType == "handLimit" || ruleType == "keepersLimit") {
+        ruleType = "limits";
+      } else if (ruleType != "drawRule" && ruleType != "playRule") {
         ruleType = "others";
       }
 
@@ -324,6 +334,10 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
             originStock = this.rulesStock.playRule;
           } else if (card_definition.ruleType == "drawRule") {
             originStock = this.rulesStock.drawRule;
+          } else if (card_definition.ruleType == "handLimit") {
+            originStock = this.rulesStock.limits;
+          } else if (card_definition.ruleType == "keepersLimit") {
+            originStock = this.rulesStock.limits;
           } else {
             originStock = this.rulesStock.others;
           }

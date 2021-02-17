@@ -1,68 +1,132 @@
 .flx-table {
-  display: flex;
-  flex-wrap: wrap;
+  position: relative;
   justify-content: center;
 
+  .flx-card,
+  .flx-discard {
+    width: 166px;
+    height: 258px;
+  }
+  
+  .flx-goal {
+    position: relative;
+  }
+
   .flx-deck {
-    flex: 1 0;
-    padding-top: 42px;
-    margin-right: 10px;
+    position: relative;
+    min-width: 320px;
+    margin-top: -55px;
+
+    .flx-deck-card {
+      position: absolute;
+      left: 160px;
+
+      background-image: url("img/cards.png");
+      background-position: -1500% -500%;
+  
+      &.flx-deck-empty {
+        background-position: -1600% -500%;
+      }
+    }
+
+    .flx-discard {
+      transition: left 1s;
+      position: absolute;
+      border: 1px;
+    }
 
     .flx-card-count {
-      padding: 5px;
+      position: absolute;
+      z-index: 200;
+      bottom: 5px;
+      right: 5px;
+      text-align: center;
+
+      font-size: 19px;
+      font-weight: bold;
+
+      width: 30px;
+      height: 25px;
+      line-height: 25px;
+      background: #fff8;
     }
   }
 
-  .flx-goal {
-    flex: 1 0;
-    margin-right: 10px;
-  }
-
   .flx-rules {
-    flex: 1 0;
+    //flex: 1 0;
 
     .flx-card-stack {
       position: relative;
-      margin: auto;
-      width: 350px;
-      height: 415px;
+      height: 420px;
 
       .flx-card-stack-center {
         position: absolute;
-        left: 90px;
+        left: 100px;
       }
       .flx-card-stack-left {
         position: absolute;
         top: 153px;
-        left: 0px;
+        left: 10px;
       }
       .flx-card-stack-right {
         position: absolute;
         top: 153px;
-        left: 180px;
+        left: 190px;
       }
     }
   }
 
-  .flx-card {
-    width: 166px;
-    height: 258px;
-  }
-  .flx-deck-card {
-    background-image: url("img/cards.png");
-    background-position: -1500% -500%;
-
-    &.flx-deck-empty {
-      background-position: -1600% -500%;
-    }
-  }
-  #discardStock {
-    border: 1px;
-  }
   #baseRuleCard {
     width: 166px;
     height: 258px;
     background-image: url("img/cards.png");
     background-position: -1400% -500%;
   }
+}
+
+.flx-table {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  grid-template-rows: 2fr 1fr;
+  grid-gap: 10px;
+
+  .flx-goal {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .flx-deck {
+    grid-column: 1;
+    grid-row: 2;
+
+    &.flx-discard-visible {
+        .flx-discard {
+          width: 166*4px;
+        }
+    }
+  }
+
+  .flx-rules {
+    grid-column: 2;
+    grid-row: 1 / 3;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 10px;
+
+    .flx-card-stack {
+      grid-column: 1;
+      grid-row: 1;
+    }
+    #limitsStock {
+      grid-column: 2;
+      grid-row: 1;
+    }
+    #othersStock {
+      grid-column: 1 / 3;
+      grid-row: 2;
+    }
+  }
+
+  
 }

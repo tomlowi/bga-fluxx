@@ -162,6 +162,9 @@ define([
         this.rulesStock.playRule = this.createCardStock("playRuleStock", [
           "rule",
         ]);
+        this.rulesStock.limits = this.createCardStock("limitsStock", [
+          "rule",
+        ]);
         this.rulesStock.others = this.createCardStock("othersStock", ["rule"]);
         this.addCardsToStock(
           this.rulesStock.drawRule,
@@ -172,11 +175,11 @@ define([
           this.gamedatas.rules.playRule
         );
         this.addCardsToStock(
-          this.rulesStock.others,
+          this.rulesStock.limits,
           this.gamedatas.rules.handLimit
         );
         this.addCardsToStock(
-          this.rulesStock.others,
+          this.rulesStock.limits,
           this.gamedatas.rules.keepersLimit
         );
         this.addCardsToStock(
@@ -231,6 +234,9 @@ define([
           );
         }
 
+        // Determine card overlaps per number of cards in hand / stocks
+        this.adaptCardOverlaps();
+
         // Hide elements that are only used with Creeper pack expansion
         if (!gamedatas.creeperPack) {
           dojo.query(".flx-board-creeper").forEach(function(node, index, nodelist){
@@ -242,6 +248,29 @@ define([
         this.setupNotifications();
 
         console.log("Setup completed!");
+      },
+
+      adaptCardOverlaps: function() {
+        var handCount = this.handStock.count();
+        if (handCount > 24) {
+          this.handStock.setOverlap(40);
+        } else if (handCount > 16) {
+          this.handStock.setOverlap(60);
+        } else if (handCount > 8) {
+          this.handStock.setOverlap(80);
+        } else {
+          this.handStock.setOverlap(0);
+        }
+        var otherRulesCount = this.rulesStock.others.count();
+        if (otherRulesCount > 10) {
+          this.rulesStock.others.setOverlap(40);
+        } else if (otherRulesCount > 6) {
+          this.rulesStock.others.setOverlap(60);
+        } else if (otherRulesCount > 4) {
+          this.rulesStock.others.setOverlap(80);
+        } else {
+          this.rulesStock.others.setOverlap(0);
+        }
       },
 
       ///////////////////////////////////////////////////
@@ -534,11 +563,13 @@ define([
           this.discardStock.setOverlap(0.00001);
           dojo.removeClass("flxDeckBlock", "flx-discard-visible");
           $("discardToggleBtn").innerHTML = _("Show discard pile");
+          this.discardStock.resetItemsPosition();
         } else {
           this.discardStock.setOverlap(0);
           this.discardStock.item_margin = 5;
           dojo.addClass("flxDeckBlock", "flx-discard-visible");
           $("discardToggleBtn").innerHTML = _("Hide discard pile");
+          this.discardStock.resetItemsPosition();
         }
       },
 
