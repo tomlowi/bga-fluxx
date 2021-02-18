@@ -14,6 +14,8 @@
 
 <div id="tmpHand" class="whiteblock flx-hand"></div>
 
+<div id="tmpKeeperPanelIcons" class="whiteblock flx-keeper-panel-placeholder"></div>
+
 <div class="flx-player">
   <div class="whiteblock flx-hand">
     <h3 style="color: #{CURRENT_PLAYER_COLOR"}>{MY_HAND}</h3>
@@ -67,17 +69,21 @@
   var jstpl_player_board =
     '\
 <div class="flx-board">\
-  <div class="flx-board-hand">\
-    <span id="handIcon${id}" class="flx-icons flx-icons-hand" aria-label="{HAND_COUNT}"></span>\
-    <span id="handCount${id}"></span>\
+  <div class="flx-board-icons">\
+    <div class="flx-board-hand">\
+      <span id="handIcon${id}" class="flx-icons flx-icons-hand" aria-label="{HAND_COUNT}"></span>\
+      <span id="handCount${id}"></span>\
+    </div>\
+    <div class="flx-board-keeper">\
+      <span id="keeperIcon${id}" class="flx-icons flx-icons-keeper" aria-label="{KEEPERS_COUNT}"></span>\
+      <span id="keepersCount${id}"></span>\
+    </div>\
+    <div class="flx-board-creeper">\
+      <span id="creeperIcon${id}" class="flx-icons flx-icons-creeper" aria-label="{CREEPERS_COUNT}"></span>\
+      <span id="creepersCount${id}"></span>\
+    </div>\
   </div>\
-  <div class="flx-board-keeper">\
-    <span id="keeperIcon${id}" class="flx-icons flx-icons-keeper" aria-label="{KEEPERS_COUNT}"></span>\
-    <span id="keepersCount${id}"></span>\
-  </div>\
-  <div class="flx-board-creeper">\
-    <span id="creeperIcon${id}" class="flx-icons flx-icons-creeper" aria-label="{CREEPERS_COUNT}"></span>\
-    <span id="creepersCount${id}"></span>\
+  <div id="keeperPanel${id}" class="flx-board-keepers">\
   </div>\
 </div>';
 
@@ -111,6 +117,12 @@ var jstpl_cardOverlay_text = `<div class="flx-card-overlay">
 			</div>
 		</div>
 </div>`;
+
+var jstpl_panel_keeper = `
+		<div class="flx-board-panel-keeper" style="background-position-x: -\${offset}%"
+          id="flx-board-panel-keeper-\${id}" title="\${name}">
+		</div>
+`;
 
 </script>
 

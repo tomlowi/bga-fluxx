@@ -22,11 +22,34 @@
 }
 .flx-board {
   margin-top: 5px;
+
+  .flx-board-icons > div {
+    display: inline-block;
+    margin-right: 10px;
+  }
+  .flx-board-keepers {
+    div {
+      display: inline-block;
+      margin-right: 2px;
+    }
+  }
 }
-.flx-board > div {
-  display: inline-block;
-  margin-right: 10px;
+
+.flx-keeper-panel-placeholder {
+  display: none;
+  
+  div {
+    display: inline-block;
+    margin-right: 2px;
+  }  
+} 
+
+.flx-board-panel-keeper {
+  height: 33px;
+  width: 28px;
+  background-image: url("img/keepers_panel_icons.png");
 }
+
 .no-creepers {
   display: none !important;
 }

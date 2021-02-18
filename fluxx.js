@@ -121,6 +121,7 @@ define([
         this.cardTypesDefinitions = this.gamedatas.cardTypesDefinitions;
         this.cardsDefinitions = this.gamedatas.cardsDefinitions;
         //console.log("Cards definitions", this.cardsDefinitions);
+        this.prepareKeeperPanelIcons(this.cardsDefinitions);
 
         // Setup all stocks and restore existing state
         this.handStock = this.createCardStock("handStock", [
@@ -204,7 +205,7 @@ define([
           this.addCardsToStock(
             this.keepersStock[player_id],
             this.gamedatas.keepers[player_id]
-          );
+          );          
 
           // Setting up player boards
           var player_board_div = $("player_board_" + player_id);
@@ -232,6 +233,9 @@ define([
           this.creepersCounter[player_id].toValue(
             this.gamedatas.creepersCount[player_id]
           );
+
+          // add current keepers in player panel
+          this.addToKeeperPanelIcons(player_id, this.gamedatas.keepers[player_id]);
         }
 
         // Determine card overlaps per number of cards in hand / stocks
@@ -250,7 +254,54 @@ define([
         console.log("Setup completed!");
       },
 
+      prepareKeeperPanelIcons: function(cardDefinitions) {
+        var panelDivId = "tmpKeeperPanelIcons";
+        var keeperCount = 19;
+        for (var id in cardDefinitions) {
+          var cardDefinition = cardDefinitions[id];
+          if (cardDefinition.type == "keeper") {
+            var params = {
+              id: id, 
+              name: cardDefinition.name, 
+              offset: (id-1)*100
+            };
+            var panelKeeper = this.format_block("jstpl_panel_keeper", params);
+            dojo.place(panelKeeper, panelDivId);
+          } else if (cardDefinition.type == "creeper") {
+            var params = {
+              id: id, 
+              name: cardDefinition.name, 
+              offset: (keeperCount + (id - 50) - 1) * 100
+            };
+            var panelCreeper = this.format_block("jstpl_panel_keeper", params);
+            dojo.place(panelCreeper, panelDivId);
+          }
+        }
+      },
+
+      addToKeeperPanelIcons(player_id, cards){
+        var destinationPanelDivId = "keeperPanel"+player_id;
+
+        for (var card_id in cards) {
+          var card = cards[card_id];
+          var keeperDivId = "flx-board-panel-keeper-"+card["type_arg"];
+          dojo.place(keeperDivId, destinationPanelDivId);          
+        }
+      },
+
+      removeFromKeeperPanelIcons(player_id, cards){
+        var destinationPanelDivId = "tmpKeeperPanelIcons";
+
+        for (var card_id in cards) {
+          var card = cards[card_id];
+          var keeperDivId = "flx-board-panel-keeper-"+card["type_arg"];
+          dojo.place(keeperDivId, destinationPanelDivId);          
+        }
+      },
+
       adaptCardOverlaps: function() {
+        // @TODO: determine best tresholds / overlap ratio
+        // depending on viewport of client window
         var handCount = this.handStock.count();
         if (handCount > 24) {
           this.handStock.setOverlap(40);
@@ -261,6 +312,8 @@ define([
         } else {
           this.handStock.setOverlap(0);
         }
+        this.handStock.resetItemsPosition();
+
         var otherRulesCount = this.rulesStock.others.count();
         if (otherRulesCount > 10) {
           this.rulesStock.others.setOverlap(40);
@@ -271,6 +324,9 @@ define([
         } else {
           this.rulesStock.others.setOverlap(0);
         }
+        this.rulesStock.others.resetItemsPosition();
+
+        // @TODO: also for keepers stocks?
       },
 
       ///////////////////////////////////////////////////
@@ -526,7 +582,7 @@ define([
         dojo.place(cardOverlayTitle, card_div.id);
         dojo.place(cardOverlay, card_div.id);
 
-        // Note that "card_type_id" contains the type of the item, so you can do special actions depending on the item type
+        // Note that "card_type_id" contains the type of the item, so you can do special actions depending on the item type        
 
       },
 

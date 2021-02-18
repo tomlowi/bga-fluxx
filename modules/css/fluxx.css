@@ -242,6 +242,8 @@
 
 .flx-other-players .flx-keepers-my {
   min-width: 320px;
+  z-index: 999;
+  /* workaround: discard pile hidden height prevents keeper tooltips/selection? */
 }
 
 .flx-other-players .flx-keepers-other {
@@ -278,9 +280,29 @@
   margin-top: 5px;
 }
 
-.flx-board > div {
+.flx-board .flx-board-icons > div {
   display: inline-block;
   margin-right: 10px;
+}
+
+.flx-board .flx-board-keepers div {
+  display: inline-block;
+  margin-right: 2px;
+}
+
+.flx-keeper-panel-placeholder {
+  display: none;
+}
+
+.flx-keeper-panel-placeholder div {
+  display: inline-block;
+  margin-right: 2px;
+}
+
+.flx-board-panel-keeper {
+  height: 33px;
+  width: 28px;
+  background-image: url("img/keepers_panel_icons.png");
 }
 
 .no-creepers {
