@@ -112,7 +112,7 @@
 
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-gap: 10px;
+    grid-gap: 8px;
 
     .flx-card-stack {
       grid-column: 1;
@@ -128,5 +128,14 @@
     }
   }
 
+  @media (max-width: 1080px) {
+    .flx-rules {
+      grid-gap: 4px;
+  
+      #limitsStock {
+        left: 80px;
+      }
+    }
+  }
   
 }

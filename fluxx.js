@@ -323,6 +323,12 @@ define([
           var stock = this.keepersStock[player_id];
           this.adaptCardOverlapsForStock(stock, maxKeeperCardsInRow);
         }
+
+        if (this.viewPortWidth < 800) {
+          this.rulesStock.limits.setOverlap(40);
+        } else {
+          this.rulesStock.limits.setOverlap(0);
+        }
       },
 
       adaptCardOverlapsForStock(stock, maxCardsPerRow) {
