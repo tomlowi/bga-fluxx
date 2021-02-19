@@ -89,7 +89,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       }
 
       // Determine card overlaps per number of cards in hand / stocks
-      this.adaptCardOverlaps();
+      this.adaptForScreenSize();
     },
 
     notif_cardsDrawnOther: function (notif) {
@@ -124,6 +124,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       this.creepersCounter[player_id].toValue(notif.args.creeperCount);
 
       this.addToKeeperPanelIcons(player_id, [notif.args.card]);
+      this.adaptForScreenSize();
     },
 
     notif_creeperPlayed: function (notif) {

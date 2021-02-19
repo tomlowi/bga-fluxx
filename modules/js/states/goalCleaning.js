@@ -7,7 +7,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
 
       if (this.isCurrentPlayerActive()) {
         this.goalsStock.setSelectionMode(1);
-        this.goalsStock.setOverlap(0);
+        //this.goalsStock.setOverlap(0);
 
         // Let's prevent registering this listener twice
         if (this._listener !== undefined) dojo.disconnect(this._listener);
@@ -29,7 +29,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         delete this._listener;
       }
       this.goalsStock.setSelectionMode(0);
-      this.goalsStock.setOverlap(50);
+      //this.goalsStock.setOverlap(60);
     },
     onUpdateActionButtonsGoalCleaning: function (args) {
       console.log("Update Action Buttons: GoalCleaning");

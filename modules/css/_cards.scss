@@ -1,12 +1,12 @@
 $font-stack-default: "Helvetica Neue","Helvetica";
 $font-stack-title-base: "Brown","Futura",sans-serif;
 $font-stack-title-creepers: "Bernard MT Condensed","Impact",sans-serif-condensed;
-$card-height: 258px;
-$card-width: 166px;
-$card-height-title: 28px;
-$card-margin-left: 41px;
-$card-margin-right: 10px;
-$card-margin-top: 16px;
+$card-height: 233px;
+$card-width: 150px;
+$card-height-title: 26px;
+$card-margin-left: 38px;
+$card-margin-right: 8px;
+$card-margin-top: 14px;
 $card-margin-bottom: 14px;
 $card-width-inner: $card-width - $card-margin-left - $card-margin-right;
 $card-height-inner: $card-height - $card-height-title - $card-margin-top - $card-margin-bottom;
@@ -98,7 +98,7 @@ $color-rule: #D7B424;
 
   .card-type {
     font-weight: bold;
-    font-size: 20px;
+    font-size: 18px;
     text-transform: uppercase;
     margin-top: $card-margin-top;    
   }
@@ -117,18 +117,18 @@ $color-rule: #D7B424;
 
   .card-name {
     font-weight: bold;
-    font-size: 15px;
+    font-size: 14px;
   }
   
   .card-subtitle {
     font-weight: bolder;
-    font-size: 11px;
+    font-size: 10px;
     margin-bottom: 2px;
   }
   
   .card-description {
     font-weight: normal;
-    font-size: 9px;  
+    font-size: 8px;  
   }
 }
 

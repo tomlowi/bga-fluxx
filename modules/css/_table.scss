@@ -4,8 +4,8 @@
 
   .flx-card,
   .flx-discard {
-    width: 166px;
-    height: 258px;
+    width: $card-width;
+    height: $card-height;
   }
   
   .flx-goal {
@@ -65,20 +65,20 @@
       }
       .flx-card-stack-left {
         position: absolute;
-        top: 153px;
-        left: 10px;
+        top: 140px;
+        left: 18px;
       }
       .flx-card-stack-right {
         position: absolute;
-        top: 153px;
-        left: 190px;
+        top: 140px;
+        left: 182px;
       }
     }
   }
 
   #baseRuleCard {
-    width: 166px;
-    height: 258px;
+    width: $card-width;
+    height: $card-height;
     background-image: url("img/cards.png");
     background-position: -1400% -500%;
   }
@@ -101,7 +101,7 @@
 
     &.flx-discard-visible {
         .flx-discard {
-          width: 166*4px;
+          width: 150*4px;
         }
     }
   }

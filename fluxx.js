@@ -51,8 +51,8 @@ define([
     ],
     {
       constructor: function () {
-        this.CARD_WIDTH = 166;
-        this.CARD_HEIGHT = 258;
+        this.CARD_WIDTH = 150;
+        this.CARD_HEIGHT = 233;
         this.CARDS_SPRITES_PATH = g_gamethemeurl + "img/cards.png";
         this.CARDS_SPRITES_PER_ROW = 17;
 
@@ -190,7 +190,7 @@ define([
 
         this.goalsStock = this.createCardStock("goalsStock", ["goal"]);
         this.addCardsToStock(this.goalsStock, this.gamedatas.goals);
-        this.goalsStock.setOverlap(50);
+        this.goalsStock.setOverlap(60);
 
         this.keepersStock = {};
         this.handCounter = {};
@@ -239,7 +239,7 @@ define([
         }
 
         // Determine card overlaps per number of cards in hand / stocks
-        this.adaptCardOverlaps();
+        this.adaptForScreenSize();
 
         // Hide elements that are only used with Creeper pack expansion
         if (!gamedatas.creeperPack) {
@@ -252,6 +252,18 @@ define([
         this.setupNotifications();
 
         console.log("Setup completed!");
+      },
+
+      onScreenWidthChange: function() {
+        this.adaptForScreenSize();
+      },
+
+      adaptForScreenSize: function() {
+        if($('game_play_area') && this.handStock !== undefined){
+          var viewPortWidth = dojo.position('game_play_area')['w'];
+          //console.log("viewPortWidth: ", viewPortWidth);
+          this.adaptCardOverlaps(viewPortWidth);
+        }        
       },
 
       prepareKeeperPanelIcons: function(cardDefinitions) {
@@ -299,34 +311,32 @@ define([
         }
       },
 
-      adaptCardOverlaps: function() {
-        // @TODO: determine best tresholds / overlap ratio
-        // depending on viewport of client window
-        var handCount = this.handStock.count();
-        if (handCount > 24) {
-          this.handStock.setOverlap(40);
-        } else if (handCount > 16) {
-          this.handStock.setOverlap(60);
-        } else if (handCount > 8) {
-          this.handStock.setOverlap(80);
-        } else {
-          this.handStock.setOverlap(0);
-        }
-        this.handStock.resetItemsPosition();
+      adaptCardOverlaps: function(viewPortWidth) {
+        var maxHandCardsInRow = viewPortWidth / (this.CARD_WIDTH + 5);
+        var maxRuleCardsInRow = (viewPortWidth * 3/4 ) / (this.CARD_WIDTH + 5);
+        var maxKeeperCardsInRow = 5;
+        
+        this.adaptCardOverlapsForStock(this.handStock, maxHandCardsInRow);
+        this.adaptCardOverlapsForStock(this.rulesStock.others, maxRuleCardsInRow);
 
-        var otherRulesCount = this.rulesStock.others.count();
-        if (otherRulesCount > 10) {
-          this.rulesStock.others.setOverlap(40);
-        } else if (otherRulesCount > 6) {
-          this.rulesStock.others.setOverlap(60);
-        } else if (otherRulesCount > 4) {
-          this.rulesStock.others.setOverlap(80);
-        } else {
-          this.rulesStock.others.setOverlap(0);
+        for (var player_id in this.keepersStock) {
+          var stock = this.keepersStock[player_id];
+          this.adaptCardOverlapsForStock(stock, maxKeeperCardsInRow);
         }
-        this.rulesStock.others.resetItemsPosition();
+      },
 
-        // @TODO: also for keepers stocks?
+      adaptCardOverlapsForStock(stock, maxCardsPerRow) {
+        var cardsCount = stock.count();
+          if (cardsCount > maxCardsPerRow * 3) {
+            stock.setOverlap(50);
+          } else if (cardsCount > maxCardsPerRow * 2) {
+            stock.setOverlap(65);
+          } else if (cardsCount > maxCardsPerRow * 1) {
+            stock.setOverlap(80);
+          } else {
+            stock.setOverlap(0);
+          }
+          stock.resetItemsPosition();
       },
 
       ///////////////////////////////////////////////////
