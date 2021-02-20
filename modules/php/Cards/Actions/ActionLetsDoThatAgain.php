@@ -18,21 +18,42 @@ class ActionLetsDoThatAgain extends ActionCard
 
   public $interactionNeeded = "discardSelection";
 
-  public function immediateEffectOnPlay($player_id)
-  {
+  private function getRuleCardsInDiscard() {
     $game = Utils::getGame();
-
     $rulesInDiscard = $game->cards->getCardsOfTypeInLocation(
       "rule",
       null,
       "discard"
     );
+    return $rulesInDiscard;
+  }
 
+  private function getActionCardsInDiscard() {
+    $game = Utils::getGame();
     $actionsInDiscard = $game->cards->getCardsOfTypeInLocation(
       "action",
       null,
       "discard"
     );
+    // have to remove LetsDoThatAgain itself
+    $thisActionCard = null;
+    foreach ($actionsInDiscard as $card_id => $card) {
+      if ($card["type_arg"] == $this->getUniqueId() {
+        $thisActionCard = $card;
+          break;
+      }
+    }
+    unset($thisActionCard);
+
+    return $actionsInDiscard;
+  }
+
+  public function immediateEffectOnPlay($player_id)
+  {
+    $game = Utils::getGame();
+
+    $rulesInDiscard = $this->getRuleCardsInDiscard();
+    $actionsInDiscard = $this->getActionCardsInDiscard();
 
     if (count($rulesInDiscard) == 0 && count($actionsInDiscard) == 0) {
       // no rules or actions in the discard, this action does nothing
@@ -53,17 +74,8 @@ class ActionLetsDoThatAgain extends ActionCard
   {
     $game = Utils::getGame();
 
-    $rulesInDiscard = $game->cards->getCardsOfTypeInLocation(
-      "rule",
-      null,
-      "discard"
-    );
-
-    $actionsInDiscard = $game->cards->getCardsOfTypeInLocation(
-      "action",
-      null,
-      "discard"
-    );
+    $rulesInDiscard = $this->getRuleCardsInDiscard();
+    $actionsInDiscard = $this->getActionCardsInDiscard();
 
     return [
       "discard" => $rulesInDiscard + $actionsInDiscard,
