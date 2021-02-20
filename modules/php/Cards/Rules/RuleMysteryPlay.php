@@ -38,6 +38,10 @@ class RuleMysteryPlay extends RuleCard
 
     // draw top card (this is moved to hand automatically)
     $card = $game->cards->pickCard("deck", $player_id);
+    // if no more cards to draw, nothing happens
+    if ($card == null)
+      return;
+
     $game->notifyPlayer($player_id, "cardsDrawn", "", [
       "cards" => [$card],
     ]);
