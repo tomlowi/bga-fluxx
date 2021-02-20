@@ -38,12 +38,17 @@ class ActionLetsDoThatAgain extends ActionCard
     // have to remove LetsDoThatAgain itself
     $thisActionCard = null;
     foreach ($actionsInDiscard as $card_id => $card) {
-      if ($card["type_arg"] == $this->getUniqueId() {
+      if ($card["type_arg"] == $this->getUniqueId()) {
         $thisActionCard = $card;
-          break;
+        break;
       }
     }
-    unset($thisActionCard);
+    self::dump("===LetsDoThatAgain===", $this->getUniqueId());
+    self::dump("===LetsDoThatAgain===", $thisActionCard);
+    self::dump("===LetsDoThatAgain===", $actionsInDiscard);
+    if ($thisActionCard != null) {
+      unset($actionsInDiscard[$thisActionCard["id"]]);
+    }
 
     return $actionsInDiscard;
   }

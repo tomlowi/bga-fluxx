@@ -387,7 +387,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
           notif.args.creeperCount
         );
 
-        this.removeFromKeeperPanelIcons(from_player_id, cards);
+        this.removeFromKeeperPanelIcons(from_player_id, [card]);
       }
     },
   });
