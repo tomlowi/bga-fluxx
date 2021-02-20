@@ -132,15 +132,6 @@ $color-rule: #D7B424;
   }
 }
 
-.flx-keepers {
-  .card-overlay-title {
-    display: none;
-  }
-  .card-overlay {
-    display: none;
-  }
-}
-
 .flx-card-action {
   .card-overlay {
     height: $card-height-inner - 5px;
@@ -180,5 +171,55 @@ $color-rule: #D7B424;
   }
   .card-description {
     margin-top: $card-height-inner * 0.40;    
+  }
+}
+
+.flx-keepers {
+  .card-overlay-title {
+    margin-left: 20px;
+    margin-right: 0px;
+    height: 14px;
+    width: 58px;
+
+    .card-type {
+      font-size: 12px;
+      margin-top: 8px;
+    }
+
+  }
+  .card-overlay {
+    margin-left: 20px;
+    margin-right: 0px;
+    width: 58px;
+
+    .card-name {
+      font-size: 10px;
+      margin-top: 2px;
+    }
+    .card-subtitle {
+      font-size: 5px;
+    }
+    .card-description {
+      font-size: 5px;
+    }
+  }
+
+  .flx-card-keeper {
+    .card-name {
+      margin-top: 88px;    
+    }
+  }
+
+  .flx-card-title-creeperpack {
+    .card-overlay-title {
+      .card-type {
+        margin-top: 6px;
+      }
+    }
+  }
+  .flx-card-creeper {
+    .card-description {
+      margin-top: 40px;    
+    }
   }
 }

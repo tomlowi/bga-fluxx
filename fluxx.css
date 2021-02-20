@@ -149,14 +149,6 @@
   font-size: 8px;
 }
 
-.flx-keepers .card-overlay-title {
-  display: none;
-}
-
-.flx-keepers .card-overlay {
-  display: none;
-}
-
 .flx-card-action .card-overlay {
   height: 174px;
 }
@@ -191,6 +183,49 @@
 
 .flx-card-creeper .card-description {
   margin-top: 71.6px;
+}
+
+.flx-keepers .card-overlay-title {
+  margin-left: 20px;
+  margin-right: 0px;
+  height: 14px;
+  width: 58px;
+}
+
+.flx-keepers .card-overlay-title .card-type {
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+.flx-keepers .card-overlay {
+  margin-left: 20px;
+  margin-right: 0px;
+  width: 58px;
+}
+
+.flx-keepers .card-overlay .card-name {
+  font-size: 10px;
+  margin-top: 2px;
+}
+
+.flx-keepers .card-overlay .card-subtitle {
+  font-size: 5px;
+}
+
+.flx-keepers .card-overlay .card-description {
+  font-size: 5px;
+}
+
+.flx-keepers .flx-card-keeper .card-name {
+  margin-top: 88px;
+}
+
+.flx-keepers .flx-card-title-creeperpack .card-overlay-title .card-type {
+  margin-top: 6px;
+}
+
+.flx-keepers .flx-card-creeper .card-description {
+  margin-top: 40px;
 }
 
 #tmpHand:empty {

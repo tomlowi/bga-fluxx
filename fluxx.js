@@ -190,7 +190,6 @@ define([
 
         this.goalsStock = this.createCardStock("goalsStock", ["goal"]);
         this.addCardsToStock(this.goalsStock, this.gamedatas.goals);
-        this.goalsStock.setOverlap(60);
 
         this.keepersStock = {};
         this.handCounter = {};
@@ -261,7 +260,7 @@ define([
       adaptForScreenSize: function() {
         if($('game_play_area') && this.handStock !== undefined){
           var viewPortWidth = dojo.position('game_play_area')['w'];
-          //console.log("viewPortWidth: ", viewPortWidth);
+          console.log("viewPortWidth: ", viewPortWidth);
           this.adaptCardOverlaps(viewPortWidth);
         }        
       },
@@ -324,11 +323,21 @@ define([
           this.adaptCardOverlapsForStock(stock, maxKeeperCardsInRow);
         }
 
-        if (this.viewPortWidth < 800) {
-          this.rulesStock.limits.setOverlap(40);
-        } else {
-          this.rulesStock.limits.setOverlap(0);
+        this.rulesStock.limits.setOverlap(0);
+        if (viewPortWidth < 800) {
+          this.rulesStock.limits.setOverlap(50);
+        } else if (viewPortWidth < 1024) {
+          this.rulesStock.limits.setOverlap(65);
         }
+        this.rulesStock.limits.resetItemsPosition();
+
+        this.goalsStock.setOverlap(80);
+        if (viewPortWidth < 800) {
+          this.goalsStock.setOverlap(45);
+        } else if (viewPortWidth < 1024) {
+          this.goalsStock.setOverlap(50);          
+        }
+        this.goalsStock.resetItemsPosition();
       },
 
       adaptCardOverlapsForStock(stock, maxCardsPerRow) {
@@ -544,7 +553,7 @@ define([
         for (var i = 0; i < count; i++) {
           stock.addItemType(
             materialOffset + i,
-            materialOffset + i,
+            0, // all no weight > keep in order as played, like on panels
             this.KEEPERS_SPRITES_PATH,
             spriteOffset + i
           );
