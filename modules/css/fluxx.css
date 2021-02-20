@@ -43,6 +43,248 @@
 */
 /* Note: you must not use any @import directive */
 /********* You can start writing your CSS below this line: **********/
+/* Free Alternative for Bernard MT Condensed */
+/* Stint Ultra Condensed */
+/* latin-ext */
+@font-face {
+  font-family: 'Stint Ultra Condensed';
+  font-style: normal;
+  font-weight: 400;
+  src: local("Stint Ultra Condensed"), local("StintUltraCondensed-Regular"), url(https://fonts.gstatic.com/s/stintultracondensed/v5/8DqLK6-YSClFZt3u3EgOUZ0M7CckEjtJ2VMldUDu5nQ.woff2) format("woff2"), url(/fonts/StintUltraCondensed-Regular.ttf) format("truetype");
+  unicode-range: U+0100-024F, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* latin */
+@font-face {
+  font-family: 'Stint Ultra Condensed';
+  font-style: normal;
+  font-weight: 400;
+  src: local("Stint Ultra Condensed"), local("StintUltraCondensed-Regular"), url(https://fonts.gstatic.com/s/stintultracondensed/v5/8DqLK6-YSClFZt3u3EgOUcBvcTyoFVl2hWxSOgahpEY.woff2) format("woff2"), url(/fonts/StintUltraCondensed-Regular.ttf) format("truetype");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+
+/* Free Alternative for Helvetica Neue */
+/* latin-ext */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local("Open Sans"), local("OpenSans"), url(https://fonts.gstatic.com/s/opensans/v13/u-WUoqrET9fUeobQW7jkRYX0hVgzZQUfRDuZrPvH3D8.woff2) format("woff2");
+  unicode-range: U+0100-024F, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* latin */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local("Open Sans"), local("OpenSans"), url(https://fonts.gstatic.com/s/opensans/v13/cJZKeOuBrn4kERxqtaUH3ZBw1xU1rKptJj_0jans920.woff2) format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+
+/* latin-ext */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 700;
+  src: local("Open Sans Bold"), local("OpenSans-Bold"), url(https://fonts.gstatic.com/s/opensans/v13/k3k702ZOKiLJc3WVjuplzIjoYw3YTyktCCer_ilOlhE.woff2) format("woff2");
+  unicode-range: U+0100-024F, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* latin */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 700;
+  src: local("Open Sans Bold"), local("OpenSans-Bold"), url(https://fonts.gstatic.com/s/opensans/v13/k3k702ZOKiLJc3WVjuplzBampu5_7CjHW5spxoeN3Vs.woff2) format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+
+.newDrawnCard {
+  outline-color: darkslategray;
+  outline-style: solid;
+  outline-width: medium;
+}
+
+.flx-card-tooltip {
+  display: block;
+}
+
+.flx-card-tooltip .card-name {
+  display: inline-block;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.flx-card-tooltip .card-type {
+  display: inline-block;
+  margin-left: 20px;
+  font-weight: bolder;
+  font-size: 18px;
+  font-style: italic;
+}
+
+.flx-card-tooltip .card-subtitle {
+  font-weight: bolder;
+  font-size: 16px;
+}
+
+.flx-card-tooltip .card-description {
+  font-weight: normal;
+  font-size: 14px;
+}
+
+.flx-card-tooltip-keeper .card-type {
+  color: #9DC139;
+}
+
+.flx-card-tooltip-creeper .card-type {
+  color: #000000;
+}
+
+.flx-card-tooltip-action .card-type {
+  color: #0099CD;
+}
+
+.flx-card-tooltip-goal .card-type {
+  color: #D23F7F;
+}
+
+.flx-card-tooltip-rule .card-type {
+  color: #D7B424;
+}
+
+.flx-card-title-base {
+  font-family: "Brown", "Futura", sans-serif;
+}
+
+.flx-card-title-creeperpack {
+  font-family: "Bernard MT Condensed", "Stint Ultra Condensed", sans-serif-condensed;
+}
+
+.card-overlay-title {
+  display: block;
+  margin-left: 38px;
+  margin-right: 8px;
+  width: 104px;
+  height: 26px;
+  background-color: #EFF0F0;
+}
+
+.card-overlay-title .card-type {
+  font-weight: bold;
+  font-size: 18px;
+  text-transform: uppercase;
+  margin-top: 14px;
+}
+
+.flx-card {
+  font-family: "Helvetica Neue", "Open Sans", sans-serif;
+}
+
+.card-overlay {
+  display: block;
+  margin-left: 38px;
+  margin-right: 8px;
+  width: 104px;
+  background-color: #EFF0F0;
+}
+
+.card-overlay .card-name {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.card-overlay .card-subtitle {
+  font-weight: bolder;
+  font-size: 10px;
+  margin-bottom: 2px;
+}
+
+.card-overlay .card-description {
+  font-weight: normal;
+  font-size: 8px;
+}
+
+.flx-card-action .card-overlay {
+  height: 174px;
+}
+
+.flx-card-action .card-name {
+  margin-top: 5px;
+}
+
+.flx-card-goal .card-name {
+  margin-top: 5px;
+}
+
+.flx-card-keeper .card-name {
+  margin-top: 159px;
+}
+
+.flx-card-rule .card-overlay {
+  height: 98.45px;
+}
+
+.flx-card-rule .card-name {
+  margin-top: 80.55px;
+}
+
+.flx-card-creeper .card-overlay {
+  background-color: transparent;
+}
+
+.flx-card-creeper .card-name {
+  margin-top: 5px;
+}
+
+.flx-card-creeper .card-description {
+  margin-top: 71.6px;
+}
+
+.flx-keepers .card-overlay-title {
+  margin-left: 20px;
+  margin-right: 0px;
+  height: 14px;
+  width: 58px;
+}
+
+.flx-keepers .card-overlay-title .card-type {
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+.flx-keepers .card-overlay {
+  margin-left: 20px;
+  margin-right: 0px;
+  width: 58px;
+}
+
+.flx-keepers .card-overlay .card-name {
+  font-size: 10px;
+  margin-top: 2px;
+}
+
+.flx-keepers .card-overlay .card-subtitle {
+  font-size: 5px;
+}
+
+.flx-keepers .card-overlay .card-description {
+  font-size: 5px;
+}
+
+.flx-keepers .flx-card-keeper .card-name {
+  margin-top: 88px;
+}
+
+.flx-keepers .flx-card-title-creeperpack .card-overlay-title .card-type {
+  margin-top: 6px;
+}
+
+.flx-keepers .flx-card-creeper .card-description {
+  margin-top: 40px;
+}
+
 #tmpHand:empty {
   display: none;
 }
@@ -80,8 +322,8 @@
 
 .flx-table .flx-card,
 .flx-table .flx-discard {
-  width: 166px;
-  height: 258px;
+  width: 150px;
+  height: 233px;
 }
 
 .flx-table .flx-goal {
@@ -138,19 +380,19 @@
 
 .flx-table .flx-rules .flx-card-stack .flx-card-stack-left {
   position: absolute;
-  top: 153px;
-  left: 10px;
+  top: 140px;
+  left: 18px;
 }
 
 .flx-table .flx-rules .flx-card-stack .flx-card-stack-right {
   position: absolute;
-  top: 153px;
-  left: 190px;
+  top: 140px;
+  left: 182px;
 }
 
 .flx-table #baseRuleCard {
-  width: 166px;
-  height: 258px;
+  width: 150px;
+  height: 233px;
   background-image: url("img/cards.png");
   background-position: -1400% -500%;
 }
@@ -180,7 +422,7 @@
 }
 
 .flx-table .flx-deck.flx-discard-visible .flx-discard {
-  width: 664px;
+  width: 600px;
 }
 
 .flx-table .flx-rules {
@@ -193,7 +435,7 @@
   display: grid;
   -ms-grid-columns: 1fr 1fr;
       grid-template-columns: 1fr 1fr;
-  grid-gap: 10px;
+  grid-gap: 8px;
 }
 
 .flx-table .flx-rules .flx-card-stack {
@@ -216,6 +458,15 @@
   grid-column: 1 / 3;
   -ms-grid-row: 2;
   grid-row: 2;
+}
+
+@media (max-width: 1080px) {
+  .flx-table .flx-rules {
+    grid-gap: 4px;
+  }
+  .flx-table .flx-rules #limitsStock {
+    left: 80px;
+  }
 }
 
 .flx-other-players {
@@ -307,155 +558,5 @@
 
 .no-creepers {
   display: none !important;
-}
-
-.newDrawnCard {
-  outline-color: darkslategray;
-  outline-style: solid;
-  outline-width: medium;
-}
-
-.flx-card-tooltip {
-  display: block;
-}
-
-.flx-card-tooltip .card-name {
-  display: inline-block;
-  font-weight: bold;
-  font-size: 20px;
-}
-
-.flx-card-tooltip .card-type {
-  display: inline-block;
-  margin-left: 20px;
-  font-weight: bolder;
-  font-size: 18px;
-  font-style: italic;
-}
-
-.flx-card-tooltip .card-subtitle {
-  font-weight: bolder;
-  font-size: 16px;
-}
-
-.flx-card-tooltip .card-description {
-  font-weight: normal;
-  font-size: 14px;
-}
-
-.flx-card-tooltip-keeper .card-type {
-  color: #9DC139;
-}
-
-.flx-card-tooltip-creeper .card-type {
-  color: #000000;
-}
-
-.flx-card-tooltip-action .card-type {
-  color: #0099CD;
-}
-
-.flx-card-tooltip-goal .card-type {
-  color: #D23F7F;
-}
-
-.flx-card-tooltip-rule .card-type {
-  color: #D7B424;
-}
-
-.flx-card-title-base {
-  font-family: "Brown", "Futura", sans-serif;
-}
-
-.flx-card-title-creeperpack {
-  font-family: "Bernard MT Condensed", "Impact", sans-serif-condensed;
-}
-
-.card-overlay-title {
-  display: block;
-  margin-left: 41px;
-  margin-right: 10px;
-  width: 115px;
-  height: 28px;
-  background-color: #EFF0F0;
-}
-
-.card-overlay-title .card-type {
-  font-weight: bold;
-  font-size: 20px;
-  text-transform: uppercase;
-  margin-top: 16px;
-}
-
-.flx-card {
-  font-family: "Helvetica Neue", "Helvetica";
-}
-
-.card-overlay {
-  display: block;
-  margin-left: 41px;
-  margin-right: 10px;
-  width: 115px;
-  background-color: #EFF0F0;
-}
-
-.card-overlay .card-name {
-  font-weight: bold;
-  font-size: 15px;
-}
-
-.card-overlay .card-subtitle {
-  font-weight: bolder;
-  font-size: 11px;
-  margin-bottom: 2px;
-}
-
-.card-overlay .card-description {
-  font-weight: normal;
-  font-size: 9px;
-}
-
-.flx-keepers .card-overlay-title {
-  display: none;
-}
-
-.flx-keepers .card-overlay {
-  display: none;
-}
-
-.flx-card-action .card-overlay {
-  height: 195px;
-}
-
-.flx-card-action .card-name {
-  margin-top: 5px;
-}
-
-.flx-card-goal .card-name {
-  margin-top: 5px;
-}
-
-.flx-card-keeper .card-name {
-  margin-top: 180px;
-}
-
-.flx-card-rule .card-overlay {
-  height: 110px;
-}
-
-.flx-card-rule .card-name {
-  margin-top: 90px;
-}
-
-.flx-card-creeper .card-overlay {
-  background-color: transparent;
-}
-
-.flx-card-creeper .card-name {
-  margin-top: 5px;
-}
-
-.flx-card-creeper .card-description {
-  margin-top: 80px;
 }
 /*# sourceMappingURL=fluxx.css.map */
