@@ -43,9 +43,6 @@ class ActionLetsDoThatAgain extends ActionCard
         break;
       }
     }
-    self::dump("===LetsDoThatAgain===", $this->getUniqueId());
-    self::dump("===LetsDoThatAgain===", $thisActionCard);
-    self::dump("===LetsDoThatAgain===", $actionsInDiscard);
     if ($thisActionCard != null) {
       unset($actionsInDiscard[$thisActionCard["id"]]);
     }
