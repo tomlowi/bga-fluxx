@@ -113,7 +113,7 @@ define([
             "gamedatas" argument contains all datas retrieved by your "getAllDatas" PHP method.
         */
       setup: function (gamedatas) {
-        console.log("GameDatas: ", gamedatas);
+        //console.log("GameDatas: ", gamedatas);
 
         this.players = gamedatas.players;
 
@@ -260,7 +260,7 @@ define([
       adaptForScreenSize: function() {
         if($('game_play_area') && this.handStock !== undefined){
           var viewPortWidth = dojo.position('game_play_area')['w'];
-          console.log("viewPortWidth: ", viewPortWidth);
+          //console.log("viewPortWidth: ", viewPortWidth);
           this.adaptCardOverlaps(viewPortWidth);
         }        
       },

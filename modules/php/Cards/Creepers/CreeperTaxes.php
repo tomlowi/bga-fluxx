@@ -139,8 +139,6 @@ class CreeperTaxes extends CreeperCard
       354 => "",
     ];
 
-    self::dump("===TaxesCheckLastPlayed===", $lastPlayedCard);
-
     if (
       $lastPlayedCard == null ||
       $lastPlayedCard["type"] == "goal" ||
