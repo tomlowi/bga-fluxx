@@ -4,9 +4,9 @@ namespace Fluxx\States;
 use Fluxx\Game\Utils;
 
 if (!defined("RPS_OPTION_ROCK")) {
-  define("RPS_OPTION_ROCK", 0);
-  define("RPS_OPTION_PAPER", 1);
-  define("RPS_OPTION_SCISSORS", 2);
+  define("RPS_OPTION_ROCK", 1);
+  define("RPS_OPTION_PAPER", 2);
+  define("RPS_OPTION_SCISSORS", 3);
 }
 
 trait RockPaperScissorsTrait
@@ -65,26 +65,30 @@ trait RockPaperScissorsTrait
     $challenger_id = self::getGameStateValue("rpsChallengerId");
     $defender_id = self::getGameStateValue("rpsDefenderId");
 
+    $resultMessage = null;
     if ($winner_choice == $challenger_choice) {
       $maxWins = self::incGameStateValue("rpsChallengerWins", 1);
       $winner_id = $challenger_id;
       $loser_id = $defender_id;
+      $resultMessage = clienttranslate("beats");
     } else {
       $maxWins = self::incGameStateValue("rpsDefenderWins", 1);
       $winner_id = $defender_id;
       $loser_id = $challenger_id;
+      $resultMessage = clienttranslate("is beaten by");
     }
 
     $players = self::loadPlayersBasicInfos();
     self::notifyAllPlayers(
       "resultRockPaperScissors",
       clienttranslate(
-        '${player_name} wins this round: ${challenger_choice} beats ${defender_choice}'
+        '${player_name} wins this round: ${challenger_choice} ${result_msg} ${defender_choice}'
       ),
       [
         "player_name" => $players[$winner_id]["player_name"],
         "challenger_choice" => $options[$challenger_choice],
         "defender_choice" => $options[$defender_choice],
+        "result_msg" => $resultMessage,
       ]
     );
 
@@ -186,6 +190,12 @@ trait RockPaperScissorsTrait
     $challenger_id = self::getGameStateValue("rpsChallengerId");
     $defender_id = self::getGameStateValue("rpsDefenderId");
 
+    self::dump("===RPS===", [
+      "player" => $player_id,
+      "choice" => $choice,
+      "challenger" => $challenger_id,
+      "defender" => $defender_id
+    ]);    
     switch ($choice) {
       case "rock":
         $option = RPS_OPTION_ROCK;

@@ -123,6 +123,9 @@ define([
         //console.log("Cards definitions", this.cardsDefinitions);
         this.prepareKeeperPanelIcons(this.cardsDefinitions);
 
+        // tooltip on Basic Rules card
+        this.setupBasicRulesCard();
+
         // Setup all stocks and restore existing state
         this.handStock = this.createCardStock("handStock", [
           "keeper",
@@ -352,6 +355,24 @@ define([
             stock.setOverlap(0);
           }
           stock.resetItemsPosition();
+      },
+
+      setupBasicRulesCard() {
+        var basicRulesCard = {
+          set: "base",
+          name: _("Basic Rules"),
+          subtitle: "",
+          description: "Draw 1 card, then Play 1 card",
+          type: "rule",
+          typeName: "",
+          id: 0,
+        };
+
+        // Add a special tooltip on the card:
+        this.addTooltipHtml(
+          "baseRuleCard",
+          this.format_block("jstpl_cardTooltip", basicRulesCard)
+        );
       },
 
       ///////////////////////////////////////////////////

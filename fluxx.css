@@ -193,6 +193,7 @@
 .card-overlay .card-name {
   font-weight: bold;
   font-size: 14px;
+  width: 108px;
 }
 
 .card-overlay .card-subtitle {
@@ -204,6 +205,7 @@
 .card-overlay .card-description {
   font-weight: normal;
   font-size: 8px;
+  line-height: 100%;
 }
 
 .flx-card-action .card-overlay {
@@ -263,6 +265,7 @@
 .flx-keepers .card-overlay .card-name {
   font-size: 10px;
   margin-top: 2px;
+  width: 60px;
 }
 
 .flx-keepers .card-overlay .card-subtitle {
@@ -270,7 +273,7 @@
 }
 
 .flx-keepers .card-overlay .card-description {
-  font-size: 5px;
+  font-size: 4px;
 }
 
 .flx-keepers .flx-card-keeper .card-name {
