@@ -43,24 +43,11 @@
 */
 /* Note: you must not use any @import directive */
 /********* You can start writing your CSS below this line: **********/
-/* Free Alternative for Bernard MT Condensed */
-/* Stint Ultra Condensed */
-/* latin-ext */
+/* Bernard MT Condensed web font */
 @font-face {
-  font-family: 'Stint Ultra Condensed';
-  font-style: normal;
-  font-weight: 400;
-  src: local("Stint Ultra Condensed"), local("StintUltraCondensed-Regular"), url(https://fonts.gstatic.com/s/stintultracondensed/v5/8DqLK6-YSClFZt3u3EgOUZ0M7CckEjtJ2VMldUDu5nQ.woff2) format("woff2"), url(/fonts/StintUltraCondensed-Regular.ttf) format("truetype");
-  unicode-range: U+0100-024F, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF;
-}
-
-/* latin */
-@font-face {
-  font-family: 'Stint Ultra Condensed';
-  font-style: normal;
-  font-weight: 400;
-  src: local("Stint Ultra Condensed"), local("StintUltraCondensed-Regular"), url(https://fonts.gstatic.com/s/stintultracondensed/v5/8DqLK6-YSClFZt3u3EgOUcBvcTyoFVl2hWxSOgahpEY.woff2) format("woff2"), url(/fonts/StintUltraCondensed-Regular.ttf) format("truetype");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+  font-family: "Bernard MT Condensed Web";
+  src: url("//db.onlinewebfonts.com/t/eceba41a00b4b94ea2965371c8dda96c.eot");
+  src: url("//db.onlinewebfonts.com/t/eceba41a00b4b94ea2965371c8dda96c.eot?#iefix") format("embedded-opentype"), url("//db.onlinewebfonts.com/t/eceba41a00b4b94ea2965371c8dda96c.woff2") format("woff2"), url("//db.onlinewebfonts.com/t/eceba41a00b4b94ea2965371c8dda96c.woff") format("woff"), url("//db.onlinewebfonts.com/t/eceba41a00b4b94ea2965371c8dda96c.ttf") format("truetype"), url("//db.onlinewebfonts.com/t/eceba41a00b4b94ea2965371c8dda96c.svg#Bernard MT Condensed") format("svg");
 }
 
 /* Free Alternative for Helvetica Neue */
@@ -159,14 +146,14 @@
 }
 
 .flx-card-title-creeperpack {
-  font-family: "Bernard MT Condensed", "Stint Ultra Condensed", sans-serif-condensed;
+  font-family: "Bernard MT Condensed", "Bernard MT Condensed Web", sans-serif-condensed;
 }
 
 .card-overlay-title {
   display: block;
-  margin-left: 38px;
+  margin-left: 36px;
   margin-right: 8px;
-  width: 104px;
+  width: 106px;
   height: 26px;
   background-color: #EFF0F0;
 }
@@ -184,9 +171,9 @@
 
 .card-overlay {
   display: block;
-  margin-left: 38px;
+  margin-left: 36px;
   margin-right: 8px;
-  width: 104px;
+  width: 106px;
   background-color: #EFF0F0;
 }
 
@@ -198,14 +185,14 @@
 
 .card-overlay .card-subtitle {
   font-weight: bolder;
-  font-size: 10px;
+  font-size: 9px;
   margin-bottom: 2px;
 }
 
 .card-overlay .card-description {
   font-weight: normal;
   font-size: 8px;
-  line-height: 100%;
+  line-height: 110%;
 }
 
 .flx-card-action .card-overlay {
@@ -274,6 +261,7 @@
 
 .flx-keepers .card-overlay .card-description {
   font-size: 4px;
+  line-height: 100%;
 }
 
 .flx-keepers .flx-card-keeper .card-name {
@@ -335,13 +323,13 @@
 
 .flx-table .flx-deck {
   position: relative;
-  min-width: 320px;
   margin-top: -55px;
+  min-width: 305px;
 }
 
 .flx-table .flx-deck .flx-deck-card {
   position: absolute;
-  left: 160px;
+  left: 152px;
   background-image: url("img/cards.png");
   background-position: -1500% -500%;
 }
@@ -463,11 +451,16 @@
   grid-row: 2;
 }
 
-@media (max-width: 1080px) {
+@media (max-width: 1024px) {
   .flx-table .flx-rules {
     grid-gap: 4px;
+    -ms-grid-columns: 2fr 1fr;
+        grid-template-columns: 2fr 1fr;
   }
-  .flx-table .flx-rules #limitsStock {
+  .flx-table .flx-deck {
+    min-width: 230px;
+  }
+  .flx-table .flx-deck .flx-deck-card {
     left: 80px;
   }
 }

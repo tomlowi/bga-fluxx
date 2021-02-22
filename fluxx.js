@@ -63,8 +63,8 @@ define([
 
         var creeperPackOffset = 19 + 30 + 27 + 23 + 3; // all base game cards + Basic Rules / Back / Front
         this.CARDS_TYPES_BASEGAME = {
-          keeper: { count: 19, spriteOffset: 0, materialOffset: 1 },
-          creeper: { count: 0 },
+          keeper: { count: 19, spriteOffset: 0, materialOffset: 1, weight: 20 },
+          creeper: { count: 0, weight: 10 },
           goal: { count: 30, spriteOffset: 19, materialOffset: 101 },
           rule: { count: 27, spriteOffset: 19 + 30, materialOffset: 201 },
           action: {
@@ -74,11 +74,12 @@ define([
           },
         };
         this.CARDS_TYPES_CREEPERPACK = {
-          keeper: { count: 0 },
+          keeper: { count: 0, weight: 21 },
           creeper: {
             count: 4,
             spriteOffset: creeperPackOffset,
             materialOffset: 51,
+            weight: 11,
           },
           goal: {
             count: 6,
@@ -294,12 +295,17 @@ define([
       },
 
       addToKeeperPanelIcons(player_id, cards){
-        var destinationPanelDivId = "keeperPanel"+player_id;
+        var keeperPanelDivId = "keeperPanel"+player_id;
+        var creeperPanelDivId = "creeperPanel"+player_id;
 
         for (var card_id in cards) {
           var card = cards[card_id];
           var keeperDivId = "flx-board-panel-keeper-"+card["type_arg"];
-          dojo.place(keeperDivId, destinationPanelDivId);          
+          if (card["type"] == "creeper") {
+            dojo.place(keeperDivId, creeperPanelDivId);
+          } else {
+            dojo.place(keeperDivId, keeperPanelDivId);
+          }          
         }
       },
 
@@ -326,13 +332,13 @@ define([
           this.adaptCardOverlapsForStock(stock, maxKeeperCardsInRow);
         }
 
-        this.rulesStock.limits.setOverlap(0);
-        if (viewPortWidth < 800) {
-          this.rulesStock.limits.setOverlap(50);
-        } else if (viewPortWidth < 1024) {
-          this.rulesStock.limits.setOverlap(65);
-        }
-        this.rulesStock.limits.resetItemsPosition();
+        // this.rulesStock.limits.setOverlap(0);
+        // if (viewPortWidth < 800) {
+        //   this.rulesStock.limits.setOverlap(50);
+        // } else if (viewPortWidth < 1024) {
+        //   this.rulesStock.limits.setOverlap(65);
+        // }
+        // this.rulesStock.limits.resetItemsPosition();
 
         this.goalsStock.setOverlap(80);
         if (viewPortWidth < 800) {
@@ -574,7 +580,8 @@ define([
         for (var i = 0; i < count; i++) {
           stock.addItemType(
             materialOffset + i,
-            0, // all no weight > keep in order as played, like on panels
+            // keepers in order as played, like on panels (but creepers before keepers)
+            cardType.weight,
             this.KEEPERS_SPRITES_PATH,
             spriteOffset + i
           );

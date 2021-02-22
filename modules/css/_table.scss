@@ -14,12 +14,12 @@
 
   .flx-deck {
     position: relative;
-    min-width: 320px;
     margin-top: -55px;
+    min-width: $card-width * 2 + 5px;
 
     .flx-deck-card {
       position: absolute;
-      left: 160px;
+      left: $card-width + 2px;
 
       background-image: url("img/cards.png");
       background-position: -1500% -500%;
@@ -128,14 +128,19 @@
     }
   }
 
-  @media (max-width: 1080px) {
+  @media (max-width: 1024px) {
     .flx-rules {
       grid-gap: 4px;
   
-      #limitsStock {
+      grid-template-columns: 2fr 1fr;
+    }
+
+    .flx-deck {
+      min-width: 230px;
+
+      .flx-deck-card {
         left: 80px;
       }
     }
   }
-  
 }
