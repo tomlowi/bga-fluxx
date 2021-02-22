@@ -74,12 +74,12 @@ class ActionMoveACreeper extends ActionCard
     $game->notifyAllPlayers(
       "keepersMoved",
       clienttranslate(
-        '${player_name} moved <b>${card_name}</b> from ${player_name2} to ${player_name3}'
+        '${player_name} moved <b>${card_name}</b> from ${player_name1} to ${player_name2}'
       ),
       [
         "player_name" => $game->getActivePlayerName(),
-        "player_name2" => $other_player_name,
-        "player_name3" => $selected_player_name,
+        "player_name1" => $other_player_name,
+        "player_name2" => $selected_player_name,
         "card_name" => $card_definition->getName(),
         "destination_player_id" => $selected_player_id,
         "origin_player_id" => $other_player_id,

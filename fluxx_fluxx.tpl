@@ -126,6 +126,13 @@ var jstpl_panel_keeper = `
 		</div>
 `;
 
+var jstpl_winDialogTemplate = `
+		<div class="flx-win-dialog-content">
+      <div id="flx-win-dialog-msg" ><h3>\${msg}</h3></div>
+      <div id="flx-win-dialog-goal"></div>
+		</div>
+`;
+
 </script>
 
 {OVERALL_GAME_FOOTER}

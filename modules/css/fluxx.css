@@ -276,6 +276,15 @@
   margin-top: 40px;
 }
 
+#flx-win-dialog-goal {
+  height: 233px;
+}
+
+#flx-win-dialog-goal .stockitem {
+  left: 100px !important;
+  top: 100px !important;
+}
+
 #tmpHand:empty {
   display: none;
 }

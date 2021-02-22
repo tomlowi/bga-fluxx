@@ -615,7 +615,6 @@ class fluxx extends Table
 
     // We have one winner, no tie
     $winnerId = $winnerInfo["winner"];
-    $winningGoal = $winnerInfo["goal"];
 
     // set final score
     $sql = "UPDATE player SET player_score=1  WHERE player_id='$winnerId'";
@@ -636,7 +635,8 @@ class fluxx extends Table
       [
         "player_id" => $winnerId,
         "player_name" => $players[$winnerId]["player_name"],
-        "goal_name" => $winningGoal,
+        "goal_id" => $winnerInfo["goalId"],
+        "goal_name" => $winnerInfo["goal"]
       ]
     );
 
@@ -703,7 +703,7 @@ class fluxx extends Table
         }
         // this player is the winner, unless someone else also reached another goal
         $winnerId = $goalReachedByPlayerId;
-        $winningGoalCard = $goalCard->getName();
+        $winningGoalCard = $goalCard;
       }
     }
 
@@ -713,7 +713,8 @@ class fluxx extends Table
 
     return [
       "winner" => $winnerId,
-      "goal" => $winningGoalCard,
+      "goal" => $winningGoalCard->getName(),
+      "goalId" => $winningGoalCard->getCardId(),
     ];
   }
 
