@@ -101,10 +101,10 @@ class CreeperWar extends CreeperCard
     $game->notifyAllPlayers(
       "keepersMoved",
       clienttranslate(
-        '<b>${card_name}</b> drives away Peace to <b>${selected_player_name}</b>'
+        '<b>${card_name}</b> drives away Peace to ${player_name2}'
       ),
       [
-        "selected_player_name" => $selected_player_name,
+        "player_name2" => $selected_player_name,
         "card_name" => $this->name,
         "destination_player_id" => $selected_player_id,
         "origin_player_id" => $player_id,

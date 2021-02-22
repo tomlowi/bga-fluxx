@@ -50,12 +50,12 @@ class ActionUseWhatYouTake extends ActionCard
     $game->notifyAllPlayers(
       "actionDone",
       clienttranslate(
-        '${player_name} took ${card_name} from <b>${selected_player_name}</b>\'s hand (and must play it)'
+        '${player_name} took ${card_name} from ${player_name2}\'s hand (and must play it)'
       ),
       [
         "card_name" => $card_definition->getName(),
         "player_name" => $player_name,
-        "selected_player_name" => $selected_player_name,
+        "player_name2" => $selected_player_name,
       ]
     );
     $game->sendHandCountNotifications();

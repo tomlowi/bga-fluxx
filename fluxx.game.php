@@ -662,11 +662,11 @@ class fluxx extends Table
         self::notifyAllPlayers(
           "winPreventedByCreeper",
           clienttranslate(
-            'Creepers prevent <b>${unlucky_player_name}</b> from winning with <b>${goal_name}</b>'
+            'Creepers prevent ${player_name2} from winning with <b>${goal_name}</b>'
           ),
           [
             "goal_name" => $goalCard->getName(),
-            "unlucky_player_name" => $unlucky_player_name,
+            "player_name2" => $unlucky_player_name,
           ]
         );
         // sorry, but you can't win yet
@@ -685,11 +685,11 @@ class fluxx extends Table
         self::notifyAllPlayers(
           "winPreventedByBakedPotato",
           clienttranslate(
-            'Baked Potato prevents <b>${unlucky_player_name}</b> from winning with <b>${goal_name}</b>'
+            'Baked Potato prevents ${player_name2} from winning with <b>${goal_name}</b>'
           ),
           [
             "goal_name" => $goalCard->getName(),
-            "unlucky_player_name" => $unlucky_player_name,
+            "player_name2" => $unlucky_player_name,
           ]
         );
         // sorry, but you can't win yet

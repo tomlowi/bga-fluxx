@@ -63,11 +63,11 @@ class ActionTradeHands extends ActionCard
     $game->notifyAllPlayers(
       "actionDone",
       clienttranslate(
-        '${player_name} trades hands with ${selected_player_name}'
+        '${player_name} trades hands with ${player_name2}'
       ),
       [
         "player_name" => $player_name,
-        "selected_player_name" => $selected_player_name,
+        "player_name2" => $selected_player_name,
       ]
     );
     $game->sendHandCountNotifications();

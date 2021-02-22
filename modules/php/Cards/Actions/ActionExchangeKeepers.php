@@ -99,11 +99,11 @@ class ActionExchangeKeepers extends ActionCard
     $game->notifyAllPlayers(
       "actionResolved",
       clienttranslate(
-        '${player_name} got <b>${other_keeper_name}</b> from <b>${other_player_name}</b> in exchange for <b>${my_keeper_name}</b>'
+        '${player_name} got <b>${other_keeper_name}</b> from ${player_name2} in exchange for <b>${my_keeper_name}</b>'
       ),
       [
         "player_name" => $game->getActivePlayerName(),
-        "other_player_name" => $other_player_name,
+        "player_name2" => $other_player_name,
         "other_keeper_name" => $otherKeeperCard->getName(),
         "my_keeper_name" => $myKeeperCard->getName(),
       ]
