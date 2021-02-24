@@ -179,7 +179,7 @@
   margin-left: 36px;
   margin-right: 8px;
   width: 106px;
-  background-color: #EFF0F0;
+  background-color: transparent;
   font-size: 16px;
 }
 
@@ -236,8 +236,8 @@
   margin-top: 80.55px;
 }
 
-.flx-card-creeper .card-overlay {
-  background-color: transparent;
+.flx-card-rule .card-description {
+  margin-top: -5px;
 }
 
 .flx-card-creeper .card-name {
@@ -305,11 +305,11 @@
 }
 
 .flx-keepers .flx-card-creeper .card-subtitle {
-  margin-top: -6px;
+  margin-top: -15px;
 }
 
 .flx-keepers .flx-card-creeper .card-description {
-  margin-top: 2px;
+  margin-top: 5px;
 }
 
 #flx-win-dialog-goal {
