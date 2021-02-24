@@ -95,12 +95,16 @@ $color-rule: #D7B424;
   width: $card-width-inner;
   height: $card-height-title;
   background-color: $color-cardwhite;
+  font-size: 16px;
 
   .card-type {
-    font-weight: bold;
-    font-size: 18px;
+    font-weight: bold;    
     text-transform: uppercase;
     margin-top: $card-margin-top;    
+    // 18/16
+    width: 100% * 16/18;
+    transform:scale(1.125); 
+    transform-origin: top left;
   }
 }
 
@@ -114,23 +118,32 @@ $color-rule: #D7B424;
   margin-right: $card-margin-right;
   width: $card-width-inner;
   background-color: $color-cardwhite;
+  font-size: 16px;
 
   .card-name {
     font-weight: bold;
-    font-size: 14px;
-    width: $card-width-inner + 2px;
+    // 14/16
+    width: 100% * 16/14;
+    transform:scale(0.875);
+    transform-origin: top left;
   }
   
   .card-subtitle {
-    font-weight: bolder;
-    font-size: 9px;
+    font-weight: bolder;    
     margin-bottom: 2px;
+    // 9/16
+    width: 100% * 16/9;
+    transform:scale(0.5625);
+    transform-origin: top left;
   }
   
   .card-description {
-    font-weight: normal;
-    font-size: 8px;
+    font-weight: normal;    
     line-height: 110%;
+    // 8/16
+    width: 100% * 16/8;
+    transform:scale(0.5);
+    transform-origin: top left;
   }
 }
 
@@ -172,7 +185,7 @@ $color-rule: #D7B424;
     margin-top: 5px;
   }
   .card-description {
-    margin-top: $card-height-inner * 0.40;    
+    margin-top: 46px;
   }
 }
 
@@ -184,8 +197,11 @@ $color-rule: #D7B424;
     width: 58px;
 
     .card-type {
-      font-size: 12px;
       margin-top: 8px;
+      // 12/16
+      width: 100% * 16/12;
+      transform:scale(0.75);
+      transform-origin: top left;
     }
 
   }
@@ -194,16 +210,24 @@ $color-rule: #D7B424;
     margin-right: 0px;
     width: 58px;
 
-    .card-name {
-      font-size: 10px;
+    .card-name {      
       margin-top: 2px;
-      width: 58px + 2px;
+      // 10/16
+      width: 100% * 16/10;
+      transform:scale(0.625);
+      transform-origin: top left;
     }
     .card-subtitle {
-      font-size: 5px;
+      // 5/16
+      width: 100% * 16/5;
+      transform:scale(0.3125);
+      transform-origin: top left;
     }
     .card-description {
-      font-size: 4px;
+      // 4/16
+      width: 100% * 16/4;
+      transform:scale(0.25); // 4/16
+      transform-origin: top left;
       line-height: 100%;
     }
   }
@@ -222,8 +246,11 @@ $color-rule: #D7B424;
     }
   }
   .flx-card-creeper {
+    .card-subtitle {
+      margin-top: -6px;
+    }
     .card-description {
-      margin-top: 40px;    
+      margin-top: 2px;
     }
   }
 }

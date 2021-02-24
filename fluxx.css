@@ -156,13 +156,18 @@
   width: 106px;
   height: 26px;
   background-color: #EFF0F0;
+  font-size: 16px;
 }
 
 .card-overlay-title .card-type {
   font-weight: bold;
-  font-size: 18px;
   text-transform: uppercase;
   margin-top: 14px;
+  width: 88.88889%;
+  -webkit-transform: scale(1.125);
+          transform: scale(1.125);
+  -webkit-transform-origin: top left;
+          transform-origin: top left;
 }
 
 .flx-card {
@@ -175,24 +180,36 @@
   margin-right: 8px;
   width: 106px;
   background-color: #EFF0F0;
+  font-size: 16px;
 }
 
 .card-overlay .card-name {
   font-weight: bold;
-  font-size: 14px;
-  width: 108px;
+  width: 114.28571%;
+  -webkit-transform: scale(0.875);
+          transform: scale(0.875);
+  -webkit-transform-origin: top left;
+          transform-origin: top left;
 }
 
 .card-overlay .card-subtitle {
   font-weight: bolder;
-  font-size: 9px;
   margin-bottom: 2px;
+  width: 177.77778%;
+  -webkit-transform: scale(0.5625);
+          transform: scale(0.5625);
+  -webkit-transform-origin: top left;
+          transform-origin: top left;
 }
 
 .card-overlay .card-description {
   font-weight: normal;
-  font-size: 8px;
   line-height: 110%;
+  width: 200%;
+  -webkit-transform: scale(0.5);
+          transform: scale(0.5);
+  -webkit-transform-origin: top left;
+          transform-origin: top left;
 }
 
 .flx-card-action .card-overlay {
@@ -228,7 +245,7 @@
 }
 
 .flx-card-creeper .card-description {
-  margin-top: 71.6px;
+  margin-top: 46px;
 }
 
 .flx-keepers .card-overlay-title {
@@ -239,8 +256,12 @@
 }
 
 .flx-keepers .card-overlay-title .card-type {
-  font-size: 12px;
   margin-top: 8px;
+  width: 133.33333%;
+  -webkit-transform: scale(0.75);
+          transform: scale(0.75);
+  -webkit-transform-origin: top left;
+          transform-origin: top left;
 }
 
 .flx-keepers .card-overlay {
@@ -250,17 +271,28 @@
 }
 
 .flx-keepers .card-overlay .card-name {
-  font-size: 10px;
   margin-top: 2px;
-  width: 60px;
+  width: 160%;
+  -webkit-transform: scale(0.625);
+          transform: scale(0.625);
+  -webkit-transform-origin: top left;
+          transform-origin: top left;
 }
 
 .flx-keepers .card-overlay .card-subtitle {
-  font-size: 5px;
+  width: 320%;
+  -webkit-transform: scale(0.3125);
+          transform: scale(0.3125);
+  -webkit-transform-origin: top left;
+          transform-origin: top left;
 }
 
 .flx-keepers .card-overlay .card-description {
-  font-size: 4px;
+  width: 400%;
+  -webkit-transform: scale(0.25);
+          transform: scale(0.25);
+  -webkit-transform-origin: top left;
+          transform-origin: top left;
   line-height: 100%;
 }
 
@@ -272,8 +304,12 @@
   margin-top: 6px;
 }
 
+.flx-keepers .flx-card-creeper .card-subtitle {
+  margin-top: -6px;
+}
+
 .flx-keepers .flx-card-creeper .card-description {
-  margin-top: 40px;
+  margin-top: 2px;
 }
 
 #flx-win-dialog-goal {
