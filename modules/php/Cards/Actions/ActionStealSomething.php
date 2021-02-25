@@ -15,6 +15,10 @@ class ActionStealSomething extends ActionCard
     $this->description = clienttranslate(
       "Take your choice of any Keeper or Creeper from in front of another player and put it in front of you."
     );
+
+    $this->help = clienttranslate(
+      "Select any keeper or creeper card in play from another player."
+    );
   }
 
   public $interactionNeeded = "keeperSelectionOther";

@@ -15,6 +15,10 @@ class ActionMoveACreeper extends ActionCard
     $this->description = clienttranslate(
       "Choose any Creeper in front of any player and move it to some other player."
     );
+
+    $this->help = clienttranslate(
+      "First select any creeper card in play, then choose the player it should move to."
+    );
   }
 
   public $interactionNeeded = "keeperAndPlayerSelectionAny";

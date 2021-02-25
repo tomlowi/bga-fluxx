@@ -14,6 +14,10 @@ class ActionTrashAKeeper extends ActionCard
     $this->description = clienttranslate(
       "Take a Keeper from in front of any player and put it on the discard pile. <br/> If no one has any Keepers in play, nothing happens when you play this card."
     );
+
+    $this->help = clienttranslate(
+      "Select any keeper card in play from any player (including yourself)."
+    );
   }
 
   public $interactionNeeded = "keeperSelectionAny";

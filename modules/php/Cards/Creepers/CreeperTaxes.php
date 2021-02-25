@@ -15,6 +15,10 @@ class CreeperTaxes extends CreeperCard
     $this->description = clienttranslate(
       "You cannot win if you have this, unless the Goal says otherwise. If you have Money in play, you can discard it and this."
     );
+
+    $this->help = clienttranslate(
+      "Decide if you want to pay Taxes with Money now, or if you still want to keep your Money."
+    );
   }
 
   public function preventsWinForGoal($goalCard)

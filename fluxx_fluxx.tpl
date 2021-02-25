@@ -13,7 +13,7 @@
 -->
 
 <div class="flx_help_msg_wrapper">
-  <span id="flx_help_msg" class="flx_help"></span>
+  <div id="flx_help_msg" class="flx_help"></div>
 </div>
 
 <div id="tmpHand" class="whiteblock flx-hand"></div>
@@ -117,9 +117,9 @@ var jstpl_cardOverlay_text = `<div class="flx-card-overlay">
 		<div class="flx-card flx-card-\${set} flx-card-\${type}" 
           id="flx-card-overlay-\${id}">
 			<div class="card-overlay">
-        <div class="card-name">\${name}</div>
+        <div class="card-name card-name-\${nameLength}">\${name}</div>
         <div class="card-subtitle">\${subtitle}</div>
-				<div class="card-description">\${description}</div>
+				<div class="card-description card-desc-\${descLength}"">\${description}</div>
 			</div>
 		</div>
 </div>`;

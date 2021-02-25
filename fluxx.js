@@ -619,12 +619,21 @@ define([
         var card = {
           set: cardDefinition.set,
           name: cardDefinition.name,
+          nameLength: "normal",
           subtitle: cardDefinition.subtitle || "",
           description: cardDefinition.description || "",
+          descLength: "normal",
           type: cardDefinition.type,
           typeName: this.cardTypesDefinitions[cardDefinition.type],
           id: card_type_id,
         };
+
+        if (card.name.length > 20) {
+          card.nameLength = "long";
+        }
+        if (card.description.length > 158) {
+          card.descLength = "long";
+        }
 
         // Add a special tooltip on the card:
         this.addTooltipHtml(
@@ -635,7 +644,7 @@ define([
         var cardOverlayTitle = this.format_block("jstpl_cardOverlay_title", card);
         var cardOverlay = this.format_block("jstpl_cardOverlay_text", card);
         dojo.place(cardOverlayTitle, card_div.id);
-        dojo.place(cardOverlay, card_div.id);
+        dojo.place(cardOverlay, card_div.id);        
 
         // Note that "card_type_id" contains the type of the item, so you can do special actions depending on the item type        
 

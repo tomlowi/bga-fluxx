@@ -125,7 +125,13 @@ $color-rule: #D7B424;
     // 14/16
     width: 100% * 16/14;
     transform:scale(0.875);
-    transform-origin: top left;
+    transform-origin: top left;    
+  }
+
+  .card-name-long {
+    // 12/16
+    width: 100% * 16/12;
+    transform:scale(0.75);
   }
   
   .card-subtitle {
@@ -144,6 +150,12 @@ $color-rule: #D7B424;
     width: 100% * 16/8;
     transform:scale(0.5);
     transform-origin: top left;
+  }
+
+  .card-desc-long {
+    // 7/16
+    width: 100% * 16/7;
+    transform:scale(0.4375);
   }
 }
 

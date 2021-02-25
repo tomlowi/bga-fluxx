@@ -14,6 +14,10 @@ class ActionStealAKeeper extends ActionCard
     $this->description = clienttranslate(
       "Steal a Keeper from in front of another player, and add it to your collection of Keepers on the table."
     );
+
+    $this->help = clienttranslate(
+      "Select any keeper card in play from another player."
+    );
   }
 
   public $interactionNeeded = "keeperSelectionOther";

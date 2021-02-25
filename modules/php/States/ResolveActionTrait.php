@@ -31,6 +31,7 @@ trait ResolveActionTrait
       "action_name" => $actionCard->getName(),
       "action_type" => $actionCard->interactionNeeded,
       "action_args" => $actionCard->resolveArgs(),
+      "action_help" => $actionCard->getHelp(),
     ];
   }
 

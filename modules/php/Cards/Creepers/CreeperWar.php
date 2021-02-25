@@ -16,6 +16,10 @@ class CreeperWar extends CreeperCard
       "You cannot win if you have this, unless the Goal says otherwise. If you have Peace, you must move it to another player."
     );
 
+    $this->help = clienttranslate(
+      "Choose the player you want to move Peace to."
+    );
+
     $this->peace_unique_id = 19;
   }
 

@@ -53,8 +53,11 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui"], (dojo, declare) => {
       }
     },
 
-    displayHelpMessage: function (msg) {
-        this.changeInnerHtml("flx_help_msg", msg);
+    displayHelpMessage: function (msg, msgType) {
+      if ((msg || "") == "") return;
+
+      this.changeInnerHtml("flx_help_msg", 
+        '<span class="help_txt help_txt_' + msgType + '">' + msg + '</span>');
     },
 
     resetHelpMessage: function () {

@@ -14,6 +14,10 @@ class ActionExchangeKeepers extends ActionCard
     $this->description = clienttranslate(
       "Pick any Keeper another player has on the table and exchange it for one you have on the table. <be/> If you have no Keepers in play, or if no one else has a Keeper, nothing happens."
     );
+
+    $this->help = clienttranslate(
+      "Select exactly 2 Keeper cards, 1 of yours and 1 of another player."
+    );
   }
 
   public $interactionNeeded = "keepersExchange";

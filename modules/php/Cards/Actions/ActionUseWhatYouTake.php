@@ -14,6 +14,10 @@ class ActionUseWhatYouTake extends ActionCard
     $this->description = clienttranslate(
       "Take a card at random form another player's hand, and play it."
     );
+
+    $this->help = clienttranslate(
+      "Choose the player you want to take a card from (that will be played automatically)."
+    );
   }
 
   public $interactionNeeded = "playerSelection";
