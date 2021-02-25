@@ -305,11 +305,8 @@
 }
 
 .flx-keepers .flx-card-creeper .card-subtitle {
-  margin-top: -15px;
-}
-
-.flx-keepers .flx-card-creeper .card-description {
-  margin-top: 5px;
+  margin-top: -6px;
+  margin-bottom: -46px;
 }
 
 #flx-win-dialog-goal {
