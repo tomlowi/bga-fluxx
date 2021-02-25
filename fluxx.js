@@ -390,7 +390,7 @@ define([
       onEnteringState: function (stateName, args) {
         this.currentState = stateName;
         console.log("Entering state: " + stateName);
-
+      
         switch (stateName) {
           case "playCard":
             this.onEnteringStatePlayCard(args);
@@ -436,6 +436,8 @@ define([
       //
       onLeavingState: function (stateName) {
         console.log("Leaving state: " + stateName);
+
+        this.resetHelpMessage();
 
         switch (stateName) {
           case "playCard":

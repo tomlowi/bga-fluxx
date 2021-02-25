@@ -7,13 +7,14 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
     },
 
     onEnteringStateActionResolve: function (args) {
-      console.log("Entering state: ActionResolve", args);
+      console.log("Entering state: ActionResolve", args);      
     },
 
     onUpdateActionButtonsActionResolve: function (args) {
       console.log("Update Action Buttons: ActionResolve", args);
 
       if (this.isCurrentPlayerActive()) {
+        this.displayHelpMessage(args.action_name + " help text");
         method = this.updateActionButtonsActionResolve[args.action_type];
         method(this, args.action_args);
       }

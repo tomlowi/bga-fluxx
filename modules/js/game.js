@@ -46,5 +46,20 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui"], (dojo, declare) => {
 
       this.myDlg.show();
     },
+
+    changeInnerHtml: function (id, text) {
+      if (dojo.byId(id)) {
+          dojo.byId(id).innerHTML = text;
+      }
+    },
+
+    displayHelpMessage: function (msg) {
+        this.changeInnerHtml("flx_help_msg", msg);
+    },
+
+    resetHelpMessage: function () {
+        this.changeInnerHtml("flx_help_msg", "");
+    },
+
   });
 });

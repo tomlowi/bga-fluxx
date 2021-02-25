@@ -12,6 +12,10 @@
     fluxx_fluxx.tpl
 -->
 
+<div class="flx_help_msg_wrapper">
+  <span id="flx_help_msg" class="flx_help"></span>
+</div>
+
 <div id="tmpHand" class="whiteblock flx-hand"></div>
 
 <div id="tmpKeeperPanelIcons" class="whiteblock flx-keeper-panel-placeholder"></div>
