@@ -12,7 +12,7 @@ class GoalCantBuyMeLove extends GoalTwoKeepers
     $this->name = clienttranslate("Can’t Buy Me Love");
     $this->subtitle = clienttranslate("Money + Love");
 
-    $this->keeper1 = 1;
-    $this->keeper2 = 13;
+    $this->keeper1 = 7;
+    $this->keeper2 = 18;
   }
 }
