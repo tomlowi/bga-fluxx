@@ -364,7 +364,7 @@ class fluxx extends Table
       "creeper" => clienttranslate("Creeper"),
       "goal" => clienttranslate("Goal"),
       "keeper" => clienttranslate("Keeper"),
-      "rule" => clienttranslate("New Rule"),
+      "rule" => clienttranslate("New&nbsp;Rule"),
     ];
   }
 
