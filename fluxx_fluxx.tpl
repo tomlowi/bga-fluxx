@@ -71,8 +71,12 @@
     <span id="handCount${id}"></span>\
   </div>\
   <div class="flx-board-keeper">\
-    <span id="handIcon${id}" class="flx-icons flx-icons-keeper" aria-label="{KEEPERS_COUNT}"></span>\
+    <span id="keeperIcon${id}" class="flx-icons flx-icons-keeper" aria-label="{KEEPERS_COUNT}"></span>\
     <span id="keepersCount${id}"></span>\
+  </div>\
+  <div class="flx-board-creeper">\
+    <span id="creeperIcon${id}" class="flx-icons flx-icons-creeper" aria-label="{CREEPERS_COUNT}"></span>\
+    <span id="creepersCount${id}"></span>\
   </div>\
 </div>';
 

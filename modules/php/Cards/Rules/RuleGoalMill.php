@@ -22,11 +22,17 @@ class RuleGoalMill extends RuleCard
   public function canBeUsedInPlayerTurn($player_id)
   {
     $alreadyUsed = !Utils::playerHasNotYetUsedGoalMill();
-    if ($alreadyUsed) return false;
-    
+    if ($alreadyUsed) {
+      return false;
+    }
+
     $game = Utils::getGame();
-    $goalCardsInHand 
-      = $game->cards->getCardsOfTypeInLocation( "goal", null, "hand", $player_id);    
+    $goalCardsInHand = $game->cards->getCardsOfTypeInLocation(
+      "goal",
+      null,
+      "hand",
+      $player_id
+    );
 
     return count($goalCardsInHand) > 0;
   }
@@ -44,7 +50,7 @@ class RuleGoalMill extends RuleCard
   public function freePlayInPlayerTurn($player_id)
   {
     $game = Utils::getGame();
-    $game->setGameStateValue("playerTurnUsedGoalMill", 1);    
+    $game->setGameStateValue("playerTurnUsedGoalMill", 1);
     return parent::freePlayInPlayerTurn($player_id);
   }
 
@@ -53,7 +59,7 @@ class RuleGoalMill extends RuleCard
     $game = Utils::getGame();
     // validate all cards are goals in hand of player
     $cards = $args["cards"];
-    foreach ($cards as $card_id => $card) {      
+    foreach ($cards as $card) {
       if (
         $card["location"] != "hand" ||
         $card["location_arg"] != $player_id ||
@@ -67,8 +73,8 @@ class RuleGoalMill extends RuleCard
       }
     }
     // discard the selected goals from hand
-    foreach ($cards as $card_id => $card) {      
-      $game->cards->playCard($card_id);
+    foreach ($cards as $card) {
+      $game->cards->playCard($card["id"]);
     }
 
     $game->notifyAllPlayers("handDiscarded", "", [
@@ -78,8 +84,8 @@ class RuleGoalMill extends RuleCard
       "handCount" => $game->cards->countCardInLocation("hand", $player_id),
     ]);
     // draw equal number of cards
+
     $drawCount = count($cards);
     $game->performDrawCards($player_id, $drawCount);
-
   }
 }

@@ -28,19 +28,19 @@ class ActionCreeperSweeper extends ActionCard
     $creeperCardsPerPlayer = [];
     foreach ($creeperCards as $card_id => $card) {
       $player_id = $card["location_arg"];
-      if (!array_key_exists($player_id, $creeperCardsPerPlayer)){
+      if (!array_key_exists($player_id, $creeperCardsPerPlayer)) {
         $creeperCardsPerPlayer[$player_id] = [];
       }
       $creeperCardsPerPlayer[$player_id][] = $card;
       $game->cards->playCard($card_id);
     }
 
-    foreach ($creeperCardsPerPlayer as $player_id => $discards_for_player) 
-    {
+    foreach ($creeperCardsPerPlayer as $player_id => $discards_for_player) {
       $game->notifyAllPlayers("keepersDiscarded", "", [
         "player_id" => $player_id,
         "cards" => $discards_for_player,
         "discardCount" => $game->cards->countCardInLocation("discard"),
+        "creeperCount" => 0,
       ]);
     }
   }

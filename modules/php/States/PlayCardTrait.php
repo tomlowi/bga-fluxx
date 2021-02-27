@@ -25,6 +25,10 @@ trait PlayCardTrait
       return;
     }
 
+    // check if the first play random rule is active
+    // if so, the first card is already played automatically
+    $this->checkFirstPlayRandom();
+
     $player_id = $game->getActivePlayerId();
 
     // If any "free action" rule can be played, we cannot end turn automatically
@@ -55,7 +59,7 @@ trait PlayCardTrait
     $mustPlay = Utils::calculateCardsMustPlayFor($player_id, true);
 
     $leftToPlay = Utils::calculateCardsLeftToPlayFor($player_id);
-    
+
     if ($mustPlay >= PLAY_COUNT_ALL) {
       $countLabel = clienttranslate("All");
     } elseif ($mustPlay < 0) {
@@ -65,7 +69,7 @@ trait PlayCardTrait
     }
 
     $freeRulesAvailable = $this->getFreeRulesAvailable($player_id);
-    
+
     return [
       "countLabel" => $countLabel,
       "count" => $leftToPlay,
@@ -124,7 +128,7 @@ trait PlayCardTrait
     if ($card["location"] != "rules") {
       Utils::throwInvalidUserAction(
         fluxx::totranslate("This is not an active Rule")
-      );      
+      );
     }
 
     $ruleCard = RuleCardFactory::getCard($card_id, $card["type_arg"]);
@@ -138,7 +142,7 @@ trait PlayCardTrait
         "player_id" => $player_id,
         "card_name" => $ruleCard->getName(),
       ]
-    );    
+    );
 
     $stateTransition = $ruleCard->freePlayInPlayerTurn($player_id);
     if ($stateTransition != null) {
@@ -151,7 +155,7 @@ trait PlayCardTrait
     }
   }
 
-  public function action_playCard($card_id)
+  public function action_playCard($card_id, $postponeCreeperResolve = false)
   {
     // Check that this is the player's turn and that it is a "possible action" at this game state (see states.inc.php)
     $game = Utils::getGame();
@@ -167,7 +171,7 @@ trait PlayCardTrait
     }
 
     // play the card from active player's hand
-    self::_action_playCard($card_id, true);
+    self::_action_playCard($card_id, true, $postponeCreeperResolve);
   }
 
   public function action_forced_playCard($card_id)
@@ -175,12 +179,15 @@ trait PlayCardTrait
     // Check that this is the player's turn and that it is a "possible action" at this game state (see states.inc.php)
     $game = Utils::getGame();
     $game->checkAction("playCard");
-    // play the card from active player's hand, but don't count it for nr played cards    
+    // play the card from active player's hand, but don't count it for nr played cards
     self::_action_playCard($card_id, false);
   }
 
-  private function _action_playCard($card_id, $incrementPlayedCards)
-  {
+  private function _action_playCard(
+    $card_id,
+    $incrementPlayedCards,
+    $postponeCreeperResolve = false
+  ) {
     $game = Utils::getGame();
 
     $player_id = $game->getActivePlayerId();
@@ -194,6 +201,7 @@ trait PlayCardTrait
 
     $card_type = $card["type"];
     $stateTransition = null;
+    $continuePlayTransition = "continuePlay";
     switch ($card_type) {
       case "keeper":
         $this->playKeeperCard($player_id, $card);
@@ -209,6 +217,9 @@ trait PlayCardTrait
         break;
       case "creeper":
         $this->playCreeperCard($player_id, $card);
+        // Creepers are played automatically when drawn in any state,
+        // so we must stay in whatever the current state is
+        $continuePlayTransition = null;
         break;
       default:
         die("Not implemented: Card type $card_type does not exist");
@@ -217,6 +228,13 @@ trait PlayCardTrait
 
     if ($incrementPlayedCards) {
       $game->incGameStateValue("playedCards", 1);
+    }
+
+    // check creeper abilities to resolve (unless we still need to resolve the card played)
+    if ($stateTransition == null && !$postponeCreeperResolve) {
+      if ($game->checkCreeperResolveNeeded($card)) {
+        return;
+      }
     }
 
     // A card has been played: do we have a new winner?
@@ -228,10 +246,10 @@ trait PlayCardTrait
     if ($stateTransition != null) {
       // player must resolve something before continuing to play more cards
       $game->gamestate->nextstate($stateTransition);
-    } else {
+    } elseif ($continuePlayTransition != null) {
       // else: just let player continue playing cards
       // but explicitly set state again to force args refresh
-      $game->gamestate->nextstate("continuePlay");
+      $game->gamestate->nextstate($continuePlayTransition);
     }
   }
 
@@ -253,6 +271,7 @@ trait PlayCardTrait
         "card_name" => $keeperCard->getName(),
         "card" => $card,
         "handCount" => $game->cards->countCardInLocation("hand", $player_id),
+        "creeperCount" => Utils::getPlayerCreeperCount($player_id),
       ]
     );
   }
@@ -265,17 +284,18 @@ trait PlayCardTrait
     $game->cards->moveCard($card["id"], "keepers", $player_id);
 
     // Notify all players about the creeper played
-    $keeperCard = CreeperCardFactory::getCard($card["id"], $card["type_arg"]);
+    $creeperCard = CreeperCardFactory::getCard($card["id"], $card["type_arg"]);
     $game->notifyAllPlayers(
-      "keeperPlayed",
-      clienttranslate('${player_name} plays creeper <b>${card_name}</b>'),
+      "creeperPlayed",
+      clienttranslate('${player_name} must place creeper <b>${card_name}</b>'),
       [
         "i18n" => ["card_name"],
         "player_name" => $game->getActivePlayerName(),
         "player_id" => $player_id,
-        "card_name" => $keeperCard->getName(),
+        "card_name" => $creeperCard->getName(),
         "card" => $card,
         "handCount" => $game->cards->countCardInLocation("hand", $player_id),
+        "creeperCount" => Utils::getPlayerCreeperCount($player_id),
       ]
     );
   }
@@ -286,7 +306,7 @@ trait PlayCardTrait
 
     // Notify all players about the goal played
     $goalCard = GoalCardFactory::getCard($card["id"], $card["type_arg"]);
-    
+
     // this goal card is still in hand at this time
     $handCount = $game->cards->countCardInLocation("hand", $player_id) - 1;
 
@@ -324,6 +344,13 @@ trait PlayCardTrait
     // We play the new goal
     $game->cards->moveCard($card["id"], "goals");
 
+    // Fluxx FAQ:
+    // Goal change and Potato move are considered to be simultaneous.
+    // Basically, do both of the things (play the Goal and move the Creeper)
+    // and only THEN take a look at the situation to see if you win or not.
+    // So no separate win conditions check before the Potato moves.
+    CreeperCardFactory::onGoalChange();
+
     if ($hasDoubleAgenda && $existingGoalCount > 1) {
       $game->setGameStateValue("lastGoalBeforeDoubleAgenda", $card["id"]);
       return "doubleAgendaRule";
@@ -340,6 +367,9 @@ trait PlayCardTrait
 
     // Notify all players about the new rule
     // (this needs to be done before the effect, otherwise the history is confusing)
+    // and so the hand count must be corrected accordingly
+    $handCount = $game->cards->countCardInLocation("hand", $player_id) - 1;
+
     $game->notifyAllPlayers(
       "rulePlayed",
       clienttranslate('${player_name} placed a new rule: <b>${card_name}</b>'),
@@ -350,7 +380,7 @@ trait PlayCardTrait
         "player_id" => $player_id,
         "ruleType" => $ruleType,
         "card" => $card,
-        "handCount" => $game->cards->countCardInLocation("hand", $player_id),
+        "handCount" => $handCount,
       ]
     );
 
@@ -358,8 +388,13 @@ trait PlayCardTrait
 
     // Execute the immediate rule effect
     $stateTransition = $ruleCard->immediateEffectOnPlay($player_id);
-
+    // Move card from hand to correct rules section
     $game->cards->moveCard($card["id"], "rules", $location_arg);
+    // If the Rules card played resulted in any cards drawn,
+    // the hand counter is incorrect (because this card was still in hand)
+    // But changing order of effect/move here breaks the game play
+    // Easiest fix seems to push the correct hand counters again
+    $this->sendHandCountNotifications();
 
     return $stateTransition;
   }
@@ -373,6 +408,10 @@ trait PlayCardTrait
 
     // Notify all players about the action played
     // (this needs to be done before the effect, otherwise the history is confusing)
+    // and so the hand + discard count must be corrected accordingly
+    $handCount = $game->cards->countCardInLocation("hand", $player_id) - 1;
+    $discardCount = $game->cards->countCardInLocation("discard") + 1;
+
     $game->notifyAllPlayers(
       "actionPlayed",
       clienttranslate('${player_name} plays an action: <b>${card_name}</b>'),
@@ -382,8 +421,8 @@ trait PlayCardTrait
         "player_id" => $player_id,
         "card_name" => $actionCard->getName(),
         "card" => $card,
-        "handCount" => $game->cards->countCardInLocation("hand", $player_id),
-        "discardCount" => $game->cards->countCardInLocation("discard"),
+        "handCount" => $handCount,
+        "discardCount" => $discardCount,
       ]
     );
 
@@ -394,5 +433,44 @@ trait PlayCardTrait
     $stateTransition = $actionCard->immediateEffectOnPlay($player_id);
 
     return $stateTransition;
+  }
+
+  private function checkFirstPlayRandom()
+  {
+    $game = Utils::getGame();
+    $firstPlayRandom = 0 != $game->getGameStateValue("activeFirstPlayRandom");
+    $playRule = $game->getGameStateValue("playRule");
+    $alreadyPlayed = $game->getGameStateValue("playedCards");
+
+    // Ignore this rule if the current Rule card allow you to play only one card
+    if (!$firstPlayRandom || $playRule <= 1 || $alreadyPlayed > 0) {
+      return;
+    }
+
+    // select random card from player hand (always something there, just drew cards)
+    $player_id = $game->getActivePlayerId();
+    $cardsInHand = $game->cards->getCardsInLocation("hand", $player_id);
+
+    $i = bga_rand(0, count($cardsInHand) - 1);
+    $card = array_values($cardsInHand)[$i];
+
+    $game->notifyAllPlayers(
+      "firstPlayRandom",
+      clienttranslate('${player_name} must play first card random'),
+      [
+        "player_name" => $game->getActivePlayerName(),
+        "player_id" => $player_id,
+      ]
+    );
+
+    // note: be aware we can't have "checkAction" running here!
+    // the *active* player has already changed, but the *current* player
+    // is still the previous player that triggered its turn end
+    // so "checkAction" would thrown "It is not your turn" to the current player
+    // when trying to play the card for the active player
+
+    // first card is a forced play, but in this case
+    // it does count for the number of cards played
+    $this->_action_playCard($card["id"], true);
   }
 }

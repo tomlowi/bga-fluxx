@@ -18,11 +18,11 @@ class RuleSilverLining extends RuleCard
 
   public function immediateEffectOnPlay($player)
   {
-    // @TODO : set game state?
+    Utils::getGame()->setGameStateValue("activeSilverLining", 1);
   }
 
   public function immediateEffectOnDiscard($player)
   {
-    // @TODO : unset game state?
+    Utils::getGame()->setGameStateValue("activeSilverLining", 0);
   }
 }

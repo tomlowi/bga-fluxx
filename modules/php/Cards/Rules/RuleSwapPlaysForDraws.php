@@ -38,11 +38,10 @@ class RuleSwapPlaysForDraws extends RuleCard
     // calculate how many cards player should still play
     $drawCount = Utils::calculateCardsLeftToPlayFor($player_id);
     // draw as many cards as we could have still played
-    if ($drawCount > 0)
-    {
+    if ($drawCount > 0) {
       $game->performDrawCards($player_id, $drawCount);
     }
-    
+
     // Force end of turn
     return "endOfTurn";
   }

@@ -22,8 +22,17 @@ class RuleRecycling extends RuleCard
   public function canBeUsedInPlayerTurn($player_id)
   {
     $game = Utils::getGame();
-    return Utils::playerHasNotYetUsedRecycling()
-      && $game->cards->countCardInLocation("keepers", $player_id) > 0;
+
+    $playersKeepersInPlay = count(
+      $game->cards->getCardsOfTypeInLocation(
+        "keeper",
+        null,
+        "keepers",
+        $player_id
+      )
+    );
+
+    return Utils::playerHasNotYetUsedRecycling() && $playersKeepersInPlay > 0;
   }
 
   public function immediateEffectOnPlay($player)
@@ -39,17 +48,18 @@ class RuleRecycling extends RuleCard
   public function freePlayInPlayerTurn($player_id)
   {
     $game = Utils::getGame();
-    $game->setGameStateValue("playerTurnUsedRecycling", 1);    
+    $game->setGameStateValue("playerTurnUsedRecycling", 1);
     return parent::freePlayInPlayerTurn($player_id);
   }
 
   public function resolvedBy($player_id, $args)
   {
-    // Validate args contains 1 card, 
+    // Validate args contains 1 card,
     // and it is a Keeper in play for this player
     $myKeeper = $args["card"];
 
     if (
+      $myKeeper["type"] != "keeper" ||
       $myKeeper["location"] != "keepers" ||
       $myKeeper["location_arg"] != $player_id
     ) {
@@ -75,13 +85,13 @@ class RuleRecycling extends RuleCard
         "cards" => [$card],
         "player_id" => $player_id,
         "discardCount" => $game->cards->countCardInLocation("discard"),
+        "creeperCount" => Utils::getPlayerCreeperCount($player_id),
       ]
     );
 
-    // Draw 3 cards (+ inflation)    
+    // Draw 3 cards (+ inflation)
     $addInflation = Utils::getActiveInflation() ? 1 : 0;
     $drawCount = 3 + $addInflation;
     $game->performDrawCards($player_id, $drawCount);
-
   }
 }

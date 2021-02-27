@@ -16,7 +16,7 @@ class ActionMoveACreeper extends ActionCard
     );
   }
 
-  public $interactionNeeded = "keeperSelectionAny";
+  public $interactionNeeded = "keeperAndPlayerSelectionAny";
 
   public function immediateEffectOnPlay($player_id)
   {
@@ -41,6 +41,8 @@ class ActionMoveACreeper extends ActionCard
     $game = Utils::getGame();
 
     $card = $args["card"];
+    $selected_player_id = $args["selected_player_id"];
+
     $card_definition = $game->getCardDefinitionFor($card);
 
     $card_type = $card["type"];
@@ -53,25 +55,38 @@ class ActionMoveACreeper extends ActionCard
       );
     }
 
-    // move this creeper to the current player
-    // @TODO: should actually move to a selected player
-    $game->cards->moveCard($card["id"], "keepers", $player_id);
+    if ($selected_player_id == $other_player_id) {
+      Utils::throwInvalidUserAction(
+        fluxx::totranslate(
+          "You must move the creeper to a player different from the current owner"
+        )
+      );
+    }
+
+    // move this creeper to the selected player
+    $game->cards->moveCard($card["id"], "keepers", $selected_player_id);
 
     $players = $game->loadPlayersBasicInfos();
     $other_player_name = $players[$other_player_id]["player_name"];
+    $selected_player_name = $players[$selected_player_id]["player_name"];
 
     $game->notifyAllPlayers(
       "keepersMoved",
       clienttranslate(
-        '${player_name} stole <b>${card_name}</b> from <b>${other_player_name}</b>'
+        '${player_name} moved <b>${card_name}</b> from <b>${other_player_name}</b> to <b>${selected_player_name}</b>'
       ),
       [
         "player_name" => $game->getActivePlayerName(),
         "other_player_name" => $other_player_name,
+        "selected_player_name" => $selected_player_name,
         "card_name" => $card_definition->getName(),
-        "destination_player_id" => $player_id,
+        "destination_player_id" => $selected_player_id,
         "origin_player_id" => $other_player_id,
         "cards" => [$card],
+        "destination_creeperCount" => Utils::getPlayerCreeperCount(
+          $selected_player_id
+        ),
+        "origin_creeperCount" => Utils::getPlayerCreeperCount($other_player_id),
       ]
     );
   }

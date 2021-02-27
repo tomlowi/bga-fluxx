@@ -21,14 +21,20 @@ class ActionExchangeKeepers extends ActionCard
   public function immediateEffectOnPlay($player_id)
   {
     $game = Utils::getGame();
-    $keepersInPlay = $game->cards->countCardInLocation("keepers");
-    $playersKeepersInPlay = $game->cards->countCardInLocation(
-      "keepers",
-      $player_id
+    $totalKeepersInPlay = count(
+      $game->cards->getCardsOfTypeInLocation("keeper", null, "keepers", null)
+    );
+    $playersKeepersInPlay = count(
+      $game->cards->getCardsOfTypeInLocation(
+        "keeper",
+        null,
+        "keepers",
+        $player_id
+      )
     );
     if (
       $playersKeepersInPlay == 0 ||
-      $keepersInPlay - $playersKeepersInPlay == 0
+      $totalKeepersInPlay - $playersKeepersInPlay == 0
     ) {
       // no keepers on my side or
       // no keepers on the table for others, this action does nothing
@@ -49,7 +55,9 @@ class ActionExchangeKeepers extends ActionCard
 
     if (
       $myKeeper["location"] != "keepers" ||
+      $myKeeper["type"] != "keeper" ||
       $otherKeeper["location"] != "keepers" ||
+      $otherKeeper["type"] != "keeper" ||
       $myKeeper["location_arg"] != $player_id ||
       $other_player_id == $player_id
     ) {
@@ -63,10 +71,15 @@ class ActionExchangeKeepers extends ActionCard
     // switch the keeper locations
     $game->cards->moveCard($myKeeper["id"], "keepers", $other_player_id);
 
+    $player_creeperCount = Utils::getPlayerCreeperCount($player_id);
+    $other_player_creeperCount = Utils::getPlayerCreeperCount($other_player_id);
+
     $game->notifyAllPlayers("keepersMoved", "", [
       "origin_player_id" => $player_id,
       "destination_player_id" => $other_player_id,
       "cards" => [$myKeeper],
+      "destination_creeperCount" => $other_player_creeperCount,
+      "origin_creeperCount" => $player_creeperCount,
     ]);
 
     $game->cards->moveCard($otherKeeper["id"], "keepers", $player_id);
@@ -74,6 +87,8 @@ class ActionExchangeKeepers extends ActionCard
       "origin_player_id" => $other_player_id,
       "destination_player_id" => $player_id,
       "cards" => [$otherKeeper],
+      "destination_creeperCount" => $player_creeperCount,
+      "origin_creeperCount" => $other_player_creeperCount,
     ]);
 
     $players = $game->loadPlayersBasicInfos();

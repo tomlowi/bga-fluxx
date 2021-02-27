@@ -35,7 +35,7 @@ class ActionTodaysSpecial extends ActionCard
     $addInflation = Utils::getActiveInflation() ? 1 : 0;
 
     $value = $args["value"];
-    $nrCardsToDraw = 0;
+    $nrCardsToDraw = 3 + $addInflation;
 
     switch ($value) {
       case "birthday":

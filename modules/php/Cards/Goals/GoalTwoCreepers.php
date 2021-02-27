@@ -40,7 +40,8 @@ class GoalTwoCreepers extends GoalCard
 
     // If both creepers are in the same player's keepers, this player wins
     if (
-      $first_creeper_card["location_arg"] == $second_creeper_card["location_arg"]
+      $first_creeper_card["location_arg"] ==
+      $second_creeper_card["location_arg"]
     ) {
       return $first_creeper_card["location_arg"];
     }
