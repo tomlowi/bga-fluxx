@@ -29,8 +29,33 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         this.handStock.setSelectionMode(0);
       }
     },
+
     onUpdateActionButtonsPlayCard: function (args) {
-      console.log("Update Action Buttons: PlayCard");
+      console.log("Update Action Buttons: PlayCard", args);
+      
+      if (args.freeRules != undefined && args.freeRules.length > 0)
+      {
+        for (availableRule of args.freeRules)
+        {
+          var card_id = availableRule.card_id;
+          this.addActionButton(
+            "button_rule_" + card_id,
+            availableRule.name,
+            "onPlayFreeRule"
+          );
+          dojo.attr("button_rule_" + card_id, "data-rule-id", card_id);
+        }
+        // if no more cards must be played, but free rules available
+        // => player should have possibility to explicitly end turn
+        if (args.count == 0)
+        {
+          this.addActionButton(
+            "button_finish",
+            _("Finish Turn"),
+            "onPlayFinishTurn"
+          );
+        }
+      }
     },
 
     onSelectCardPlayCard: function () {
@@ -51,5 +76,29 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
 
       this.handStock.unselectAll();
     },
+
+    onPlayFreeRule: function (ev) {
+      var rule_id = ev.target.getAttribute("data-rule-id");
+
+      var action = "playFreeRule";
+
+      if (this.checkAction(action)) {
+        this.ajaxAction(action, {
+          card_id: rule_id,          
+        });
+      }
+    },
+
+    onPlayFinishTurn: function (ev) {
+
+      var action = "finishTurn";
+
+      if (this.checkAction(action)) {
+        this.ajaxAction(action, {
+          
+        });
+      }
+    },    
+
   });
 });

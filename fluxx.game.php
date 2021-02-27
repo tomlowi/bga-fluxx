@@ -78,6 +78,10 @@ class fluxx extends Table
       "forcedCard" => 42,
       "playerTurnUsedPartyBonus" => 43,
       "playerTurnUsedPoorBonus" => 44,
+      "freeRuleToResolve" => 45,
+      "playerTurnUsedGoalMill" => 46,
+      "playerTurnUsedMysteryPlay" => 47,
+      "playerTurnUsedRecycling" => 48,
       "rpsChallengerId" => 90,
       "rpsDefenderId" => 91,
       "rpsChallengerChoice" => 92,
@@ -176,6 +180,9 @@ class fluxx extends Table
     self::setGameStateInitialValue("forcedCard", -1);
     self::setGameStateInitialValue("playerTurnUsedPartyBonus", 0);
     self::setGameStateInitialValue("playerTurnUsedPoorBonus", 0);
+    self::setGameStateInitialValue("playerTurnUsedGoalMill", 0);
+    self::setGameStateInitialValue("playerTurnUsedMysteryPlay", 0);
+    self::setGameStateInitialValue("playerTurnUsedRecycling", 0);
     self::setGameStateInitialValue("rpsChallengerId", -1);
     self::setGameStateInitialValue("rpsDefenderId", -1);
     self::setGameStateInitialValue("rpsChallengerChoice", -1);
@@ -627,6 +634,7 @@ class fluxx extends Table
   use Fluxx\States\KeepersLimitTrait;
   use Fluxx\States\ResolveActionTrait;
   use Fluxx\States\RockPaperScissorsTrait;
+  use Fluxx\States\ResolveFreeRuleTrait;
 
   //////////////////////////////////////////////////////////////////////////////
   //////////// Game state actions
@@ -670,7 +678,7 @@ class fluxx extends Table
         clienttranslate('${player_name} finished their turn.'),
         [
           "player_id" => self::getActivePlayerId(),
-          "player_name" => self::getCurrentPlayerName(),
+          "player_name" => self::getActivePlayerName(),
         ]
       );
       $player_id = self::activeNextPlayer();
@@ -680,6 +688,9 @@ class fluxx extends Table
     self::setGameStateValue("playedCards", 0);
     self::setGameStateValue("playerTurnUsedPartyBonus", 0);
     self::setGameStateValue("playerTurnUsedPoorBonus", 0);
+    self::setGameStateValue("playerTurnUsedGoalMill", 0);
+    self::setGameStateValue("playerTurnUsedMysteryPlay", 0);
+    self::setGameStateValue("playerTurnUsedRecycling", 0);
 
     self::giveExtraTime($player_id);
     $this->gamestate->nextState("");

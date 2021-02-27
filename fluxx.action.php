@@ -43,6 +43,21 @@ class action_fluxx extends APP_GameAction
     self::ajaxResponse();
   }
 
+  public function playFreeRule()
+  {
+    self::setAjaxMode();
+    $card_id = self::getArg("card_id", AT_posint, true);
+    $this->game->action_playFreeRule($card_id);
+    self::ajaxResponse();
+  }
+  
+  public function finishTurn()
+  {
+    self::setAjaxMode();
+    $this->game->action_finishTurn();
+    self::ajaxResponse();
+  }  
+
   public function stripListOfCardIds($card_ids_raw)
   {
     // Removing last ';' if exists
@@ -82,18 +97,6 @@ class action_fluxx extends APP_GameAction
     self::setAjaxMode();
     $card_id = self::getArg("card_id", AT_posint, true);
     $this->game->action_discardGoal($card_id);
-    self::ajaxResponse();
-  }
-
-  public function resolveActionWithCards()
-  {
-    self::setAjaxMode();
-    $option = self::getArg("option", AT_posint, true); // option button chosen
-    $card_ids_raw = self::getArg("card_ids", AT_numberlist, true); // ids of card to use
-    $result = $this->game->action_resolveActionWithCards(
-      $option,
-      $this->stripListOfCardIds($card_ids_raw)
-    );
     self::ajaxResponse();
   }
 
@@ -149,4 +152,21 @@ class action_fluxx extends APP_GameAction
     $this->game->action_selectRockPaperScissors($value);
     self::ajaxResponse();
   }
+
+  public function resolveFreeRuleCardSelection()
+  {
+    self::setAjaxMode();
+    $card_id = self::getArg("card_id", AT_posint, true);
+    $this->game->action_resolveFreeRuleCardSelection($card_id);
+    self::ajaxResponse();
+  }
+  public function resolveFreeRuleCardsSelection()
+  {
+    self::setAjaxMode();
+    $cards_id = self::getArg("cards_id", AT_numberlist, true); // ids of card to discard
+    $this->game->action_resolveFreeRuleCardsSelection(
+      $this->stripListOfCardIds($cards_id)
+    );
+    self::ajaxResponse();
+  }  
 }

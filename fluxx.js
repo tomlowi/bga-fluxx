@@ -31,6 +31,7 @@ define([
   g_gamethemeurl + "modules/js/states/enforceKeepersLimit.js",
   g_gamethemeurl + "modules/js/states/goalCleaning.js",
   g_gamethemeurl + "modules/js/states/actionResolve.js",
+  g_gamethemeurl + "modules/js/states/freeRuleResolve.js",
   g_gamethemeurl + "modules/js/states/playRockPaperScissors.js",
 ], function (dojo, declare) {
   return declare(
@@ -43,6 +44,7 @@ define([
       fluxx.states.enforceKeepersLimit,
       fluxx.states.goalCleaning,
       fluxx.states.actionResolve,
+      fluxx.states.freeRuleResolve,
       fluxx.states.playRockPaperScissors,
     ],
     {
@@ -262,6 +264,10 @@ define([
             this.onEnteringStateActionResolve(args);
             break;
 
+          case "freeRuleResolve":
+            this.onEnteringStateFreeRuleResolve(args);
+            break;
+
           case "dummmy":
             break;
         }
@@ -298,6 +304,10 @@ define([
           case "playRockPaperScissors":
             this.onLeavingStatePlayRockPaperScissors();
 
+          case "freeRuleResolve":
+            this.onLeavingStateFreeRuleResolve();
+            break;
+
           case "dummmy":
             break;
         }
@@ -330,6 +340,9 @@ define([
               break;
             case "playRockPaperScissors":
               this.onUpdateActionButtonsPlayRockPaperScissors(args);
+              break;
+            case "freeRuleResolve":
+              this.onUpdateActionButtonsFreeRuleResolve(args);
               break;
           }
         }

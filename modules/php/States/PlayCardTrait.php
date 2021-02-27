@@ -8,8 +8,6 @@ use Fluxx\Cards\Goals\GoalCardFactory;
 use Fluxx\Cards\Rules\RuleCardFactory;
 use Fluxx\Cards\Actions\ActionCardFactory;
 use Fluxx\Cards\Creepers\CreeperCardFactory;
-use Fluxx\Cards\Rules\RulePartyBonus;
-use Fluxx\Cards\Rules\RuleRichBonus;
 
 trait PlayCardTrait
 {
@@ -22,39 +20,30 @@ trait PlayCardTrait
 
     if ($forcedCardId != -1) {
       $game->setGameStateValue("forcedCard", -1);
-      self::action_playCard($forcedCardId);
+      // But forced play cards should not really be counted for play rule
+      self::action_forced_playCard($forcedCardId);
       return;
-    }
-
-    // If any "free action" rule can be played, we cannot move to the next state
-    $rules = $game->cards->getCardsInLocation("rules", RULE_OTHERS);
-
-    foreach ($rules as $rule_id => $rule) {
-      $ruleCard = RuleCardFactory::getCard($rule["id"], $rule["type_arg"]);
-
-      if ($ruleCard->canBeUsedByPlayer) {
-        return;
-      }
     }
 
     $player_id = $game->getActivePlayerId();
 
-    $alreadyPlayed = $game->getGameStateValue("playedCards");
-    $mustPlay = $this->calculateCardsLeftToPlayFor($player_id, false);
+    // If any "free action" rule can be played, we cannot end turn automatically
+    // Player must finish its turn by explicitly deciding not to use any of the free rules
+    $freeRulesAvailable = $this->getFreeRulesAvailable($player_id);
+    if (count($freeRulesAvailable) > 0) {
+      return;
+    }
 
-    // still cards in hand?
-    $cardsInHand = $game->cards->countCardInLocation("hand", $player_id);
-
-    if (
-      // Play All but 1, and player has only so much cards left
-      ($mustPlay < 0 && $cardsInHand <= $mustPlay) ||
-      // Normal Play Rule, and player has already played enough cards
-      ($mustPlay >= 0 && $alreadyPlayed >= $mustPlay) ||
-      // Player cannot play if no more cards in hand
-      $cardsInHand == 0
-    ) {
+    if (!$this->activePlayerMustPlayMoreCards($player_id)) {
       $game->gamestate->nextstate("endOfTurn");
     }
+  }
+
+  private function activePlayerMustPlayMoreCards($player_id)
+  {
+    $leftToPlay = Utils::calculateCardsLeftToPlayFor($player_id);
+
+    return $leftToPlay > 0;
   }
 
   public function arg_playCard()
@@ -63,64 +52,116 @@ trait PlayCardTrait
     $player_id = $game->getActivePlayerId();
 
     $alreadyPlayed = $game->getGameStateValue("playedCards");
-    $mustPlay = $this->calculateCardsLeftToPlayFor($player_id, true);
+    $mustPlay = Utils::calculateCardsMustPlayFor($player_id, true);
 
+    $leftToPlay = Utils::calculateCardsLeftToPlayFor($player_id);
+    
     if ($mustPlay >= PLAY_COUNT_ALL) {
-      return ["count" => clienttranslate("All")];
+      $countLabel = clienttranslate("All");
     } elseif ($mustPlay < 0) {
-      return ["count" => clienttranslate("All but") . " " . $mustPlay];
+      $countLabel = clienttranslate("All but") . " " . -$mustPlay;
+    } else {
+      $countLabel = $leftToPlay;
     }
 
-    return ["count" => $mustPlay - $alreadyPlayed];
+    $freeRulesAvailable = $this->getFreeRulesAvailable($player_id);
+    
+    return [
+      "countLabel" => $countLabel,
+      "count" => $leftToPlay,
+      "freeRules" => $freeRulesAvailable,
+    ];
   }
 
-  private function calculateCardsLeftToPlayFor($player_id, $withNotifications)
+  private function getFreeRulesAvailable($player_id)
+  {
+    $freeRulesAvailable = [];
+
+    $game = Utils::getGame();
+    $rulesInPlay = $game->cards->getCardsInLocation("rules", RULE_OTHERS);
+    foreach ($rulesInPlay as $card_id => $rule) {
+      $ruleCard = RuleCardFactory::getCard($rule["id"], $rule["type_arg"]);
+
+      if ($ruleCard->canBeUsedInPlayerTurn($player_id)) {
+        $freeRulesAvailable[] = [
+          "card_id" => $card_id,
+          "name" => $ruleCard->getName(),
+        ];
+      }
+    }
+
+    return $freeRulesAvailable;
+  }
+
+  public function action_finishTurn()
   {
     $game = Utils::getGame();
-    // current basic Play rule
-    $playRule = $game->getGameStateValue("playRule");
+    // Check that this is the player's turn and that it is a "possible action" at this game state (see states.inc.php)
+    $game->checkAction("finishTurn");
 
-    // Play All = always Play All
-    if ($playRule >= PLAY_COUNT_ALL) {
-      return $playRule;
-    }
-
-    $addInflation = Utils::getActiveInflation() ? 1 : 0;
-    // check bonus rules
-    $partyBonus =
-      Utils::getActivePartyBonus() && Utils::isPartyInPlay()
-        ? 1 + $addInflation
-        : 0;
-    if ($partyBonus > 0 && $withNotifications) {
-      RulePartyBonus::notifyActiveFor($player_id, false);
-    }
-    $richBonus =
-      Utils::getActiveRichBonus() && Utils::hasMostKeepers($player_id)
-        ? 1 + $addInflation
-        : 0;
-    if ($richBonus > 0 && $withNotifications) {
-      RuleRichBonus::notifyActiveFor($player_id);
+    $player_id = $game->getActivePlayerId();
+    if ($this->activePlayerMustPlayMoreCards($player_id)) {
+      Utils::throwInvalidUserAction(
+        fluxx::totranslate(
+          "You cannot finish your turn if you still need to play cards"
+        )
+      );
     }
 
-    // Play All but 1 is also affected by Inflation and Bonus rules
-    if ($playRule < 0) {
-      $playRule -= $addInflation;
-      // if "Play All but ..." + bonus plays becomes >= 0, it actually becomes "Play All"
-      if ($playRule + $partyBonus + $richBonus >= 0) {
-        return PLAY_COUNT_ALL;
-      }
-      // else it stays "Play All but ..."
-      return $playRule + $partyBonus + $richBonus;
-    }
-    // Normal Play Rule
-    else {
-      $playRule += $addInflation + $partyBonus + $richBonus;
+    $game->gamestate->nextstate("endOfTurn");
+  }
+
+  public function action_playFreeRule($card_id)
+  {
+    $game = Utils::getGame();
+
+    // Check that this is the player's turn and that it is a "possible action" at this game state (see states.inc.php)
+    $game->checkAction("playFreeRule");
+
+    $player_id = $game->getActivePlayerId();
+    $card = $game->cards->getCard($card_id);
+
+    if ($card["location"] != "rules") {
+      Utils::throwInvalidUserAction(
+        fluxx::totranslate("This is not an active Rule")
+      );      
     }
 
-    return $playRule;
+    $ruleCard = RuleCardFactory::getCard($card_id, $card["type_arg"]);
+
+    $game->notifyAllPlayers(
+      "freeRulePlayed",
+      clienttranslate('${player_name} uses free rule <b>${card_name}</b>'),
+      [
+        "i18n" => ["card_name"],
+        "player_name" => $game->getActivePlayerName(),
+        "player_id" => $player_id,
+        "card_name" => $ruleCard->getName(),
+      ]
+    );    
+
+    $stateTransition = $ruleCard->freePlayInPlayerTurn($player_id);
+    if ($stateTransition != null) {
+      // player must resolve something before continuing to play more cards
+      $game->gamestate->nextstate($stateTransition);
+    } else {
+      // else: just let player continue playing cards
+      // but explicitly set state again to force args refresh
+      $game->gamestate->nextstate("continuePlay");
+    }
   }
 
   public function action_playCard($card_id)
+  {
+    self::_action_playCard($card_id, true);
+  }
+
+  public function action_forced_playCard($card_id)
+  {
+    self::_action_playCard($card_id, false);
+  }
+
+  private function _action_playCard($card_id, $incrementPlayedCards)
   {
     $game = Utils::getGame();
 
@@ -159,7 +200,9 @@ trait PlayCardTrait
         break;
     }
 
-    $game->incGameStateValue("playedCards", 1);
+    if ($incrementPlayedCards) {
+      $game->incGameStateValue("playedCards", 1);
+    }
 
     // A card has been played: do we have a new winner?
     $game->checkWinConditions();
@@ -228,6 +271,10 @@ trait PlayCardTrait
 
     // Notify all players about the goal played
     $goalCard = GoalCardFactory::getCard($card["id"], $card["type_arg"]);
+    
+    // this goal card is still in hand at this time
+    $handCount = $game->cards->countCardInLocation("hand", $player_id) - 1;
+
     $game->notifyAllPlayers(
       "goalPlayed",
       clienttranslate('${player_name} sets a new goal <b>${card_name}</b>'),
@@ -237,7 +284,7 @@ trait PlayCardTrait
         "player_id" => $player_id,
         "card_name" => $goalCard->getName(),
         "card" => $card,
-        "handCount" => $game->cards->countCardInLocation("hand", $player_id),
+        "handCount" => $handCount,
       ]
     );
 
@@ -272,6 +319,7 @@ trait PlayCardTrait
   {
     $game = Utils::getGame();
 
+    $game->setGameStateValue("freeRuleToResolve", -1);
     $ruleCard = RuleCardFactory::getCard($card["id"], $card["type_arg"]);
     $ruleType = $ruleCard->getRuleType();
 

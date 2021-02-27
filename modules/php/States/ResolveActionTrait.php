@@ -9,14 +9,8 @@ trait ResolveActionTrait
 {
   function st_resolveAction()
   {
-    $player_id = self::getActivePlayerId();
-    $players = self::loadPlayersBasicInfos();
-
-    // @TODO: for now, just mark action as finished and continue play
-    // this should actually be done as response to specific client actions
+    // nothing here, wait for clientside actions
     // depending on the special action card that was played
-
-    //self::action_resolveActionWithCards([]);
   }
 
   private function getCurrentResolveActionCard()
@@ -41,45 +35,6 @@ trait ResolveActionTrait
       "action_type" => $actionCard->interactionNeeded,
       "action_args" => $actionCard->resolveArgs(),
     ];
-  }
-
-  /*
-   * Player resolves any action card, with the cards selected
-   */
-  public function action_resolveActionWithCards($option, $cards_id)
-  {
-    $game = Utils::getGame();
-
-    self::checkAction("resolveAction");
-    $player_id = self::getActivePlayerId();
-
-    $args = self::arg_resolveAction();
-    $actionCardId = $args["action_id"];
-    $card = $game->cards->getCard($actionCardId);
-    $actionCard = ActionCardFactory::getCard($card["id"], $card["type_arg"]);
-    $actionName = $actionCard->getName();
-
-    $stateTransition = $actionCard->resolvedBy($player_id, [
-      "option" => $option,
-      "cardIdsSelected" => $cards_id,
-    ]);
-
-    self::notifyAllPlayers(
-      "actionDone",
-      clienttranslate('${player_name} finished action ${action_name}'),
-      [
-        "player_id" => $player_id,
-        "player_name" => self::getActivePlayerName(),
-        "action_name" => $actionName,
-      ]
-    );
-    self::setGameStateValue("actionToResolve", -1);
-
-    if ($stateTransition != null) {
-      $game->gamestate->nextstate($stateTransition);
-    } else {
-      $game->gamestate->nextstate("resolvedAction");
-    }
   }
 
   private function _action_resolveAction($args)

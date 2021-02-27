@@ -2,6 +2,7 @@
 namespace Fluxx\Game;
 use Fluxx\Cards\Rules\RulePartyBonus;
 use Fluxx\Cards\Rules\RulePoorBonus;
+use Fluxx\Cards\Rules\RuleRichBonus;
 use fluxx;
 
 class Utils
@@ -182,5 +183,95 @@ class Utils
     {
       Utils::getGame()->performDrawCards($player_id, $poorBonus);
     }
+  }
+
+  public static function playerHasNotYetUsedGoalMill()
+  {
+    // Goal Mill can only be used once by the same player in one turn.
+    return 0 == Utils::getGame()->getGameStateValue("playerTurnUsedGoalMill");
+  }
+
+  public static function playerHasNotYetUsedMysteryPlay()
+  {
+    // Mystery Play can only be used once by the same player in one turn.
+    return 0 == Utils::getGame()->getGameStateValue("playerTurnUsedMysteryPlay");
+  }
+
+  public static function playerHasNotYetUsedRecycling()
+  {
+    // Recycling can only be used once by the same player in one turn.
+    return 0 == Utils::getGame()->getGameStateValue("playerTurnUsedRecycling");
+  }
+
+  public static function calculateCardsLeftToPlayFor($player_id)
+  {
+    $game = Utils::getGame();
+    // calculate how many cards player should still play
+    $alreadyPlayed = $game->getGameStateValue("playedCards");
+
+    $mustPlay = Utils::calculateCardsMustPlayFor($player_id, false);
+
+    $leftCount = $mustPlay - $alreadyPlayed;
+    if ($mustPlay >= PLAY_COUNT_ALL)
+    { // Play All > left as many as cards in hand
+      $leftCount = $game->cards->countCardInLocation("hand", $player_id);
+    } 
+    elseif ($mustPlay < 0)
+    { // Play All but 1 > left as many as cards in hand minus the leftover
+      $handCount = $game->cards->countCardInLocation("hand", $player_id);
+      $leftCount = $handCount + $mustPlay; // ok, $mustPlay is negative here
+    }
+
+    // could become < 0 if rules for already used bonus plays get discarded
+    // in that case player should not play any more cards
+    if ($leftCount < 0) $leftCount = 0;
+
+    return $leftCount;
+  }
+
+  public static function calculateCardsMustPlayFor($player_id, $withNotifications)
+  {
+    $game = Utils::getGame();
+    // current basic Play rule
+    $playRule = $game->getGameStateValue("playRule");
+
+    // Play All = always Play All
+    if ($playRule >= PLAY_COUNT_ALL) {
+      return $playRule;
+    }
+
+    $addInflation = Utils::getActiveInflation() ? 1 : 0;
+    // check bonus rules
+    $partyBonus =
+      Utils::getActivePartyBonus() && Utils::isPartyInPlay()
+        ? 1 + $addInflation
+        : 0;
+    if ($partyBonus > 0 && $withNotifications) {
+      RulePartyBonus::notifyActiveFor($player_id, false);
+    }
+    $richBonus =
+      Utils::getActiveRichBonus() && Utils::hasMostKeepers($player_id)
+        ? 1 + $addInflation
+        : 0;
+    if ($richBonus > 0 && $withNotifications) {
+      RuleRichBonus::notifyActiveFor($player_id);
+    }
+
+    // Play All but 1 is also affected by Inflation and Bonus rules
+    if ($playRule < 0) {
+      $playRule -= $addInflation;
+      // if "Play All but ..." + bonus plays becomes >= 0, it actually becomes "Play All"
+      if ($playRule + $partyBonus + $richBonus >= 0) {
+        return PLAY_COUNT_ALL;
+      }
+      // else it stays "Play All but ..."
+      return $playRule + $partyBonus + $richBonus;
+    }
+    // Normal Play Rule
+    else {
+      $playRule += $addInflation + $partyBonus + $richBonus;
+    }
+
+    return $playRule;
   }
 }

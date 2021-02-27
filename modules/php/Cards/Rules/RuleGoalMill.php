@@ -2,14 +2,13 @@
 namespace Fluxx\Cards\Rules;
 
 use Fluxx\Game\Utils;
+use fluxx;
 
 class RuleGoalMill extends RuleCard
 {
   public function __construct($cardId, $uniqueId)
   {
     parent::__construct($cardId, $uniqueId);
-
-    $canBeUsedByPlayer = true;
 
     $this->name = clienttranslate("Goal Mill");
     $this->subtitle = clienttranslate("Free Action");
@@ -18,13 +17,69 @@ class RuleGoalMill extends RuleCard
     );
   }
 
+  public $interactionNeeded = "handCardsSelection";
+
+  public function canBeUsedInPlayerTurn($player_id)
+  {
+    $alreadyUsed = !Utils::playerHasNotYetUsedGoalMill();
+    if ($alreadyUsed) return false;
+    
+    $game = Utils::getGame();
+    $goalCardsInHand 
+      = $game->cards->getCardsOfTypeInLocation( "goal", null, "hand", $player_id);    
+
+    return count($goalCardsInHand) > 0;
+  }
+
   public function immediateEffectOnPlay($player)
   {
-    // @TODO
+    // nothing
   }
 
   public function immediateEffectOnDiscard($player)
   {
     // nothing
+  }
+
+  public function freePlayInPlayerTurn($player_id)
+  {
+    $game = Utils::getGame();
+    $game->setGameStateValue("playerTurnUsedGoalMill", 1);    
+    return parent::freePlayInPlayerTurn($player_id);
+  }
+
+  public function resolvedBy($player_id, $args)
+  {
+    $game = Utils::getGame();
+    // validate all cards are goals in hand of player
+    $cards = $args["cards"];
+    foreach ($cards as $card_id => $card) {      
+      if (
+        $card["location"] != "hand" ||
+        $card["location_arg"] != $player_id ||
+        $card["type"] != "goal"
+      ) {
+        Utils::throwInvalidUserAction(
+          fluxx::totranslate(
+            "You can only discard Goals from your hand for the Goal Mill"
+          )
+        );
+      }
+    }
+    // discard the selected goals from hand
+    foreach ($cards as $card_id => $card) {      
+      $game->cards->playCard($card_id);
+    }
+
+    $game->notifyAllPlayers("handDiscarded", "", [
+      "player_id" => $player_id,
+      "cards" => $cards,
+      "discardCount" => $game->cards->countCardInLocation("discard"),
+      "handCount" => $game->cards->countCardInLocation("hand", $player_id),
+    ]);
+    // draw equal number of cards
+    $drawCount = count($cards);
+    $game->performDrawCards($player_id, $drawCount);
+
   }
 }
