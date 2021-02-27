@@ -183,8 +183,11 @@ trait PlayCardTrait
     self::_action_playCard($card_id, false);
   }
 
-  private function _action_playCard($card_id, $incrementPlayedCards, $postponeCreeperResolve = false)
-  {
+  private function _action_playCard(
+    $card_id,
+    $incrementPlayedCards,
+    $postponeCreeperResolve = false
+  ) {
     $game = Utils::getGame();
 
     $player_id = $game->getActivePlayerId();
@@ -469,5 +472,5 @@ trait PlayCardTrait
     // first card is a forced play, but in this case
     // it does count for the number of cards played
     $this->_action_playCard($card["id"], true);
-  }  
+  }
 }

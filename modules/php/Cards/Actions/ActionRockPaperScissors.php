@@ -15,8 +15,7 @@ class ActionRockPaperScissors extends ActionCard
       "Challenge another player to a 3-round Rock-Paper-Scissors tournament. Winner takes loser's entire hand of cards."
     );
 
-    $this->help = clienttranslate(
-      "Choose the player you want to challenge.");
+    $this->help = clienttranslate("Choose the player you want to challenge.");
   }
 
   public $interactionNeeded = "playerSelection";

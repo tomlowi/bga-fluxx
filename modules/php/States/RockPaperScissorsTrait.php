@@ -194,8 +194,8 @@ trait RockPaperScissorsTrait
       "player" => $player_id,
       "choice" => $choice,
       "challenger" => $challenger_id,
-      "defender" => $defender_id
-    ]);    
+      "defender" => $defender_id,
+    ]);
     switch ($choice) {
       case "rock":
         $option = RPS_OPTION_ROCK;

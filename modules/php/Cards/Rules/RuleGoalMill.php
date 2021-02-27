@@ -16,9 +16,12 @@ class RuleGoalMill extends RuleCard
       "Once during your turn, discard as many of your Goal cards as you choose, then draw that many cards."
     );
 
-    $this->help = clienttranslate(
-      "Select any number of goal cards in your hand to discard."
-    ) . " " . clienttranslate("Click the button when finished.");
+    $this->help =
+      clienttranslate(
+        "Select any number of goal cards in your hand to discard."
+      ) .
+      " " .
+      clienttranslate("Click the button when finished.");
   }
 
   public $interactionNeeded = "handCardsSelection";
