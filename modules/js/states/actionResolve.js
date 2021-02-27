@@ -102,18 +102,18 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         );
       },
       discardSelection: function (that, args) {
-        dojo.place('<div id="tmpDiscardStock"></div>', "tmpHand", "first");
+        dojo.place('<div id="tmpSelectStock"></div>', "tmpSelectCards", "first");
 
-        that.tmpDiscardStock = that.createCardStock("tmpDiscardStock", [
+        that.tmpSelectStock = that.createCardStock("tmpSelectStock", [
           "rule",
           "action",
         ]);
 
-        that.addCardsToStock(that.tmpDiscardStock, args.discard);
-        that.tmpDiscardStock.setSelectionMode(1);
+        that.addCardsToStock(that.tmpSelectStock, args.discard);
+        that.tmpSelectStock.setSelectionMode(1);
 
         that._listeners["tmpDiscard"] = dojo.connect(
-          that.tmpDiscardStock,
+          that.tmpSelectStock,
           "onChangeSelection",
           that,
           "onResolveActionCardSelection"
@@ -199,11 +199,37 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
           dojo.attr("button_" + choice.value, "data-value", choice.value);
         }
       },
+      tmpCardsSelectionForPlayer: function (that, args) {
+        dojo.place('<div id="tmpSelectStock"></div>', "tmpSelectCards", "first");
+
+        that.tmpSelectStock = that.createCardStock("tmpSelectStock", [
+          "keeper",
+          "goal",
+          "rule",
+          "action",
+        ]);
+
+        that.addCardsToStock(that.tmpSelectStock, args.cards);
+        that.tmpSelectStock.setSelectionMode(args.cardsPerPlayer == 1 ? 1 : 2);
+
+        var player_id = args.forPlayerId;
+        var player_name = that.players[player_id]["name"];
+        if (that.player_id == player_id) {
+          player_name = _("myself");
+        }          
+
+        that.addActionButton(
+          "button_" + player_id,
+          _("for") + " " + player_name,
+          "onResolveActionCardsSelection"
+        );
+        dojo.attr("button_" + player_id, "data-player-id", player_id);
+      },
 
       TODO: function (that, args) {
         that.addActionButton(
           "button_0",
-          _("Not implemented, ignore"),
+          _("Not implemented"),
           "onResolveActionButtons"
         );
         dojo.attr("button_0", "data-value", 0);
@@ -373,6 +399,23 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       }
     },
 
+    onResolveActionCardsSelection: function (ev) {
+      var action = "resolveActionCardsSelection";
+
+      var selected_player_id = ev.target.getAttribute("data-player-id");
+
+      var cards = this.tmpSelectStock.getSelectedItems();
+      var cards_id = cards.map(function (card) {
+        return card.id;
+      });
+
+      if (this.checkAction(action)) {
+        this.ajaxAction(action, {
+          cards_id: cards_id.join(";"),
+        });
+      }
+    },
+
     onLeavingStateActionResolve: function () {
       console.log("Leaving state: ActionResolve");
 
@@ -394,29 +437,15 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         delete this._listeners[listener_id];
       }
 
-      if (this.tmpDiscardStock !== undefined) {
-        delete this.tmpDiscardStock;
+      if (this.tmpSelectStock !== undefined) {
+        delete this.tmpSelectStock;
       }
-      dojo.destroy("tmpDiscardStock");
+      dojo.destroy("tmpSelectStock");
     },
 
     notif_actionResolved: function (notif) {
       var player_id = notif.args.player_id;
       var cards = notif.args.cards;
-
-      // @TODO: depending on specific Action Card, different selections to be made
-      // mulitple cards to be moved, or to be discarded, or hands switched, or ...
-
-      // if (player_id == this.player_id) {
-      //   this.discardCards(cards, this.handStock);
-      // } else {
-      //   this.discardCards(cards, undefined, player_id);
-      // }
-
-      // this.keepersCounter[player_id].toValue(
-      //   this.keepersStock[player_id].count()
-      // );
-      // this.discardCounter.toValue(notif.args.discardCount);
     },
   });
 });

@@ -208,7 +208,7 @@ $machinestates = [
       "resolveActionCardSelection",
       "resolveActionCardsSelection",
       "resolveActionKeepersExchange",
-      "resolveActionButtons",
+      "resolveActionButtons",      
     ],
     "transitions" => [
       "resolvedAction" => STATE_PLAY_CARD,
@@ -218,6 +218,7 @@ $machinestates = [
       "rulesChanged" => STATE_GOAL_CLEANING,
       "endGame" => STATE_GAME_END,
       "playRockPaperScissors" => STATE_ROCKPAPERSCISSORS,
+      "resolveActionCard" => STATE_RESOLVE_ACTION,
     ],
   ],
 

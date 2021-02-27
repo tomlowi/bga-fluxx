@@ -16,7 +16,9 @@
   <div id="flx_help_msg" class="flx_help"></div>
 </div>
 
-<div id="tmpHand" class="whiteblock flx-hand"></div>
+<div id="tmpPlayCards2" class="whiteblock flx-hand flx-tmp-hand"></div>
+<div id="tmpPlayCards1" class="whiteblock flx-hand flx-tmp-hand"></div>
+<div id="tmpSelectCards" class="whiteblock flx-hand flx-tmp-hand"></div>
 
 <div id="tmpKeeperPanelIcons" class="whiteblock flx-keeper-panel-placeholder"></div>
 

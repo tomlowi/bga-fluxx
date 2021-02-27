@@ -200,6 +200,10 @@ class fluxx extends Table
     self::setGameStateInitialValue("creeperToResolvePlayerId", -1);
     self::setGameStateInitialValue("creeperTurnStartDeathExecuted", 0);
 
+    // Initialize game statistics
+    // (note: statistics used in this file must be defined in your stats.inc.php file)
+    //self::initStat( 'table', 'table_teststat1', 0 );    // Init a table statistics
+    //self::initStat( 'player', 'player_teststat1', 0 );  // Init a player statistics (for all players)
     self::initStat("table", "turns_number", 0);
 
     // Create cards
@@ -236,10 +240,6 @@ class fluxx extends Table
     // reset to start with correct first active player
     $this->gamestate->changeActivePlayer($first_player_id);
 
-    // @TODO: Init game statistics
-    // (note: statistics used in this file must be defined in your stats.inc.php file)
-    //self::initStat( 'table', 'table_teststat1', 0 );    // Init a table statistics
-    //self::initStat( 'player', 'player_teststat1', 0 );  // Init a player statistics (for all players)
   }
 
   /*
@@ -451,7 +451,8 @@ class fluxx extends Table
     return $cardsDrawn;
   }
 
-  public function performDrawCards($player_id, $drawCount, $postponeCreeperResolve = false)
+  public function performDrawCards($player_id, $drawCount, 
+    $postponeCreeperResolve = false, $temporaryDraw = false)
   {
     $cardsDrawn = [];
     if (Utils::useCreeperPackExpansion()) {
@@ -464,10 +465,11 @@ class fluxx extends Table
 
     // don't increment drawn counter here, extra cards drawn from actions etc
     // do not count
-
-    self::notifyPlayer($player_id, "cardsDrawn", "", [
-      "cards" => $cardsDrawn,
-    ]);
+    if (!$temporaryDraw) {
+      self::notifyPlayer($player_id, "cardsDrawn", "", [
+        "cards" => $cardsDrawn,
+      ]);
+    }
 
     self::notifyAllPlayers(
       "cardsDrawnOther",
@@ -482,7 +484,11 @@ class fluxx extends Table
     );
 
     // check victory: some goals can also be triggered when extra cards drawn
-    $this->checkWinConditions();
+    if (!$temporaryDraw) {
+      $this->checkWinConditions();
+    }
+
+    return $cardsDrawn;
   }
 
   public function sendHandCountNotifications()

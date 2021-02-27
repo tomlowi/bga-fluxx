@@ -18,7 +18,7 @@ $gameinfos = [
   "designer" => "Andrew Looney, Kristin Looney",
 
   // Game artist (or game artists, separated by commas)
-  // @TODO: Limited to 64 chars, check what should be put with Kristin
+  // Limited to 64 chars
   "artist" => "R. Castellanos, M. Hays, N. Kageyama, A. Looney, B. Spelger",
 
   // Year of FIRST publication of this game. Can be negative.
@@ -146,6 +146,7 @@ $gameinfos = [
   "tags" => [
     2, // Casual games
     11, //  Medium length game
+    20, // Awarded game (1999: Mensa Select Winner)    
     200, // Card game
     204, // Hand management
   ],
