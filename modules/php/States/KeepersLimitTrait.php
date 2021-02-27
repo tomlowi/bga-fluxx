@@ -30,7 +30,9 @@ trait KeepersLimitTrait
     $cards = Utils::getGame()->cards;
 
     foreach ($players_id as $player_id) {
-      $keepersInPlay = $cards->countCardInLocation("keepers", $player_id);
+      $keepersInPlay = count(
+        $cards->getCardsOfTypeInLocation("keeper", null, "keepers", $player_id)
+      );
       if ($keepersInPlay > $keepersLimit) {
         $playersInfraction[$player_id] = [
           "count" => $keepersInPlay - $keepersLimit,
@@ -112,12 +114,20 @@ trait KeepersLimitTrait
       );
     }
 
-    $cards = self::discardCardsFromLocation($cards_id, "keepers", $player_id);
+    // verify these are all actually keeper cards in hand of player
+
+    $cards = self::discardCardsFromLocation(
+      $cards_id,
+      "keepers",
+      $player_id,
+      "keeper"
+    );
 
     self::notifyAllPlayers("keepersDiscarded", "", [
       "player_id" => $player_id,
       "cards" => $cards,
       "discardCount" => $game->cards->countCardInLocation("discard"),
+      "creeperCount" => Utils::getPlayerCreeperCount($player_id),
     ]);
 
     $state = $game->gamestate->state();

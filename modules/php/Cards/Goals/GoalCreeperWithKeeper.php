@@ -26,9 +26,7 @@ class GoalCreeperWithKeeper extends GoalCard
     $creeper_card = array_values(
       $cards->getCardsOfType("creeper", $creeper)
     )[0];
-    $keeper_card = array_values(
-      $cards->getCardsOfType("keeper", $keeper)
-    )[0];
+    $keeper_card = array_values($cards->getCardsOfType("keeper", $keeper))[0];
 
     // If both cards are not in a player's keepers section, noone wins
     if (
@@ -39,9 +37,7 @@ class GoalCreeperWithKeeper extends GoalCard
     }
 
     // If both cards are in the same player's keepers, this player wins
-    if (
-      $creeper_card["location_arg"] == $keeper_card["location_arg"]
-    ) {
+    if ($creeper_card["location_arg"] == $keeper_card["location_arg"]) {
       return $creeper_card["location_arg"];
     }
 

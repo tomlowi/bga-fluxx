@@ -8,19 +8,25 @@ use Fluxx\Game\Utils;
  */
 class CreeperCardFactory extends CardFactory
 {
-  private static $classes = null;
+  public static function getCardFullClassName($uniqueId)
+  {
+    $name = "Fluxx\Cards\Creepers\\" . self::$classes[$uniqueId];
+    return $name;
+  }
 
   public static function listCardDefinitions()
   {
     $creeperDefinitions = [];
 
     if (Utils::useCreeperPackExpansion()) {
-      foreach (self::getClasses() as $definitionId => $class) {
+      foreach (self::$classes as $definitionId => $class) {
+        $card = self::getCard(0, $definitionId);
+
         $creeperDefinitions[$definitionId] = [
           "type" => "creeper",
-          "name" => $class["name"],
-          "subtitle" => $class["subtitle"],
-          "description" => $class["description"],
+          "name" => $card->getName(),
+          "subtitle" => $card->getSubtitle(),
+          "description" => $card->getDescription(),
         ];
       }
     }
@@ -28,57 +34,65 @@ class CreeperCardFactory extends CardFactory
     return $creeperDefinitions;
   }
 
-  public static function getCard($cardId, $cardDefinitionId)
-  {
-    $cardDefinition = self::getClasses()[$cardDefinitionId];
-    return new CreeperCard(
-      $cardId,
-      $cardDefinitionId,
-      $cardDefinition["name"],
-      $cardDefinition["subtitle"],
-      $cardDefinition["description"]
-    );
-  }
-
   /*
    * cardClasses : for each card Id, the corresponding class name
    * no need for separate Creeper Card files, Creepers have no game logic
    */
-  public static function getClasses()
+  public static $classes = [
+    51 => "CreeperWar",
+    52 => "CreeperTaxes",
+    53 => "CreeperDeath",
+    54 => "CreeperRadioactivePotato",
+  ];
+
+  /* trigger all Creepers in play that have a special ability when Goal changes */
+  public static function onGoalChange()
   {
-    if (self::$classes == null) {
-      self::$classes = [
-        51 => [
-          "name" => clienttranslate("War"),
-          "subtitle" => clienttranslate("Place Immediately + Redraw"),
-          "description" => clienttranslate(
-            "You cannot win if you have this, unless the Goal says otherwise. If you have Peace, you must move it to another player."
-          ),
-        ],
-        52 => [
-          "name" => clienttranslate("Taxes"),
-          "subtitle" => clienttranslate("Place Immediately + Redraw"),
-          "description" => clienttranslate(
-            "You cannot win if you have this, unless the Goal says otherwise. If you have Money in play, you can discard it and this."
-          ),
-        ],
-        53 => [
-          "name" => clienttranslate("Death"),
-          "subtitle" => clienttranslate("Place Immediately + Redraw"),
-          "description" => clienttranslate(
-            "You cannot win if you have this, unless the Goal says otherwise. If you have this at the start of your turn, discard something else you have in play (a Keeper or Creeper). You may discard this anytime it stands alone."
-          ),
-        ],
-        54 => [
-          "name" => clienttranslate("Radioactive Potato"),
-          "subtitle" => clienttranslate("Place Immediately + Redraw"),
-          "description" => clienttranslate(
-            "You cannot win if you have this card. Any time the Goal changes, move this card in the counter-turn direction."
-          ),
-        ],
-      ];
+    if (!Utils::useCreeperPackExpansion()) {
+      return;
     }
 
-    return self::$classes;
+    foreach (self::$classes as $definitionId => $class) {
+      $card = self::getCard(0, $definitionId);
+
+      $card->onGoalChange();
+    }
+  }
+
+  /* trigger all Creepers in play that have a special ability on start of turn */
+  public static function onTurnStart()
+  {
+    if (!Utils::useCreeperPackExpansion()) {
+      return;
+    }
+
+    foreach (self::$classes as $definitionId => $class) {
+      $card = self::getCard(0, $definitionId);
+
+      $stateTransition = $card->onTurnStart();
+      if ($stateTransition != null) {
+        return $stateTransition;
+      }
+      // TODO: what if multiple Creeper abilities need to be resolved?
+    }
+  }
+
+  /* trigger all Creepers in play that have a special ability to be checked after every change */
+  public static function onCheckResolveKeepersAndCreepers($lastPlayedCard)
+  {
+    if (!Utils::useCreeperPackExpansion()) {
+      return;
+    }
+
+    foreach (self::$classes as $definitionId => $class) {
+      $card = self::getCard(0, $definitionId);
+
+      $stateTransition = $card->onCheckResolveKeepersAndCreepers(
+        $lastPlayedCard
+      );
+      if ($stateTransition != null) {
+        return $stateTransition;
+      }
+    }
   }
 }

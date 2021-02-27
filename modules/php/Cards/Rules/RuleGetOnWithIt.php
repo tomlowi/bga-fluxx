@@ -19,10 +19,10 @@ class RuleGetOnWithIt extends RuleCard
   public function canBeUsedInPlayerTurn($player_id)
   {
     $game = Utils::getGame();
-    return $game->cards->countCardInLocation("hand", $player_id) > 0
-      && Utils::calculateCardsLeftToPlayFor($player_id) > 0;
+    return $game->cards->countCardInLocation("hand", $player_id) > 0 &&
+      Utils::calculateCardsLeftToPlayFor($player_id) > 0;
   }
-  
+
   public function immediateEffectOnPlay($player)
   {
     // nothing
@@ -47,8 +47,8 @@ class RuleGetOnWithIt extends RuleCard
       "cards" => $cards,
       "discardCount" => $game->cards->countCardInLocation("discard"),
       "handCount" => $game->cards->countCardInLocation("hand", $player_id),
-    ]);    
-    // Draw 3 cards (+ inflation)    
+    ]);
+    // Draw 3 cards (+ inflation)
     $addInflation = Utils::getActiveInflation() ? 1 : 0;
     $drawCount = 3 + $addInflation;
     $game->performDrawCards($player_id, $drawCount);

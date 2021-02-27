@@ -73,6 +73,8 @@ class fluxx extends Table
       "activePoorBonus" => 35,
       "activeRichBonus" => 36,
       "activeFirstPlayRandom" => 37,
+      "activeSilverLining" => 38,
+      "activeBakedPotato" => 39,
       "actionToResolve" => 40,
       "anotherTurnMark" => 41,
       "forcedCard" => 42,
@@ -82,6 +84,9 @@ class fluxx extends Table
       "playerTurnUsedGoalMill" => 46,
       "playerTurnUsedMysteryPlay" => 47,
       "playerTurnUsedRecycling" => 48,
+      "creeperToResolveCardId" => 49,
+      "creeperToResolvePlayerId" => 50,
+      "creeperTurnStartDeathExecuted" => 51,
       "rpsChallengerId" => 90,
       "rpsDefenderId" => 91,
       "rpsChallengerChoice" => 92,
@@ -189,6 +194,13 @@ class fluxx extends Table
     self::setGameStateInitialValue("rpsDefenderChoice", -1);
     self::setGameStateInitialValue("rpsChallengerWins", 0);
     self::setGameStateInitialValue("rpsDefenderWins", 0);
+    self::setGameStateInitialValue("actionToResolve", -1);
+    self::setGameStateInitialValue("freeRuleToResolve", -1);
+    self::setGameStateInitialValue("creeperToResolveCardId", -1);
+    self::setGameStateInitialValue("creeperToResolvePlayerId", -1);
+    self::setGameStateInitialValue("creeperTurnStartDeathExecuted", 0);
+
+    self::initStat("table", "turns_number", 0);
 
     // Create cards
     $cards = [];
@@ -209,17 +221,25 @@ class fluxx extends Table
     $this->cards->shuffle("deck");
 
     // Each player starts the game with 3 cards
+
+    // Check who should be the first active player
+    $this->activeNextPlayer();
+    $first_player_id = $this->getActivePlayerId();
+
+    // If creepers are included, they must already be played when drawn:
+    // so we need activated players for that!
     foreach ($players as $player_id => $player) {
-      $cards = $this->cards->pickCards(3, "deck", $player_id);
+      $this->gamestate->changeActivePlayer($player_id);
+      $this->performDrawCards($player_id, 3);
     }
+
+    // reset to start with correct first active player
+    $this->gamestate->changeActivePlayer($first_player_id);
 
     // @TODO: Init game statistics
     // (note: statistics used in this file must be defined in your stats.inc.php file)
     //self::initStat( 'table', 'table_teststat1', 0 );    // Init a table statistics
     //self::initStat( 'player', 'player_teststat1', 0 );  // Init a player statistics (for all players)
-
-    // Activate first player
-    $this->activeNextPlayer();
   }
 
   /*
@@ -243,6 +263,7 @@ class fluxx extends Table
     $result = [
       "players" => $players,
       "cardsDefinitions" => $this->getAllCardsDefinitions(),
+      "creeperPack" => Utils::useCreeperPackExpansion(),
       "hand" => $this->cards->getCardsInLocation("hand", $current_player_id),
       "rules" => [
         "drawRule" => $this->cards->getCardsInLocation("rules", RULE_DRAW_RULE),
@@ -259,6 +280,7 @@ class fluxx extends Table
       ],
       "goals" => $this->cards->getCardsInLocation("goals"),
       "keepers" => [],
+      "creepersCount" => [],
       "handsCount" => [],
       "discard" => $this->cards->getCardsInLocation("discard"),
       "deckCount" => $this->cards->countCardInLocation("deck"),
@@ -268,6 +290,9 @@ class fluxx extends Table
     foreach ($players as $player_id => $player) {
       $result["keepers"][$player_id] = $this->cards->getCardsInLocation(
         "keepers",
+        $player_id
+      );
+      $result["creepersCount"][$player_id] = Utils::getPlayerCreeperCount(
         $player_id
       );
       $result["handsCount"][$player_id] = $this->cards->countCardInLocation(
@@ -291,9 +316,13 @@ class fluxx extends Table
      */
   public function getGameProgression()
   {
-    // @TODO: compute and return the game progression
-    // with Fluxx, that's always something of a 50/50 chance ?
-    return 50;
+    // With Fluxx, there is no way to know when the game ends.
+    // This ensures that:
+    // - game progression is >50% after the 4th round
+    // - it tends to 100% but never goes above it
+
+    $turns = self::getStat("turns_number");
+    return round(100 - 100 / exp($turns / 5));
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -382,9 +411,54 @@ class fluxx extends Table
     return $result;
   }
 
-  public function performDrawCards($player_id, $drawCount)
-  {
-    $cardsDrawn = $this->cards->pickCards($drawCount, "deck", $player_id);
+  private function pickCardsWithCreeperCheck(
+    $player_id,
+    $drawCount,
+    $postponeCreeperResolve
+  ) {
+    $cardsDrawn = [];
+    // If any creepers are drawn, they must be placed immediately,
+    // and replaced by a new draw.
+    // Since that can trigger a win, they must be drawn 1 by 1
+    for ($i = 0; $i < $drawCount; $i++) {
+      $nextCard = $this->cards->pickCard("deck", $player_id);
+      while ($nextCard != null && $nextCard["type"] == "creeper") {
+        // notify so card is shown in hand and can be played
+        self::notifyPlayer($player_id, "cardsDrawn", "", [
+          "cards" => [$nextCard],
+        ]);
+        // play card without "checkAction": can be in any state here
+        // and don't add this to "play count", and postpone
+        self::_action_playCard($nextCard["id"], false, $postponeCreeperResolve);
+        // re-draw for another card
+        $nextCard = $this->cards->pickCard("deck", $player_id);
+      }
+
+      if ($nextCard != null) {
+        $cardsDrawn[] = $nextCard;
+      }
+    }
+
+    return $cardsDrawn;
+  }
+
+  public function performDrawCards(
+    $player_id,
+    $drawCount,
+    $postponeCreeperResolve = false
+  ) {
+    $cardsDrawn = [];
+    if (Utils::useCreeperPackExpansion()) {
+      // check for creepers while drawing
+      $cardsDrawn = $this->pickCardsWithCreeperCheck(
+        $player_id,
+        $drawCount,
+        $postponeCreeperResolve
+      );
+    } else {
+      // No creepers: we can just draw
+      $cardsDrawn = $this->cards->pickCards($drawCount, "deck", $player_id);
+    }
 
     // don't increment drawn counter here, extra cards drawn from actions etc
     // do not count
@@ -470,8 +544,12 @@ class fluxx extends Table
     }
   }
 
-  public function discardCardsFromLocation($cards_id, $location, $location_arg)
-  {
+  public function discardCardsFromLocation(
+    $cards_id,
+    $location,
+    $location_arg,
+    $expected_type
+  ) {
     $cards = [];
     foreach ($cards_id as $card_id) {
       // Verify card is in the right location
@@ -481,8 +559,14 @@ class fluxx extends Table
         $card["location"] != $location ||
         $card["location_arg"] != $location_arg
       ) {
-        BgaUserException(
+        throw new BgaUserException(
           self::_("Impossible discard: invalid card ") . $card_id
+        );
+      }
+      // and of the expected type to be discarded (if specified)
+      if ($expected_type != null && $expected_type != $card["type"]) {
+        throw new BgaUserException(
+          self::_("Illegal discard: card must be of type ") . $expected_type
         );
       }
 
@@ -506,6 +590,18 @@ class fluxx extends Table
   {
     Utils::checkForPartyBonus($player_id);
     Utils::checkForPoorBonus($player_id);
+  }
+
+  public function checkCreeperResolveNeeded($lastPlayedCard)
+  {
+    // Check for any Creeper abilities after keepers/creepers played or moved
+    $stateTransition = CreeperCardFactory::onCheckResolveKeepersAndCreepers(
+      $lastPlayedCard
+    );
+    if ($stateTransition != null) {
+      $this->gamestate->nextState($stateTransition);
+    }
+    return $stateTransition != null;
   }
 
   public function checkWinConditions()
@@ -554,13 +650,56 @@ class fluxx extends Table
       $goalCard = GoalCardFactory::getCard($card["id"], $card["type_arg"]);
 
       $goalReachedByPlayerId = $goalCard->goalReachedByPlayer();
+      if (
+        $goalReachedByPlayerId != null &&
+        $goalCard->isWinPreventedByCreepers($goalReachedByPlayerId, $goalCard)
+      ) {
+        // notify that player could have won but was prevented by creeper
+        $players = self::loadPlayersBasicInfos();
+        $unlucky_player_name = $players[$goalReachedByPlayerId]["player_name"];
+        self::notifyAllPlayers(
+          "winPreventedByCreeper",
+          clienttranslate(
+            'Creepers prevent <b>${unlucky_player_name}</b> from winning with <b>${goal_name}</b>'
+          ),
+          [
+            "goal_name" => $goalCard->getName(),
+            "unlucky_player_name" => $unlucky_player_name,
+          ]
+        );
+        // sorry, but you can't win yet
+        $goalReachedByPlayerId = null;
+      }
+      if (
+        $goalReachedByPlayerId != null &&
+        $goalCard->isWinPreventedByBakedPotato(
+          $goalReachedByPlayerId,
+          $goalCard
+        )
+      ) {
+        // notify that player could have won but also needs the Radioactive Potato
+        $players = self::loadPlayersBasicInfos();
+        $unlucky_player_name = $players[$goalReachedByPlayerId]["player_name"];
+        self::notifyAllPlayers(
+          "winPreventedByBakedPotato",
+          clienttranslate(
+            'Baked Potato prevents <b>${unlucky_player_name}</b> from winning with <b>${goal_name}</b>'
+          ),
+          [
+            "goal_name" => $goalCard->getName(),
+            "unlucky_player_name" => $unlucky_player_name,
+          ]
+        );
+        // sorry, but you can't win yet
+        $goalReachedByPlayerId = null;
+      }
       if ($goalReachedByPlayerId != null) {
         // some player reached this goal
         if ($winnerId != null && $goalReachedByPlayerId != $winnerId) {
           // if multiple goals reached by different players, keep playing
           return;
         }
-        // this player is the winner, unless someone else also reached a next goal
+        // this player is the winner, unless someone else also reached another goal
         $winnerId = $goalReachedByPlayerId;
         $winningGoalCard = $goalCard->getName();
       }
@@ -635,6 +774,7 @@ class fluxx extends Table
   use Fluxx\States\ResolveActionTrait;
   use Fluxx\States\RockPaperScissorsTrait;
   use Fluxx\States\ResolveFreeRuleTrait;
+  use Fluxx\States\ResolveCreeperTrait;
 
   //////////////////////////////////////////////////////////////////////////////
   //////////// Game state actions
@@ -659,6 +799,7 @@ class fluxx extends Table
     // special case: current player received another turn
     $anotherTurnMark = self::getGameStateValue("anotherTurnMark");
     $player_id = -1;
+    $active_player = self::getActivePlayerId();
     if ($anotherTurnMark == 1) {
       // Take Another Turn can only be used once (two turns in a row)
       self::setGameStateValue("anotherTurnMark", 2);
@@ -667,7 +808,7 @@ class fluxx extends Table
         "turnFinished",
         clienttranslate('${player_name} can take another turn!'),
         [
-          "player_id" => self::getActivePlayerId(),
+          "player_id" => $active_player,
           "player_name" => self::getCurrentPlayerName(),
         ]
       );
@@ -677,11 +818,20 @@ class fluxx extends Table
         "turnFinished",
         clienttranslate('${player_name} finished their turn.'),
         [
-          "player_id" => self::getActivePlayerId(),
+          "player_id" => $active_player,
           "player_name" => self::getActivePlayerName(),
         ]
       );
       $player_id = self::activeNextPlayer();
+      self::incStat(1, "turns_number", $active_player);
+
+      $players = self::loadPlayersBasicInfos();
+      reset($players);
+      $first_player = key($players);
+      if ($first_player == $active_player) {
+        // Turns played during the game
+        self::incStat(1, "turns_number");
+      }
     }
 
     // reset everything for turn of next player

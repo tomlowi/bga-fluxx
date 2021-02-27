@@ -32,6 +32,7 @@ define([
   g_gamethemeurl + "modules/js/states/goalCleaning.js",
   g_gamethemeurl + "modules/js/states/actionResolve.js",
   g_gamethemeurl + "modules/js/states/freeRuleResolve.js",
+  g_gamethemeurl + "modules/js/states/creeperResolve.js",
   g_gamethemeurl + "modules/js/states/playRockPaperScissors.js",
 ], function (dojo, declare) {
   return declare(
@@ -45,6 +46,7 @@ define([
       fluxx.states.goalCleaning,
       fluxx.states.actionResolve,
       fluxx.states.freeRuleResolve,
+      fluxx.states.creeperResolve,
       fluxx.states.playRockPaperScissors,
     ],
     {
@@ -117,7 +119,7 @@ define([
 
         // Save card metadata that we will use for UI & metadata
         this.cardsDefinitions = this.gamedatas.cardsDefinitions;
-        console.log("Cards definitions", this.cardsDefinitions);
+        //console.log("Cards definitions", this.cardsDefinitions);
 
         // Setup all stocks and restore existing state
         this.handStock = this.createCardStock("handStock", [
@@ -188,8 +190,9 @@ define([
         this.keepersStock = {};
         this.handCounter = {};
         this.keepersCounter = {};
+        this.creepersCounter = {};
         for (var player_id in gamedatas.players) {
-          // Setting up player keepers stocls
+          // Setting up player keepers stocks
           this.keepersStock[player_id] = this.createKeepersStock(
             "keepersStock" + player_id,
             0
@@ -210,16 +213,28 @@ define([
 
           this.handCounter[player_id] = new ebg.counter();
           this.keepersCounter[player_id] = new ebg.counter();
+          this.creepersCounter[player_id] = new ebg.counter();
 
           this.handCounter[player_id].create("handCount" + player_id);
           this.keepersCounter[player_id].create("keepersCount" + player_id);
+          this.creepersCounter[player_id].create("creepersCount" + player_id);
 
           this.handCounter[player_id].toValue(
             this.gamedatas.handsCount[player_id]
           );
           this.keepersCounter[player_id].toValue(
-            this.keepersStock[player_id].count()
+            this.keepersStock[player_id].count() - this.gamedatas.creepersCount[player_id]
           );
+          this.creepersCounter[player_id].toValue(
+            this.gamedatas.creepersCount[player_id]
+          );
+        }
+
+        // Hide elements that are only used with Creeper pack expansion
+        if (!gamedatas.creeperPack) {
+          dojo.query(".flx-board-creeper").forEach(function(node, index, nodelist){
+            dojo.addClass(node, "no-creepers");
+            });
         }
 
         // Setup game notifications to handle (see "setupNotifications" method below)
@@ -268,6 +283,11 @@ define([
             this.onEnteringStateFreeRuleResolve(args);
             break;
 
+          case "creeperResolveInPlay":
+          case "creeperResolveTurnStart":
+            this.onEnteringStateCreeperResolve(args);
+            break;
+
           case "dummmy":
             break;
         }
@@ -308,6 +328,11 @@ define([
             this.onLeavingStateFreeRuleResolve();
             break;
 
+          case "creeperResolveInPlay":
+          case "creeperResolveTurnStart":
+                this.onLeavingStateCreeperResolve();
+            break;            
+
           case "dummmy":
             break;
         }
@@ -344,7 +369,10 @@ define([
             case "freeRuleResolve":
               this.onUpdateActionButtonsFreeRuleResolve(args);
               break;
-          }
+            case "creeperResolveInPlay":
+            case "creeperResolveTurnStart":
+              this.onUpdateActionButtonsCreeperResolve(args);
+              break;          }
         }
       },
 

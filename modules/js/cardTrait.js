@@ -5,6 +5,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         ["cardsDrawn", null],
         ["cardsDrawnOther", null],
         ["keeperPlayed", 500],
+        ["creeperPlayed", 500],
         ["goalsDiscarded", 500],
         ["goalPlayed", null],
         ["rulesDiscarded", 500],
@@ -22,7 +23,9 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
     },
 
     playCard: function (player_id, card, destinationStock) {
-      if (this.isCurrentPlayerActive()) {
+      // forced plays (like creepers) can happen during "game" type states,
+      // in which case isCurrentPlayerActive is not set
+      if (player_id == this.player_id) {
         destinationStock.addToStockWithId(
           card.type_arg,
           card.id,
@@ -110,8 +113,16 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       this.playCard(player_id, notif.args.card, this.keepersStock[player_id]);
       this.handCounter[player_id].toValue(notif.args.handCount);
       this.keepersCounter[player_id].toValue(
-        this.keepersStock[player_id].count()
+        this.keepersStock[player_id].count() - notif.args.creeperCount
       );
+      this.creepersCounter[player_id].toValue(notif.args.creeperCount);
+    },
+
+    notif_creeperPlayed: function (notif) {
+      var player_id = notif.args.player_id;
+      this.playCard(player_id, notif.args.card, this.keepersStock[player_id]);
+      this.handCounter[player_id].toValue(notif.args.handCount);
+      this.creepersCounter[player_id].toValue(notif.args.creeperCount);
     },
 
     notif_goalsDiscarded: function (notif) {
@@ -197,8 +208,9 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       this.discardCards(cards, this.keepersStock[player_id]);
 
       this.keepersCounter[player_id].toValue(
-        this.keepersStock[player_id].count()
+        this.keepersStock[player_id].count() - notif.args.creeperCount
       );
+      this.creepersCounter[player_id].toValue(notif.args.creeperCount);
       this.discardCounter.toValue(notif.args.discardCount);
     },
 
@@ -249,9 +261,17 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         originStock.removeFromStockById(card.id);
       }
       this.keepersCounter[destination_player_id].toValue(
-        destinationStock.count()
+        destinationStock.count() - notif.args.destination_creeperCount
       );
-      this.keepersCounter[origin_player_id].toValue(originStock.count());
+      this.keepersCounter[origin_player_id].toValue(
+        originStock.count() - notif.args.origin_creeperCount
+      );
+      this.creepersCounter[destination_player_id].toValue(
+        notif.args.destination_creeperCount
+      );
+      this.creepersCounter[origin_player_id].toValue(
+        notif.args.origin_creeperCount
+      );
     },
 
     notif_handCountUpdate: function (notif) {
@@ -330,7 +350,10 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
 
       if (card.location == "keepers") {
         this.keepersCounter[card.location_arg].toValue(
-          this.keepersStock[card.location_arg].count()
+          this.keepersStock[card.location_arg].count() - notif.args.creeperCount
+        );
+        this.creepersCounter[card.location_arg].toValue(
+          notif.args.creeperCount
         );
       }
     },

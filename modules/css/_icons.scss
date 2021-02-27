@@ -15,3 +15,18 @@
   height: 33px;
   background-position: -23px -0px;
 }
+.flx-icons-creeper {
+  width: 22px;
+  height: 33px;
+  background-position: -46px -0px;
+}
+.flx-board {
+  margin-top: 5px;
+}
+.flx-board > div {
+  display: inline-block;
+  margin-right: 10px;
+}
+.no-creepers {
+  display: none !important;
+}

@@ -65,11 +65,17 @@ class ActionZapACard extends ActionCard
         "card" => $card,
         "player_id" => $player_id,
         "handCount" => $game->cards->countCardInLocation("hand", $player_id),
+        "creeperCount" => Utils::getPlayerCreeperCount($player_id),
       ]
     );
 
     if ($card["type"] == "rule") {
       return "rulesChanged";
+    }
+
+    // if player zapped a creeper, it should be placed immediately
+    if ($card["type"] == "creeper") {
+      $game->playCreeperCard($player_id, $card);
     }
   }
 }

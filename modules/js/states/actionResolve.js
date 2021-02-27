@@ -19,6 +19,20 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       }
     },
 
+    addPlayerSelectionButtons(that, args, onResolveMethodName, includeSelf) {
+      // @TODO: could be extended with nice visual way of selecting other players
+      for (var player_id in that.players) {
+        if (includeSelf || player_id != that.player_id) {
+          that.addActionButton(
+            "button_" + player_id,
+            that.players[player_id]["name"],
+            onResolveMethodName
+          );
+          dojo.attr("button_" + player_id, "data-player-id", player_id);
+        }
+      }
+    },
+
     updateActionButtonsActionResolve: {
       keepersExchange: function (that, args) {
         for (var player_id in that.keepersStock) {
@@ -65,18 +79,26 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
           );
         }
       },
-      playerSelection: function (that, args) {
-        // @TODO: to be replaced with nice visual way of selecting other players
-        for (var player_id in that.players) {
-          if (player_id != that.player_id) {
-            that.addActionButton(
-              "button_" + player_id,
-              that.players[player_id]["name"],
-              "onResolveActionPlayerSelection"
-            );
-            dojo.attr("button_" + player_id, "data-player-id", player_id);
-          }
+      keeperAndPlayerSelectionAny: function (that, args) {
+        for (var player_id in that.keepersStock) {
+          var stock = that.keepersStock[player_id];
+          stock.setSelectionMode(1);
         }
+
+        that.addPlayerSelectionButtons(
+          that,
+          args,
+          "onResolveActionKeeperAndPlayerSelection",
+          true
+        );
+      },
+      playerSelection: function (that, args) {
+        that.addPlayerSelectionButtons(
+          that,
+          args,
+          "onResolveActionPlayerSelection",
+          false
+        );
       },
       discardSelection: function (that, args) {
         dojo.place('<div id="tmpDiscardStock"></div>', "tmpHand", "first");
@@ -195,6 +217,49 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       if (this.checkAction(action)) {
         this.ajaxAction(action, {
           player_id: player_id,
+        });
+      }
+    },
+
+    onResolveActionKeeperAndPlayerSelection: function (ev) {
+      var selected_player_id = ev.target.getAttribute("data-player-id");
+
+      var action = "resolveActionCardAndPlayerSelection";
+
+      debugger;
+      var selectedKeeper = undefined;
+      for (var player_id in this.keepersStock) {
+        var stock = this.keepersStock[player_id];
+        var items = stock.getSelectedItems();
+
+        if (
+          items.length > 1 ||
+          (items.length > 0 && selectedKeeper !== undefined)
+        ) {
+          this.showMessage(
+            _("You must select exactly 1 item from 1 player's keeper section"),
+            "error"
+          );
+          return;
+        }
+
+        if (items.length > 0) {
+          selectedKeeper = items[0];
+        }
+      }
+
+      if (selectedKeeper === undefined) {
+        this.showMessage(
+          _("You must select exactly 1 item from 1 player's keeper section"),
+          "error"
+        );
+        return;
+      }
+
+      if (this.checkAction(action)) {
+        this.ajaxAction(action, {
+          player_id: selected_player_id,
+          card_id: selectedKeeper.id,
         });
       }
     },

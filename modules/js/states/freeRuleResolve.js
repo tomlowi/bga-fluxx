@@ -20,7 +20,6 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
     },
 
     updateActionButtonsFreeRuleResolve: {
-
       keeperSelectionSelf: function (that, args) {
         for (var player_id in that.keepersStock) {
           if (player_id == that.player_id) {
@@ -35,7 +34,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
               "onChangeSelection",
               that,
               "onResolveFreeRuleCardSelection"
-            );        
+            );
           }
         }
       },
@@ -48,7 +47,6 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
           "onResolveFreeRuleHandCardsSelection"
         );
       },
-
     },
 
     onResolveFreeRuleHandCardsSelection: function (ev) {
@@ -110,8 +108,6 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         dojo.disconnect(this._listeners[listener_id]);
         delete this._listeners[listener_id];
       }
-
     },
-
   });
 });

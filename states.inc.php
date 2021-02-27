@@ -64,6 +64,9 @@ if (!defined("STATE_GAME_SETUP")) {
   define("STATE_ROCKPAPERSCISSORS", 31);
   define("STATE_ROCKPAPERSCISSORS_NEXTROUND", 32);
   define("STATE_RESOLVE_FREE_RULE", 33);
+  define("STATE_RESOLVE_CREEPER_TURNSTART", 34);
+  define("STATE_RESOLVE_CREEPER_INPLAY", 35);
+  define("STATE_NEXT_PLAYER_TURNSTART_CREEPERS", 89);
   define("STATE_NEXT_PLAYER", 90);
 }
 
@@ -90,8 +93,12 @@ $machinestates = [
 
   STATE_PLAY_CARD => [
     "name" => "playCard",
-    "description" => clienttranslate('${actplayer} must play ${countLabel} card(s)'),
-    "descriptionmyturn" => clienttranslate('${you} must play ${countLabel} card(s)'),
+    "description" => clienttranslate(
+      '${actplayer} must play ${countLabel} card(s)'
+    ),
+    "descriptionmyturn" => clienttranslate(
+      '${you} must play ${countLabel} card(s)'
+    ),
     "type" => "activeplayer",
     "action" => "st_playCard",
     "args" => "arg_playCard",
@@ -105,6 +112,7 @@ $machinestates = [
 
       "resolveActionCard" => STATE_RESOLVE_ACTION,
       "resolveFreeRule" => STATE_RESOLVE_FREE_RULE,
+      "resolveCreeper" => STATE_RESOLVE_CREEPER_INPLAY,
       "continuePlay" => STATE_PLAY_CARD,
       "endGame" => STATE_GAME_END,
     ],
@@ -167,7 +175,9 @@ $machinestates = [
     "args" => "arg_enforceKeepersLimitForSelf",
     "action" => "st_enforceKeepersLimitForSelf",
     "possibleactions" => ["discardKeepers"],
-    "transitions" => ["" => STATE_NEXT_PLAYER],
+    "transitions" => [
+      "" => STATE_NEXT_PLAYER,
+    ],
   ],
 
   STATE_GOAL_CLEANING => [
@@ -194,6 +204,7 @@ $machinestates = [
     "possibleactions" => [
       "resolveAction",
       "resolveActionPlayerSelection",
+      "resolveActionCardAndPlayerSelection",
       "resolveActionCardSelection",
       "resolveActionCardsSelection",
       "resolveActionKeepersExchange",
@@ -201,6 +212,7 @@ $machinestates = [
     ],
     "transitions" => [
       "resolvedAction" => STATE_PLAY_CARD,
+      "resolveCreeper" => STATE_RESOLVE_CREEPER_INPLAY,
       "handsExchangeOccured" => STATE_ENFORCE_HAND_LIMIT_OTHERS,
       "keepersExchangeOccured" => STATE_ENFORCE_KEEPERS_LIMIT_OTHERS,
       "rulesChanged" => STATE_GOAL_CLEANING,
@@ -257,9 +269,66 @@ $machinestates = [
     ],
     "transitions" => [
       "resolvedFreeRule" => STATE_PLAY_CARD,
+      "resolveCreeper" => STATE_RESOLVE_CREEPER_INPLAY,
       "endGame" => STATE_GAME_END,
     ],
-  ],  
+  ],
+
+  STATE_RESOLVE_CREEPER_INPLAY => [
+    "name" => "creeperResolveInPlay",
+    "description" => clienttranslate(
+      '${actplayer} must resolve Creeper: ${action_name}'
+    ),
+    "descriptionmyturn" => clienttranslate(
+      '${you} must resolve Creeper: ${action_name}'
+    ),
+    "type" => "multipleactiveplayer",
+    "args" => "arg_resolveCreeper",
+    "action" => "st_resolveCreeperInPlay",
+    "possibleactions" => [
+      "resolveCreeperCardSelection",
+      "resolveCreeperPlayerSelection",
+      "resolveCreeperButtons",
+    ],
+    "transitions" => [
+      "resolveCreeper" => STATE_RESOLVE_CREEPER_INPLAY,
+      "resolvedCreeper" => STATE_PLAY_CARD,
+      "endGame" => STATE_GAME_END,
+    ],
+  ],
+
+  STATE_RESOLVE_CREEPER_TURNSTART => [
+    "name" => "creeperResolveTurnStart",
+    "description" => clienttranslate(
+      '${actplayer} must resolve Creeper: ${action_name}'
+    ),
+    "descriptionmyturn" => clienttranslate(
+      '${you} must resolve Creeper: ${action_name}'
+    ),
+    "type" => "activeplayer",
+    "args" => "arg_resolveCreeper",
+    "action" => "st_resolveCreeperTurnStart",
+    "possibleactions" => [
+      "resolveCreeperCardSelection",
+      "resolveCreeperPlayerSelection",
+      "resolveCreeperButtons",
+    ],
+    "transitions" => [
+      "resolvedCreeper" => STATE_NEXT_PLAYER_TURNSTART_CREEPERS,
+    ],
+  ],
+
+  STATE_NEXT_PLAYER_TURNSTART_CREEPERS => [
+    "name" => "nextPlayerTurnStartCreepers",
+    "description" => "",
+    "type" => "game",
+    "action" => "st_nextPlayerTurnStartCreepers",
+    "updateGameProgression" => false,
+    "transitions" => [
+      "resolveCreeper" => STATE_RESOLVE_CREEPER_TURNSTART,
+      "finishedTurnStartCreepers" => STATE_DRAW_CARDS,
+    ],
+  ],
 
   STATE_NEXT_PLAYER => [
     "name" => "nextPlayer",
@@ -267,7 +336,9 @@ $machinestates = [
     "type" => "game",
     "action" => "st_nextPlayer",
     "updateGameProgression" => true,
-    "transitions" => ["" => STATE_DRAW_CARDS],
+    "transitions" => [
+      "" => STATE_NEXT_PLAYER_TURNSTART_CREEPERS,
+    ],
   ],
 
   /*
