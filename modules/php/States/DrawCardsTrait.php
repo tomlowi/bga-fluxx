@@ -40,6 +40,49 @@ trait DrawCardsTrait
     );
     $game->setGameStateValue("drawnCards", $drawRule);
 
+    // move to state where player is allowed to start playing cards
     $game->gamestate->nextstate("cardsDrawn");
+
+    // check if the first play random rule is active
+    // if so, the first card is already played automatically
+    $this->checkFirstPlayRandom();
+  }
+
+  private function checkFirstPlayRandom()
+  {
+    $game = Utils::getGame();
+    $firstPlayRandom = (0 != $game->getGameStateValue("activeFirstPlayRandom"));
+    $playRule = $game->getGameStateValue("playRule");
+
+    // Ignore this rule if the current Rule card allow you to play only one card
+    if (!$firstPlayRandom || $playRule <= 1)
+      return;
+    
+    // select random card from player hand (always something there, just drew cards)
+    $player_id = $game->getActivePlayerId();
+    $cardsInHand = $game->cards->getCardsInLocation("hand", $player_id);
+
+    $i = bga_rand(0, count($cardsInHand) - 1);
+    $card = array_values($cardsInHand)[$i];
+
+    $game->notifyAllPlayers(
+      "firstPlayRandom",
+      clienttranslate('${player_name} must play first card random'),
+      [
+        "player_name" => $game->getActivePlayerName(),
+        "player_id" => $player_id,
+      ]
+    );
+
+    // note: be aware we can't have "checkAction" running here!
+    // the *active* player has already changed, but the *current* player
+    // is still the previous player that triggered its turn end
+    // so "checkAction" would thrown "It is not your turn" to the current player
+    // when trying to play the card for the active player
+
+        // first card is a forced play, but in this case
+    // it does count for the number of cards played
+    $this->_action_playCard($card["id"], true);
+    
   }
 }
