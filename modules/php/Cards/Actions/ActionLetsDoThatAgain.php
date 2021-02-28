@@ -18,7 +18,8 @@ class ActionLetsDoThatAgain extends ActionCard
 
   public $interactionNeeded = "discardSelection";
 
-  private function getRuleCardsInDiscard() {
+  private function getRuleCardsInDiscard()
+  {
     $game = Utils::getGame();
     $rulesInDiscard = $game->cards->getCardsOfTypeInLocation(
       "rule",
@@ -28,7 +29,8 @@ class ActionLetsDoThatAgain extends ActionCard
     return $rulesInDiscard;
   }
 
-  private function getActionCardsInDiscard() {
+  private function getActionCardsInDiscard()
+  {
     $game = Utils::getGame();
     $actionsInDiscard = $game->cards->getCardsOfTypeInLocation(
       "action",
