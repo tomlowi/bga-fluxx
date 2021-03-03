@@ -18,7 +18,8 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         ["keepersMoved", 500],
         ["cardFromTableToHand", null],
         ["handCountUpdate", null],
-        ["reshuffle", null]
+        ["reshuffle", null],
+        ["tmpHandDiscarded", 500],
       );
     },
 
@@ -390,5 +391,16 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         this.removeFromKeeperPanelIcons(from_player_id, [card]);
       }
     },
+
+    notif_tmpHandDiscarded: function (notif) {
+      var player_id = notif.args.player_id;
+      var cards = notif.args.cards;
+
+      // tmp hand stocks will already be destroyed
+      this.discardCards(cards, undefined, player_id);      
+
+      this.discardCounter.toValue(notif.args.discardCount);
+    },
+
   });
 });

@@ -17,9 +17,9 @@
 </div>
 
 <div id="tmpSelectCards" class="whiteblock flx-hand flx-tmp-hand"></div>
-<div id="tmpPlayCards3" class="whiteblock flx-hand flx-tmp-hand"></div>
-<div id="tmpPlayCards2" class="whiteblock flx-hand flx-tmp-hand"></div>
-<div id="tmpPlayCards1" class="whiteblock flx-hand flx-tmp-hand"></div>
+<div id="tmpHand3" class="whiteblock flx-hand flx-tmp-hand"></div>
+<div id="tmpHand2" class="whiteblock flx-hand flx-tmp-hand"></div>
+<div id="tmpHand1" class="whiteblock flx-hand flx-tmp-hand"></div>
 
 <div id="tmpKeeperPanelIcons" class="whiteblock flx-keeper-panel-placeholder"></div>
 

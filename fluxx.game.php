@@ -87,6 +87,12 @@ class fluxx extends Table
       "creeperToResolveCardId" => 49,
       "creeperToResolvePlayerId" => 50,
       "creeperTurnStartDeathExecuted" => 51,
+      "tmpHand1ToPlay" => 52,
+      "tmpHand1Card" => 53,
+      "tmpHand2ToPlay" => 54,
+      "tmpHand2Card" => 55,
+      "tmpHand3ToPlay" => 56,
+      "tmpHand3Card" => 57,
       "rpsChallengerId" => 90,
       "rpsDefenderId" => 91,
       "rpsChallengerChoice" => 92,
@@ -199,6 +205,13 @@ class fluxx extends Table
     self::setGameStateInitialValue("creeperToResolveCardId", -1);
     self::setGameStateInitialValue("creeperToResolvePlayerId", -1);
     self::setGameStateInitialValue("creeperTurnStartDeathExecuted", 0);
+
+    self::setGameStateInitialValue("tmpHand1ToPlay", 0);
+    self::setGameStateInitialValue("tmpHand1Card", -1);
+    self::setGameStateInitialValue("tmpHand2ToPlay", 0);
+    self::setGameStateInitialValue("tmpHand2Card", -1);
+    self::setGameStateInitialValue("tmpHand3ToPlay", 0);
+    self::setGameStateInitialValue("tmpHand3Card", -1);
 
     // Initialize game statistics
     // (note: statistics used in this file must be defined in your stats.inc.php file)
@@ -784,6 +797,7 @@ class fluxx extends Table
   use Fluxx\States\RockPaperScissorsTrait;
   use Fluxx\States\ResolveFreeRuleTrait;
   use Fluxx\States\ResolveCreeperTrait;
+  use Fluxx\States\TempHandPlayTrait;
 
   //////////////////////////////////////////////////////////////////////////////
   //////////// Game state actions

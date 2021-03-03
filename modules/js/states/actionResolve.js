@@ -229,14 +229,14 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         dojo.attr("button_" + player_id, "data-player-id", player_id);
       },
 
-      TODO: function (that, action_name, args) {
-        that.addActionButton(
-          "button_0",
-          _("Not implemented"),
-          "onResolveActionButtons"
-        );
-        dojo.attr("button_0", "data-value", 0);
-      },
+      // NotImplemented: function (that, action_name, args) {
+      //   that.addActionButton(
+      //     "button_0",
+      //     _("Not implemented"),
+      //     "onResolveActionButtons"
+      //   );
+      //   dojo.attr("button_0", "data-value", 0);
+      // },
     },
 
     onResolveActionPlayerSelection: function (ev) {

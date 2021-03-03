@@ -14,6 +14,7 @@ trait PlayCardTrait
   public function st_playCard()
   {
     $game = Utils::getGame();
+    $player_id = $game->getActivePlayerId();
 
     // If any card is a force move, play it
     $forcedCardId = $game->getGameStateValue("forcedCard");
@@ -25,11 +26,18 @@ trait PlayCardTrait
       return;
     }
 
+    // If there are still cards left in Temp Hands but no more forced plays,
+    // discard the leftovers from the Temp Hands
+    $tmpHandActive = $this->checkTempHandsForDiscard($player_id);
+    // If we still have Temp Hands active with more cards to play, do this first
+    if ($tmpHandActive > 0) {
+      $game->gamestate->nextstate("resolveTempHand");
+      return;  
+    }
+
     // check if the first play random rule is active
     // if so, the first card is already played automatically
     $this->checkFirstPlayRandom();
-
-    $player_id = $game->getActivePlayerId();
 
     // If any "free action" rule can be played, we cannot end turn automatically
     // Player must finish its turn by explicitly deciding not to use any of the free rules
@@ -41,6 +49,34 @@ trait PlayCardTrait
     if (!$this->activePlayerMustPlayMoreCards($player_id)) {
       $game->gamestate->nextstate("endOfTurn");
     }
+  }
+
+  private function checkTempHandsForDiscard($player_id)
+  {
+    $tmpHandActive = Utils::getActiveTempHand();
+    for (int i=3; i>=1; i--) {
+      $tmpHandLocation = "tmpHand" + i;
+      $tmpHandCard = $game->getGameStateValue($tmpHandLocation + "Card");
+      // there was a Temp Hand active above the current one:
+      // reset it and check for remaining tmp cards to discard
+      if ($tmpHandCard > 0 && i > $tmpHandActive) {
+        $game->setGameStateValue($tmpHandLocation + "Card", -1);
+        $cardsToDiscard = $game->cards->getCardsInLocation($tmpHandLocation, $player_id);
+
+        // discard all remaining cards
+        foreach ($cardsToDiscard as $card_id => $card) {
+          $game->cards->playCard($card_id);
+        }
+        if (count($cardsToDiscard) > 0) {
+          $game->notifyAllPlayers("tmpHandDiscarded", "", [
+            "tmpHand" => i,
+            "player_id" => $player_id,
+            "cards" => $cardsToDiscard,
+            "discardCount" => $game->cards->countCardInLocation("discard"),
+          ]);
+        }
+      }
+    }    
   }
 
   private function activePlayerMustPlayMoreCards($player_id)

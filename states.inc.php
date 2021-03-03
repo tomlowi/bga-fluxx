@@ -66,6 +66,7 @@ if (!defined("STATE_GAME_SETUP")) {
   define("STATE_RESOLVE_FREE_RULE", 33);
   define("STATE_RESOLVE_CREEPER_TURNSTART", 34);
   define("STATE_RESOLVE_CREEPER_INPLAY", 35);
+  define("STATE_RESOLVE_TEMP_HAND_PLAY", 36);
   define("STATE_NEXT_PLAYER_TURNSTART_CREEPERS", 89);
   define("STATE_NEXT_PLAYER", 90);
 }
@@ -113,6 +114,7 @@ $machinestates = [
       "resolveActionCard" => STATE_RESOLVE_ACTION,
       "resolveFreeRule" => STATE_RESOLVE_FREE_RULE,
       "resolveCreeper" => STATE_RESOLVE_CREEPER_INPLAY,
+      "resolveTempHand" => STATE_RESOLVE_TEMP_HAND_PLAY,
       "continuePlay" => STATE_PLAY_CARD,
       "endGame" => STATE_GAME_END,
     ],
@@ -317,6 +319,23 @@ $machinestates = [
     ],
     "transitions" => [
       "resolvedCreeper" => STATE_NEXT_PLAYER_TURNSTART_CREEPERS,
+    ],
+  ],
+
+  STATE_RESOLVE_TEMP_HAND_PLAY => [
+    "name" => "tempHandPlay",
+    "description" => clienttranslate(
+      '${actplayer} must play ${leftToPlay} card(s) from ${tempHandName}'
+    ),
+    "descriptionmyturn" => clienttranslate(
+      '${you} must play ${leftToPlay} card(s) from ${tempHandName}'
+    ),
+    "type" => "activeplayer",
+    "action" => "st_tempHandPlay",
+    "args" => "arg_tempHandPlay",
+    "possibleactions" => ["selectTempHandCard"],
+    "transitions" => [
+      "selectedCard" => STATE_PLAY_CARD,
     ],
   ],
 

@@ -34,6 +34,7 @@ define([
   g_gamethemeurl + "modules/js/states/freeRuleResolve.js",
   g_gamethemeurl + "modules/js/states/creeperResolve.js",
   g_gamethemeurl + "modules/js/states/playRockPaperScissors.js",
+  g_gamethemeurl + "modules/js/states/tempHandPlay.js",
 ], function (dojo, declare) {
   return declare(
     "bgagame.fluxx",
@@ -48,6 +49,7 @@ define([
       fluxx.states.freeRuleResolve,
       fluxx.states.creeperResolve,
       fluxx.states.playRockPaperScissors,
+      fluxx.states.tempHandPlay,
     ],
     {
       constructor: function () {
@@ -426,6 +428,10 @@ define([
             this.onEnteringStateCreeperResolve(args);
             break;
 
+          case "tempHandPlay":
+            this.onEnteringStateTempHandPlay(args);
+            break;
+
           case "dummmy":
             break;
         }
@@ -473,6 +479,10 @@ define([
                 this.onLeavingStateCreeperResolve();
             break;            
 
+          case "tempHandPlay":
+            this.onLeavingStateTempHandPlay();
+            break;
+
           case "dummmy":
             break;
         }
@@ -512,7 +522,11 @@ define([
             case "creeperResolveInPlay":
             case "creeperResolveTurnStart":
               this.onUpdateActionButtonsCreeperResolve(args);
-              break;          }
+              break;
+            case "tempHandPlay":
+              this.onUpdateActionButtonsTempHandPlay(args);
+              break;
+            }
         }
       },
 
