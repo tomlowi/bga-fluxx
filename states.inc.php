@@ -325,10 +325,10 @@ $machinestates = [
   STATE_RESOLVE_TEMP_HAND_PLAY => [
     "name" => "tempHandPlay",
     "description" => clienttranslate(
-      '${actplayer} must play ${leftToPlay} card(s) from ${tempHandName}'
+      '${actplayer} must play ${tmpToPlay} card(s) from ${tmpHandName}'
     ),
     "descriptionmyturn" => clienttranslate(
-      '${you} must play ${leftToPlay} card(s) from ${tempHandName}'
+      '${you} must play ${tmpToPlay} card(s) from ${tmpHandName}'
     ),
     "type" => "activeplayer",
     "action" => "st_tempHandPlay",

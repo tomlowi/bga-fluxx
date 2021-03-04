@@ -1,12 +1,12 @@
 define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
   return declare("fluxx.states.tempHandPlay", null, {
-    constructor() {},
-
-    onEnteringStateTempHandPlay: function (args) {
-      console.log("Entering state: TempHandPlay", this.isCurrentPlayerActive());
-      
+    constructor() {
       this.tmpHandStockActive = null;
       this.tmpHandStocks = [];
+    },
+
+    onEnteringStateTempHandPlay: function (args) {
+      console.log("Entering state: TempHandPlay", this.isCurrentPlayerActive());    
     },
 
     onLeavingStateTempHandPlay: function () {
@@ -48,10 +48,11 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
 
           this.tmpHandStocks[tmpHandId] = tmpHandStock;
           if (tmpHandId == tmpHandActive) {
-            tmpHandStock.setSelectionMode(1);
+            this.tmpHandStockActive = tmpHandStock;
+            this.tmpHandStockActive.setSelectionMode(1);
 
             this._listener = dojo.connect(
-              tmpHandStock,
+              this.tmpHandStockActive,
               "onChangeSelection",
               this,
               "onSelectCardTempHandPlay"
@@ -70,7 +71,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       if (items.length == 0) return;
 
       if (this.checkAction(action, true)) {
-        // Play a card from temp hand
+        // Play a card from temp hand                
         this.ajaxAction(action, {
           card_id: items[0].id,
           lock: true,

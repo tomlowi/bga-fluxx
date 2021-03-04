@@ -253,6 +253,14 @@ class fluxx extends Table
     // reset to start with correct first active player
     $this->gamestate->changeActivePlayer($first_player_id);
 
+    // // @TODO: remove this test for temp hands
+    // $draw3Play2 = ActionCardFactory::getCard(0, 311);
+    // $draw3Play2->immediateEffectOnPlay($first_player_id);
+
+    // $draw2AndUse = ActionCardFactory::getCard(0, 310);
+    // $draw2AndUse->immediateEffectOnPlay($first_player_id);
+
+
   }
 
   /*

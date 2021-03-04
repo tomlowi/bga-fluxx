@@ -20,19 +20,20 @@ trait TempHandPlayTrait
     // check game states for which temp hands are active
     // and how many cards must still be played for the active temp hand
     $tmpHandActive = Utils::getActiveTempHand();
-    $tmpHandLocation = "tmpHand" + $tmpHandActive;
-    $leftToPlay = $game->getGameStateValue($tmpHandLocation + "ToPlay");
+    $tmpHandLocation = "tmpHand" . $tmpHandActive;
+    $tmpToPlay = $game->getGameStateValue($tmpHandLocation . "ToPlay");
 
     // get cards for all temp hand locations for this player
     $tmpHands = [];
-    for (int i=3; i>=1; i--) {
-      $tmpHandLocation = "tmpHand" + i;
-      $tmpCardArg = $game->getGameStateValue($tmpHandLocation + "Card");
+    $tmpHandName = null;
+    for ($i=1; $i<=3; $i++) {
+      $tmpHandNext = "tmpHand" . $i;
+      $tmpCardArg = $game->getGameStateValue($tmpHandNext . "Card");
       if ($tmpCardArg > 0) {
         $tmpHandName = ActionCardFactory::getCard(0, $tmpCardArg)->getName();
-        $tmpHandCards = $this->cards->getCardsInLocation($tmpHandLocation, $player_id);
+        $tmpHandCards = $this->cards->getCardsInLocation($tmpHandNext, $player_id);
   
-        $tmpHands[$tmpHandLocation] = [
+        $tmpHands[$tmpHandNext] = [
           "tmpHandName" => $tmpHandName,
           "tmpHandCards" => $tmpHandCards,
         ];
@@ -41,7 +42,8 @@ trait TempHandPlayTrait
 
     return [
       "tmpHandActive" => $tmpHandLocation,
-      "leftToPlay" => $leftToPlay,
+      "tmpHandName" => $tmpHandName,
+      "tmpToPlay" => $tmpToPlay,
       "tmpHands" => $tmpHands,
     ];
   }
@@ -53,7 +55,7 @@ trait TempHandPlayTrait
     $game->checkAction("selectTempHandCard");
 
     $tmpHandActive = Utils::getActiveTempHand();
-    $tmpHandLocation = "tmpHand" + $tmpHandActive;
+    $tmpHandLocation = "tmpHand" . $tmpHandActive;
     // verify this card comes from the correct player temp hand
     $player_id = $game->getActivePlayerId();
     $card = $game->cards->getCard($card_id);
@@ -65,7 +67,7 @@ trait TempHandPlayTrait
     }
 
     // resolved 1 temp hand play
-    $game->incGameStateValue($tmpHandLocation + "ToPlay", -1);
+    $game->incGameStateValue($tmpHandLocation . "ToPlay", -1);
 
     // We move this card in the player's hand
     $game->cards->moveCard($card["id"], "hand", $player_id);

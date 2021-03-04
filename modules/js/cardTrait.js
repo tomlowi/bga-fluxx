@@ -24,9 +24,17 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
     },
 
     playCard: function (player_id, card, destinationStock) {
+      // check the card exists in hand stock (might also have been in temp hand)
+      var playFromHand = false;
+
       // forced plays (like creepers) can happen during "game" type states,
       // in which case isCurrentPlayerActive is not set
-      if (player_id == this.player_id) {
+      if (player_id == this.player_id) {        
+        var fromDiv = this.handStock.getItemDivId(card.id);
+        playFromHand = dojo.byId(fromDiv) != null;
+      }
+
+      if (playFromHand) {
         destinationStock.addToStockWithId(
           card.type_arg,
           card.id,
@@ -200,7 +208,13 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       var handCount = notif.args.handCount;
       var discardCount = notif.args.discardCount;
 
+      var discardFromHand = false;      
       if (this.isCurrentPlayerActive()) {
+        var fromDiv = this.handStock.getItemDivId(card.id);
+        discardFromHand = dojo.byId(fromDiv) != null;
+      }
+
+      if (discardFromHand) {
         this.discardCard(card, this.handStock);
       } else {
         this.discardCard(card, undefined, player_id);

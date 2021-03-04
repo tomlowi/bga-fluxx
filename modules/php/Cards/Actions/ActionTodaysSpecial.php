@@ -32,6 +32,7 @@ class ActionTodaysSpecial extends ActionCard
 
   public function resolvedBy($player_id, $args)
   {
+    $game = Utils::getGame();
     $addInflation = Utils::getActiveInflation() ? 1 : 0;
 
     $value = $args["value"];
@@ -54,7 +55,7 @@ class ActionTodaysSpecial extends ActionCard
     $tmpHandActive = Utils::getActiveTempHand();
     $tmpHandNext = $tmpHandActive + 1;
 
-    $tmpHandLocation = "tmpHand" + $tmpHandNext;
+    $tmpHandLocation = "tmpHand" . $tmpHandNext;
     // Draw for temp hand
     $tmpCards = $game->performDrawCards($player_id, 
       $nrCardsToDraw + $addInflation,
@@ -62,8 +63,8 @@ class ActionTodaysSpecial extends ActionCard
       true); // $temporaryDraw
     $tmpCardIds = array_column($tmpCards, "id");
     // Must Play a certain nr of them, depending on the choice made
-    $game->setGameStateValue($tmpHandLocation + "ToPlay", $nrCardsToPlay + $addInflation);
-    $game->setGameStateValue($tmpHandLocation + "Card", $this->getUniqueId());
+    $game->setGameStateValue($tmpHandLocation . "ToPlay", $nrCardsToPlay + $addInflation);
+    $game->setGameStateValue($tmpHandLocation . "Card", $this->getUniqueId());
 
     // move cards to temporary hand location
     $game->cards->moveCards($tmpCardIds, $tmpHandLocation, $player_id);

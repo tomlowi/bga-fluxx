@@ -53,14 +53,15 @@ trait PlayCardTrait
 
   private function checkTempHandsForDiscard($player_id)
   {
+    $game = Utils::getGame();
     $tmpHandActive = Utils::getActiveTempHand();
-    for (int i=3; i>=1; i--) {
-      $tmpHandLocation = "tmpHand" + i;
-      $tmpHandCard = $game->getGameStateValue($tmpHandLocation + "Card");
+    for ($i=3; $i>=1; $i--) {
+      $tmpHandLocation = "tmpHand" . $i;
+      $tmpHandCard = $game->getGameStateValue($tmpHandLocation . "Card");
       // there was a Temp Hand active above the current one:
       // reset it and check for remaining tmp cards to discard
-      if ($tmpHandCard > 0 && i > $tmpHandActive) {
-        $game->setGameStateValue($tmpHandLocation + "Card", -1);
+      if ($tmpHandCard > 0 && $i > $tmpHandActive) {
+        $game->setGameStateValue($tmpHandLocation . "Card", -1);
         $cardsToDiscard = $game->cards->getCardsInLocation($tmpHandLocation, $player_id);
 
         // discard all remaining cards
@@ -69,14 +70,15 @@ trait PlayCardTrait
         }
         if (count($cardsToDiscard) > 0) {
           $game->notifyAllPlayers("tmpHandDiscarded", "", [
-            "tmpHand" => i,
+            "tmpHand" => $i,
             "player_id" => $player_id,
             "cards" => $cardsToDiscard,
             "discardCount" => $game->cards->countCardInLocation("discard"),
           ]);
         }
       }
-    }    
+    }
+    return $tmpHandActive;
   }
 
   private function activePlayerMustPlayMoreCards($player_id)
