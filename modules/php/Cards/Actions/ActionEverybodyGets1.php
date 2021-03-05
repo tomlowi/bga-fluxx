@@ -15,9 +15,10 @@ class ActionEverybodyGets1 extends ActionCard
       "Set your hand aside. Count the number of players in the game (including yourself). Draw enough cards to give 1 to each player, and then distribute them evenly amongst all the players. You decide who gets what."
     );
 
-    $this->help = clienttranslate(
-      "Select what you want to distribute to this player."
-    ) . " " . clienttranslate("Click the button when finished.");
+    $this->help =
+      clienttranslate("Select what you want to distribute to this player.") .
+      " " .
+      clienttranslate("Click the button when finished.");
   }
 
   public $interactionNeeded = "tmpCardsSelectionForPlayer";
@@ -29,16 +30,18 @@ class ActionEverybodyGets1 extends ActionCard
 
     $game = Utils::getGame();
     $players_ordered = $game->getPlayersInOrder();
-    
-    $tmpCards = $game->performDrawCards($player_id, 
+
+    $tmpCards = $game->performDrawCards(
+      $player_id,
       count($players_ordered) * $cardsPerPlayer,
       true, // $postponeCreeperResolve
-      true); // $temporaryDraw
+      true
+    ); // $temporaryDraw
     $tmpCardIds = array_column($tmpCards, "id");
 
     // move cards to temporary select location and let player choose who gets what
     $game->cards->moveCards($tmpCardIds, "tmpSelectCards", $player_id);
-    
+
     return parent::immediateEffectOnPlay($player_id);
   }
 
@@ -54,7 +57,7 @@ class ActionEverybodyGets1 extends ActionCard
     $playerCount = count($players_ordered);
     $remainingCardCount = count($tmpCards) / $cardsPerPlayer;
     // active player starts with selecting cards for themself, then around the table
-    $forPlayerId =  $players_ordered[$playerCount - $remainingCardCount];
+    $forPlayerId = $players_ordered[$playerCount - $remainingCardCount];
 
     return [
       "cards" => $tmpCards,
@@ -66,13 +69,14 @@ class ActionEverybodyGets1 extends ActionCard
   public function resolvedBy($player_id, $args)
   {
     // move selected cards to the selected player
-    $cards = $args["cards"];    
+    $cards = $args["cards"];
     $resolveArgs = $this->resolveArgs();
 
     // verify arguments
     if (count($cards) != $resolveArgs["cardsPerPlayer"]) {
       Utils::throwInvalidUserAction(
-        fluxx::totranslate("Wrong number of cards. Expected: ") . $resolveArgs["cardsPerPlayer"]
+        fluxx::totranslate("Wrong number of cards. Expected: ") .
+          $resolveArgs["cardsPerPlayer"]
       );
     }
 
@@ -89,14 +93,21 @@ class ActionEverybodyGets1 extends ActionCard
     $selected_player_id = $resolveArgs["forPlayerId"];
 
     $game = Utils::getGame();
-    $game->cards->moveCards(array_column($cards, "id"), "hand", $selected_player_id);
+    $game->cards->moveCards(
+      array_column($cards, "id"),
+      "hand",
+      $selected_player_id
+    );
 
     $game->notifyPlayer($selected_player_id, "cardsDrawn", "", [
       "cards" => $cards,
     ]);
 
     // repeat this state for next player, as long as there are more cards to distribute
-    $countToDistribute = $game->cards->countCardInLocation("tmpSelectCards", $player_id);
+    $countToDistribute = $game->cards->countCardInLocation(
+      "tmpSelectCards",
+      $player_id
+    );
     if ($countToDistribute > 0) {
       return parent::immediateEffectOnPlay($player_id);
     }

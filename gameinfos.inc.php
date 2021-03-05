@@ -146,7 +146,7 @@ $gameinfos = [
   "tags" => [
     2, // Casual games
     11, //  Medium length game
-    20, // Awarded game (1999: Mensa Select Winner)    
+    20, // Awarded game (1999: Mensa Select Winner)
     200, // Card game
     204, // Hand management
   ],

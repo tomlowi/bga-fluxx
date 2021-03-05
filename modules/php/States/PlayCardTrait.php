@@ -32,7 +32,7 @@ trait PlayCardTrait
     // If we still have Temp Hands active with more cards to play, do this first
     if ($tmpHandActive > 0) {
       $game->gamestate->nextstate("resolveTempHand");
-      return;  
+      return;
     }
 
     // check if the first play random rule is active
@@ -55,14 +55,17 @@ trait PlayCardTrait
   {
     $game = Utils::getGame();
     $tmpHandActive = Utils::getActiveTempHand();
-    for ($i=3; $i>=1; $i--) {
+    for ($i = 3; $i >= 1; $i--) {
       $tmpHandLocation = "tmpHand" . $i;
       $tmpHandCard = $game->getGameStateValue($tmpHandLocation . "Card");
       // there was a Temp Hand active above the current one:
       // reset it and check for remaining tmp cards to discard
       if ($tmpHandCard > 0 && $i > $tmpHandActive) {
         $game->setGameStateValue($tmpHandLocation . "Card", -1);
-        $cardsToDiscard = $game->cards->getCardsInLocation($tmpHandLocation, $player_id);
+        $cardsToDiscard = $game->cards->getCardsInLocation(
+          $tmpHandLocation,
+          $player_id
+        );
 
         // discard all remaining cards
         foreach ($cardsToDiscard as $card_id => $card) {

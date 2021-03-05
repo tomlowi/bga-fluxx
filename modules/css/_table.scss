@@ -35,7 +35,7 @@
     width: $card-width;
     height: $card-height;
   }
-  
+
   .flx-goal {
     position: relative;
   }
@@ -51,7 +51,7 @@
 
       background-image: url("img/cards.png");
       background-position: -1500% -500%;
-  
+
       &.flx-deck-empty {
         background-position: -1600% -500%;
       }
@@ -128,9 +128,9 @@
     grid-row: 2;
 
     &.flx-discard-visible {
-        .flx-discard {
-          width: 150*4px;
-        }
+      .flx-discard {
+        width: 150 * 4px;
+      }
     }
   }
 
@@ -159,7 +159,7 @@
   @media (max-width: 1024px) {
     .flx-rules {
       grid-gap: 4px;
-  
+
       grid-template-columns: 2fr 1fr;
     }
 

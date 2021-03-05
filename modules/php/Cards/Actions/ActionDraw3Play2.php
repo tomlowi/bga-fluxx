@@ -28,10 +28,12 @@ class ActionDraw3Play2 extends ActionCard
 
     $tmpHandLocation = "tmpHand" . $tmpHandNext;
     // Draw 3 for temp hand
-    $tmpCards = $game->performDrawCards($player_id, 
+    $tmpCards = $game->performDrawCards(
+      $player_id,
       3 + $addInflation,
       true, // $postponeCreeperResolve
-      true); // $temporaryDraw
+      true
+    ); // $temporaryDraw
     $tmpCardIds = array_column($tmpCards, "id");
     // Must Play 2 of them
     $game->setGameStateValue($tmpHandLocation . "ToPlay", 2 + $addInflation);

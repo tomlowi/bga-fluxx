@@ -252,15 +252,6 @@ class fluxx extends Table
 
     // reset to start with correct first active player
     $this->gamestate->changeActivePlayer($first_player_id);
-
-    // // @TODO: remove this test for temp hands
-    // $draw3Play2 = ActionCardFactory::getCard(0, 311);
-    // $draw3Play2->immediateEffectOnPlay($first_player_id);
-
-    // $draw2AndUse = ActionCardFactory::getCard(0, 310);
-    // $draw2AndUse->immediateEffectOnPlay($first_player_id);
-
-
   }
 
   /*
@@ -444,8 +435,11 @@ class fluxx extends Table
     return $result;
   }
 
-  private function pickCardsWithCreeperCheck($player_id, $drawCount, $postponeCreeperResolve)
-  {
+  private function pickCardsWithCreeperCheck(
+    $player_id,
+    $drawCount,
+    $postponeCreeperResolve
+  ) {
     $cardsDrawn = [];
     // If any creepers are drawn, they must be placed immediately,
     // and replaced by a new draw.
@@ -458,7 +452,7 @@ class fluxx extends Table
           "cards" => [$nextCard],
         ]);
         // play card without "checkAction": can be in any state here
-        // and don't add this to "play count", and postpone 
+        // and don't add this to "play count", and postpone
         self::_action_playCard($nextCard["id"], false, $postponeCreeperResolve);
         // re-draw for another card
         $nextCard = $this->cards->pickCard("deck", $player_id);
@@ -472,13 +466,20 @@ class fluxx extends Table
     return $cardsDrawn;
   }
 
-  public function performDrawCards($player_id, $drawCount, 
-    $postponeCreeperResolve = false, $temporaryDraw = false)
-  {
+  public function performDrawCards(
+    $player_id,
+    $drawCount,
+    $postponeCreeperResolve = false,
+    $temporaryDraw = false
+  ) {
     $cardsDrawn = [];
     if (Utils::useCreeperPackExpansion()) {
       // check for creepers while drawing
-      $cardsDrawn = $this->pickCardsWithCreeperCheck($player_id, $drawCount, $postponeCreeperResolve);
+      $cardsDrawn = $this->pickCardsWithCreeperCheck(
+        $player_id,
+        $drawCount,
+        $postponeCreeperResolve
+      );
     } else {
       // No creepers: we can just draw
       $cardsDrawn = $this->cards->pickCards($drawCount, "deck", $player_id);
@@ -663,7 +664,7 @@ class fluxx extends Table
         "player_id" => $winnerId,
         "player_name" => $players[$winnerId]["player_name"],
         "goal_id" => $winnerInfo["goalId"],
-        "goal_name" => $winnerInfo["goal"]
+        "goal_name" => $winnerInfo["goal"],
       ]
     );
 

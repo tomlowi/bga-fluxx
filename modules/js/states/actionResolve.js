@@ -7,7 +7,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
     },
 
     onEnteringStateActionResolve: function (args) {
-      console.log("Entering state: ActionResolve", args);      
+      console.log("Entering state: ActionResolve", args);
     },
 
     onUpdateActionButtonsActionResolve: function (args) {
@@ -102,8 +102,8 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         );
       },
       discardSelection: function (that, action_name, args) {
-        dojo.place('<h3>' + action_name + '</h3>', "tmpSelectCards");
-        dojo.place('<div id="tmpSelectStock"></div>', "tmpSelectCards");        
+        dojo.place("<h3>" + action_name + "</h3>", "tmpSelectCards");
+        dojo.place('<div id="tmpSelectStock"></div>', "tmpSelectCards");
 
         that.tmpSelectStock = that.createCardStock("tmpSelectStock", [
           "rule",
@@ -202,7 +202,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         }
       },
       tmpCardsSelectionForPlayer: function (that, action_name, args) {
-        dojo.place('<h3>' + action_name + '</h3>', "tmpSelectCards");
+        dojo.place("<h3>" + action_name + "</h3>", "tmpSelectCards");
         dojo.place('<div id="tmpSelectStock"></div>', "tmpSelectCards");
 
         that.tmpSelectStock = that.createCardStock("tmpSelectStock", [
@@ -219,7 +219,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         var player_name = that.players[player_id]["name"];
         if (that.player_id == player_id) {
           player_name = _("myself");
-        }          
+        }
 
         that.addActionButton(
           "button_" + player_id,

@@ -57,19 +57,23 @@ class ActionTodaysSpecial extends ActionCard
 
     $tmpHandLocation = "tmpHand" . $tmpHandNext;
     // Draw for temp hand
-    $tmpCards = $game->performDrawCards($player_id, 
+    $tmpCards = $game->performDrawCards(
+      $player_id,
       $nrCardsToDraw + $addInflation,
       true, // $postponeCreeperResolve
-      true); // $temporaryDraw
+      true
+    ); // $temporaryDraw
     $tmpCardIds = array_column($tmpCards, "id");
     // Must Play a certain nr of them, depending on the choice made
-    $game->setGameStateValue($tmpHandLocation . "ToPlay", $nrCardsToPlay + $addInflation);
+    $game->setGameStateValue(
+      $tmpHandLocation . "ToPlay",
+      $nrCardsToPlay + $addInflation
+    );
     $game->setGameStateValue($tmpHandLocation . "Card", $this->getUniqueId());
 
     // move cards to temporary hand location
     $game->cards->moveCards($tmpCardIds, $tmpHandLocation, $player_id);
 
     // done: next play run will detect temp hand active
-  
   }
 }

@@ -169,9 +169,7 @@ define([
         this.rulesStock.playRule = this.createCardStock("playRuleStock", [
           "rule",
         ]);
-        this.rulesStock.limits = this.createCardStock("limitsStock", [
-          "rule",
-        ]);
+        this.rulesStock.limits = this.createCardStock("limitsStock", ["rule"]);
         this.rulesStock.others = this.createCardStock("othersStock", ["rule"]);
         this.addCardsToStock(
           this.rulesStock.drawRule,
@@ -210,7 +208,7 @@ define([
           this.addCardsToStock(
             this.keepersStock[player_id],
             this.gamedatas.keepers[player_id]
-          );          
+          );
 
           // Setting up player boards
           var player_board_div = $("player_board_" + player_id);
@@ -233,14 +231,18 @@ define([
             this.gamedatas.handsCount[player_id]
           );
           this.keepersCounter[player_id].toValue(
-            this.keepersStock[player_id].count() - this.gamedatas.creepersCount[player_id]
+            this.keepersStock[player_id].count() -
+              this.gamedatas.creepersCount[player_id]
           );
           this.creepersCounter[player_id].toValue(
             this.gamedatas.creepersCount[player_id]
           );
 
           // add current keepers in player panel
-          this.addToKeeperPanelIcons(player_id, this.gamedatas.keepers[player_id]);
+          this.addToKeeperPanelIcons(
+            player_id,
+            this.gamedatas.keepers[player_id]
+          );
         }
 
         // Determine card overlaps per number of cards in hand / stocks
@@ -248,8 +250,10 @@ define([
 
         // Hide elements that are only used with Creeper pack expansion
         if (!gamedatas.creeperPack) {
-          dojo.query(".flx-board-creeper").forEach(function(node, index, nodelist){
-            dojo.addClass(node, "no-creepers");
+          dojo
+            .query(".flx-board-creeper")
+            .forEach(function (node, index, nodelist) {
+              dojo.addClass(node, "no-creepers");
             });
         }
 
@@ -259,36 +263,36 @@ define([
         console.log("Setup completed!");
       },
 
-      onScreenWidthChange: function() {
+      onScreenWidthChange: function () {
         this.adaptForScreenSize();
       },
 
-      adaptForScreenSize: function() {
-        if($('game_play_area') && this.handStock !== undefined){
-          var viewPortWidth = dojo.position('game_play_area')['w'];
+      adaptForScreenSize: function () {
+        if ($("game_play_area") && this.handStock !== undefined) {
+          var viewPortWidth = dojo.position("game_play_area")["w"];
           //console.log("viewPortWidth: ", viewPortWidth);
           this.adaptCardOverlaps(viewPortWidth);
-        }        
+        }
       },
 
-      prepareKeeperPanelIcons: function(cardDefinitions) {
+      prepareKeeperPanelIcons: function (cardDefinitions) {
         var panelDivId = "tmpKeeperPanelIcons";
         var keeperCount = 19;
         for (var id in cardDefinitions) {
           var cardDefinition = cardDefinitions[id];
           if (cardDefinition.type == "keeper") {
             var params = {
-              id: id, 
-              name: cardDefinition.name, 
-              offset: (id-1)*100
+              id: id,
+              name: cardDefinition.name,
+              offset: (id - 1) * 100,
             };
             var panelKeeper = this.format_block("jstpl_panel_keeper", params);
             dojo.place(panelKeeper, panelDivId);
           } else if (cardDefinition.type == "creeper") {
             var params = {
-              id: id, 
-              name: cardDefinition.name, 
-              offset: (keeperCount + (id - 50) - 1) * 100
+              id: id,
+              name: cardDefinition.name,
+              offset: (keeperCount + (id - 50) - 1) * 100,
             };
             var panelCreeper = this.format_block("jstpl_panel_keeper", params);
             dojo.place(panelCreeper, panelDivId);
@@ -296,38 +300,41 @@ define([
         }
       },
 
-      addToKeeperPanelIcons(player_id, cards){
-        var keeperPanelDivId = "keeperPanel"+player_id;
-        var creeperPanelDivId = "creeperPanel"+player_id;
+      addToKeeperPanelIcons(player_id, cards) {
+        var keeperPanelDivId = "keeperPanel" + player_id;
+        var creeperPanelDivId = "creeperPanel" + player_id;
 
         for (var card_id in cards) {
           var card = cards[card_id];
-          var keeperDivId = "flx-board-panel-keeper-"+card["type_arg"];
+          var keeperDivId = "flx-board-panel-keeper-" + card["type_arg"];
           if (card["type"] == "creeper") {
             dojo.place(keeperDivId, creeperPanelDivId);
           } else {
             dojo.place(keeperDivId, keeperPanelDivId);
-          }          
+          }
         }
       },
 
-      removeFromKeeperPanelIcons(player_id, cards){
+      removeFromKeeperPanelIcons(player_id, cards) {
         var destinationPanelDivId = "tmpKeeperPanelIcons";
 
         for (var card_id in cards) {
           var card = cards[card_id];
-          var keeperDivId = "flx-board-panel-keeper-"+card["type_arg"];
-          dojo.place(keeperDivId, destinationPanelDivId);          
+          var keeperDivId = "flx-board-panel-keeper-" + card["type_arg"];
+          dojo.place(keeperDivId, destinationPanelDivId);
         }
       },
 
-      adaptCardOverlaps: function(viewPortWidth) {
+      adaptCardOverlaps: function (viewPortWidth) {
         var maxHandCardsInRow = viewPortWidth / (this.CARD_WIDTH + 5);
-        var maxRuleCardsInRow = (viewPortWidth * 3/4 ) / (this.CARD_WIDTH + 5);
+        var maxRuleCardsInRow = (viewPortWidth * 3) / 4 / (this.CARD_WIDTH + 5);
         var maxKeeperCardsInRow = 5;
-        
+
         this.adaptCardOverlapsForStock(this.handStock, maxHandCardsInRow);
-        this.adaptCardOverlapsForStock(this.rulesStock.others, maxRuleCardsInRow);
+        this.adaptCardOverlapsForStock(
+          this.rulesStock.others,
+          maxRuleCardsInRow
+        );
 
         for (var player_id in this.keepersStock) {
           var stock = this.keepersStock[player_id];
@@ -346,23 +353,23 @@ define([
         if (viewPortWidth < 800) {
           this.goalsStock.setOverlap(45);
         } else if (viewPortWidth < 1024) {
-          this.goalsStock.setOverlap(50);          
+          this.goalsStock.setOverlap(50);
         }
         this.goalsStock.resetItemsPosition();
       },
 
       adaptCardOverlapsForStock(stock, maxCardsPerRow) {
         var cardsCount = stock.count();
-          if (cardsCount > maxCardsPerRow * 3) {
-            stock.setOverlap(50);
-          } else if (cardsCount > maxCardsPerRow * 2) {
-            stock.setOverlap(65);
-          } else if (cardsCount > maxCardsPerRow * 1) {
-            stock.setOverlap(80);
-          } else {
-            stock.setOverlap(0);
-          }
-          stock.resetItemsPosition();
+        if (cardsCount > maxCardsPerRow * 3) {
+          stock.setOverlap(50);
+        } else if (cardsCount > maxCardsPerRow * 2) {
+          stock.setOverlap(65);
+        } else if (cardsCount > maxCardsPerRow * 1) {
+          stock.setOverlap(80);
+        } else {
+          stock.setOverlap(0);
+        }
+        stock.resetItemsPosition();
       },
 
       setupBasicRulesCard() {
@@ -392,7 +399,7 @@ define([
       onEnteringState: function (stateName, args) {
         this.currentState = stateName;
         console.log("Entering state: " + stateName);
-      
+
         switch (stateName) {
           case "playCard":
             this.onEnteringStatePlayCard(args);
@@ -476,8 +483,8 @@ define([
 
           case "creeperResolveInPlay":
           case "creeperResolveTurnStart":
-                this.onLeavingStateCreeperResolve();
-            break;            
+            this.onLeavingStateCreeperResolve();
+            break;
 
           case "tempHandPlay":
             this.onLeavingStateTempHandPlay();
@@ -526,7 +533,7 @@ define([
             case "tempHandPlay":
               this.onUpdateActionButtonsTempHandPlay(args);
               break;
-            }
+          }
         }
       },
 
@@ -655,13 +662,15 @@ define([
           this.format_block("jstpl_cardTooltip", card)
         );
         // Overlay the card image with translated descriptions
-        var cardOverlayTitle = this.format_block("jstpl_cardOverlay_title", card);
+        var cardOverlayTitle = this.format_block(
+          "jstpl_cardOverlay_title",
+          card
+        );
         var cardOverlay = this.format_block("jstpl_cardOverlay_text", card);
         dojo.place(cardOverlayTitle, card_div.id);
-        dojo.place(cardOverlay, card_div.id);        
+        dojo.place(cardOverlay, card_div.id);
 
-        // Note that "card_type_id" contains the type of the item, so you can do special actions depending on the item type        
-
+        // Note that "card_type_id" contains the type of the item, so you can do special actions depending on the item type
       },
 
       addCardsToStock: function (stock, cards, keepOrder) {

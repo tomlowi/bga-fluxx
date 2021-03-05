@@ -210,7 +210,7 @@ $machinestates = [
       "resolveActionCardSelection",
       "resolveActionCardsSelection",
       "resolveActionKeepersExchange",
-      "resolveActionButtons",      
+      "resolveActionButtons",
     ],
     "transitions" => [
       "resolvedAction" => STATE_PLAY_CARD,

@@ -28,12 +28,14 @@ class ActionDraw2AndUseEm extends ActionCard
 
     $tmpHandLocation = "tmpHand" . $tmpHandNext;
     // Draw 2 for temp hand
-    $tmpCards = $game->performDrawCards($player_id, 
+    $tmpCards = $game->performDrawCards(
+      $player_id,
       2 + $addInflation,
       true, // $postponeCreeperResolve
-      true); // $temporaryDraw
+      true
+    ); // $temporaryDraw
     $tmpCardIds = array_column($tmpCards, "id");
-    // Must Use 'Em both 
+    // Must Use 'Em both
     $game->setGameStateValue($tmpHandLocation . "ToPlay", 2 + $addInflation);
     $game->setGameStateValue($tmpHandLocation . "Card", $this->getUniqueId());
 

@@ -47,44 +47,65 @@
 @font-face {
   font-family: "Bernard MT Condensed Web";
   src: url("//db.onlinewebfonts.com/t/eceba41a00b4b94ea2965371c8dda96c.eot");
-  src: url("//db.onlinewebfonts.com/t/eceba41a00b4b94ea2965371c8dda96c.eot?#iefix") format("embedded-opentype"), url("//db.onlinewebfonts.com/t/eceba41a00b4b94ea2965371c8dda96c.woff2") format("woff2"), url("//db.onlinewebfonts.com/t/eceba41a00b4b94ea2965371c8dda96c.woff") format("woff"), url("//db.onlinewebfonts.com/t/eceba41a00b4b94ea2965371c8dda96c.ttf") format("truetype"), url("//db.onlinewebfonts.com/t/eceba41a00b4b94ea2965371c8dda96c.svg#Bernard MT Condensed") format("svg");
+  src: url("//db.onlinewebfonts.com/t/eceba41a00b4b94ea2965371c8dda96c.eot?#iefix")
+      format("embedded-opentype"),
+    url("//db.onlinewebfonts.com/t/eceba41a00b4b94ea2965371c8dda96c.woff2")
+      format("woff2"),
+    url("//db.onlinewebfonts.com/t/eceba41a00b4b94ea2965371c8dda96c.woff")
+      format("woff"),
+    url("//db.onlinewebfonts.com/t/eceba41a00b4b94ea2965371c8dda96c.ttf")
+      format("truetype"),
+    url("//db.onlinewebfonts.com/t/eceba41a00b4b94ea2965371c8dda96c.svg#Bernard MT Condensed")
+      format("svg");
 }
 
 /* Free Alternative for Helvetica Neue */
 /* latin-ext */
 @font-face {
-  font-family: 'Open Sans';
+  font-family: "Open Sans";
   font-style: normal;
   font-weight: 400;
-  src: local("Open Sans"), local("OpenSans"), url(https://fonts.gstatic.com/s/opensans/v13/u-WUoqrET9fUeobQW7jkRYX0hVgzZQUfRDuZrPvH3D8.woff2) format("woff2");
-  unicode-range: U+0100-024F, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF;
+  src: local("Open Sans"), local("OpenSans"),
+    url(https://fonts.gstatic.com/s/opensans/v13/u-WUoqrET9fUeobQW7jkRYX0hVgzZQUfRDuZrPvH3D8.woff2)
+      format("woff2");
+  unicode-range: U+0100-024F, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F,
+    U+A720-A7FF;
 }
 
 /* latin */
 @font-face {
-  font-family: 'Open Sans';
+  font-family: "Open Sans";
   font-style: normal;
   font-weight: 400;
-  src: local("Open Sans"), local("OpenSans"), url(https://fonts.gstatic.com/s/opensans/v13/cJZKeOuBrn4kERxqtaUH3ZBw1xU1rKptJj_0jans920.woff2) format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+  src: local("Open Sans"), local("OpenSans"),
+    url(https://fonts.gstatic.com/s/opensans/v13/cJZKeOuBrn4kERxqtaUH3ZBw1xU1rKptJj_0jans920.woff2)
+      format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC,
+    U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
 }
 
 /* latin-ext */
 @font-face {
-  font-family: 'Open Sans';
+  font-family: "Open Sans";
   font-style: normal;
   font-weight: 700;
-  src: local("Open Sans Bold"), local("OpenSans-Bold"), url(https://fonts.gstatic.com/s/opensans/v13/k3k702ZOKiLJc3WVjuplzIjoYw3YTyktCCer_ilOlhE.woff2) format("woff2");
-  unicode-range: U+0100-024F, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF;
+  src: local("Open Sans Bold"), local("OpenSans-Bold"),
+    url(https://fonts.gstatic.com/s/opensans/v13/k3k702ZOKiLJc3WVjuplzIjoYw3YTyktCCer_ilOlhE.woff2)
+      format("woff2");
+  unicode-range: U+0100-024F, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F,
+    U+A720-A7FF;
 }
 
 /* latin */
 @font-face {
-  font-family: 'Open Sans';
+  font-family: "Open Sans";
   font-style: normal;
   font-weight: 700;
-  src: local("Open Sans Bold"), local("OpenSans-Bold"), url(https://fonts.gstatic.com/s/opensans/v13/k3k702ZOKiLJc3WVjuplzBampu5_7CjHW5spxoeN3Vs.woff2) format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+  src: local("Open Sans Bold"), local("OpenSans-Bold"),
+    url(https://fonts.gstatic.com/s/opensans/v13/k3k702ZOKiLJc3WVjuplzBampu5_7CjHW5spxoeN3Vs.woff2)
+      format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC,
+    U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
 }
 
 .newDrawnCard {
@@ -122,7 +143,7 @@
 }
 
 .flx-card-tooltip-keeper .card-type {
-  color: #9DC139;
+  color: #9dc139;
 }
 
 .flx-card-tooltip-creeper .card-type {
@@ -130,15 +151,15 @@
 }
 
 .flx-card-tooltip-action .card-type {
-  color: #0099CD;
+  color: #0099cd;
 }
 
 .flx-card-tooltip-goal .card-type {
-  color: #D23F7F;
+  color: #d23f7f;
 }
 
 .flx-card-tooltip-rule .card-type {
-  color: #D7B424;
+  color: #d7b424;
 }
 
 .flx-card-title-base {
@@ -146,7 +167,8 @@
 }
 
 .flx-card-title-creeperpack {
-  font-family: "Bernard MT Condensed", "Bernard MT Condensed Web", sans-serif-condensed;
+  font-family: "Bernard MT Condensed", "Bernard MT Condensed Web",
+    sans-serif-condensed;
 }
 
 .card-overlay-title {
@@ -155,7 +177,7 @@
   margin-right: 8px;
   width: 106px;
   height: 26px;
-  background-color: #EFF0F0;
+  background-color: #eff0f0;
   font-size: 16px;
 }
 
@@ -165,9 +187,9 @@
   margin-top: 14px;
   width: 88.88889%;
   -webkit-transform: scale(1.125);
-          transform: scale(1.125);
+  transform: scale(1.125);
   -webkit-transform-origin: top left;
-          transform-origin: top left;
+  transform-origin: top left;
 }
 
 .flx-card {
@@ -187,15 +209,15 @@
   font-weight: bold;
   width: 114.28571%;
   -webkit-transform: scale(0.875);
-          transform: scale(0.875);
+  transform: scale(0.875);
   -webkit-transform-origin: top left;
-          transform-origin: top left;
+  transform-origin: top left;
 }
 
 .card-overlay .card-name-long {
   width: 133.33333%;
   -webkit-transform: scale(0.75);
-          transform: scale(0.75);
+  transform: scale(0.75);
 }
 
 .card-overlay .card-subtitle {
@@ -203,9 +225,9 @@
   margin-bottom: 2px;
   width: 177.77778%;
   -webkit-transform: scale(0.5625);
-          transform: scale(0.5625);
+  transform: scale(0.5625);
   -webkit-transform-origin: top left;
-          transform-origin: top left;
+  transform-origin: top left;
 }
 
 .card-overlay .card-description {
@@ -213,15 +235,15 @@
   line-height: 110%;
   width: 200%;
   -webkit-transform: scale(0.5);
-          transform: scale(0.5);
+  transform: scale(0.5);
   -webkit-transform-origin: top left;
-          transform-origin: top left;
+  transform-origin: top left;
 }
 
 .card-overlay .card-desc-long {
   width: 228.57143%;
   -webkit-transform: scale(0.4375);
-          transform: scale(0.4375);
+  transform: scale(0.4375);
 }
 
 .flx-card-action .card-overlay {
@@ -271,9 +293,9 @@
   margin-top: 8px;
   width: 133.33333%;
   -webkit-transform: scale(0.75);
-          transform: scale(0.75);
+  transform: scale(0.75);
   -webkit-transform-origin: top left;
-          transform-origin: top left;
+  transform-origin: top left;
 }
 
 .flx-keepers .card-overlay {
@@ -286,25 +308,25 @@
   margin-top: 2px;
   width: 160%;
   -webkit-transform: scale(0.625);
-          transform: scale(0.625);
+  transform: scale(0.625);
   -webkit-transform-origin: top left;
-          transform-origin: top left;
+  transform-origin: top left;
 }
 
 .flx-keepers .card-overlay .card-subtitle {
   width: 320%;
   -webkit-transform: scale(0.3125);
-          transform: scale(0.3125);
+  transform: scale(0.3125);
   -webkit-transform-origin: top left;
-          transform-origin: top left;
+  transform-origin: top left;
 }
 
 .flx-keepers .card-overlay .card-description {
   width: 400%;
   -webkit-transform: scale(0.25);
-          transform: scale(0.25);
+  transform: scale(0.25);
   -webkit-transform-origin: top left;
-          transform-origin: top left;
+  transform-origin: top left;
   line-height: 100%;
 }
 
@@ -339,23 +361,23 @@
   display: -ms-flexbox;
   display: flex;
   -ms-flex-wrap: wrap;
-      flex-wrap: wrap;
+  flex-wrap: wrap;
   -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
 }
 
 .flx-player .flx-hand {
   margin-right: 10px;
   -webkit-box-flex: 3;
-      -ms-flex: 3 0;
-          flex: 3 0;
+  -ms-flex: 3 0;
+  flex: 3 0;
 }
 
 .flx-player .flx-keepers {
   -webkit-box-flex: 1;
-      -ms-flex: 1 0;
-          flex: 1 0;
+  -ms-flex: 1 0;
+  flex: 1 0;
 }
 
 .flx_help_msg_wrapper {
@@ -378,7 +400,7 @@
 }
 
 .flx_help_msg_wrapper .flx_help .help_txt_action {
-  border-color: #0099CD;
+  border-color: #0099cd;
 }
 
 .flx_help_msg_wrapper .flx_help .help_txt_creeper {
@@ -386,14 +408,14 @@
 }
 
 .flx_help_msg_wrapper .flx_help .help_txt_freerule {
-  border-color: #D7B424;
+  border-color: #d7b424;
 }
 
 .flx-table {
   position: relative;
   -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
 }
 
 .flx-table .flx-card,
@@ -477,9 +499,9 @@
   display: -ms-grid;
   display: grid;
   -ms-grid-columns: 1fr 3fr;
-      grid-template-columns: 1fr 3fr;
+  grid-template-columns: 1fr 3fr;
   -ms-grid-rows: 2fr 1fr;
-      grid-template-rows: 2fr 1fr;
+  grid-template-rows: 2fr 1fr;
   grid-gap: 10px;
 }
 
@@ -510,7 +532,7 @@
   display: -ms-grid;
   display: grid;
   -ms-grid-columns: 1fr 1fr;
-      grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
   grid-gap: 8px;
 }
 
@@ -540,7 +562,7 @@
   .flx-table .flx-rules {
     grid-gap: 4px;
     -ms-grid-columns: 2fr 1fr;
-        grid-template-columns: 2fr 1fr;
+    grid-template-columns: 2fr 1fr;
   }
   .flx-table .flx-deck {
     min-width: 230px;
@@ -555,16 +577,16 @@
   display: -ms-flexbox;
   display: flex;
   -ms-flex-wrap: wrap;
-      flex-wrap: wrap;
+  flex-wrap: wrap;
   -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
 }
 
 .flx-other-players .flx-keepers {
   -webkit-box-flex: 1;
-      -ms-flex: 1 0;
-          flex: 1 0;
+  -ms-flex: 1 0;
+  flex: 1 0;
   margin-right: 10px;
 }
 

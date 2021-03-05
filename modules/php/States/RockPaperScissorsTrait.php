@@ -189,7 +189,7 @@ trait RockPaperScissorsTrait
 
     $challenger_id = self::getGameStateValue("rpsChallengerId");
     $defender_id = self::getGameStateValue("rpsDefenderId");
-   
+
     switch ($choice) {
       case "rock":
         $option = RPS_OPTION_ROCK;

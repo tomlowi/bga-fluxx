@@ -6,7 +6,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
     },
 
     onEnteringStateTempHandPlay: function (args) {
-      console.log("Entering state: TempHandPlay", this.isCurrentPlayerActive());    
+      console.log("Entering state: TempHandPlay", this.isCurrentPlayerActive());
     },
 
     onLeavingStateTempHandPlay: function () {
@@ -22,7 +22,6 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         delete this.tmpHandStocks[tmpHandStock_id];
         dojo.empty(tmpHandStock_id);
       }
-
     },
 
     onUpdateActionButtonsTempHandPlay: function (args) {
@@ -34,8 +33,8 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
           var tmpHand = args.tmpHands[tmpHandId];
           var tmpStockId = tmpHandId + "Stock";
 
-          dojo.place('<h3>' + tmpHand.tmpHandName + '</h3>', tmpHandId);
-          dojo.place('<div id="'+tmpStockId+'"></div>', tmpHandId);
+          dojo.place("<h3>" + tmpHand.tmpHandName + "</h3>", tmpHandId);
+          dojo.place('<div id="' + tmpStockId + '"></div>', tmpHandId);
 
           var tmpHandStock = this.createCardStock(tmpStockId, [
             "keeper",
@@ -66,12 +65,10 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       var action = "selectTempHandCard";
       var items = this.tmpHandStockActive.getSelectedItems();
 
-      console.log("onSelectCardTempHandPlay", items);
-
       if (items.length == 0) return;
 
       if (this.checkAction(action, true)) {
-        // Play a card from temp hand                
+        // Play a card from temp hand
         this.ajaxAction(action, {
           card_id: items[0].id,
           lock: true,
@@ -80,6 +77,5 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
 
       this.tmpHandStockActive.unselectAll();
     },
-
   });
 });

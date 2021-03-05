@@ -19,7 +19,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         ["cardFromTableToHand", null],
         ["handCountUpdate", null],
         ["reshuffle", null],
-        ["tmpHandDiscarded", 500],
+        ["tmpHandDiscarded", 500]
       );
     },
 
@@ -29,7 +29,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
 
       // forced plays (like creepers) can happen during "game" type states,
       // in which case isCurrentPlayerActive is not set
-      if (player_id == this.player_id) {        
+      if (player_id == this.player_id) {
         var fromDiv = this.handStock.getItemDivId(card.id);
         playFromHand = dojo.byId(fromDiv) != null;
       }
@@ -91,10 +91,10 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
 
     notif_cardsDrawn: function (notif) {
       const markerClass = "newDrawnCard";
-      dojo.query( '.' + markerClass ).removeClass( markerClass );
+      dojo.query("." + markerClass).removeClass(markerClass);
       for (var card of notif.args.cards) {
         this.handStock.addToStockWithId(card.type_arg, card.id, "deckCard");
-        dojo.addClass('handStock_item_' + card.id, markerClass);
+        dojo.addClass("handStock_item_" + card.id, markerClass);
       }
 
       // Determine card overlaps per number of cards in hand / stocks
@@ -208,7 +208,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       var handCount = notif.args.handCount;
       var discardCount = notif.args.discardCount;
 
-      var discardFromHand = false;      
+      var discardFromHand = false;
       if (this.isCurrentPlayerActive()) {
         var fromDiv = this.handStock.getItemDivId(card.id);
         discardFromHand = dojo.byId(fromDiv) != null;
@@ -398,9 +398,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         this.keepersCounter[from_player_id].toValue(
           this.keepersStock[from_player_id].count() - notif.args.creeperCount
         );
-        this.creepersCounter[from_player_id].toValue(
-          notif.args.creeperCount
-        );
+        this.creepersCounter[from_player_id].toValue(notif.args.creeperCount);
 
         this.removeFromKeeperPanelIcons(from_player_id, [card]);
       }
@@ -411,10 +409,9 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       var cards = notif.args.cards;
 
       // tmp hand stocks will already be destroyed
-      this.discardCards(cards, undefined, player_id);      
+      this.discardCards(cards, undefined, player_id);
 
       this.discardCounter.toValue(notif.args.discardCount);
     },
-
   });
 });

@@ -55,7 +55,6 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
     notif_resultRockPaperScissors: function (notif) {
       var player_id = notif.args.player_id;
       var cards = notif.args.cards;
-
     },
   });
 });
