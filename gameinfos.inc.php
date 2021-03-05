@@ -80,7 +80,7 @@ $gameinfos = [
   "is_coop" => 0,
 
   // Complexity of the game, from 0 (extremely simple) to 5 (extremely complex)
-  "complexity" => 1.39,
+  "complexity" => 2,
 
   // Luck of the game, from 0 (absolutely no luck in this game) to 5 (totally luck driven)
   "luck" => 3,
@@ -131,9 +131,10 @@ $gameinfos = [
   // A good length for this text is between 100 and 150 words (about 6 to 9 lines on a standard display)
   "presentation" => [
     totranslate("The Card Game With Ever-Changing Rules!"),
-    //    totranslate("This wonderful game is about geometric shapes!"),
-    //    totranslate("It was awarded best triangle game of the year in 2005 and nominated for the Spiel des Jahres."),
-    //    ...
+    totranslate("It all begins with one basic rule: Draw one card, Play one card. But New Rule cards quickly make things chaotic..."),
+    totranslate("Even the object of the game will often change as you play, as players swap out one Goal card for another. Can you achieve World Peace before someone changes the goal to Bread and Chocolate?"),
+    totranslate("1999 Mensa Select Winner"),
+    totranslate("For even more fun and a litte more complexity, include the Creeper Pack expansion. Because sometimes you just Also Need a Baked Potato!"),
   ],
 
   // Games categories
