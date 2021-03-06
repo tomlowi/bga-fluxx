@@ -53,7 +53,7 @@
 /* Free Alternative for Helvetica Neue */
 /* latin-ext */
 @font-face {
-  font-family: 'Open Sans';
+  font-family: "Open Sans";
   font-style: normal;
   font-weight: 400;
   src: local("Open Sans"), local("OpenSans"), url(https://fonts.gstatic.com/s/opensans/v13/u-WUoqrET9fUeobQW7jkRYX0hVgzZQUfRDuZrPvH3D8.woff2) format("woff2");
@@ -62,7 +62,7 @@
 
 /* latin */
 @font-face {
-  font-family: 'Open Sans';
+  font-family: "Open Sans";
   font-style: normal;
   font-weight: 400;
   src: local("Open Sans"), local("OpenSans"), url(https://fonts.gstatic.com/s/opensans/v13/cJZKeOuBrn4kERxqtaUH3ZBw1xU1rKptJj_0jans920.woff2) format("woff2");
@@ -71,7 +71,7 @@
 
 /* latin-ext */
 @font-face {
-  font-family: 'Open Sans';
+  font-family: "Open Sans";
   font-style: normal;
   font-weight: 700;
   src: local("Open Sans Bold"), local("OpenSans-Bold"), url(https://fonts.gstatic.com/s/opensans/v13/k3k702ZOKiLJc3WVjuplzIjoYw3YTyktCCer_ilOlhE.woff2) format("woff2");
@@ -80,7 +80,7 @@
 
 /* latin */
 @font-face {
-  font-family: 'Open Sans';
+  font-family: "Open Sans";
   font-style: normal;
   font-weight: 700;
   src: local("Open Sans Bold"), local("OpenSans-Bold"), url(https://fonts.gstatic.com/s/opensans/v13/k3k702ZOKiLJc3WVjuplzBampu5_7CjHW5spxoeN3Vs.woff2) format("woff2");
@@ -122,7 +122,7 @@
 }
 
 .flx-card-tooltip-keeper .card-type {
-  color: #9DC139;
+  color: #9dc139;
 }
 
 .flx-card-tooltip-creeper .card-type {
@@ -130,15 +130,15 @@
 }
 
 .flx-card-tooltip-action .card-type {
-  color: #0099CD;
+  color: #0099cd;
 }
 
 .flx-card-tooltip-goal .card-type {
-  color: #D23F7F;
+  color: #d23f7f;
 }
 
 .flx-card-tooltip-rule .card-type {
-  color: #D7B424;
+  color: #d7b424;
 }
 
 .flx-card-title-base {
@@ -155,7 +155,7 @@
   margin-right: 8px;
   width: 106px;
   height: 26px;
-  background-color: #EFF0F0;
+  background-color: #eff0f0;
   font-size: 16px;
 }
 
@@ -322,7 +322,7 @@
 }
 
 #flx-win-dialog-goal {
-  height: 233px;
+  height: 253px;
 }
 
 #flx-win-dialog-goal .stockitem {
@@ -378,7 +378,7 @@
 }
 
 .flx_help_msg_wrapper .flx_help .help_txt_action {
-  border-color: #0099CD;
+  border-color: #0099cd;
 }
 
 .flx_help_msg_wrapper .flx_help .help_txt_creeper {
@@ -386,7 +386,7 @@
 }
 
 .flx_help_msg_wrapper .flx_help .help_txt_freerule {
-  border-color: #D7B424;
+  border-color: #d7b424;
 }
 
 .flx-table {

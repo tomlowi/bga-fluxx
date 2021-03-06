@@ -351,9 +351,9 @@ define([
 
         this.goalsStock.setOverlap(80);
         if (viewPortWidth < 800) {
-          this.goalsStock.setOverlap(45);
+          this.goalsStock.setOverlap(55);
         } else if (viewPortWidth < 1024) {
-          this.goalsStock.setOverlap(50);
+          this.goalsStock.setOverlap(65);
         }
         this.goalsStock.resetItemsPosition();
       },

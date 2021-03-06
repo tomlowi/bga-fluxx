@@ -269,7 +269,7 @@ $color-rule: #d7b424;
 }
 
 #flx-win-dialog-goal {
-  height: $card-height;
+  height: $card-height + 20px;
 
   .stockitem {
     left: 100px !important;
