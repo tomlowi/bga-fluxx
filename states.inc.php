@@ -117,6 +117,8 @@ $machinestates = [
       "resolveTempHand" => STATE_RESOLVE_TEMP_HAND_PLAY,
       "continuePlay" => STATE_PLAY_CARD,
       "endGame" => STATE_GAME_END,
+
+      "zombiePass" => STATE_ENFORCE_HAND_LIMIT_SELF,
     ],
   ],
 
@@ -221,6 +223,7 @@ $machinestates = [
       "endGame" => STATE_GAME_END,
       "playRockPaperScissors" => STATE_ROCKPAPERSCISSORS,
       "resolveActionCard" => STATE_RESOLVE_ACTION,
+      "zombiePass" => STATE_PLAY_CARD,
     ],
   ],
 
@@ -250,6 +253,7 @@ $machinestates = [
     "transitions" => [
       "continue" => STATE_ROCKPAPERSCISSORS,
       "done" => STATE_PLAY_CARD,
+      "zombiePass" => STATE_PLAY_CARD,
     ],
   ],
 
@@ -274,6 +278,7 @@ $machinestates = [
       "resolvedFreeRule" => STATE_PLAY_CARD,
       "resolveCreeper" => STATE_RESOLVE_CREEPER_INPLAY,
       "endGame" => STATE_GAME_END,
+      "zombiePass" => STATE_PLAY_CARD,
     ],
   ],
 
@@ -298,6 +303,7 @@ $machinestates = [
       "resolvedCreeper" => STATE_PLAY_CARD,
       "continuePlay" => STATE_PLAY_CARD,
       "endGame" => STATE_GAME_END,
+      "zombiePass" => STATE_PLAY_CARD,
     ],
   ],
 
@@ -319,6 +325,7 @@ $machinestates = [
     ],
     "transitions" => [
       "resolvedCreeper" => STATE_NEXT_PLAYER_TURNSTART_CREEPERS,
+      "zombiePass" => STATE_NEXT_PLAYER_TURNSTART_CREEPERS,
     ],
   ],
 
@@ -336,6 +343,7 @@ $machinestates = [
     "possibleactions" => ["selectTempHandCard"],
     "transitions" => [
       "selectedCard" => STATE_PLAY_CARD,
+      "zombiePass" => STATE_PLAY_CARD,
     ],
   ],
 
@@ -348,6 +356,7 @@ $machinestates = [
     "transitions" => [
       "resolveCreeper" => STATE_RESOLVE_CREEPER_TURNSTART,
       "finishedTurnStartCreepers" => STATE_DRAW_CARDS,
+      "zombiePass" => STATE_DRAW_CARDS,
     ],
   ],
 
