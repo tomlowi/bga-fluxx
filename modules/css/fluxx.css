@@ -334,6 +334,10 @@
   display: none;
 }
 
+.flx-spectator {
+  display: none;
+}
+
 .flx-player {
   display: -webkit-box;
   display: -ms-flexbox;

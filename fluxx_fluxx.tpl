@@ -24,8 +24,8 @@
 <div id="tmpKeeperPanelIcons" class="whiteblock flx-keeper-panel-placeholder"></div>
 
 <div class="flx-player">
-  <div class="whiteblock flx-hand">
-    <h3 style="color: #{CURRENT_PLAYER_COLOR"}>{MY_HAND}</h3>
+  <div id="flxMyHand" class="whiteblock flx-hand">
+    <h3 style="color: #{CURRENT_PLAYER_COLOR}">{MY_HAND}</h3>
     <div id="handStock"></div>
   </div>
 </div>
@@ -60,7 +60,7 @@
 </div>
 
 <div class="flx-other-players">
-  <div class="whiteblock flx-keepers flx-keepers-my">
+  <div id="flxMyKeepers" class="whiteblock flx-keepers flx-keepers-my">
     <h3 style="color: #{CURRENT_PLAYER_COLOR}">{MY_KEEPERS}</h3>
     <div id="keepersStock{CURRENT_PLAYER_ID}"></div>
   </div>

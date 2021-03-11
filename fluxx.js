@@ -257,6 +257,12 @@ define([
             });
         }
 
+        // Hide elements that are not relevant for spectator
+        if (this.isSpectator) {
+          dojo.addClass("flxMyHand", "flx-spectator");
+          dojo.addClass("flxMyKeepers", "flx-spectator");
+        }
+
         // Setup game notifications to handle (see "setupNotifications" method below)
         this.setupNotifications();
 

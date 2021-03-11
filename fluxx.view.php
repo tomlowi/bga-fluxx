@@ -52,9 +52,13 @@ class view_fluxx_fluxx extends game_view
     $this->tpl["SHOW_DISCARD"] = clienttranslate("Show discard pile");
 
     // This will inflate players keepers block
-    $player_info = $players[$current_player_id];
+    $player_color = "#000000";
+    if (array_key_exists($current_player_id, $players)) {
+      $player_info = $players[$current_player_id];
+      $player_color = $player_info["player_color"];
+    }    
     $this->tpl["CURRENT_PLAYER_ID"] = $current_player_id;
-    $this->tpl["CURRENT_PLAYER_COLOR"] = $player_info["player_color"];
+    $this->tpl["CURRENT_PLAYER_COLOR"] = $player_color;
 
     $this->page->begin_block($template, "keepers");
 
