@@ -597,6 +597,7 @@ define([
         }
 
         stock.setSelectionMode(0);
+        stock.setSelectionAppearance("class");
         stock.onItemCreate = dojo.hitch(this, "setupNewCard");
         return stock;
       },
@@ -636,6 +637,7 @@ define([
         );
 
         stock.setSelectionMode(0);
+        stock.setSelectionAppearance("class");
         stock.onItemCreate = dojo.hitch(this, "setupNewCard");
         return stock;
       },

@@ -88,9 +88,13 @@
 }
 
 .newDrawnCard {
-  outline-color: darkslategray;
+  outline-color: #fee800;
   outline-style: solid;
   outline-width: medium;
+}
+
+.stockitem_selected {
+  border: 3px solid #00b1e3 !important;
 }
 
 .flx-card-tooltip {
