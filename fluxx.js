@@ -710,16 +710,18 @@ define([
         ev.preventDefault();
 
         if (dojo.hasClass("flxDeckBlock", "flx-discard-visible")) {
+          dojo.place("discardStock", "discardPileCollapsed");
           this.discardStock.item_margin = 0;
           this.discardStock.setOverlap(0.00001);
           dojo.removeClass("flxDeckBlock", "flx-discard-visible");
-          $("discardToggleBtn").innerHTML = _("Show discard pile");
+          $("discardToggleBtn").innerHTML = _("Show");
           this.discardStock.resetItemsPosition();
         } else {
+          dojo.place("discardStock", "discardPileExpanded");
           this.discardStock.setOverlap(0);
           this.discardStock.item_margin = 5;
           dojo.addClass("flxDeckBlock", "flx-discard-visible");
-          $("discardToggleBtn").innerHTML = _("Hide discard pile");
+          $("discardToggleBtn").innerHTML = _("Hide");
           this.discardStock.resetItemsPosition();
         }
       },
