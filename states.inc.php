@@ -125,10 +125,10 @@ $machinestates = [
   STATE_ENFORCE_HAND_LIMIT_OTHERS => [
     "name" => "enforceHandLimitForOthers",
     "description" => clienttranslate(
-      'Some players must discard cards for Hand Limit ${limit}'
+      'Some players must discard card(s) for Hand Limit ${limit}'
     ),
     "descriptionmyturn" => clienttranslate(
-      '${you} must discard ${_private.count} cards for Hand Limit ${limit}'
+      '${you} must discard ${_private.count} card(s) for Hand Limit ${limit}'
     ),
     "type" => "multipleactiveplayer",
     "args" => "arg_enforceHandLimitForOthers",

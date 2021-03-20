@@ -38,7 +38,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
           var card_id = availableRule.card_id;
           this.addActionButton(
             "button_rule_" + card_id,
-            availableRule.name,
+            _(availableRule.name),
             "onPlayFreeRule"
           );
           dojo.attr("button_rule_" + card_id, "data-rule-id", card_id);

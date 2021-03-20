@@ -91,15 +91,18 @@
 <div class="flx-board">\
   <div class="flx-board-icons">\
     <div class="flx-board-hand">\
-      <span id="handIcon${id}" class="flx-icons flx-icons-hand" aria-label="{HAND_COUNT}"></span>\
+      <span id="handIcon${id}" class="flx-icons flx-icons-hand"\
+        aria-label="${tooltipCardsInHand}" title="${tooltipCardsInHand}"></span>\
       <span id="handCount${id}"></span>\
     </div>\
     <div class="flx-board-keeper">\
-      <span id="keeperIcon${id}" class="flx-icons flx-icons-keeper" aria-label="{KEEPERS_COUNT}"></span>\
+      <span id="keeperIcon${id}" class="flx-icons flx-icons-keeper"\
+        aria-label="${tooltipKeepersInPlay}" title="${tooltipKeepersInPlay}"></span>\
       <span id="keepersCount${id}"></span>\
     </div>\
     <div class="flx-board-creeper">\
-      <span id="creeperIcon${id}" class="flx-icons flx-icons-creeper" aria-label="{CREEPERS_COUNT}"></span>\
+      <span id="creeperIcon${id}" class="flx-icons flx-icons-creeper"\
+        aria-label="${tooltipCreepersInPlay}" title="${tooltipCreepersInPlay}"></span>\
       <span id="creepersCount${id}"></span>\
     </div>\
   </div>\

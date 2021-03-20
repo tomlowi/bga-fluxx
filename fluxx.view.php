@@ -42,17 +42,14 @@ class view_fluxx_fluxx extends game_view
     $players = $this->game->loadPlayersBasicInfos();
 
     // Translations
-    $this->tpl["MY_HAND"] = clienttranslate("My hand");
-    $this->tpl["MY_KEEPERS"] = clienttranslate("My keepers");
-    $this->tpl["HAND_COUNT"] = clienttranslate("# cards in hand");
-    $this->tpl["KEEPERS_COUNT"] = clienttranslate("# keepers on table");
-    $this->tpl["CREEPERS_COUNT"] = clienttranslate("# creepers on table");
-    $this->tpl["BASICRULES"] = clienttranslate("Basic Rules");
-    $this->tpl["LIMITRULES"] = clienttranslate("Limits");
-    $this->tpl["OTHERRULES"] = clienttranslate("Extra Rules");
-    $this->tpl["GOAL"] = clienttranslate("Goal");
-    $this->tpl["DECK"] = clienttranslate("Discard pile");
-    $this->tpl["SHOW_DISCARD"] = clienttranslate("Show");
+    $this->tpl["MY_HAND"] = self::_("My hand");
+    $this->tpl["MY_KEEPERS"] = self::_("My keepers");
+    $this->tpl["BASICRULES"] = self::_("Basic Rules");
+    $this->tpl["LIMITRULES"] = self::_("Limits");
+    $this->tpl["OTHERRULES"] = self::_("Extra Rules");
+    $this->tpl["GOAL"] = self::_("Goal");
+    $this->tpl["DECK"] = self::_("Discard pile");
+    $this->tpl["SHOW_DISCARD"] = self::_("Show");
 
     // This will inflate players keepers block
     $player_color = "#000000";
