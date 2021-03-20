@@ -24,6 +24,7 @@ class CreeperCardFactory extends CardFactory
 
         $creeperDefinitions[$definitionId] = [
           "type" => "creeper",
+          "set" => $card->getCardSet(),
           "name" => $card->getName(),
           "subtitle" => $card->getSubtitle(),
           "description" => $card->getDescription(),
@@ -73,7 +74,8 @@ class CreeperCardFactory extends CardFactory
       if ($stateTransition != null) {
         return $stateTransition;
       }
-      // TODO: what if multiple Creeper abilities need to be resolved?
+      // @TODO: what if multiple Creeper abilities need to be resolved on turn start?
+      // does order matter here and should player get to choose what goes first?
     }
   }
 

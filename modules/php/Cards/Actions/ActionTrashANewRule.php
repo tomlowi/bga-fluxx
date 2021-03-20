@@ -15,6 +15,10 @@ class ActionTrashANewRule extends ActionCard
     $this->description = clienttranslate(
       "Select one of the New Rule cards in play and place it in the discard pile."
     );
+
+    $this->help = clienttranslate(
+      "Select one of the New Rule cards in play that you want to discard."
+    );
   }
 
   public $interactionNeeded = "ruleSelection";

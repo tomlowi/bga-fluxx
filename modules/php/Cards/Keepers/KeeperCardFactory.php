@@ -15,6 +15,7 @@ class KeeperCardFactory extends CardFactory
     foreach (self::getClasses() as $definitionId => $class) {
       $keeperDefinitions[$definitionId] = [
         "type" => "keeper",
+        "set" => "base",
         "name" => $class["name"],
       ];
     }
@@ -45,7 +46,7 @@ class KeeperCardFactory extends CardFactory
         8 => ["name" => clienttranslate("The Eye")],
         9 => ["name" => clienttranslate("The Moon")],
         10 => ["name" => clienttranslate("The Rocket")],
-        11 => ["name" => clienttranslate("The Toaster")],
+        11 => ["name" => clienttranslate("The&nbsp;Toaster")],
         12 => ["name" => clienttranslate("Television")],
         13 => ["name" => clienttranslate("Time")],
         14 => ["name" => clienttranslate("Dreams")],

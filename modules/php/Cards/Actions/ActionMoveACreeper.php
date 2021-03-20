@@ -10,9 +10,14 @@ class ActionMoveACreeper extends ActionCard
   {
     parent::__construct($cardId, $uniqueId);
 
+    $this->set = "creeperpack";
     $this->name = clienttranslate("Move a Creeper");
     $this->description = clienttranslate(
       "Choose any Creeper in front of any player and move it to some other player."
+    );
+
+    $this->help = clienttranslate(
+      "First select any creeper card in play, then choose the player it should move to."
     );
   }
 
@@ -73,12 +78,12 @@ class ActionMoveACreeper extends ActionCard
     $game->notifyAllPlayers(
       "keepersMoved",
       clienttranslate(
-        '${player_name} moved <b>${card_name}</b> from <b>${other_player_name}</b> to <b>${selected_player_name}</b>'
+        '${player_name} moved <b>${card_name}</b> from ${player_name1} to ${player_name2}'
       ),
       [
         "player_name" => $game->getActivePlayerName(),
-        "other_player_name" => $other_player_name,
-        "selected_player_name" => $selected_player_name,
+        "player_name1" => $other_player_name,
+        "player_name2" => $selected_player_name,
         "card_name" => $card_definition->getName(),
         "destination_player_id" => $selected_player_id,
         "origin_player_id" => $other_player_id,

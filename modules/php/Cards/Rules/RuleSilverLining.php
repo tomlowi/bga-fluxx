@@ -9,6 +9,7 @@ class RuleSilverLining extends RuleCard
   {
     parent::__construct($cardId, $uniqueId);
 
+    $this->set = "creeperpack";
     $this->name = clienttranslate("Silver Lining");
     $this->subtitle = clienttranslate("Takes Instant Effect");
     $this->description = clienttranslate(

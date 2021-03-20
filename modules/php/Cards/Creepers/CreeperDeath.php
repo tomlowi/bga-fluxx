@@ -15,6 +15,10 @@ class CreeperDeath extends CreeperCard
     $this->description = clienttranslate(
       "You cannot win if you have this, unless the Goal says otherwise. If you have this at the start of your turn, discard something else you have in play (a Keeper or Creeper). You may discard this anytime it stands alone."
     );
+
+    $this->help = clienttranslate(
+      "Select any of your keeper or creeper cards in play to discard. If you only have Death, select it to discard or click the button to keep it."
+    );
   }
 
   public function preventsWinForGoal($goalCard)

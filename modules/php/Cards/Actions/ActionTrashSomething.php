@@ -10,9 +10,14 @@ class ActionTrashSomething extends ActionCard
   {
     parent::__construct($cardId, $uniqueId);
 
+    $this->set = "creeperpack";
     $this->name = clienttranslate("Trash Something");
     $this->description = clienttranslate(
       "Take your choice of any Keeper or Creeper from in front of any player and put it on the discard pile. If no one has any Keepers or Creepers, nothing happens when you play this card."
+    );
+
+    $this->help = clienttranslate(
+      "Select any keeper or creeper card in play from any player (including yourself)."
     );
   }
 

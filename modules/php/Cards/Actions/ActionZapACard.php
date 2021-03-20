@@ -15,6 +15,10 @@ class ActionZapACard extends ActionCard
     $this->description = clienttranslate(
       "Choose any card in play, anywhere on the table (except for the Basic Rules) and add it to your hand."
     );
+
+    $this->help = clienttranslate(
+      "Select any card on the table to pick up and add to your hand."
+    );
   }
 
   public $interactionNeeded = "cardSelection";

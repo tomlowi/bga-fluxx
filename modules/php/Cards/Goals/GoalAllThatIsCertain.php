@@ -9,6 +9,7 @@ class GoalAllThatIsCertain extends GoalTwoCreepers
   {
     parent::__construct($cardId, $uniqueId);
 
+    $this->set = "creeperpack";
     $this->name = clienttranslate("All That Is Certain");
     $this->subtitle = clienttranslate("Death + Taxes");
 

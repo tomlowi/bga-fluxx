@@ -32,8 +32,10 @@ class GoalCardFactory extends CardFactory
 
       $goalDefinitions[$definitionId] = [
         "type" => "goal",
+        "set" => $card->getCardSet(),
         "name" => $card->getName(),
         "subtitle" => $card->getSubtitle(),
+        "description" => $card->getDescription(),
       ];
     }
 

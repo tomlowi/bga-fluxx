@@ -14,6 +14,10 @@ class ActionRotateHands extends ActionCard
     $this->description = clienttranslate(
       "All players pass their hands to the player next to them. You decide which direction."
     );
+
+    $this->help = clienttranslate(
+      "Choose the direction. To the right means you will get your cards from the previous player, to the left means you will get them from the next player."
+    );
   }
 
   public $interactionNeeded = "buttons";

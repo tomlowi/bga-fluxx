@@ -9,6 +9,7 @@ class RuleYouAlsoNeedABakedPotato extends RuleCard
   {
     parent::__construct($cardId, $uniqueId);
 
+    $this->set = "creeperpack";
     $this->name = clienttranslate("You Also Need a Baked Potato");
     $this->subtitle = clienttranslate("Takes Instant Effect");
     $this->description = clienttranslate(

@@ -87,6 +87,12 @@ class fluxx extends Table
       "creeperToResolveCardId" => 49,
       "creeperToResolvePlayerId" => 50,
       "creeperTurnStartDeathExecuted" => 51,
+      "tmpHand1ToPlay" => 52,
+      "tmpHand1Card" => 53,
+      "tmpHand2ToPlay" => 54,
+      "tmpHand2Card" => 55,
+      "tmpHand3ToPlay" => 56,
+      "tmpHand3Card" => 57,
       "rpsChallengerId" => 90,
       "rpsDefenderId" => 91,
       "rpsChallengerChoice" => 92,
@@ -200,6 +206,17 @@ class fluxx extends Table
     self::setGameStateInitialValue("creeperToResolvePlayerId", -1);
     self::setGameStateInitialValue("creeperTurnStartDeathExecuted", 0);
 
+    self::setGameStateInitialValue("tmpHand1ToPlay", 0);
+    self::setGameStateInitialValue("tmpHand1Card", -1);
+    self::setGameStateInitialValue("tmpHand2ToPlay", 0);
+    self::setGameStateInitialValue("tmpHand2Card", -1);
+    self::setGameStateInitialValue("tmpHand3ToPlay", 0);
+    self::setGameStateInitialValue("tmpHand3Card", -1);
+
+    // Initialize game statistics
+    // (note: statistics used in this file must be defined in your stats.inc.php file)
+    //self::initStat( 'table', 'table_teststat1', 0 );    // Init a table statistics
+    //self::initStat( 'player', 'player_teststat1', 0 );  // Init a player statistics (for all players)
     self::initStat("table", "turns_number", 0);
 
     // Create cards
@@ -235,11 +252,6 @@ class fluxx extends Table
 
     // reset to start with correct first active player
     $this->gamestate->changeActivePlayer($first_player_id);
-
-    // @TODO: Init game statistics
-    // (note: statistics used in this file must be defined in your stats.inc.php file)
-    //self::initStat( 'table', 'table_teststat1', 0 );    // Init a table statistics
-    //self::initStat( 'player', 'player_teststat1', 0 );  // Init a player statistics (for all players)
   }
 
   /*
@@ -262,6 +274,7 @@ class fluxx extends Table
 
     $result = [
       "players" => $players,
+      "cardTypesDefinitions" => $this->getAllCardTypesDefinitions(),
       "cardsDefinitions" => $this->getAllCardsDefinitions(),
       "creeperPack" => Utils::useCreeperPackExpansion(),
       "hand" => $this->cards->getCardsInLocation("hand", $current_player_id),
@@ -356,6 +369,17 @@ class fluxx extends Table
     }
   }
 
+  function getAllCardTypesDefinitions()
+  {
+    return [
+      "action" => clienttranslate("Action"),
+      "creeper" => clienttranslate("Creeper"),
+      "goal" => clienttranslate("Goal"),
+      "keeper" => clienttranslate("Keeper"),
+      "rule" => clienttranslate("New&nbsp;Rule"),
+    ];
+  }
+
   /*
    * Returns all cards definitions using factories
    */
@@ -445,7 +469,8 @@ class fluxx extends Table
   public function performDrawCards(
     $player_id,
     $drawCount,
-    $postponeCreeperResolve = false
+    $postponeCreeperResolve = false,
+    $temporaryDraw = false
   ) {
     $cardsDrawn = [];
     if (Utils::useCreeperPackExpansion()) {
@@ -462,10 +487,11 @@ class fluxx extends Table
 
     // don't increment drawn counter here, extra cards drawn from actions etc
     // do not count
-
-    self::notifyPlayer($player_id, "cardsDrawn", "", [
-      "cards" => $cardsDrawn,
-    ]);
+    if (!$temporaryDraw) {
+      self::notifyPlayer($player_id, "cardsDrawn", "", [
+        "cards" => $cardsDrawn,
+      ]);
+    }
 
     self::notifyAllPlayers(
       "cardsDrawnOther",
@@ -480,7 +506,11 @@ class fluxx extends Table
     );
 
     // check victory: some goals can also be triggered when extra cards drawn
-    $this->checkWinConditions();
+    if (!$temporaryDraw) {
+      $this->checkWinConditions();
+    }
+
+    return $cardsDrawn;
   }
 
   public function sendHandCountNotifications()
@@ -613,7 +643,6 @@ class fluxx extends Table
 
     // We have one winner, no tie
     $winnerId = $winnerInfo["winner"];
-    $winningGoal = $winnerInfo["goal"];
 
     // set final score
     $sql = "UPDATE player SET player_score=1  WHERE player_id='$winnerId'";
@@ -634,7 +663,8 @@ class fluxx extends Table
       [
         "player_id" => $winnerId,
         "player_name" => $players[$winnerId]["player_name"],
-        "goal_name" => $winningGoal,
+        "goal_id" => $winnerInfo["goalId"],
+        "goal_name" => $winnerInfo["goal"],
       ]
     );
 
@@ -660,11 +690,11 @@ class fluxx extends Table
         self::notifyAllPlayers(
           "winPreventedByCreeper",
           clienttranslate(
-            'Creepers prevent <b>${unlucky_player_name}</b> from winning with <b>${goal_name}</b>'
+            'Creepers prevent ${player_name2} from winning with <b>${goal_name}</b>'
           ),
           [
             "goal_name" => $goalCard->getName(),
-            "unlucky_player_name" => $unlucky_player_name,
+            "player_name2" => $unlucky_player_name,
           ]
         );
         // sorry, but you can't win yet
@@ -683,11 +713,11 @@ class fluxx extends Table
         self::notifyAllPlayers(
           "winPreventedByBakedPotato",
           clienttranslate(
-            'Baked Potato prevents <b>${unlucky_player_name}</b> from winning with <b>${goal_name}</b>'
+            'Baked Potato prevents ${player_name2} from winning with <b>${goal_name}</b>'
           ),
           [
             "goal_name" => $goalCard->getName(),
-            "unlucky_player_name" => $unlucky_player_name,
+            "player_name2" => $unlucky_player_name,
           ]
         );
         // sorry, but you can't win yet
@@ -701,7 +731,7 @@ class fluxx extends Table
         }
         // this player is the winner, unless someone else also reached another goal
         $winnerId = $goalReachedByPlayerId;
-        $winningGoalCard = $goalCard->getName();
+        $winningGoalCard = $goalCard;
       }
     }
 
@@ -711,7 +741,8 @@ class fluxx extends Table
 
     return [
       "winner" => $winnerId,
-      "goal" => $winningGoalCard,
+      "goal" => $winningGoalCard->getName(),
+      "goalId" => $winningGoalCard->getCardId(),
     ];
   }
 
@@ -775,6 +806,7 @@ class fluxx extends Table
   use Fluxx\States\RockPaperScissorsTrait;
   use Fluxx\States\ResolveFreeRuleTrait;
   use Fluxx\States\ResolveCreeperTrait;
+  use Fluxx\States\TempHandPlayTrait;
 
   //////////////////////////////////////////////////////////////////////////////
   //////////// Game state actions
@@ -870,6 +902,21 @@ class fluxx extends Table
     if ($state["type"] === "activeplayer") {
       switch ($statename) {
         default:
+        // zombie player: discards any remaining cards in hand
+        // then just zombie pass
+          $cards = $this->cards->getCardsInLocation("hand", $active_player);
+          // discard all cards
+          foreach ($cards as $card_id => $card) {
+            $this->cards->playCard($card_id);
+          }
+
+          $this->notifyAllPlayers("handDiscarded", "", [
+            "player_id" => $active_player,
+            "cards" => $cards,
+            "discardCount" => $this->cards->countCardInLocation("discard"),
+            "handCount" => $this->cards->countCardInLocation("hand", $active_player),
+          ]);
+
           $this->gamestate->nextState("zombiePass");
           break;
       }

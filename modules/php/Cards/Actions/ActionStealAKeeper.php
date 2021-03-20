@@ -14,6 +14,10 @@ class ActionStealAKeeper extends ActionCard
     $this->description = clienttranslate(
       "Steal a Keeper from in front of another player, and add it to your collection of Keepers on the table."
     );
+
+    $this->help = clienttranslate(
+      "Select any keeper card in play from another player."
+    );
   }
 
   public $interactionNeeded = "keeperSelectionOther";
@@ -72,11 +76,11 @@ class ActionStealAKeeper extends ActionCard
     $game->notifyAllPlayers(
       "keepersMoved",
       clienttranslate(
-        '${player_name} stole <b>${card_name}</b> from <b>${other_player_name}</b>'
+        '${player_name} stole <b>${card_name}</b> from ${player_name2}'
       ),
       [
         "player_name" => $game->getActivePlayerName(),
-        "other_player_name" => $other_player_name,
+        "player_name2" => $other_player_name,
         "card_name" => $card_definition->getName(),
         "destination_player_id" => $player_id,
         "origin_player_id" => $other_player_id,
