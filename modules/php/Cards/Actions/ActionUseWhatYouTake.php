@@ -12,7 +12,7 @@ class ActionUseWhatYouTake extends ActionCard
 
     $this->name = clienttranslate("Use What You Take");
     $this->description = clienttranslate(
-      "Take a card at random form another player's hand, and play it."
+      "Take a card at random from another player's hand, and play it."
     );
 
     $this->help = clienttranslate(
