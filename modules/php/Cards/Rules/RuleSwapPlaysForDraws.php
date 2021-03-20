@@ -12,7 +12,7 @@ class RuleSwapPlaysForDraws extends RuleCard
     $this->name = clienttranslate("Swap Plays for Draws");
     $this->subtitle = clienttranslate("Takes Instant Effect");
     $this->description = clienttranslate(
-      "During your yurn, you may decide to play no more cards and instead draw as many cards as you have plays remaining. If Play All, draw as many cards as you hold."
+      "During your turn, you may decide to play no more cards and instead draw as many cards as you have plays remaining. If Play All, draw as many cards as you hold."
     );
   }
 
