@@ -257,6 +257,12 @@ define([
             });
         }
 
+        // Hide elements that are not relevant for spectator
+        if (this.isSpectator) {
+          dojo.addClass("flxMyHand", "flx-spectator");
+          dojo.addClass("flxMyKeepers", "flx-spectator");
+        }
+
         // Setup game notifications to handle (see "setupNotifications" method below)
         this.setupNotifications();
 
@@ -591,6 +597,7 @@ define([
         }
 
         stock.setSelectionMode(0);
+        stock.setSelectionAppearance("class");
         stock.onItemCreate = dojo.hitch(this, "setupNewCard");
         return stock;
       },
@@ -630,6 +637,7 @@ define([
         );
 
         stock.setSelectionMode(0);
+        stock.setSelectionAppearance("class");
         stock.onItemCreate = dojo.hitch(this, "setupNewCard");
         return stock;
       },
@@ -702,16 +710,18 @@ define([
         ev.preventDefault();
 
         if (dojo.hasClass("flxDeckBlock", "flx-discard-visible")) {
+          dojo.place("discardStock", "discardPileCollapsed");
           this.discardStock.item_margin = 0;
           this.discardStock.setOverlap(0.00001);
           dojo.removeClass("flxDeckBlock", "flx-discard-visible");
-          $("discardToggleBtn").innerHTML = _("Show discard pile");
+          $("discardToggleBtn").innerHTML = _("Show");
           this.discardStock.resetItemsPosition();
         } else {
+          dojo.place("discardStock", "discardPileExpanded");
           this.discardStock.setOverlap(0);
           this.discardStock.item_margin = 5;
           dojo.addClass("flxDeckBlock", "flx-discard-visible");
-          $("discardToggleBtn").innerHTML = _("Hide discard pile");
+          $("discardToggleBtn").innerHTML = _("Hide");
           this.discardStock.resetItemsPosition();
         }
       },

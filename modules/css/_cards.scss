@@ -18,11 +18,18 @@ $color-creeper: #000000;
 $color-action: #0099cd;
 $color-goal: #d23f7f;
 $color-rule: #d7b424;
+$color-flx-blue: #00b1e3;
+$color-flx-yellow: #fee800;
+$color-flx-brown: #f6821f;
 
 .newDrawnCard {
-  outline-color: darkslategray;
+  outline-color: $color-flx-yellow;
   outline-style: solid;
   outline-width: medium;
+}
+
+.stockitem_selected {
+  border: 3px solid $color-flx-blue !important;
 }
 
 .flx-card-tooltip {

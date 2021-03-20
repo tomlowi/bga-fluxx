@@ -65,7 +65,7 @@ class ActionLetsDoThatAgain extends ActionCard
         "",
         clienttranslate(
           "There are no rule or action cards in the discard pile!"
-        )
+        ), ["player_id" => $player_id]
       );
 
       return;

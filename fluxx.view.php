@@ -47,14 +47,21 @@ class view_fluxx_fluxx extends game_view
     $this->tpl["HAND_COUNT"] = clienttranslate("# cards in hand");
     $this->tpl["KEEPERS_COUNT"] = clienttranslate("# keepers on table");
     $this->tpl["CREEPERS_COUNT"] = clienttranslate("# creepers on table");
-    $this->tpl["RULES"] = clienttranslate("Rules");
+    $this->tpl["BASICRULES"] = clienttranslate("Basic Rules");
+    $this->tpl["LIMITRULES"] = clienttranslate("Limits");
+    $this->tpl["OTHERRULES"] = clienttranslate("Extra Rules");
     $this->tpl["GOAL"] = clienttranslate("Goal");
-    $this->tpl["SHOW_DISCARD"] = clienttranslate("Show discard pile");
+    $this->tpl["DECK"] = clienttranslate("Discard pile");
+    $this->tpl["SHOW_DISCARD"] = clienttranslate("Show");
 
     // This will inflate players keepers block
-    $player_info = $players[$current_player_id];
+    $player_color = "#000000";
+    if (array_key_exists($current_player_id, $players)) {
+      $player_info = $players[$current_player_id];
+      $player_color = $player_info["player_color"];
+    }    
     $this->tpl["CURRENT_PLAYER_ID"] = $current_player_id;
-    $this->tpl["CURRENT_PLAYER_COLOR"] = $player_info["player_color"];
+    $this->tpl["CURRENT_PLAYER_COLOR"] = $player_color;
 
     $this->page->begin_block($template, "keepers");
 

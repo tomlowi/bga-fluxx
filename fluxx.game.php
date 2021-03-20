@@ -902,6 +902,21 @@ class fluxx extends Table
     if ($state["type"] === "activeplayer") {
       switch ($statename) {
         default:
+        // zombie player: discards any remaining cards in hand
+        // then just zombie pass
+          $cards = $this->cards->getCardsInLocation("hand", $active_player);
+          // discard all cards
+          foreach ($cards as $card_id => $card) {
+            $this->cards->playCard($card_id);
+          }
+
+          $this->notifyAllPlayers("handDiscarded", "", [
+            "player_id" => $active_player,
+            "cards" => $cards,
+            "discardCount" => $this->cards->countCardInLocation("discard"),
+            "handCount" => $this->cards->countCardInLocation("hand", $active_player),
+          ]);
+
           $this->gamestate->nextState("zombiePass");
           break;
       }
