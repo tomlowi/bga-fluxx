@@ -29,6 +29,8 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
     },
 
     onLeavingStateEnforceKeepersLimit: function () {
+      if (this.isSpectator) return;
+      
       var stock = this.keepersStock[this.player_id];
       console.log("Leaving state: EnforceKeepersLimit");
 

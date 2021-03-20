@@ -1,8 +1,7 @@
-
 .flx-other-players {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;  
+  justify-content: center;
 
   .flx-keepers {
     flex: 1 0;
@@ -16,10 +15,10 @@
   .flx-keepers-my {
     min-width: 320px;
     z-index: 999; /* workaround: discard pile hidden height prevents keeper tooltips/selection? */
-  } 
+  }
 
   .flx-keepers-other {
     min-width: 320px;
     max-width: 440px;
-  } 
+  }
 }

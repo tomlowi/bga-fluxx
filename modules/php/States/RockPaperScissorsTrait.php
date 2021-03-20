@@ -190,12 +190,6 @@ trait RockPaperScissorsTrait
     $challenger_id = self::getGameStateValue("rpsChallengerId");
     $defender_id = self::getGameStateValue("rpsDefenderId");
 
-    self::dump("===RPS===", [
-      "player" => $player_id,
-      "choice" => $choice,
-      "challenger" => $challenger_id,
-      "defender" => $defender_id,
-    ]);
     switch ($choice) {
       case "rock":
         $option = RPS_OPTION_ROCK;
@@ -218,6 +212,7 @@ trait RockPaperScissorsTrait
     }
 
     //@TODO: is it possible to allow the current player to change is mind?
+    // why bother? would this be useful?
 
     // once both players will have made their choice, state will move to check winner state
     $this->gamestate->setPlayerNonMultiactive($player_id, "");
