@@ -52,10 +52,10 @@ class CreeperRadioactivePotato extends CreeperCard
     $game->notifyAllPlayers(
       "keepersMoved",
       clienttranslate(
-        'Goal change: <b>${card_name}</b> moves to <b>${destination_player_name}</b>'
+        'Goal change: <b>${card_name}</b> moves to ${player_name2}'
       ),
       [
-        "destination_player_name" => $destination_player_name,
+        "player_name2" => $destination_player_name,
         "card_name" => $this->name,
         "destination_player_id" => $destination_player_id,
         "origin_player_id" => $origin_player_id,

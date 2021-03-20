@@ -29,6 +29,7 @@ trait ResolveFreeRuleTrait
       "action_name" => $freeRuleCard->getName(),
       "action_type" => $freeRuleCard->interactionNeeded,
       "action_args" => $freeRuleCard->resolveArgs(),
+      "action_help" => $freeRuleCard->getHelp(),
     ];
   }
 

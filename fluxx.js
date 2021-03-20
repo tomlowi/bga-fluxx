@@ -34,6 +34,7 @@ define([
   g_gamethemeurl + "modules/js/states/freeRuleResolve.js",
   g_gamethemeurl + "modules/js/states/creeperResolve.js",
   g_gamethemeurl + "modules/js/states/playRockPaperScissors.js",
+  g_gamethemeurl + "modules/js/states/tempHandPlay.js",
 ], function (dojo, declare) {
   return declare(
     "bgagame.fluxx",
@@ -48,11 +49,12 @@ define([
       fluxx.states.freeRuleResolve,
       fluxx.states.creeperResolve,
       fluxx.states.playRockPaperScissors,
+      fluxx.states.tempHandPlay,
     ],
     {
       constructor: function () {
-        this.CARD_WIDTH = 166;
-        this.CARD_HEIGHT = 258;
+        this.CARD_WIDTH = 150;
+        this.CARD_HEIGHT = 233;
         this.CARDS_SPRITES_PATH = g_gamethemeurl + "img/cards.png";
         this.CARDS_SPRITES_PER_ROW = 17;
 
@@ -63,8 +65,8 @@ define([
 
         var creeperPackOffset = 19 + 30 + 27 + 23 + 3; // all base game cards + Basic Rules / Back / Front
         this.CARDS_TYPES_BASEGAME = {
-          keeper: { count: 19, spriteOffset: 0, materialOffset: 1 },
-          creeper: { count: 0 },
+          keeper: { count: 19, spriteOffset: 0, materialOffset: 1, weight: 20 },
+          creeper: { count: 0, weight: 10 },
           goal: { count: 30, spriteOffset: 19, materialOffset: 101 },
           rule: { count: 27, spriteOffset: 19 + 30, materialOffset: 201 },
           action: {
@@ -74,11 +76,12 @@ define([
           },
         };
         this.CARDS_TYPES_CREEPERPACK = {
-          keeper: { count: 0 },
+          keeper: { count: 0, weight: 21 },
           creeper: {
             count: 4,
             spriteOffset: creeperPackOffset,
             materialOffset: 51,
+            weight: 11,
           },
           goal: {
             count: 6,
@@ -113,7 +116,7 @@ define([
             "gamedatas" argument contains all datas retrieved by your "getAllDatas" PHP method.
         */
       setup: function (gamedatas) {
-        console.log("GameDatas: ", gamedatas);
+        //console.log("GameDatas: ", gamedatas);
 
         this.players = gamedatas.players;
 
@@ -121,6 +124,10 @@ define([
         this.cardTypesDefinitions = this.gamedatas.cardTypesDefinitions;
         this.cardsDefinitions = this.gamedatas.cardsDefinitions;
         //console.log("Cards definitions", this.cardsDefinitions);
+        this.prepareKeeperPanelIcons(this.cardsDefinitions);
+
+        // tooltip on Basic Rules card
+        this.setupBasicRulesCard();
 
         // Setup all stocks and restore existing state
         this.handStock = this.createCardStock("handStock", [
@@ -162,6 +169,7 @@ define([
         this.rulesStock.playRule = this.createCardStock("playRuleStock", [
           "rule",
         ]);
+        this.rulesStock.limits = this.createCardStock("limitsStock", ["rule"]);
         this.rulesStock.others = this.createCardStock("othersStock", ["rule"]);
         this.addCardsToStock(
           this.rulesStock.drawRule,
@@ -172,11 +180,11 @@ define([
           this.gamedatas.rules.playRule
         );
         this.addCardsToStock(
-          this.rulesStock.others,
+          this.rulesStock.limits,
           this.gamedatas.rules.handLimit
         );
         this.addCardsToStock(
-          this.rulesStock.others,
+          this.rulesStock.limits,
           this.gamedatas.rules.keepersLimit
         );
         this.addCardsToStock(
@@ -186,7 +194,6 @@ define([
 
         this.goalsStock = this.createCardStock("goalsStock", ["goal"]);
         this.addCardsToStock(this.goalsStock, this.gamedatas.goals);
-        this.goalsStock.setOverlap(50);
 
         this.keepersStock = {};
         this.handCounter = {};
@@ -224,24 +231,169 @@ define([
             this.gamedatas.handsCount[player_id]
           );
           this.keepersCounter[player_id].toValue(
-            this.keepersStock[player_id].count() - this.gamedatas.creepersCount[player_id]
+            this.keepersStock[player_id].count() -
+              this.gamedatas.creepersCount[player_id]
           );
           this.creepersCounter[player_id].toValue(
             this.gamedatas.creepersCount[player_id]
           );
+
+          // add current keepers in player panel
+          this.addToKeeperPanelIcons(
+            player_id,
+            this.gamedatas.keepers[player_id]
+          );
         }
+
+        // Determine card overlaps per number of cards in hand / stocks
+        this.adaptForScreenSize();
 
         // Hide elements that are only used with Creeper pack expansion
         if (!gamedatas.creeperPack) {
-          dojo.query(".flx-board-creeper").forEach(function(node, index, nodelist){
-            dojo.addClass(node, "no-creepers");
+          dojo
+            .query(".flx-board-creeper")
+            .forEach(function (node, index, nodelist) {
+              dojo.addClass(node, "no-creepers");
             });
+        }
+
+        // Hide elements that are not relevant for spectator
+        if (this.isSpectator) {
+          dojo.addClass("flxMyHand", "flx-spectator");
+          dojo.addClass("flxMyKeepers", "flx-spectator");
         }
 
         // Setup game notifications to handle (see "setupNotifications" method below)
         this.setupNotifications();
 
         console.log("Setup completed!");
+      },
+
+      onScreenWidthChange: function () {
+        this.adaptForScreenSize();
+      },
+
+      adaptForScreenSize: function () {
+        if ($("game_play_area") && this.handStock !== undefined) {
+          var viewPortWidth = dojo.position("game_play_area")["w"];
+          //console.log("viewPortWidth: ", viewPortWidth);
+          this.adaptCardOverlaps(viewPortWidth);
+        }
+      },
+
+      prepareKeeperPanelIcons: function (cardDefinitions) {
+        var panelDivId = "tmpKeeperPanelIcons";
+        var keeperCount = 19;
+        for (var id in cardDefinitions) {
+          var cardDefinition = cardDefinitions[id];
+          if (cardDefinition.type == "keeper") {
+            var params = {
+              id: id,
+              name: cardDefinition.name,
+              offset: (id - 1) * 100,
+            };
+            var panelKeeper = this.format_block("jstpl_panel_keeper", params);
+            dojo.place(panelKeeper, panelDivId);
+          } else if (cardDefinition.type == "creeper") {
+            var params = {
+              id: id,
+              name: cardDefinition.name,
+              offset: (keeperCount + (id - 50) - 1) * 100,
+            };
+            var panelCreeper = this.format_block("jstpl_panel_keeper", params);
+            dojo.place(panelCreeper, panelDivId);
+          }
+        }
+      },
+
+      addToKeeperPanelIcons(player_id, cards) {
+        var keeperPanelDivId = "keeperPanel" + player_id;
+        var creeperPanelDivId = "creeperPanel" + player_id;
+
+        for (var card_id in cards) {
+          var card = cards[card_id];
+          var keeperDivId = "flx-board-panel-keeper-" + card["type_arg"];
+          if (card["type"] == "creeper") {
+            dojo.place(keeperDivId, creeperPanelDivId);
+          } else {
+            dojo.place(keeperDivId, keeperPanelDivId);
+          }
+        }
+      },
+
+      removeFromKeeperPanelIcons(player_id, cards) {
+        var destinationPanelDivId = "tmpKeeperPanelIcons";
+
+        for (var card_id in cards) {
+          var card = cards[card_id];
+          var keeperDivId = "flx-board-panel-keeper-" + card["type_arg"];
+          dojo.place(keeperDivId, destinationPanelDivId);
+        }
+      },
+
+      adaptCardOverlaps: function (viewPortWidth) {
+        var maxHandCardsInRow = viewPortWidth / (this.CARD_WIDTH + 5);
+        var maxRuleCardsInRow = (viewPortWidth * 3) / 4 / (this.CARD_WIDTH + 5);
+        var maxKeeperCardsInRow = 5;
+
+        this.adaptCardOverlapsForStock(this.handStock, maxHandCardsInRow);
+        this.adaptCardOverlapsForStock(
+          this.rulesStock.others,
+          maxRuleCardsInRow
+        );
+
+        for (var player_id in this.keepersStock) {
+          var stock = this.keepersStock[player_id];
+          this.adaptCardOverlapsForStock(stock, maxKeeperCardsInRow);
+        }
+
+        // this.rulesStock.limits.setOverlap(0);
+        // if (viewPortWidth < 800) {
+        //   this.rulesStock.limits.setOverlap(50);
+        // } else if (viewPortWidth < 1024) {
+        //   this.rulesStock.limits.setOverlap(65);
+        // }
+        // this.rulesStock.limits.resetItemsPosition();
+
+        this.goalsStock.setOverlap(80);
+        if (viewPortWidth < 800) {
+          this.goalsStock.setOverlap(55);
+        } else if (viewPortWidth < 1024) {
+          this.goalsStock.setOverlap(65);
+        }
+        this.goalsStock.resetItemsPosition();
+      },
+
+      adaptCardOverlapsForStock(stock, maxCardsPerRow) {
+        var cardsCount = stock.count();
+        if (cardsCount > maxCardsPerRow * 3) {
+          stock.setOverlap(50);
+        } else if (cardsCount > maxCardsPerRow * 2) {
+          stock.setOverlap(65);
+        } else if (cardsCount > maxCardsPerRow * 1) {
+          stock.setOverlap(80);
+        } else {
+          stock.setOverlap(0);
+        }
+        stock.resetItemsPosition();
+      },
+
+      setupBasicRulesCard() {
+        var basicRulesCard = {
+          set: "base",
+          name: _("Basic Rules"),
+          subtitle: "",
+          description: "Draw 1 card, then Play 1 card",
+          type: "rule",
+          typeName: "",
+          id: 0,
+        };
+
+        // Add a special tooltip on the card:
+        this.addTooltipHtml(
+          "baseRuleCard",
+          this.format_block("jstpl_cardTooltip", basicRulesCard)
+        );
       },
 
       ///////////////////////////////////////////////////
@@ -289,6 +441,10 @@ define([
             this.onEnteringStateCreeperResolve(args);
             break;
 
+          case "tempHandPlay":
+            this.onEnteringStateTempHandPlay(args);
+            break;
+
           case "dummmy":
             break;
         }
@@ -299,6 +455,8 @@ define([
       //
       onLeavingState: function (stateName) {
         console.log("Leaving state: " + stateName);
+
+        this.resetHelpMessage();
 
         switch (stateName) {
           case "playCard":
@@ -331,8 +489,12 @@ define([
 
           case "creeperResolveInPlay":
           case "creeperResolveTurnStart":
-                this.onLeavingStateCreeperResolve();
-            break;            
+            this.onLeavingStateCreeperResolve();
+            break;
+
+          case "tempHandPlay":
+            this.onLeavingStateTempHandPlay();
+            break;
 
           case "dummmy":
             break;
@@ -373,7 +535,11 @@ define([
             case "creeperResolveInPlay":
             case "creeperResolveTurnStart":
               this.onUpdateActionButtonsCreeperResolve(args);
-              break;          }
+              break;
+            case "tempHandPlay":
+              this.onUpdateActionButtonsTempHandPlay(args);
+              break;
+          }
         }
       },
 
@@ -431,6 +597,7 @@ define([
         }
 
         stock.setSelectionMode(0);
+        stock.setSelectionAppearance("class");
         stock.onItemCreate = dojo.hitch(this, "setupNewCard");
         return stock;
       },
@@ -443,7 +610,8 @@ define([
         for (var i = 0; i < count; i++) {
           stock.addItemType(
             materialOffset + i,
-            materialOffset + i,
+            // keepers in order as played, like on panels (but creepers before keepers)
+            cardType.weight,
             this.KEEPERS_SPRITES_PATH,
             spriteOffset + i
           );
@@ -469,6 +637,7 @@ define([
         );
 
         stock.setSelectionMode(0);
+        stock.setSelectionAppearance("class");
         stock.onItemCreate = dojo.hitch(this, "setupNewCard");
         return stock;
       },
@@ -479,12 +648,21 @@ define([
         var card = {
           set: cardDefinition.set,
           name: cardDefinition.name,
+          nameLength: "normal",
           subtitle: cardDefinition.subtitle || "",
           description: cardDefinition.description || "",
+          descLength: "normal",
           type: cardDefinition.type,
           typeName: this.cardTypesDefinitions[cardDefinition.type],
           id: card_type_id,
         };
+
+        if (card.name.length > 20) {
+          card.nameLength = "long";
+        }
+        if (card.description.length > 158) {
+          card.descLength = "long";
+        }
 
         // Add a special tooltip on the card:
         this.addTooltipHtml(
@@ -492,13 +670,15 @@ define([
           this.format_block("jstpl_cardTooltip", card)
         );
         // Overlay the card image with translated descriptions
-        var cardOverlayTitle = this.format_block("jstpl_cardOverlay_title", card);
+        var cardOverlayTitle = this.format_block(
+          "jstpl_cardOverlay_title",
+          card
+        );
         var cardOverlay = this.format_block("jstpl_cardOverlay_text", card);
         dojo.place(cardOverlayTitle, card_div.id);
         dojo.place(cardOverlay, card_div.id);
 
         // Note that "card_type_id" contains the type of the item, so you can do special actions depending on the item type
-
       },
 
       addCardsToStock: function (stock, cards, keepOrder) {
@@ -530,15 +710,19 @@ define([
         ev.preventDefault();
 
         if (dojo.hasClass("flxDeckBlock", "flx-discard-visible")) {
+          dojo.place("discardStock", "discardPileCollapsed");
           this.discardStock.item_margin = 0;
           this.discardStock.setOverlap(0.00001);
           dojo.removeClass("flxDeckBlock", "flx-discard-visible");
-          $("discardToggleBtn").innerHTML = _("Show discard pile");
+          $("discardToggleBtn").innerHTML = _("Show");
+          this.discardStock.resetItemsPosition();
         } else {
+          dojo.place("discardStock", "discardPileExpanded");
           this.discardStock.setOverlap(0);
           this.discardStock.item_margin = 5;
           dojo.addClass("flxDeckBlock", "flx-discard-visible");
-          $("discardToggleBtn").innerHTML = _("Hide discard pile");
+          $("discardToggleBtn").innerHTML = _("Hide");
+          this.discardStock.resetItemsPosition();
         }
       },
 

@@ -46,8 +46,9 @@
 
 /********* You can start writing your CSS below this line: **********/
 
-@import 'player';
-@import 'table';
-@import 'other_players';
-@import 'icons';
-@import 'cards';
+@import "fonts";
+@import "cards";
+@import "player";
+@import "table";
+@import "other_players";
+@import "icons";

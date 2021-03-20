@@ -14,6 +14,10 @@ class ActionExchangeKeepers extends ActionCard
     $this->description = clienttranslate(
       "Pick any Keeper another player has on the table and exchange it for one you have on the table. <be/> If you have no Keepers in play, or if no one else has a Keeper, nothing happens."
     );
+
+    $this->help = clienttranslate(
+      "Select exactly 2 Keeper cards, 1 of yours and 1 of another player."
+    );
   }
 
   public $interactionNeeded = "keepersExchange";
@@ -99,11 +103,11 @@ class ActionExchangeKeepers extends ActionCard
     $game->notifyAllPlayers(
       "actionResolved",
       clienttranslate(
-        '${player_name} got <b>${other_keeper_name}</b> from <b>${other_player_name}</b> in exchange for <b>${my_keeper_name}</b>'
+        '${player_name} got <b>${other_keeper_name}</b> from ${player_name2} in exchange for <b>${my_keeper_name}</b>'
       ),
       [
         "player_name" => $game->getActivePlayerName(),
-        "other_player_name" => $other_player_name,
+        "player_name2" => $other_player_name,
         "other_keeper_name" => $otherKeeperCard->getName(),
         "my_keeper_name" => $myKeeperCard->getName(),
       ]

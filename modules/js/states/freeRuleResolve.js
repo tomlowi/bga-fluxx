@@ -13,6 +13,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
     onUpdateActionButtonsFreeRuleResolve: function (args) {
       console.log("Update Action Buttons: FreeRuleResolve", args);
 
+      this.displayHelpMessage(args.action_help, "freerule");
       if (this.isCurrentPlayerActive()) {
         method = this.updateActionButtonsFreeRuleResolve[args.action_type];
         method(this, args.action_args);
@@ -52,10 +53,8 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
     onResolveFreeRuleHandCardsSelection: function (ev) {
       var selectedCards = [];
 
-      for (var rule_type in this.rulesStock) {
-        var stock = this.handStock;
-        selectedCards = stock.getSelectedItems();
-      }
+      var stock = this.handStock;
+      selectedCards = stock.getSelectedItems();
 
       var action = "resolveFreeRuleCardsSelection";
       var cards_id = selectedCards.map(function (card) {

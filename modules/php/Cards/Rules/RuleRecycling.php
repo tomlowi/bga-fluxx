@@ -15,6 +15,10 @@ class RuleRecycling extends RuleCard
     $this->description = clienttranslate(
       "Once during your turn, you may discard one of your Keepers from the table and draw 3 extra cards."
     );
+
+    $this->help = clienttranslate(
+      "Select one of your keepers in play to discard."
+    );
   }
 
   public $interactionNeeded = "keeperSelectionSelf";

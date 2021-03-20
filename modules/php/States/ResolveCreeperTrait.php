@@ -60,6 +60,7 @@ trait ResolveCreeperTrait
       "action_name" => $creeperCard->getName(),
       "action_type" => $creeperCard->interactionNeeded,
       "action_args" => $creeperCard->resolveArgs(),
+      "action_help" => $creeperCard->getHelp(),
     ];
   }
 

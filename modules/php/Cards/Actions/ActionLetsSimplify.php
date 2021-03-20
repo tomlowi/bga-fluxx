@@ -15,6 +15,13 @@ class ActionLetsSimplify extends ActionCard
     $this->description = clienttranslate(
       "Discard your choice of up to half (rounded up) of the New Rule cards in play."
     );
+
+    $this->help =
+      clienttranslate(
+        "Select any New Rule cards (or none) in play that you want to discard."
+      ) .
+      " " .
+      clienttranslate("Click the button when finished.");
   }
 
   public $interactionNeeded = "rulesSelection";

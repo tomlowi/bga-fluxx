@@ -227,6 +227,20 @@ class Utils
     return 0 == Utils::getGame()->getGameStateValue("playerTurnUsedRecycling");
   }
 
+  public static function getActiveTempHand()
+  {
+    if (Utils::getGame()->getGameStateValue("tmpHand3ToPlay") > 0) {
+      return 3;
+    }
+    if (Utils::getGame()->getGameStateValue("tmpHand2ToPlay") > 0) {
+      return 2;
+    }
+    if (Utils::getGame()->getGameStateValue("tmpHand1ToPlay") > 0) {
+      return 1;
+    }
+    return 0;
+  }
+
   public static function calculateCardsLeftToPlayFor($player_id)
   {
     $game = Utils::getGame();
@@ -242,7 +256,7 @@ class Utils
       // Play All > left as many as cards in hand
       $leftCount = $handCount;
     } elseif ($mustPlay < 0) {
-      // Play All but 1 > left as many as cards in hand minus the leftover      
+      // Play All but 1 > left as many as cards in hand minus the leftover
       $leftCount = $handCount + $mustPlay; // ok, $mustPlay is negative here
     }
 
@@ -250,9 +264,9 @@ class Utils
     // in that case player should not play any more cards
     if ($leftCount < 0) {
       $leftCount = 0;
-    } else 
+    }
     // can't play more cards than in hand
-    if ($leftCount > $handCount) {
+    elseif ($leftCount > $handCount) {
       $leftCount = $handCount;
     }
 

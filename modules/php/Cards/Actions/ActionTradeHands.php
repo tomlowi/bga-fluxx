@@ -14,6 +14,10 @@ class ActionTradeHands extends ActionCard
     $this->description = clienttranslate(
       "Trade your hand for the hand of one of your opponents. This is one of those times when you can get something for nothing!"
     );
+
+    $this->help = clienttranslate(
+      "Choose the player you want to trade hands with."
+    );
   }
 
   public $interactionNeeded = "playerSelection";
@@ -62,12 +66,10 @@ class ActionTradeHands extends ActionCard
 
     $game->notifyAllPlayers(
       "actionDone",
-      clienttranslate(
-        '${player_name} trades hands with ${selected_player_name}'
-      ),
+      clienttranslate('${player_name} trades hands with ${player_name2}'),
       [
         "player_name" => $player_name,
-        "selected_player_name" => $selected_player_name,
+        "player_name2" => $selected_player_name,
       ]
     );
     $game->sendHandCountNotifications();

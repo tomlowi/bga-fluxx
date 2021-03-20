@@ -50,8 +50,5 @@ trait DrawCardsTrait
     if ($game->checkCreeperResolveNeeded(null)) {
       return;
     }
-
   }
-
-
 }

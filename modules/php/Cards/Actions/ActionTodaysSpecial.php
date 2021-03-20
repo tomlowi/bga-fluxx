@@ -32,10 +32,11 @@ class ActionTodaysSpecial extends ActionCard
 
   public function resolvedBy($player_id, $args)
   {
+    $game = Utils::getGame();
     $addInflation = Utils::getActiveInflation() ? 1 : 0;
 
     $value = $args["value"];
-    $nrCardsToDraw = 3 + $addInflation;
+    $nrCardsToDraw = 3;
 
     switch ($value) {
       case "birthday":
@@ -48,15 +49,31 @@ class ActionTodaysSpecial extends ActionCard
         $nrCardsToPlay = 1;
     }
 
-    $nrCardsToPlay += $addInflation;
+    $nrCardsToPlay;
 
-    // @TODO: Today’s Special!
-    // Challenges: current hand needs to be set aside and player gets special turn with these cards
-    // this will probably require an entirely separate state?
-    // and after all is done, current player needs to continue its turn
+    // determine temp hand to be used
+    $tmpHandActive = Utils::getActiveTempHand();
+    $tmpHandNext = $tmpHandActive + 1;
 
-    // This is similar to "draw 2 and play them" and "draw 3, play 2" and must probably have a similar solution
+    $tmpHandLocation = "tmpHand" . $tmpHandNext;
+    // Draw for temp hand
+    $tmpCards = $game->performDrawCards(
+      $player_id,
+      $nrCardsToDraw + $addInflation,
+      true, // $postponeCreeperResolve
+      true
+    ); // $temporaryDraw
+    $tmpCardIds = array_column($tmpCards, "id");
+    // Must Play a certain nr of them, depending on the choice made
+    $game->setGameStateValue(
+      $tmpHandLocation . "ToPlay",
+      $nrCardsToPlay + $addInflation
+    );
+    $game->setGameStateValue($tmpHandLocation . "Card", $this->getUniqueId());
 
-    Utils::getGame()->performDrawCards($player_id, $nrCardsToDraw);
+    // move cards to temporary hand location
+    $game->cards->moveCards($tmpCardIds, $tmpHandLocation, $player_id);
+
+    // done: next play run will detect temp hand active
   }
 }
