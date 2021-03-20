@@ -16,17 +16,32 @@ class ActionDraw3Play2 extends ActionCard
     );
   }
 
-  public $interactionNeeded = "TODO";
+  public $interactionNeeded = null;
 
-  public function resolvedBy($player_id, $args)
+  public function immediateEffectOnPlay($player_id)
   {
-    // options: none ?
+    $game = Utils::getGame();
+    $addInflation = Utils::getActiveInflation() ? 1 : 0;
 
-    // @TODO: Draw 3, Play 2 of Them
-    // Challenges: current hand needs to be set aside and player gets special turn with these 2 cards
-    // this will probably require an entirely separate state?
-    // and after all is done, current player needs to continue its turn
+    $tmpHandActive = Utils::getActiveTempHand();
+    $tmpHandNext = $tmpHandActive + 1;
 
-    Utils::getGame()->performDrawCards($player_id, 3);
+    $tmpHandLocation = "tmpHand" . $tmpHandNext;
+    // Draw 3 for temp hand
+    $tmpCards = $game->performDrawCards(
+      $player_id,
+      3 + $addInflation,
+      true, // $postponeCreeperResolve
+      true
+    ); // $temporaryDraw
+    $tmpCardIds = array_column($tmpCards, "id");
+    // Must Play 2 of them
+    $game->setGameStateValue($tmpHandLocation . "ToPlay", 2 + $addInflation);
+    $game->setGameStateValue($tmpHandLocation . "Card", $this->getUniqueId());
+
+    // move cards to temporary hand location
+    $game->cards->moveCards($tmpCardIds, $tmpHandLocation, $player_id);
+
+    // done: next play run will detect temp hand active
   }
 }

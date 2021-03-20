@@ -206,4 +206,12 @@ class action_fluxx extends APP_GameAction
     $this->game->action_resolveCreeperButtons($value);
     self::ajaxResponse();
   }
+
+  public function selectTempHandCard()
+  {
+    self::setAjaxMode();
+    $card_id = self::getArg("card_id", AT_posint, true);
+    $this->game->action_selectTempHandCard($card_id);
+    self::ajaxResponse();
+  }
 }
