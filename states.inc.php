@@ -125,10 +125,10 @@ $machinestates = [
   STATE_ENFORCE_HAND_LIMIT_OTHERS => [
     "name" => "enforceHandLimitForOthers",
     "description" => clienttranslate(
-      'Some players must discard card(s) for Hand Limit ${limit}'
+      'Some players must discard card(s) for Hand Limit ${limit}${warnInflation}'
     ),
     "descriptionmyturn" => clienttranslate(
-      '${you} must discard ${_private.count} card(s) for Hand Limit ${limit}'
+      '${you} must discard ${_private.count} card(s) for Hand Limit ${limit}${warnInflation}'
     ),
     "type" => "multipleactiveplayer",
     "args" => "arg_enforceHandLimitForOthers",
@@ -140,10 +140,10 @@ $machinestates = [
   STATE_ENFORCE_KEEPERS_LIMIT_OTHERS => [
     "name" => "enforceKeepersLimitForOthers",
     "description" => clienttranslate(
-      'Some players must remove keepers for Keeper Limit ${limit}'
+      'Some players must remove keepers for Keeper Limit ${limit}${warnInflation}'
     ),
     "descriptionmyturn" => clienttranslate(
-      '${you} must remove ${_private.count} keepers for Keeper Limit ${limit}'
+      '${you} must remove ${_private.count} keepers for Keeper Limit ${limit}${warnInflation}'
     ),
     "type" => "multipleactiveplayer",
     "args" => "arg_enforceKeepersLimitForOthers",
@@ -155,10 +155,10 @@ $machinestates = [
   STATE_ENFORCE_HAND_LIMIT_SELF => [
     "name" => "enforceHandLimitForSelf",
     "description" => clienttranslate(
-      '${actplayer} must discard card(s) for Hand Limit ${limit}'
+      '${actplayer} must discard card(s) for Hand Limit ${limit}${warnInflation}'
     ),
     "descriptionmyturn" => clienttranslate(
-      '${you} must discard ${_private.count} card(s) for Hand Limit ${limit}'
+      '${you} must discard ${_private.count} card(s) for Hand Limit ${limit}${warnInflation}'
     ),
     "type" => "activeplayer",
     "args" => "arg_enforceHandLimitForSelf",
@@ -170,10 +170,10 @@ $machinestates = [
   STATE_ENFORCE_KEEPERS_LIMIT_SELF => [
     "name" => "enforceKeepersLimitForSelf",
     "description" => clienttranslate(
-      '${actplayer} must remove keepers(s) for Keeper Limit ${limit}'
+      '${actplayer} must remove keepers(s) for Keeper Limit ${limit}${warnInflation}'
     ),
     "descriptionmyturn" => clienttranslate(
-      '${you} must remove ${_private.count} keeper(s) for Keeper Limit ${limit}'
+      '${you} must remove ${_private.count} keeper(s) for Keeper Limit ${limit}${warnInflation}'
     ),
     "type" => "activeplayer",
     "args" => "arg_enforceKeepersLimitForSelf",

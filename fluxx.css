@@ -356,6 +356,11 @@
   top: 100px !important;
 }
 
+.flx-warn-inflation {
+  margin-left: 2px;
+  color: #d7b424;
+}
+
 .flx-tmp-hand:empty {
   display: none;
 }
