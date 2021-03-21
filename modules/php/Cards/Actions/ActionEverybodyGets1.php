@@ -110,6 +110,10 @@ class ActionEverybodyGets1 extends ActionCard
     );
     if ($countToDistribute > 0) {
       return parent::immediateEffectOnPlay($player_id);
+    } else {
+      // we gave cards to other players: check for hand limits
+      $game->sendHandCountNotifications();
+      return "handsExchangeOccured";
     }
   }
 }
