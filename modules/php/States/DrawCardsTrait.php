@@ -42,6 +42,9 @@ trait DrawCardsTrait
     );
     $game->setGameStateValue("drawnCards", $drawRule);
 
+    // count statistics start of turn for this player
+    self::incStat(1, "turns_number", $player_id);
+
     // move to state where player is allowed to start playing cards
     $game->gamestate->nextstate("cardsDrawn");
 

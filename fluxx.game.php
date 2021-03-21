@@ -854,14 +854,13 @@ class fluxx extends Table
           "player_name" => self::getActivePlayerName(),
         ]
       );
-      $player_id = self::activeNextPlayer();
-      self::incStat(1, "turns_number", $active_player);
+      $player_id = self::activeNextPlayer();      
 
       $players = self::loadPlayersBasicInfos();
       reset($players);
       $first_player = key($players);
       if ($first_player == $active_player) {
-        // Turns played during the game
+        // Full Turns played during the game
         self::incStat(1, "turns_number");
       }
     }
