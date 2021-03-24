@@ -53,6 +53,7 @@ class ActionRandomTax extends ActionCard
               '<b>You</b> received <b>${card_name}</b> from ${player_name}'
             ),
             [
+              "i18n" => ["card_name"],
               "cards" => [$card],
               "card_name" => $card_definition->getName(),
               "player_id" => $from_player_id,
@@ -66,6 +67,7 @@ class ActionRandomTax extends ActionCard
               '${player_name} took <b>${card_name}</b> from your hand'
             ),
             [
+              "i18n" => ["card_name"],
               "cards" => [$card],
               "card_name" => $card_definition->getName(),
               "player_id" => $player_id,

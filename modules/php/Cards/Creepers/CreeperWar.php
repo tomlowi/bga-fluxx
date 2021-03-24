@@ -108,6 +108,7 @@ class CreeperWar extends CreeperCard
         '<b>${card_name}</b> drives away Peace to ${player_name2}'
       ),
       [
+        "i18n" => ["card_name"],
         "player_name2" => $selected_player_name,
         "card_name" => $this->name,
         "destination_player_id" => $selected_player_id,

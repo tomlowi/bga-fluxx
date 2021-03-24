@@ -61,6 +61,7 @@ class ActionTodaysSpecial extends ActionCard
       "todayIsSpecial",
       clienttranslate('${player_name} says: ${today_choice}'),
       [
+        "i18n" => ["today_choice"],
         "player_id" => $player_id,
         "player_name" => $players[$player_id]["player_name"],
         "today_choice" => $choiceLabel,

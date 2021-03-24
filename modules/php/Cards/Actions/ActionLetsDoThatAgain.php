@@ -64,7 +64,7 @@ class ActionLetsDoThatAgain extends ActionCard
       $game->notifyAllPlayers(
         "",
         clienttranslate(
-          "There are no rule or action cards in the discard pile!"
+          'There are no rule or action cards in the discard pile!'
         ), ["player_id" => $player_id]
       );
 
@@ -115,6 +115,7 @@ class ActionLetsDoThatAgain extends ActionCard
         '${player_name} took <b>${card_name}</b> from the discard pile (and must play it)'
       ),
       [
+        "i18n" => ["card_name"],
         "card_name" => $card_definition->getName(),
         "player_name" => $game->getActivePlayerName(),
       ]

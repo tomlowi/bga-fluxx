@@ -95,10 +95,10 @@ $machinestates = [
   STATE_PLAY_CARD => [
     "name" => "playCard",
     "description" => clienttranslate(
-      '${actplayer} must play ${countLabel} card(s)'
+      '${actplayer} must play ${countLabelText}${countLabelNr} card(s)'
     ),
     "descriptionmyturn" => clienttranslate(
-      '${you} must play ${countLabel} card(s)'
+      '${you} must play ${countLabelText}${countLabelNr} card(s)'
     ),
     "type" => "activeplayer",
     "action" => "st_playCard",
@@ -140,10 +140,10 @@ $machinestates = [
   STATE_ENFORCE_KEEPERS_LIMIT_OTHERS => [
     "name" => "enforceKeepersLimitForOthers",
     "description" => clienttranslate(
-      'Some players must remove keepers for Keeper Limit ${limit}${warnInflation}'
+      'Some players must remove keeper(s) for Keeper Limit ${limit}${warnInflation}'
     ),
     "descriptionmyturn" => clienttranslate(
-      '${you} must remove ${_private.count} keepers for Keeper Limit ${limit}${warnInflation}'
+      '${you} must remove ${_private.count} keeper(s) for Keeper Limit ${limit}${warnInflation}'
     ),
     "type" => "multipleactiveplayer",
     "args" => "arg_enforceKeepersLimitForOthers",
@@ -170,7 +170,7 @@ $machinestates = [
   STATE_ENFORCE_KEEPERS_LIMIT_SELF => [
     "name" => "enforceKeepersLimitForSelf",
     "description" => clienttranslate(
-      '${actplayer} must remove keepers(s) for Keeper Limit ${limit}${warnInflation}'
+      '${actplayer} must remove keeper(s) for Keeper Limit ${limit}${warnInflation}'
     ),
     "descriptionmyturn" => clienttranslate(
       '${you} must remove ${_private.count} keeper(s) for Keeper Limit ${limit}${warnInflation}'
@@ -230,10 +230,10 @@ $machinestates = [
   STATE_ROCKPAPERSCISSORS => [
     "name" => "playRockPaperScissors",
     "description" => clienttranslate(
-      '${challenger_name} and ${defender_name} are playing Rock Paper Scissors (${challenger_wins} - ${defender_wins})'
+      '${challenger_name} and ${defender_name} are playing Rock-Paper-Scissors (${challenger_wins} - ${defender_wins})'
     ),
     "descriptionmyturn" => clienttranslate(
-      '${you} are playing Rock Paper Scissors against ${_private.opponent_name} (${_private.my_wins} - ${_private.opponent_wins})'
+      '${you} are playing Rock-Paper-Scissors against ${_private.opponent_name} (${_private.my_wins} - ${_private.opponent_wins})'
     ),
     "type" => "multipleactiveplayer",
     "args" => "arg_playRockPaperScissors",

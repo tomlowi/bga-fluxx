@@ -130,6 +130,7 @@ class CreeperDeath extends CreeperCard
       "keepersDiscarded",
       clienttranslate('Death killed <b>${card_name}</b> from ${player_name}'),
       [
+        "i18n" => ["card_name"],
         "player_name" => $game->getActivePlayerName(),
         "card_name" => $card_definition->getName(),
         "cards" => [$card],

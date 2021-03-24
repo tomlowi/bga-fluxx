@@ -661,6 +661,7 @@ class fluxx extends Table
       "win",
       clienttranslate('${player_name} wins with goal <b>${goal_name}</b>'),
       [
+        "i18n" => ["goal_name"],
         "player_id" => $winnerId,
         "player_name" => $players[$winnerId]["player_name"],
         "goal_id" => $winnerInfo["goalId"],
@@ -693,6 +694,7 @@ class fluxx extends Table
             'Creepers prevent ${player_name2} from winning with <b>${goal_name}</b>'
           ),
           [
+            "i18n" => ["goal_name"],
             "goal_name" => $goalCard->getName(),
             "player_name2" => $unlucky_player_name,
           ]

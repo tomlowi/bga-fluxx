@@ -56,6 +56,7 @@ trait ResolveCreeperTrait
 
     $creeperCard = CreeperCardFactory::getCard($card["id"], $card["type_arg"]);
     return [
+      "i18n" => ["action_name"],
       "action_id" => $creeperCard->getCardId(),
       "action_name" => $creeperCard->getName(),
       "action_type" => $creeperCard->interactionNeeded,

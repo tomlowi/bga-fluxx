@@ -55,6 +55,7 @@ class CreeperRadioactivePotato extends CreeperCard
         'Goal change: <b>${card_name}</b> moves to ${player_name2}'
       ),
       [
+        "i18n" => ["card_name"],
         "player_name2" => $destination_player_name,
         "card_name" => $this->name,
         "destination_player_id" => $destination_player_id,

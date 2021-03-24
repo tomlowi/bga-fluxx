@@ -25,6 +25,7 @@ trait ResolveFreeRuleTrait
     $freeRuleCard = RuleCardFactory::getCard($card["id"], $card["type_arg"]);
 
     return [
+      "i18n" => ["action_name"],
       "action_id" => $freeRuleCard->getCardId(),
       "action_name" => $freeRuleCard->getName(),
       "action_type" => $freeRuleCard->interactionNeeded,

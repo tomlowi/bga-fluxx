@@ -184,6 +184,7 @@ class CreeperTaxes extends CreeperCard
       "keepersDiscarded",
       clienttranslate('${player_name} pays <b>${card_name}</b> with Money'),
       [
+        "i18n" => ["card_name"],
         "player_name" => $taxes_player_name,
         "card_name" => $this->name,
         "cards" => [$cardTaxes, $cardMoney],

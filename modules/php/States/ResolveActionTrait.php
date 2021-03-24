@@ -27,6 +27,7 @@ trait ResolveActionTrait
     $actionCard = ActionCardFactory::getCard($card["id"], $card["type_arg"]);
 
     return [
+      "i18n" => ["action_name"],
       "action_id" => $actionCard->getCardId(),
       "action_name" => $actionCard->getName(),
       "action_type" => $actionCard->interactionNeeded,

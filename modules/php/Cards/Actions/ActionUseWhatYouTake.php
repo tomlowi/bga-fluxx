@@ -57,6 +57,7 @@ class ActionUseWhatYouTake extends ActionCard
         '${player_name} took ${card_name} from ${player_name2}\'s hand (and must play it)'
       ),
       [
+        "i18n" => ["card_name"],
         "card_name" => $card_definition->getName(),
         "player_name" => $player_name,
         "player_name2" => $selected_player_name,

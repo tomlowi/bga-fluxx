@@ -18,10 +18,8 @@ class ActionLetsSimplify extends ActionCard
 
     $this->help =
       clienttranslate(
-        "Select any New Rule cards (or none) in play that you want to discard."
-      ) .
-      " " .
-      clienttranslate("Click the button when finished.");
+        "Select any New Rule cards (or none) in play that you want to discard. Click the button when finished."
+      );
   }
 
   public $interactionNeeded = "rulesSelection";

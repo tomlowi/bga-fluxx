@@ -62,6 +62,7 @@ class ActionTrashAKeeper extends ActionCard
       "keepersDiscarded",
       clienttranslate('${player_name} trashed <b>${card_name}</b>'),
       [
+        "i18n" => ["card_name"],
         "player_name" => $game->getActivePlayerName(),
         "card_name" => $card_definition->getName(),
         "cards" => [$card],
