@@ -119,7 +119,7 @@ class CreeperTaxes extends CreeperCard
     $game = Utils::getGame();
     // don't check Taxes again after resolving Taxes itself
     $creeperResolving = $game->getGameStateValue("creeperToResolveCardId");
-    if ($lastPlayedCard["id"] == $creeperResolving) {
+    if ($lastPlayedCard != null && $lastPlayedCard["id"] == $creeperResolving) {
       return null;
     }
 
