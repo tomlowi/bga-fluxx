@@ -372,9 +372,9 @@ define([
         if (cardsCount > maxCardsPerRow * 3) {
           stock.setOverlap(50);
         } else if (cardsCount > maxCardsPerRow * 2) {
-          stock.setOverlap(65);
+          stock.setOverlap(60);
         } else if (cardsCount > maxCardsPerRow * 1) {
-          stock.setOverlap(80);
+          stock.setOverlap(70);
         } else {
           stock.setOverlap(0);
         }

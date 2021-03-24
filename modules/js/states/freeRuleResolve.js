@@ -13,7 +13,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
     onUpdateActionButtonsFreeRuleResolve: function (args) {
       console.log("Update Action Buttons: FreeRuleResolve", args);
 
-      this.displayHelpMessage(args.action_help, "freerule");
+      this.displayHelpMessage(_(args.action_help), "freerule");
       if (this.isCurrentPlayerActive()) {
         method = this.updateActionButtonsFreeRuleResolve[args.action_type];
         method(this, args.action_args);

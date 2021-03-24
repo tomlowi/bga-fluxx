@@ -14,7 +14,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       console.log("Update Action Buttons: ActionResolve", args);
 
       if (this.isCurrentPlayerActive()) {
-        this.displayHelpMessage(args.action_help, "action");
+        this.displayHelpMessage(_(args.action_help), "action");
         method = this.updateActionButtonsActionResolve[args.action_type];
         method(this, args.action_name, args.action_args);
       }
