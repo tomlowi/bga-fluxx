@@ -74,7 +74,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         for (var choice of args) {
           that.addActionButton(
             "button_" + choice.value,
-            choice.label,
+            _(choice.label),
             "onResolveCreeperButtons"
           );
           dojo.attr("button_" + choice.value, "data-value", choice.value);

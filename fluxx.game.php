@@ -680,7 +680,7 @@ class fluxx extends Table
     foreach ($goals as $card_id => $card) {
       $goalCard = GoalCardFactory::getCard($card["id"], $card["type_arg"]);
 
-      $goalReachedByPlayerId = $goalCard->goalReachedByPlayer();
+      $goalReachedByPlayerId = $goalCard->goalReachedByPlayer();      
       if (
         $goalReachedByPlayerId != null &&
         $goalCard->isWinPreventedByCreepers($goalReachedByPlayerId, $goalCard)

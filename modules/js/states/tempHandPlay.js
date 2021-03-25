@@ -33,7 +33,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
           var tmpHand = args.tmpHands[tmpHandId];
           var tmpStockId = tmpHandId + "Stock";
 
-          dojo.place("<h3>" + tmpHand.tmpHandName + "</h3>", tmpHandId);
+          dojo.place("<h3>" + _(tmpHand.tmpHandName) + "</h3>", tmpHandId);
           dojo.place('<div id="' + tmpStockId + '"></div>', tmpHandId);
 
           var tmpHandStock = this.createCardStock(tmpStockId, [

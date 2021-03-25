@@ -81,6 +81,7 @@ class ActionMoveACreeper extends ActionCard
         '${player_name} moved <b>${card_name}</b> from ${player_name1} to ${player_name2}'
       ),
       [
+        "i18n" => ["card_name"],
         "player_name" => $game->getActivePlayerName(),
         "player_name1" => $other_player_name,
         "player_name2" => $selected_player_name,
