@@ -491,7 +491,7 @@ trait PlayCardTrait
     $alreadyPlayed = $game->getGameStateValue("playedCards");
 
     // Ignore this rule if the current Rule card allow you to play only one card
-    if (!$firstPlayRandom || $playRule <= 1 || $alreadyPlayed > 0) {
+    if (!$firstPlayRandom || $playRule == 1 || $alreadyPlayed > 0) {
       return;
     }
 
