@@ -28,6 +28,11 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       console.log("Update Action Buttons: TempHandPlay", args);
 
       if (this.isCurrentPlayerActive()) {
+        // just to be sure, some strange bug reports about "hanging" previous temp hand cards
+        dojo.empty("tmpHand1");
+        dojo.empty("tmpHand2");
+        dojo.empty("tmpHand3");
+
         var tmpHandActive = args.tmpHandActive;
         for (var tmpHandId in args.tmpHands) {
           var tmpHand = args.tmpHands[tmpHandId];
