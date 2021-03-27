@@ -34,40 +34,47 @@
 
   <div class="flx-table-section flx-goal">
     <h3>{GOAL}</h3>
-    <div id="goalsStock"></div>
+    <div id="goalsStock" class="flx-card-stock"></div>
   </div>
 
   <div id="flxDeckBlock" class="flx-table-section flx-deck">
-    <h3>{DECK}</h3>    
-    <div id="discardPileCollapsed" class="flx-discard">
-      <div id="discardToggle" class="flx-toggle"><a id="discardToggleBtn" href="#">{SHOW_DISCARD}</a></div>
-      <div id="discardCount" class="flx-card-count"></div>
-      <div id="discardStock"></div>
-    </div>
-    <div id="deckCard" class="flx-card flx-deck-card">
-      <div id="deckCount" class="flx-card-count"></div>
-    </div>    
-  </div>
-
-  <div class="flx-rules">
-      <div class="flx-table-section flx-card-stack">
-        <h3>{BASICRULES}</h3>
-        <div id="baseRuleCard" class="flx-card-stack-center"></div>
-        <div id="drawRuleStock" class="flx-card-stack-left"></div>
-        <div id="playRuleStock" class="flx-card-stack-right"></div>        
-      </div>
-
-      <div class="flx-table-section flx-rules-limits">
-        <h3>{LIMITRULES}</h3>
-        <div id="limitsStock"></div>
-      </div>
-
-      <div class="flx-table-section flx-rules-other">
-        <h3>{OTHERRULES}</h3>
-        <div id="othersStock"></div>
+    <h3>{DECK}</h3>
+    <div class="flx-deck-wrap">
+      <div class="flx-discard-deck">
+        <div id="discardPileCollapsed" class="flx-discard">
+          <div id="discardToggle" class="flx-toggle"><a id="discardToggleBtn" href="#">{SHOW_DISCARD}</a></div>
+          <div id="discardCount" class="flx-card-count"></div>
+          <div id="discardStock"></div>
+        </div>
+        <div id="deckCard" class="flx-card flx-deck-card">
+          <div id="deckCount" class="flx-card-count"></div>
+        </div>
       </div>
     </div>
   </div>
+
+
+    <div class="flx-table-section flx-rules-basic">
+      <h3>{BASICRULES}</h3>
+      <div class="flx-rules-basic-wrap">
+        <div class="flx-card-stack">
+          <div id="baseRuleCard" class="flx-card-stack-center"></div>
+          <div id="drawRuleStock" class="flx-card-stack-left"></div>
+          <div id="playRuleStock" class="flx-card-stack-right"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flx-table-section flx-rules-limits">
+      <h3>{LIMITRULES}</h3>
+      <div id="limitsStock" class="flx-card-stock"></div>
+    </div>
+
+    <div class="flx-table-section flx-rules-other">
+      <h3>{OTHERRULES}</h3>
+      <div id="othersStock" class="flx-card-stock"></div>
+    </div>
+
 </div>
 
 <div id="discardPileExpanded" class="whiteblock flx-tmp-hand"></div>
