@@ -136,7 +136,7 @@
 .flx-table {
   display: grid;
   grid-template-columns: 1fr 2fr 1fr;
-  grid-template-rows: 1fr 1fr;
+  grid-template-rows: auto auto;
   grid-gap: 8px;
 
   .flx-table-section {
