@@ -38,15 +38,19 @@ class ActionLetsDoThatAgain extends ActionCard
       "discard"
     );
     // have to remove LetsDoThatAgain itself
-    $thisActionCard = null;
+    // and also exclude any "Temp Hand" cards that are still being resolved
+    $tmpHand1CardUniqueId = $game->getGameStateValue("tmpHand1Card");
+    $tmpHand2CardUniqueId = $game->getGameStateValue("tmpHand2Card");
+    $tmpHand3CardUniqueId = $game->getGameStateValue("tmpHand3Card");
     foreach ($actionsInDiscard as $card_id => $card) {
-      if ($card["type_arg"] == $this->getUniqueId()) {
-        $thisActionCard = $card;
-        break;
+      $actionCardUniqueId = $card["type_arg"];
+      if ($actionCardUniqueId == $this->getUniqueId()
+          || $actionCardUniqueId == $tmpHand1CardUniqueId
+          || $actionCardUniqueId == $tmpHand2CardUniqueId
+          || $actionCardUniqueId == $tmpHand3CardUniqueId
+          ) {
+        unset($actionsInDiscard[$card["id"]]);
       }
-    }
-    if ($thisActionCard != null) {
-      unset($actionsInDiscard[$thisActionCard["id"]]);
     }
 
     return $actionsInDiscard;
