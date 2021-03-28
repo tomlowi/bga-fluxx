@@ -59,10 +59,10 @@
       <div class="flx-rules-basic-wrap">
         <div class="flx-card-stack">
           <div id="baseRuleCard" class="flx-card-stack-center">
-            <div id="baseRuleDraw" class="flx-card-title-base card-name card-name-normal">
+            <div id="baseRuleDraw" class="flx-card card-name card-name-normal">
               {BASICRULE_DRAW}
             </div>
-            <div id="baseRulePlay" class="flx-card-title-base card-name card-name-normal">
+            <div id="baseRulePlay" class="flx-card card-name card-name-normal">
               {BASICRULE_PLAY}
             </div>
           </div>
