@@ -677,6 +677,13 @@ class fluxx extends Table
     $winnerId = null;
     $winningGoalCard = null;
     $goals = $this->cards->getCardsInLocation("goals");
+
+    // if more than 2 goals in play (Double Agenda), we have to wait 
+    // until choice has been made which goal to discard (this cannot win)
+    if (count($goals) > 2) {
+      return null;
+    }
+
     foreach ($goals as $card_id => $card) {
       $goalCard = GoalCardFactory::getCard($card["id"], $card["type_arg"]);
 
@@ -729,7 +736,7 @@ class fluxx extends Table
         // some player reached this goal
         if ($winnerId != null && $goalReachedByPlayerId != $winnerId) {
           // if multiple goals reached by different players, keep playing
-          return;
+          return null;
         }
         // this player is the winner, unless someone else also reached another goal
         $winnerId = $goalReachedByPlayerId;
@@ -738,7 +745,7 @@ class fluxx extends Table
     }
 
     if ($winnerId == null) {
-      return;
+      return null;
     }
 
     return [
@@ -788,6 +795,9 @@ class fluxx extends Table
 
     self::setGameStateValue("lastGoalBeforeDoubleAgenda", -1);
     $this->gamestate->nextstate("");
+
+    // check win *after* decision which goals to keep
+    $this->checkWinConditions();
   }
 
   //////////////////////////////////////////////////////////////////////////////
