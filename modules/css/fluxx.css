@@ -506,21 +506,41 @@
 
 .flx-table .flx-rules-basic .flx-rules-basic-wrap .flx-card-stack .flx-card-stack-left {
   position: absolute;
-  top: 6px;
-  left: -84px;
+  top: 4px;
+  left: 2px;
 }
 
 .flx-table .flx-rules-basic .flx-rules-basic-wrap .flx-card-stack .flx-card-stack-right {
   position: absolute;
-  top: 6px;
-  left: 84px;
+  top: 4px;
+  left: 164px;
 }
 
 .flx-table #baseRuleCard {
-  width: 150px;
-  height: 100px;
+  width: 318px;
+  height: 240px;
+  margin-bottom: 2px;
   background-image: url("img/basicrule.png");
   background-repeat: no-repeat;
+  position: relative;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.flx-table #baseRuleCard #baseRuleDraw {
+  position: absolute;
+  top: 40px;
+  width: 150px;
+  left: 2px;
+  text-align: center;
+}
+
+.flx-table #baseRuleCard #baseRulePlay {
+  position: absolute;
+  top: 40px;
+  width: 150px;
+  left: 164px;
+  text-align: center;
 }
 
 .flx-table {

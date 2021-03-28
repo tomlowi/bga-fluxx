@@ -113,23 +113,43 @@
         }
         .flx-card-stack-left {
           position: absolute;
-          top: 6px;
-          left: -84px;
+          top: 4px;
+          left: 2px;
         }
         .flx-card-stack-right {
           position: absolute;
-          top: 6px;
-          left: 84px;
+          top: 4px;
+          left: 164px;
         }
       }
     }
   }
 
   #baseRuleCard {
-    width: $card-width;
-    height: 100px;
+    width: 318px;
+    height: 240px;
+    margin-bottom: 2px;
     background-image: url("img/basicrule.png");
     background-repeat: no-repeat;
+    position: relative;
+
+    font-weight: bold;
+    font-size: 16px;
+
+    #baseRuleDraw {
+      position: absolute;
+      top: 40px;
+      width: $card-width;
+      left: 2px;
+      text-align: center;
+    }
+    #baseRulePlay {
+      position: absolute;
+      top: 40px;
+      width: $card-width;
+      left: 164px;
+      text-align: center;
+    }
   }
 }
 

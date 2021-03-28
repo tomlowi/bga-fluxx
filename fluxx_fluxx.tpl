@@ -58,7 +58,14 @@
       <h3>{BASICRULES}</h3>
       <div class="flx-rules-basic-wrap">
         <div class="flx-card-stack">
-          <div id="baseRuleCard" class="flx-card-stack-center"></div>
+          <div id="baseRuleCard" class="flx-card-stack-center">
+            <div id="baseRuleDraw" class="flx-card-title-base card-name card-name-normal">
+              {BASICRULE_DRAW}
+            </div>
+            <div id="baseRulePlay" class="flx-card-title-base card-name card-name-normal">
+              {BASICRULE_PLAY}
+            </div>
+          </div>
           <div id="drawRuleStock" class="flx-card-stack-left"></div>
           <div id="playRuleStock" class="flx-card-stack-right"></div>
         </div>

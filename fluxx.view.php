@@ -45,6 +45,8 @@ class view_fluxx_fluxx extends game_view
     $this->tpl["MY_HAND"] = self::_("My hand");
     $this->tpl["MY_KEEPERS"] = self::_("My keepers");
     $this->tpl["BASICRULES"] = self::_("Basic Rules");
+    $this->tpl["BASICRULE_DRAW"] = self::_("Draw 1");
+    $this->tpl["BASICRULE_PLAY"] = self::_("Play 1");
     $this->tpl["LIMITRULES"] = self::_("Limits");
     $this->tpl["OTHERRULES"] = self::_("Extra Rules");
     $this->tpl["GOAL"] = self::_("Goal");
