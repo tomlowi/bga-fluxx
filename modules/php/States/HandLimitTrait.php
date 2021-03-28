@@ -79,6 +79,7 @@ trait HandLimitTrait
       : "";
 
     return [
+      "i18n" => ["warnInflation"],
       "limit" => $this->getHandLimit(),
       "warnInflation" => $warnInflation,
       "_private" => $this->getHandInfractions(),
@@ -95,6 +96,7 @@ trait HandLimitTrait
     $playersInfraction = $this->getHandInfractions([$player_id]);
 
     $out = [
+      "i18n" => ["warnInflation"],
       "limit" => $this->getHandLimit(),
       "warnInflation" => $warnInflation,
       "_private" => [

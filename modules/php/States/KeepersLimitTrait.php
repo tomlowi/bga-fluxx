@@ -81,6 +81,7 @@ trait KeepersLimitTrait
       : "";
 
     return [
+      "i18n" => ["warnInflation"],
       "limit" => $this->getKeepersLimit(),
       "warnInflation" => $warnInflation,
       "_private" => $this->getKeepersInfractions(),
@@ -97,6 +98,7 @@ trait KeepersLimitTrait
     $playersInfraction = $this->getKeepersInfractions([$player_id]);
 
     return [
+      "i18n" => ["warnInflation"],
       "limit" => $this->getKeepersLimit(),
       "warnInflation" => $warnInflation,
       "_private" => [
