@@ -33,11 +33,21 @@ trait DrawCardsTrait
     $partyBonus = Utils::calculatePartyBonus($player_id);
     $poorBonus = Utils::calculatePoorBonus($player_id);
 
+    $cardsToDraw = $drawRule + $addInflation + $partyBonus + $poorBonus;
+    // PlayAllBut1: If you started with no cards in your hand and only drew 1, draw an extra card.
+    // => don't apply inflation on this
+    if ($cardsInHand == 0 && $cardsToDraw == 1) {
+      $playRule = $game->getGameStateValue("playRule");
+      if ($playRule == -1) {
+        $cardsToDraw += 1;
+      }      
+    }    
+
     // entering this state, so this player can always draw for current draw rule
     // postpone creepers to be resolved until after all cards drawn
     $game->performDrawCards(
       $player_id,
-      $drawRule + $addInflation + $partyBonus + $poorBonus,
+      $cardsToDraw,
       true
     );
     $game->setGameStateValue("drawnCards", $drawRule);
