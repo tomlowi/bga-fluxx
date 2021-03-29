@@ -86,5 +86,7 @@ class ActionLetsSimplify extends ActionCard
         "discardCount" => $game->cards->countCardInLocation("discard"),
       ]
     );
+
+    return "rulesChanged";
   }
 }

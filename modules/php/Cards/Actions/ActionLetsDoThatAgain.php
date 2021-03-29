@@ -66,7 +66,7 @@ class ActionLetsDoThatAgain extends ActionCard
     if (count($rulesInDiscard) == 0 && count($actionsInDiscard) == 0) {
       // no rules or actions in the discard, this action does nothing
       $game->notifyAllPlayers(
-        "",
+        "actionIgnored",
         clienttranslate(
           'There are no rule or action cards in the discard pile!'
         ), ["player_id" => $player_id]
