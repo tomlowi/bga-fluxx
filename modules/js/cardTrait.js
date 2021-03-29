@@ -19,7 +19,8 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         ["cardFromTableToHand", null],
         ["handCountUpdate", null],
         ["reshuffle", null],
-        ["tmpHandDiscarded", 500]
+        ["tmpHandDiscarded", 500],
+        ["forcedCardNotification", null]
       );
     },
 
@@ -412,6 +413,16 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       this.discardCards(cards, undefined, player_id);
 
       this.discardCounter.toValue(notif.args.discardCount);
+    },
+
+    notif_forcedCardNotification: function (notif) {
+      var card_trigger = notif.args.card_trigger;
+      var card_forced = notif.args.card_forced;
+
+      this.showNotificationBubble(
+        _(card_trigger) + ": <b>" + _(card_forced) + "</b>"
+      );
+      setTimeout(() => this.hideNotificationBubble(), 3000);
     },
   });
 });

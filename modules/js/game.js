@@ -67,5 +67,19 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui"], (dojo, declare) => {
     resetHelpMessage: function () {
       this.changeInnerHtml("flx_help_msg", "");
     },
+
+    /*
+     * Bubble management
+     */
+    showNotificationBubble: function (message) {
+      const itemId = "flxMyNotification";
+      $(itemId).innerHTML = message;
+      dojo.addClass(itemId, "flx-notification-bubble--visible");
+    },
+
+    hideNotificationBubble: function () {
+      const itemId = "flxMyNotification";
+      dojo.removeClass(itemId, "flx-notification-bubble--visible");
+    },
   });
 });
