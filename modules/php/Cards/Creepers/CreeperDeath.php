@@ -38,23 +38,30 @@ class CreeperDeath extends CreeperCard
   public function onTurnStart()
   {
     $game = Utils::getGame();
+
     // check who has Death in play now
-    $cardDeath = array_values(
-      $game->cards->getCardsOfType("creeper", $this->uniqueId)
-    )[0];
+    $death_player = $this->findPlayerWithDeath();
     // if nobody, nothing to do
-    if ($cardDeath["location"] != "keepers") {
+    if ($death_player == null) {
       return null;
     }
 
     $active_player_id = $game->getActivePlayerId();
-    $death_player_id = $cardDeath["location_arg"];
+    $death_player_id = $death_player["player_id"];
+    $cardDeath = $death_player["death_card"];
     // Death is not with active player
     if ($active_player_id != $death_player_id) {
       return null;
     }
-    // if Death already executed, nothing to do
-    if (0 != $game->getGameStateValue("creeperTurnStartDeathExecuted")) {
+    // if Death already resolved once on turn start, nothing to do
+    // Unless Death is now the only thing remaining for this player!
+    $deathCheckCount = $game->getGameStateValue("creeperTurnStartDeathExecuted");
+    if ($deathCheckCount == 1) {
+      $keepersInPlay = $game->cards->countCardInLocation("keepers", $active_player_id);
+      if ($keepersInPlay > 1) {
+        return null;
+      }
+    } else if ($deathCheckCount > 1) {
       return null;
     }
     // Current player has Death and must still resolve it
@@ -66,8 +73,83 @@ class CreeperDeath extends CreeperCard
 
   public function onCheckResolveKeepersAndCreepers($lastPlayedCard)
   {
+    // Death can also be discarded any time it stands alone    
+    $game = Utils::getGame();
+    // don't check Death again after resolving Death itself
+    $creeperResolving = $game->getGameStateValue("creeperToResolveCardId");
+    if ($lastPlayedCard != null && $lastPlayedCard["id"] == $creeperResolving) {
+      return null;
+    }
+
+    // Attempt to not have to ask player to discard Death after every single play
+    // Probably it is sufficient to ask on turn start, and then only if
+    // certain cards have been played like Death itself, goal changes,
+    // keepers/creepers moved around
+
+    $interestingCards = [
+      53 => "Death",
+      // Actions that mess with Keepers
+      301 => "",
+      314 => "",
+      320 => "",
+      321 => "",
+      // Actions that mess with Creepers
+      351 => "",
+      352 => "",
+      353 => "",
+      354 => "",
+    ];
+
+    if (
+      $lastPlayedCard == null ||
+      $lastPlayedCard["type"] == "goal" ||
+      array_key_exists($lastPlayedCard["type_arg"], $interestingCards)
+    ) {
+      return $this->checkResolveDeathAlone();
+    }
+
     return null;
   }
+
+  private function findPlayerWithDeath()
+  {
+    $game = Utils::getGame();
+    // check who has Death in play now
+    $death_card = array_values(
+      $game->cards->getCardsOfType("creeper", $this->uniqueId)
+    )[0];
+    // if nobody, nothing to do
+    if ($death_card["location"] != "keepers") {
+      return null;
+    }
+
+    $death_player_id = $death_card["location_arg"];
+    return [
+      "player_id" => $death_player_id,
+      "death_card" => $death_card,
+    ];
+  }
+
+  private function checkResolveDeathAlone()
+  {
+    $game = Utils::getGame();
+    // check who has Death in play now
+    $death_player = $this->findPlayerWithDeath();
+    if ($death_player == null) {
+      return null;
+    }
+    $death_player_id = $death_player["player_id"];
+    // is it the only thing in play for this player?
+    $keepersInPlay = $game->cards->countCardInLocation("keepers", $death_player_id);
+    if ($keepersInPlay > 1) {
+      return null;
+    }    
+    // if it is, let this player decide again to keep Death or discard it
+    $death_card = $death_player["death_card"];
+    $game->setGameStateValue("creeperToResolvePlayerId", $death_player_id);
+    $game->setGameStateValue("creeperToResolveCardId", $death_card["id"]);
+    return parent::onCheckResolveKeepersAndCreepers($death_card);
+  }  
 
   public function resolvedBy($player_id, $args)
   {
@@ -99,7 +181,7 @@ class CreeperDeath extends CreeperCard
 
     if ($card == null) {
       // Player has only Death and decided to keep it
-      $game->setGameStateValue("creeperTurnStartDeathExecuted", 1);
+      $game->incGameStateValue("creeperTurnStartDeathExecuted", 1);
       return;
     }
 
@@ -122,7 +204,7 @@ class CreeperDeath extends CreeperCard
       );
     }
 
-    $game->setGameStateValue("creeperTurnStartDeathExecuted", 1);
+    $game->incGameStateValue("creeperTurnStartDeathExecuted", 1);
     // move this keeper/creeper to the discard
     $game->cards->playCard($card["id"]);
 
@@ -130,6 +212,7 @@ class CreeperDeath extends CreeperCard
       "keepersDiscarded",
       clienttranslate('Death killed <b>${card_name}</b> from ${player_name}'),
       [
+        "i18n" => ["card_name"],
         "player_name" => $game->getActivePlayerName(),
         "card_name" => $card_definition->getName(),
         "cards" => [$card],

@@ -37,19 +37,36 @@ class ActionTodaysSpecial extends ActionCard
 
     $value = $args["value"];
     $nrCardsToDraw = 3;
+    $choiceLabel = "";
 
     switch ($value) {
       case "birthday":
         $nrCardsToPlay = 3;
+        $choiceLabel = clienttranslate("It's my Birthday!");
         break;
       case "holiday":
         $nrCardsToPlay = 2;
+        $choiceLabel = clienttranslate("Holiday or Anniversary");
         break;
       default:
         $nrCardsToPlay = 1;
+        $choiceLabel = clienttranslate("Just another day...");
     }
 
     $nrCardsToPlay;
+
+    // notify about choice made
+    $players = $game->loadPlayersBasicInfos();
+    $game->notifyAllPlayers(
+      "todayIsSpecial",
+      clienttranslate('${player_name} says: ${today_choice}'),
+      [
+        "i18n" => ["today_choice"],
+        "player_id" => $player_id,
+        "player_name" => $players[$player_id]["player_name"],
+        "today_choice" => $choiceLabel,
+      ]
+    );
 
     // determine temp hand to be used
     $tmpHandActive = Utils::getActiveTempHand();

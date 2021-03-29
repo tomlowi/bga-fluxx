@@ -79,6 +79,7 @@ class ActionStealAKeeper extends ActionCard
         '${player_name} stole <b>${card_name}</b> from ${player_name2}'
       ),
       [
+        "i18n" => ["card_name"],
         "player_name" => $game->getActivePlayerName(),
         "player_name2" => $other_player_name,
         "card_name" => $card_definition->getName(),

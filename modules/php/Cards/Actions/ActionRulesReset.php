@@ -24,5 +24,7 @@ class ActionRulesReset extends ActionCard
     $game->discardRuleCardsForType("keepersLimit");
     $game->discardRuleCardsForType("handLimit");
     $game->discardRuleCardsForType("others");
+
+    return "rulesChanged";
   }
 }

@@ -14,7 +14,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       console.log("Update Action Buttons: CreeperResolve", args);
 
       if (this.isCurrentPlayerActive()) {
-        this.displayHelpMessage(args.action_help, "creeper");
+        this.displayHelpMessage(_(args.action_help), "creeper");
         method = this.updateActionButtonsCreeperResolve[args.action_type];
         method(this, args.action_args);
       }
@@ -74,7 +74,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         for (var choice of args) {
           that.addActionButton(
             "button_" + choice.value,
-            choice.label,
+            _(choice.label),
             "onResolveCreeperButtons"
           );
           dojo.attr("button_" + choice.value, "data-value", choice.value);

@@ -18,10 +18,8 @@ class RuleGoalMill extends RuleCard
 
     $this->help =
       clienttranslate(
-        "Select any number of goal cards in your hand to discard."
-      ) .
-      " " .
-      clienttranslate("Click the button when finished.");
+        "Select any number of goal cards in your hand to discard. Click the button when finished."
+      );
   }
 
   public $interactionNeeded = "handCardsSelection";

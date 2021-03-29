@@ -43,6 +43,7 @@ trait TempHandPlayTrait
     }
 
     return [
+      "i18n" => ["tmpHandName"],
       "tmpHandActive" => $tmpHandLocation,
       "tmpHandName" => $tmpHandName,
       "tmpToPlay" => $tmpToPlay,

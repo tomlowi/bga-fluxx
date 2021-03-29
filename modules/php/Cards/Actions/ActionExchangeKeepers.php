@@ -106,6 +106,7 @@ class ActionExchangeKeepers extends ActionCard
         '${player_name} got <b>${other_keeper_name}</b> from ${player_name2} in exchange for <b>${my_keeper_name}</b>'
       ),
       [
+        "i18n" => ["other_keeper_name", "my_keeper_name"],
         "player_name" => $game->getActivePlayerName(),
         "player_name2" => $other_player_name,
         "other_keeper_name" => $otherKeeperCard->getName(),

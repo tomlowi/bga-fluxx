@@ -16,9 +16,9 @@ class ActionEverybodyGets1 extends ActionCard
     );
 
     $this->help =
-      clienttranslate("Select what you want to distribute to this player.") .
-      " " .
-      clienttranslate("Click the button when finished.");
+      clienttranslate(
+        "Select what you want to distribute to this player. Click the button when finished."
+      );
   }
 
   public $interactionNeeded = "tmpCardsSelectionForPlayer";
@@ -110,6 +110,10 @@ class ActionEverybodyGets1 extends ActionCard
     );
     if ($countToDistribute > 0) {
       return parent::immediateEffectOnPlay($player_id);
+    } else {
+      // we gave cards to other players: check for hand limits
+      $game->sendHandCountNotifications();
+      return "handsExchangeOccured";
     }
   }
 }

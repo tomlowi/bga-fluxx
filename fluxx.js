@@ -215,6 +215,9 @@ define([
           dojo.place(
             this.format_block("jstpl_player_board", {
               id: player_id,
+              tooltipCardsInHand: _("# cards in hand"),
+              tooltipKeepersInPlay: _("# keepers on table"),
+              tooltipCreepersInPlay: _("# creepers on table"),
             }),
             player_board_div
           );
@@ -289,7 +292,7 @@ define([
           if (cardDefinition.type == "keeper") {
             var params = {
               id: id,
-              name: cardDefinition.name,
+              name: _(cardDefinition.name),
               offset: (id - 1) * 100,
             };
             var panelKeeper = this.format_block("jstpl_panel_keeper", params);
@@ -297,7 +300,7 @@ define([
           } else if (cardDefinition.type == "creeper") {
             var params = {
               id: id,
-              name: cardDefinition.name,
+              name: _(cardDefinition.name),
               offset: (keeperCount + (id - 50) - 1) * 100,
             };
             var panelCreeper = this.format_block("jstpl_panel_keeper", params);
@@ -367,9 +370,9 @@ define([
       adaptCardOverlapsForStock(stock, maxCardsPerRow) {
         var cardsCount = stock.count();
         if (cardsCount > maxCardsPerRow * 3) {
-          stock.setOverlap(50);
+          stock.setOverlap(60);
         } else if (cardsCount > maxCardsPerRow * 2) {
-          stock.setOverlap(65);
+          stock.setOverlap(70);
         } else if (cardsCount > maxCardsPerRow * 1) {
           stock.setOverlap(80);
         } else {
@@ -383,7 +386,7 @@ define([
           set: "base",
           name: _("Basic Rules"),
           subtitle: "",
-          description: "Draw 1 card, then Play 1 card",
+          description: _("Draw 1 card, then Play 1 card"),
           type: "rule",
           typeName: "",
           id: 0,
@@ -647,13 +650,13 @@ define([
 
         var card = {
           set: cardDefinition.set,
-          name: cardDefinition.name,
+          name: _(cardDefinition.name),
           nameLength: "normal",
-          subtitle: cardDefinition.subtitle || "",
-          description: cardDefinition.description || "",
+          subtitle: _(cardDefinition.subtitle || ""),
+          description: _(cardDefinition.description || ""),
           descLength: "normal",
           type: cardDefinition.type,
-          typeName: this.cardTypesDefinitions[cardDefinition.type],
+          typeName: _(this.cardTypesDefinitions[cardDefinition.type]),
           id: card_type_id,
         };
 

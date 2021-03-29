@@ -54,6 +54,7 @@ trait RockPaperScissorsTrait
         "resultRockPaperScissors",
         clienttranslate('Tie: both players picked ${choice}, try again.'),
         [
+          "i18n" => ["choice"],
           "choice" => $options[$challenger_choice],
         ]
       );
@@ -85,6 +86,7 @@ trait RockPaperScissorsTrait
         '${player_name} wins this round: ${challenger_choice} ${result_msg} ${defender_choice}'
       ),
       [
+        "i18n" => ["challenger_choice", "result_msg", "defender_choice"],
         "player_name" => $players[$winner_id]["player_name"],
         "challenger_choice" => $options[$challenger_choice],
         "defender_choice" => $options[$defender_choice],

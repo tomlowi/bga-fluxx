@@ -38,15 +38,19 @@ class ActionLetsDoThatAgain extends ActionCard
       "discard"
     );
     // have to remove LetsDoThatAgain itself
-    $thisActionCard = null;
+    // and also exclude any "Temp Hand" cards that are still being resolved
+    $tmpHand1CardUniqueId = $game->getGameStateValue("tmpHand1Card");
+    $tmpHand2CardUniqueId = $game->getGameStateValue("tmpHand2Card");
+    $tmpHand3CardUniqueId = $game->getGameStateValue("tmpHand3Card");
     foreach ($actionsInDiscard as $card_id => $card) {
-      if ($card["type_arg"] == $this->getUniqueId()) {
-        $thisActionCard = $card;
-        break;
+      $actionCardUniqueId = $card["type_arg"];
+      if ($actionCardUniqueId == $this->getUniqueId()
+          || $actionCardUniqueId == $tmpHand1CardUniqueId
+          || $actionCardUniqueId == $tmpHand2CardUniqueId
+          || $actionCardUniqueId == $tmpHand3CardUniqueId
+          ) {
+        unset($actionsInDiscard[$card["id"]]);
       }
-    }
-    if ($thisActionCard != null) {
-      unset($actionsInDiscard[$thisActionCard["id"]]);
     }
 
     return $actionsInDiscard;
@@ -62,9 +66,9 @@ class ActionLetsDoThatAgain extends ActionCard
     if (count($rulesInDiscard) == 0 && count($actionsInDiscard) == 0) {
       // no rules or actions in the discard, this action does nothing
       $game->notifyAllPlayers(
-        "",
+        "actionIgnored",
         clienttranslate(
-          "There are no rule or action cards in the discard pile!"
+          'There are no rule or action cards in the discard pile!'
         ), ["player_id" => $player_id]
       );
 
@@ -115,6 +119,7 @@ class ActionLetsDoThatAgain extends ActionCard
         '${player_name} took <b>${card_name}</b> from the discard pile (and must play it)'
       ),
       [
+        "i18n" => ["card_name"],
         "card_name" => $card_definition->getName(),
         "player_name" => $game->getActivePlayerName(),
       ]

@@ -74,19 +74,31 @@ trait HandLimitTrait
 
   public function arg_enforceHandLimitForOthers()
   {
+    $warnInflation = Utils::getActiveInflation() 
+      ? clienttranslate('<span class="flx-warn-inflation">(+1 Inflation)</span>')
+      : "";
+
     return [
+      "i18n" => ["warnInflation"],
       "limit" => $this->getHandLimit(),
+      "warnInflation" => $warnInflation,
       "_private" => $this->getHandInfractions(),
     ];
   }
 
   public function arg_enforceHandLimitForSelf()
   {
+    $warnInflation = Utils::getActiveInflation() 
+      ? clienttranslate('<span class="flx-warn-inflation">(+1 Inflation)</span>')
+      : "";
+
     $player_id = self::getActivePlayerId();
     $playersInfraction = $this->getHandInfractions([$player_id]);
 
     $out = [
+      "i18n" => ["warnInflation"],
       "limit" => $this->getHandLimit(),
+      "warnInflation" => $warnInflation,
       "_private" => [
         "active" => $playersInfraction[$player_id] ?? ["count" => 0],
       ],

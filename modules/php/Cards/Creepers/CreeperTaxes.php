@@ -119,7 +119,7 @@ class CreeperTaxes extends CreeperCard
     $game = Utils::getGame();
     // don't check Taxes again after resolving Taxes itself
     $creeperResolving = $game->getGameStateValue("creeperToResolveCardId");
-    if ($lastPlayedCard["id"] == $creeperResolving) {
+    if ($lastPlayedCard != null && $lastPlayedCard["id"] == $creeperResolving) {
       return null;
     }
 
@@ -184,6 +184,7 @@ class CreeperTaxes extends CreeperCard
       "keepersDiscarded",
       clienttranslate('${player_name} pays <b>${card_name}</b> with Money'),
       [
+        "i18n" => ["card_name"],
         "player_name" => $taxes_player_name,
         "card_name" => $this->name,
         "cards" => [$cardTaxes, $cardMoney],

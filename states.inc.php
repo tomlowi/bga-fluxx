@@ -95,10 +95,10 @@ $machinestates = [
   STATE_PLAY_CARD => [
     "name" => "playCard",
     "description" => clienttranslate(
-      '${actplayer} must play ${countLabel} card(s)'
+      '${actplayer} must play ${countLabelText}${countLabelNr} card(s)'
     ),
     "descriptionmyturn" => clienttranslate(
-      '${you} must play ${countLabel} card(s)'
+      '${you} must play ${countLabelText}${countLabelNr} card(s)'
     ),
     "type" => "activeplayer",
     "action" => "st_playCard",
@@ -110,6 +110,7 @@ $machinestates = [
       "keepersExchangeOccured" => STATE_ENFORCE_KEEPERS_LIMIT_OTHERS,
       "endOfTurn" => STATE_ENFORCE_HAND_LIMIT_SELF,
       "doubleAgendaRule" => STATE_GOAL_CLEANING,
+      "rulesChanged" => STATE_GOAL_CLEANING,
 
       "resolveActionCard" => STATE_RESOLVE_ACTION,
       "resolveFreeRule" => STATE_RESOLVE_FREE_RULE,
@@ -125,10 +126,10 @@ $machinestates = [
   STATE_ENFORCE_HAND_LIMIT_OTHERS => [
     "name" => "enforceHandLimitForOthers",
     "description" => clienttranslate(
-      'Some players must discard cards for Hand Limit ${limit}'
+      'Some players must discard card(s) for Hand Limit ${limit}${warnInflation}'
     ),
     "descriptionmyturn" => clienttranslate(
-      '${you} must discard ${_private.count} cards for Hand Limit ${limit}'
+      '${you} must discard ${_private.count} card(s) for Hand Limit ${limit}${warnInflation}'
     ),
     "type" => "multipleactiveplayer",
     "args" => "arg_enforceHandLimitForOthers",
@@ -140,10 +141,10 @@ $machinestates = [
   STATE_ENFORCE_KEEPERS_LIMIT_OTHERS => [
     "name" => "enforceKeepersLimitForOthers",
     "description" => clienttranslate(
-      'Some players must remove keepers for Keeper Limit ${limit}'
+      'Some players must remove keeper(s) for Keeper Limit ${limit}${warnInflation}'
     ),
     "descriptionmyturn" => clienttranslate(
-      '${you} must remove ${_private.count} keepers for Keeper Limit ${limit}'
+      '${you} must remove ${_private.count} keeper(s) for Keeper Limit ${limit}${warnInflation}'
     ),
     "type" => "multipleactiveplayer",
     "args" => "arg_enforceKeepersLimitForOthers",
@@ -155,10 +156,10 @@ $machinestates = [
   STATE_ENFORCE_HAND_LIMIT_SELF => [
     "name" => "enforceHandLimitForSelf",
     "description" => clienttranslate(
-      '${actplayer} must discard card(s) for Hand Limit ${limit}'
+      '${actplayer} must discard card(s) for Hand Limit ${limit}${warnInflation}'
     ),
     "descriptionmyturn" => clienttranslate(
-      '${you} must discard ${_private.count} card(s) for Hand Limit ${limit}'
+      '${you} must discard ${_private.count} card(s) for Hand Limit ${limit}${warnInflation}'
     ),
     "type" => "activeplayer",
     "args" => "arg_enforceHandLimitForSelf",
@@ -170,10 +171,10 @@ $machinestates = [
   STATE_ENFORCE_KEEPERS_LIMIT_SELF => [
     "name" => "enforceKeepersLimitForSelf",
     "description" => clienttranslate(
-      '${actplayer} must remove keepers(s) for Keeper Limit ${limit}'
+      '${actplayer} must remove keeper(s) for Keeper Limit ${limit}${warnInflation}'
     ),
     "descriptionmyturn" => clienttranslate(
-      '${you} must remove ${_private.count} keeper(s) for Keeper Limit ${limit}'
+      '${you} must remove ${_private.count} keeper(s) for Keeper Limit ${limit}${warnInflation}'
     ),
     "type" => "activeplayer",
     "args" => "arg_enforceKeepersLimitForSelf",
@@ -224,16 +225,17 @@ $machinestates = [
       "playRockPaperScissors" => STATE_ROCKPAPERSCISSORS,
       "resolveActionCard" => STATE_RESOLVE_ACTION,
       "zombiePass" => STATE_PLAY_CARD,
+      "endOfTurn" => STATE_ENFORCE_HAND_LIMIT_SELF,
     ],
   ],
 
   STATE_ROCKPAPERSCISSORS => [
     "name" => "playRockPaperScissors",
     "description" => clienttranslate(
-      '${challenger_name} and ${defender_name} are playing Rock Paper Scissors (${challenger_wins} - ${defender_wins})'
+      '${challenger_name} and ${defender_name} are playing Rock-Paper-Scissors (${challenger_wins} - ${defender_wins})'
     ),
     "descriptionmyturn" => clienttranslate(
-      '${you} are playing Rock Paper Scissors against ${_private.opponent_name} (${_private.my_wins} - ${_private.opponent_wins})'
+      '${you} are playing Rock-Paper-Scissors against ${_private.opponent_name} (${_private.my_wins} - ${_private.opponent_wins})'
     ),
     "type" => "multipleactiveplayer",
     "args" => "arg_playRockPaperScissors",
@@ -279,6 +281,7 @@ $machinestates = [
       "resolveCreeper" => STATE_RESOLVE_CREEPER_INPLAY,
       "endGame" => STATE_GAME_END,
       "zombiePass" => STATE_PLAY_CARD,
+      "endOfTurn" => STATE_ENFORCE_HAND_LIMIT_SELF,
     ],
   ],
 
@@ -301,9 +304,12 @@ $machinestates = [
     "transitions" => [
       "resolveCreeper" => STATE_RESOLVE_CREEPER_INPLAY,
       "resolvedCreeper" => STATE_PLAY_CARD,
+      "resolvedFreeRule" => STATE_PLAY_CARD,
+      "resolvedAction" => STATE_PLAY_CARD,
       "continuePlay" => STATE_PLAY_CARD,
       "endGame" => STATE_GAME_END,
       "zombiePass" => STATE_PLAY_CARD,
+      "endOfTurn" => STATE_ENFORCE_HAND_LIMIT_SELF,
     ],
   ],
 
@@ -326,6 +332,7 @@ $machinestates = [
     "transitions" => [
       "resolvedCreeper" => STATE_NEXT_PLAYER_TURNSTART_CREEPERS,
       "zombiePass" => STATE_NEXT_PLAYER_TURNSTART_CREEPERS,
+      "endOfTurn" => STATE_ENFORCE_HAND_LIMIT_SELF,
     ],
   ],
 
@@ -344,6 +351,7 @@ $machinestates = [
     "transitions" => [
       "selectedCard" => STATE_PLAY_CARD,
       "zombiePass" => STATE_PLAY_CARD,
+      "endOfTurn" => STATE_ENFORCE_HAND_LIMIT_SELF,
     ],
   ],
 

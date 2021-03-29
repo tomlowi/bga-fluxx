@@ -76,19 +76,31 @@ trait KeepersLimitTrait
 
   public function arg_enforceKeepersLimitForOthers()
   {
+    $warnInflation = Utils::getActiveInflation() 
+      ? clienttranslate('<span class="flx-warn-inflation">(+1 Inflation)</span>')
+      : "";
+
     return [
+      "i18n" => ["warnInflation"],
       "limit" => $this->getKeepersLimit(),
+      "warnInflation" => $warnInflation,
       "_private" => $this->getKeepersInfractions(),
     ];
   }
 
   public function arg_enforceKeepersLimitForSelf()
   {
+    $warnInflation = Utils::getActiveInflation() 
+      ? clienttranslate('<span class="flx-warn-inflation">(+1 Inflation)</span>')
+      : "";
+    
     $player_id = self::getActivePlayerId();
     $playersInfraction = $this->getKeepersInfractions([$player_id]);
 
     return [
+      "i18n" => ["warnInflation"],
       "limit" => $this->getKeepersLimit(),
+      "warnInflation" => $warnInflation,
       "_private" => [
         "active" => $playersInfraction[$player_id] ?? ["count" => 0],
       ],

@@ -349,11 +349,24 @@
 
 #flx-win-dialog-goal {
   height: 253px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: space-evenly;
+  -ms-flex-pack: space-evenly;
+  justify-content: space-evenly;
 }
 
 #flx-win-dialog-goal .stockitem {
-  left: 100px !important;
-  top: 100px !important;
+  position: relative !important;
+  margin-top: 10px;
+  top: 0px !important;
+  left: 0px !important;
+}
+
+.flx-warn-inflation {
+  margin-left: 2px;
+  color: #d7b424;
 }
 
 .flx-tmp-hand:empty {
@@ -432,35 +445,50 @@
   height: 233px;
 }
 
+.flx-table .flx-card-stock {
+  margin-left: 5px;
+}
+
 .flx-table .flx-goal {
   position: relative;
-  min-height: 420px;
 }
 
 .flx-table .flx-deck {
-  position: relative;
   min-width: 305px;
 }
 
-.flx-table .flx-deck .flx-deck-card {
+.flx-table .flx-deck .flx-deck-wrap {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-pack: distribute;
+  justify-content: space-around;
+}
+
+.flx-table .flx-deck .flx-deck-wrap .flx-discard-deck {
+  position: relative;
+}
+
+.flx-table .flx-deck .flx-deck-wrap .flx-deck-card {
   position: absolute;
-  left: 152px;
+  left: 0px;
   background-image: url("img/cards.png");
   background-position: -1500% -500%;
 }
 
-.flx-table .flx-deck .flx-deck-card.flx-deck-empty {
+.flx-table .flx-deck .flx-deck-wrap .flx-deck-card.flx-deck-empty {
   background-position: -1600% -500%;
 }
 
-.flx-table .flx-deck .flx-discard {
+.flx-table .flx-deck .flx-deck-wrap .flx-discard {
   -webkit-transition: left 1s;
   transition: left 1s;
   position: absolute;
+  left: -152px;
   border: 1px;
 }
 
-.flx-table .flx-deck .flx-toggle {
+.flx-table .flx-deck .flx-deck-wrap .flx-toggle {
   position: absolute;
   z-index: 200;
   background: #fff8;
@@ -468,7 +496,7 @@
   left: 5px;
 }
 
-.flx-table .flx-deck .flx-card-count {
+.flx-table .flx-deck .flx-deck-wrap .flx-card-count {
   position: absolute;
   z-index: 200;
   bottom: 5px;
@@ -482,42 +510,80 @@
   background: #fff8;
 }
 
-.flx-table .flx-rules .flx-card-stack {
+.flx-table .flx-rules-basic .flx-rules-basic-wrap {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-pack: distribute;
+  justify-content: space-around;
+}
+
+.flx-table .flx-rules-basic .flx-rules-basic-wrap .flx-card-stack {
   position: relative;
-  min-height: 420px;
 }
 
-.flx-table .flx-rules .flx-card-stack .flx-card-stack-center {
-  position: absolute;
-  left: 100px;
+.flx-table
+  .flx-rules-basic
+  .flx-rules-basic-wrap
+  .flx-card-stack
+  .flx-card-stack-center {
+  left: 0px;
 }
 
-.flx-table .flx-rules .flx-card-stack .flx-card-stack-left {
+.flx-table
+  .flx-rules-basic
+  .flx-rules-basic-wrap
+  .flx-card-stack
+  .flx-card-stack-left {
   position: absolute;
-  top: 158px;
-  left: 18px;
+  top: 4px;
+  left: 2px;
 }
 
-.flx-table .flx-rules .flx-card-stack .flx-card-stack-right {
+.flx-table
+  .flx-rules-basic
+  .flx-rules-basic-wrap
+  .flx-card-stack
+  .flx-card-stack-right {
   position: absolute;
-  top: 158px;
-  left: 182px;
+  top: 4px;
+  left: 164px;
 }
 
 .flx-table #baseRuleCard {
+  width: 318px;
+  height: 240px;
+  margin-bottom: 2px;
+  background-image: url("img/basicrule.png");
+  background-repeat: no-repeat;
+  position: relative;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.flx-table #baseRuleCard #baseRuleDraw {
+  position: absolute;
+  top: 40px;
   width: 150px;
-  height: 233px;
-  background-image: url("img/cards.png");
-  background-position: -1400% -500%;
+  left: 2px;
+  text-align: center;
+}
+
+.flx-table #baseRuleCard #baseRulePlay {
+  position: absolute;
+  top: 40px;
+  width: 150px;
+  left: 164px;
+  text-align: center;
 }
 
 .flx-table {
   display: -ms-grid;
   display: grid;
-  -ms-grid-columns: 1fr 3fr;
-  grid-template-columns: 1fr 3fr;
-  -ms-grid-rows: 3fr 2fr;
-  grid-template-rows: 3fr 2fr;
+  -ms-grid-columns: 1fr 2fr 1fr;
+  grid-template-columns: 1fr 2fr 1fr;
+  -ms-grid-rows: auto auto;
+  grid-template-rows: auto auto;
   grid-gap: 8px;
 }
 
@@ -548,28 +614,7 @@
   border-color: #0099cd;
 }
 
-.flx-table .flx-rules {
-  -ms-grid-column: 2;
-  grid-column: 2;
-  -ms-grid-row: 1;
-  -ms-grid-row-span: 2;
-  grid-row: 1 / 3;
-  display: -ms-grid;
-  display: grid;
-  -ms-grid-columns: 1fr 1fr;
-  grid-template-columns: 1fr 1fr;
-  grid-gap: 8px;
-}
-
-.flx-table .flx-rules .flx-card-stack {
-  -ms-grid-column: 1;
-  grid-column: 1;
-  -ms-grid-row: 1;
-  grid-row: 1;
-  border-color: #d7b424;
-}
-
-.flx-table .flx-rules .flx-rules-limits {
+.flx-table .flx-rules-basic {
   -ms-grid-column: 2;
   grid-column: 2;
   -ms-grid-row: 1;
@@ -577,10 +622,18 @@
   border-color: #d7b424;
 }
 
-.flx-table .flx-rules .flx-rules-other {
-  -ms-grid-column: 1;
+.flx-table .flx-rules-limits {
+  -ms-grid-column: 3;
+  grid-column: 3;
+  -ms-grid-row: 1;
+  grid-row: 1;
+  border-color: #d7b424;
+}
+
+.flx-table .flx-rules-other {
+  -ms-grid-column: 2;
   -ms-grid-column-span: 2;
-  grid-column: 1 / 3;
+  grid-column: 2 / 4;
   -ms-grid-row: 2;
   grid-row: 2;
   border-color: #d7b424;
@@ -589,14 +642,15 @@
 @media (max-width: 1024px) {
   .flx-table .flx-rules {
     grid-gap: 4px;
-    -ms-grid-columns: 2fr 1fr;
-    grid-template-columns: 2fr 1fr;
   }
   .flx-table .flx-deck {
-    min-width: 230px;
+    min-width: 200px;
   }
-  .flx-table .flx-deck .flx-deck-card {
-    left: 80px;
+  .flx-table .flx-deck .flx-deck-wrap .flx-deck-card {
+    left: -48px;
+  }
+  .flx-table .flx-deck .flx-deck-wrap .flx-discard {
+    left: -102px;
   }
 }
 
@@ -624,8 +678,9 @@
 
 .flx-other-players .flx-keepers-my {
   min-width: 320px;
-  z-index: 999;
-  /* workaround: discard pile hidden height prevents keeper tooltips/selection? */
+  /* workaround: discard pile hidden height sometimes prevents keeper tooltips/selection? */
+  /* but be sure to stay under the z-index of the BGA zoom icon (949) */
+  z-index: 99;
 }
 
 .flx-other-players .flx-keepers-other {
@@ -647,13 +702,13 @@
 }
 
 .flx-icons-keeper {
-  width: 22px;
+  width: 23px;
   height: 33px;
   background-position: -23px -0px;
 }
 
 .flx-icons-creeper {
-  width: 22px;
+  width: 23px;
   height: 33px;
   background-position: -46px -0px;
 }

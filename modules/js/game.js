@@ -40,8 +40,10 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui"], (dojo, declare) => {
 
       // move the winning goal card to here
       var goalItemId = "goalsStock_item_" + notif.args.goal_id;
-      if (dojo.byId(goalItemId)) {
-        dojo.place(goalItemId, "flx-win-dialog-goal");
+      var goalItem = dojo.byId(goalItemId);
+      if (goalItem) {
+        var winningGoal = dojo.clone(goalItem);
+        dojo.place(winningGoal, "flx-win-dialog-goal");
       }
 
       this.myDlg.show();

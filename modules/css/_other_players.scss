@@ -14,7 +14,9 @@
 
   .flx-keepers-my {
     min-width: 320px;
-    z-index: 999; /* workaround: discard pile hidden height prevents keeper tooltips/selection? */
+    /* workaround: discard pile hidden height sometimes prevents keeper tooltips/selection? */
+    /* but be sure to stay under the z-index of the BGA zoom icon (949) */
+    z-index: 99;
   }
 
   .flx-keepers-other {

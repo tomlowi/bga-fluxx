@@ -12,7 +12,7 @@ class RuleFirstPlayRandom extends RuleCard
     $this->name = clienttranslate("First Play Random");
     $this->subtitle = clienttranslate("Takes Instant Effect");
     $this->description = clienttranslate(
-      "The first card you play must be chosen at random from your hand by the player on your left. Ignore this rule if the current Rule card allow you to play only one card."
+      "The first card you play must be chosen at random from your hand. Ignore this rule if the current Rule card allow you to play only one card."
     );
   }
 

@@ -270,16 +270,23 @@ $color-flx-brown: #f6821f;
       margin-top: -6px;
       margin-bottom: -46px;
     }
-    .card-description {
-    }
   }
 }
 
 #flx-win-dialog-goal {
   height: $card-height + 20px;
+  display: flex;
+  justify-content: space-evenly;
 
   .stockitem {
-    left: 100px !important;
-    top: 100px !important;
+    position: relative !important;
+    margin-top: 10px;
+    top: 0px !important;
+    left: 0px !important;
   }
+}
+
+.flx-warn-inflation {
+  margin-left: 2px;
+  color: $color-rule;
 }

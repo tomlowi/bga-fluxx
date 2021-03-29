@@ -101,18 +101,25 @@ trait PlayCardTrait
 
     $leftToPlay = Utils::calculateCardsLeftToPlayFor($player_id);
 
+    $countLabelText = "";
+    $countLabelNr = "";
     if ($mustPlay >= PLAY_COUNT_ALL) {
-      $countLabel = clienttranslate("All");
+      $countLabelText = clienttranslate("All");
+      $countLabelNr = "";
     } elseif ($mustPlay < 0) {
-      $countLabel = clienttranslate("All but") . " " . -$mustPlay;
+      $countLabelText = clienttranslate("All but");
+      $countLabelNr = " " . -$mustPlay;
     } else {
-      $countLabel = $leftToPlay;
+      $countLabelText = "";
+      $countLabelNr = $leftToPlay;
     }
 
     $freeRulesAvailable = $this->getFreeRulesAvailable($player_id);
 
-    return [
-      "countLabel" => $countLabel,
+    return [      
+      "i18n" => ["countLabelText"],
+      "countLabelText" => $countLabelText,
+      "countLabelNr" => $countLabelNr,
       "count" => $leftToPlay,
       "freeRules" => $freeRulesAvailable,
     ];
@@ -484,7 +491,7 @@ trait PlayCardTrait
     $alreadyPlayed = $game->getGameStateValue("playedCards");
 
     // Ignore this rule if the current Rule card allow you to play only one card
-    if (!$firstPlayRandom || $playRule <= 1 || $alreadyPlayed > 0) {
+    if (!$firstPlayRandom || $playRule == 1 || $alreadyPlayed > 0) {
       return;
     }
 
