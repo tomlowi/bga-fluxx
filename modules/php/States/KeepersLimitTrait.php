@@ -35,7 +35,7 @@ trait KeepersLimitTrait
       );
       if ($keepersInPlay > $keepersLimit) {
         $playersInfraction[$player_id] = [
-          "count" => $keepersInPlay - $keepersLimit,
+          "discardCount" => $keepersInPlay - $keepersLimit,
         ];
       }
     }
@@ -102,7 +102,7 @@ trait KeepersLimitTrait
       "limit" => $this->getKeepersLimit(),
       "warnInflation" => $warnInflation,
       "_private" => [
-        "active" => $playersInfraction[$player_id] ?? ["count" => 0],
+        "active" => $playersInfraction[$player_id] ?? ["discardCount" => 0],
       ],
     ];
   }
@@ -119,7 +119,7 @@ trait KeepersLimitTrait
     $player_id = self::getCurrentPlayerId();
 
     $playersInfraction = $this->getKeepersInfractions([$player_id]);
-    $expectedCount = $playersInfraction[$player_id]["count"];
+    $expectedCount = $playersInfraction[$player_id]["discardCount"];
     if (count($cards_id) != $expectedCount) {
       Utils::throwInvalidUserAction(
         fluxx::totranslate("Wrong number of cards. Expected: ") . $expectedCount

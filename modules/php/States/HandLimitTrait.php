@@ -34,7 +34,8 @@ trait HandLimitTrait
       $handCount = $cards->countCardInLocation("hand", $player_id);
       if ($handCount > $handLimit) {
         $playersInfraction[$player_id] = [
-          "count" => $handCount - $handLimit,
+          "discardCount" => $handCount - $handLimit,
+          "actualLimit" => $handLimit,          
         ];
       }
     }
@@ -101,7 +102,7 @@ trait HandLimitTrait
       "limit" => $this->getHandLimit(),
       "warnInflation" => $warnInflation,
       "_private" => [
-        "active" => $playersInfraction[$player_id] ?? ["count" => 0],
+        "active" => $playersInfraction[$player_id] ?? ["discardCount" => 0, "actualLimit" => -1],
       ],
     ];
 
@@ -122,7 +123,7 @@ trait HandLimitTrait
     $playersInfraction = $this->getHandInfractions([$player_id]);
 
     $keepCards_id = $cards_id;    
-    $discardCount = $playersInfraction[$player_id]["count"];
+    $discardCount = $playersInfraction[$player_id]["discardCount"];
     $handCount = $game->cards->countCardInLocation("hand", $player_id);
     $expectedCount = $handCount - $discardCount;
 
@@ -145,15 +146,10 @@ trait HandLimitTrait
     // all other hand cards will be discarded    
     $discards_id = [];    
     foreach ($handCards as $card_id => $card) {
-      if (array_key_exists($card_id, $keepCards_id))
+      if (in_array($card_id, $keepCards_id))
         continue; // card to keep
       $discards_id[] = $card_id;
     }
-
-    self::dump("===HANDLIMIT===", [
-      "keep_ids" => $keepCards_id,
-      "discard_ids" => $discards_id,
-    ]);
 
     $cards = self::discardCardsFromLocation(
       $discards_id,

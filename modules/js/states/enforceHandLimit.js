@@ -10,10 +10,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       if (this.isCurrentPlayerActive()) {
         this.handStock.setSelectionMode(2);
 
-        var handSize = this.handStock.items.length;
-        this._discardCount = args._private.count;
-        var helpMsg = _("Select the card(s) in your hand that you want to KEEP.");
-        this.displayHelpMessage(helpMsg + " (" + (handSize - this._discardCount) + ")", "freerule");
+        this._discardCount = args._private.discardCount;
 
         // Prevent registering this listener twice
         if (this._listener !== undefined) dojo.disconnect(this._listener);
@@ -23,11 +20,11 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
           "onChangeSelection",
           this,
           "onSelectCardEnforceHandLimit"
-        );        
+        );
 
         this.addActionButton(
           "button_1",
-          _("Discard all but selected"),
+          _("Keep selected"),
           "onRemoveCardsEnforceHandLimit"
         );
       }
@@ -61,7 +58,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       var handSize = this.handStock.items.length;
       var cards = this.handStock.getSelectedItems();
 
-      if ((handSize - cards.length) != this._discardCount) {
+      if (handSize - cards.length != this._discardCount) {
         this.showMessage(
           _("You must discard the right amount of cards!"),
           "error"

@@ -11,9 +11,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       if (this.isCurrentPlayerActive()) {
         stock.setSelectionMode(2);
 
-        this._discardCount = args._private.count;
-        var helpMsg = _("Select your keeper(s) that you want to REMOVE.");
-        this.displayHelpMessage(helpMsg + " (" + this._discardCount + ")", "freerule");
+        this._discardCount = args._private.discardCount;
 
         if (this._listener !== undefined) dojo.disconnect(this._listener);
         this._listener = dojo.connect(
@@ -21,7 +19,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
           "onChangeSelection",
           this,
           "onSelectCardEnforceKeepersLimit"
-        );        
+        );
 
         this.addActionButton(
           "button_1",
@@ -33,7 +31,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
 
     onLeavingStateEnforceKeepersLimit: function () {
       if (this.isSpectator) return;
-      
+
       var stock = this.keepersStock[this.player_id];
       console.log("Leaving state: EnforceKeepersLimit");
 
