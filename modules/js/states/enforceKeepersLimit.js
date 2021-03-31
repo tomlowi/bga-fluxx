@@ -11,18 +11,21 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       if (this.isCurrentPlayerActive()) {
         stock.setSelectionMode(2);
 
+        this._discardCount = args._private.count;
+        var helpMsg = _("Select your keeper(s) that you want to REMOVE.");
+        this.displayHelpMessage(helpMsg + " (" + this._discardCount + ")", "freerule");
+
         if (this._listener !== undefined) dojo.disconnect(this._listener);
         this._listener = dojo.connect(
           stock,
           "onChangeSelection",
           this,
           "onSelectCardEnforceKeepersLimit"
-        );
-        this._discardCount = args._private.count;
+        );        
 
         this.addActionButton(
           "button_1",
-          _("Discard selected"),
+          _("Remove selected"),
           "onRemoveCardsEnforceKeepersLimit"
         );
       }

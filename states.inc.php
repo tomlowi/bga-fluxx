@@ -134,7 +134,7 @@ $machinestates = [
     "type" => "multipleactiveplayer",
     "args" => "arg_enforceHandLimitForOthers",
     "action" => "st_enforceHandLimitForOthers",
-    "possibleactions" => ["discardHandCards"],
+    "possibleactions" => ["discardHandCardsExcept"],
     "transitions" => ["" => STATE_PLAY_CARD],
   ],
 
@@ -164,7 +164,7 @@ $machinestates = [
     "type" => "activeplayer",
     "args" => "arg_enforceHandLimitForSelf",
     "action" => "st_enforceHandLimitForSelf",
-    "possibleactions" => ["discardHandCards"],
+    "possibleactions" => ["discardHandCardsExcept"],
     "transitions" => ["" => STATE_ENFORCE_KEEPERS_LIMIT_SELF],
   ],
 

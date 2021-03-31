@@ -2,6 +2,7 @@
 namespace Fluxx\States;
 
 use Fluxx\Game\Utils;
+use fluxx;
 
 trait HandLimitTrait
 {
@@ -110,25 +111,52 @@ trait HandLimitTrait
   /*
    * Player discards a nr of cards for hand limit
    */
-  function action_discardHandCards($cards_id)
+  function action_discardHandCardsExcept($cards_id)
   {
     $game = Utils::getGame();
 
     // possible multiple active state, so use currentPlayer rather than activePlayer
-    $game->gamestate->checkPossibleAction("discardHandCards");
+    $game->gamestate->checkPossibleAction("discardHandCardsExcept");
     $player_id = self::getCurrentPlayerId();
 
     $playersInfraction = $this->getHandInfractions([$player_id]);
-    $expectedCount = $playersInfraction[$player_id]["count"];
 
-    if (count($cards_id) != $expectedCount) {
+    $keepCards_id = $cards_id;    
+    $discardCount = $playersInfraction[$player_id]["count"];
+    $handCount = $game->cards->countCardInLocation("hand", $player_id);
+    $expectedCount = $handCount - $discardCount;
+
+    if (count($keepCards_id) != $expectedCount) {
       Utils::throwInvalidUserAction(
         fluxx::totranslate("Wrong number of cards. Expected: ") . $expectedCount
       );
     }
 
+    $handCards = $game->cards->getCardsInLocation("hand", $player_id);
+    // all cards passed to keep must be in player's hand
+    foreach ($keepCards_id as $keep_card_id) {
+      if (!array_key_exists($keep_card_id, $handCards)) {
+        Utils::throwInvalidUserAction(
+          fluxx::totranslate("You do not have this card in hand")
+        );
+      }
+    }
+
+    // all other hand cards will be discarded    
+    $discards_id = [];    
+    foreach ($handCards as $card_id => $card) {
+      if (array_key_exists($card_id, $keepCards_id))
+        continue; // card to keep
+      $discards_id[] = $card_id;
+    }
+
+    self::dump("===HANDLIMIT===", [
+      "keep_ids" => $keepCards_id,
+      "discard_ids" => $discards_id,
+    ]);
+
     $cards = self::discardCardsFromLocation(
-      $cards_id,
+      $discards_id,
       "hand",
       $player_id,
       null

@@ -10,6 +10,11 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       if (this.isCurrentPlayerActive()) {
         this.handStock.setSelectionMode(2);
 
+        var handSize = this.handStock.items.length;
+        this._discardCount = args._private.count;
+        var helpMsg = _("Select the card(s) in your hand that you want to KEEP.");
+        this.displayHelpMessage(helpMsg + " (" + (handSize - this._discardCount) + ")", "freerule");
+
         // Prevent registering this listener twice
         if (this._listener !== undefined) dojo.disconnect(this._listener);
 
@@ -18,13 +23,11 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
           "onChangeSelection",
           this,
           "onSelectCardEnforceHandLimit"
-        );
-
-        this._discardCount = args._private.count;
+        );        
 
         this.addActionButton(
           "button_1",
-          _("Discard selected"),
+          _("Discard all but selected"),
           "onRemoveCardsEnforceHandLimit"
         );
       }
@@ -42,7 +45,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
     },
 
     onSelectCardEnforceHandLimit: function () {
-      var action = "discardHandCards";
+      var action = "discardHandCardsExcept";
       var items = this.handStock.getSelectedItems();
 
       console.log("onSelectHandCard", items, this.currentState);
@@ -55,9 +58,10 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
     },
 
     onRemoveCardsEnforceHandLimit: function () {
+      var handSize = this.handStock.items.length;
       var cards = this.handStock.getSelectedItems();
 
-      if (cards.length != this._discardCount) {
+      if ((handSize - cards.length) != this._discardCount) {
         this.showMessage(
           _("You must discard the right amount of cards!"),
           "error"
@@ -69,8 +73,8 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         return card.id;
       });
 
-      console.log("discard from hand:", card_ids);
-      this.ajaxAction("discardHandCards", {
+      console.log("hand limit, discard all except:", card_ids);
+      this.ajaxAction("discardHandCardsExcept", {
         card_ids: card_ids.join(";"),
       });
     },
