@@ -68,6 +68,12 @@ class ActionUseWhatYouTake extends ActionCard
     // We move this card in the player's hand
     $game->cards->moveCard($card["id"], "hand", $player_id);
 
+    $forcedCard = $game->getCardDefinitionFor($card);
+    $game->notifyPlayer($player_id, "forcedCardNotification", "", [
+      "card_trigger" => $this->getName(),
+      "card_forced" => $forcedCard->getName(),
+    ]);
+
     // And we mark it as the next "forcedCard"
     $game->setGameStateValue("forcedCard", $card["id"]);
   }

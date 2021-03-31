@@ -24,8 +24,9 @@
 <div id="tmpKeeperPanelIcons" class="whiteblock flx-keeper-panel-placeholder"></div>
 
 <div class="flx-player">
+  <div id="flxMyNotification" class="flx-notification-bubble"></div>
   <div id="flxMyHand" class="whiteblock flx-hand">
-    <h3 style="color: #{CURRENT_PLAYER_COLOR}">{MY_HAND}</h3>
+    <h3 style="color: #{CURRENT_PLAYER_COLOR}">{MY_HAND}</h3>    
     <div id="handStock"></div>
   </div>
 </div>

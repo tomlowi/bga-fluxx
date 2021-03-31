@@ -511,6 +511,12 @@ trait PlayCardTrait
       ]
     );
 
+    $forcedCard = $game->getCardDefinitionFor($card);
+    $game->notifyPlayer($player_id, "forcedCardNotification", "", [
+      "card_trigger" => clienttranslate("First Card Random"),
+      "card_forced" => $forcedCard->getName(),
+    ]);
+
     // note: be aware we can't have "checkAction" running here!
     // the *active* player has already changed, but the *current* player
     // is still the previous player that triggered its turn end

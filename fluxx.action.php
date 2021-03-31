@@ -72,11 +72,11 @@ class action_fluxx extends APP_GameAction
     return $card_ids;
   }
 
-  public function discardHandCards()
+  public function discardHandCardsExcept()
   {
     self::setAjaxMode();
-    $card_ids_raw = self::getArg("card_ids", AT_numberlist, true); // ids of card to discard
-    $result = $this->game->action_discardHandCards(
+    $card_ids_raw = self::getArg("card_ids", AT_numberlist, true); // ids of hand cards to KEEP
+    $result = $this->game->action_discardHandCardsExcept(
       $this->stripListOfCardIds($card_ids_raw)
     );
     self::ajaxResponse();
@@ -85,7 +85,7 @@ class action_fluxx extends APP_GameAction
   public function discardKeepers()
   {
     self::setAjaxMode();
-    $card_ids_raw = self::getArg("card_ids", AT_numberlist, true); // ids of card to discard
+    $card_ids_raw = self::getArg("card_ids", AT_numberlist, true); // ids of keeper cards to REMOVE
     $result = $this->game->action_discardKeepers(
       $this->stripListOfCardIds($card_ids_raw)
     );

@@ -2,6 +2,7 @@
 namespace Fluxx\States;
 
 use Fluxx\Game\Utils;
+use fluxx;
 
 trait HandLimitTrait
 {
@@ -33,7 +34,8 @@ trait HandLimitTrait
       $handCount = $cards->countCardInLocation("hand", $player_id);
       if ($handCount > $handLimit) {
         $playersInfraction[$player_id] = [
-          "count" => $handCount - $handLimit,
+          "discardCount" => $handCount - $handLimit,
+          "actualLimit" => $handLimit,          
         ];
       }
     }
@@ -100,7 +102,7 @@ trait HandLimitTrait
       "limit" => $this->getHandLimit(),
       "warnInflation" => $warnInflation,
       "_private" => [
-        "active" => $playersInfraction[$player_id] ?? ["count" => 0],
+        "active" => $playersInfraction[$player_id] ?? ["discardCount" => 0, "actualLimit" => -1],
       ],
     ];
 
@@ -110,25 +112,47 @@ trait HandLimitTrait
   /*
    * Player discards a nr of cards for hand limit
    */
-  function action_discardHandCards($cards_id)
+  function action_discardHandCardsExcept($cards_id)
   {
     $game = Utils::getGame();
 
     // possible multiple active state, so use currentPlayer rather than activePlayer
-    $game->gamestate->checkPossibleAction("discardHandCards");
+    $game->gamestate->checkPossibleAction("discardHandCardsExcept");
     $player_id = self::getCurrentPlayerId();
 
     $playersInfraction = $this->getHandInfractions([$player_id]);
-    $expectedCount = $playersInfraction[$player_id]["count"];
 
-    if (count($cards_id) != $expectedCount) {
+    $keepCards_id = $cards_id;    
+    $discardCount = $playersInfraction[$player_id]["discardCount"];
+    $handCount = $game->cards->countCardInLocation("hand", $player_id);
+    $expectedCount = $handCount - $discardCount;
+
+    if (count($keepCards_id) != $expectedCount) {
       Utils::throwInvalidUserAction(
         fluxx::totranslate("Wrong number of cards. Expected: ") . $expectedCount
       );
     }
 
+    $handCards = $game->cards->getCardsInLocation("hand", $player_id);
+    // all cards passed to keep must be in player's hand
+    foreach ($keepCards_id as $keep_card_id) {
+      if (!array_key_exists($keep_card_id, $handCards)) {
+        Utils::throwInvalidUserAction(
+          fluxx::totranslate("You do not have this card in hand")
+        );
+      }
+    }
+
+    // all other hand cards will be discarded    
+    $discards_id = [];    
+    foreach ($handCards as $card_id => $card) {
+      if (in_array($card_id, $keepCards_id))
+        continue; // card to keep
+      $discards_id[] = $card_id;
+    }
+
     $cards = self::discardCardsFromLocation(
-      $cards_id,
+      $discards_id,
       "hand",
       $player_id,
       null

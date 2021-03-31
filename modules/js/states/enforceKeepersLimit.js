@@ -11,6 +11,8 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       if (this.isCurrentPlayerActive()) {
         stock.setSelectionMode(2);
 
+        this._discardCount = args._private.discardCount;
+
         if (this._listener !== undefined) dojo.disconnect(this._listener);
         this._listener = dojo.connect(
           stock,
@@ -18,11 +20,10 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
           this,
           "onSelectCardEnforceKeepersLimit"
         );
-        this._discardCount = args._private.count;
 
         this.addActionButton(
           "button_1",
-          _("Discard selected"),
+          _("Remove selected"),
           "onRemoveCardsEnforceKeepersLimit"
         );
       }
@@ -30,7 +31,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
 
     onLeavingStateEnforceKeepersLimit: function () {
       if (this.isSpectator) return;
-      
+
       var stock = this.keepersStock[this.player_id];
       console.log("Leaving state: EnforceKeepersLimit");
 

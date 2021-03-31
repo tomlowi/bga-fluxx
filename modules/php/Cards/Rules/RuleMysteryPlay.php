@@ -47,6 +47,12 @@ class RuleMysteryPlay extends RuleCard
       "cards" => [$card],
     ]);
 
+    $forcedCard = $game->getCardDefinitionFor($card);
+    $game->notifyPlayer($player_id, "forcedCardNotification", "", [
+      "card_trigger" => $this->getName(),
+      "card_forced" => $forcedCard->getName(),
+    ]);
+
     // And we mark it as the next "forcedCard" to play
     $game->setGameStateValue("forcedCard", $card["id"]);
   }

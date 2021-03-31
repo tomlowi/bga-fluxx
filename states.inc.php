@@ -129,12 +129,12 @@ $machinestates = [
       'Some players must discard card(s) for Hand Limit ${limit}${warnInflation}'
     ),
     "descriptionmyturn" => clienttranslate(
-      '${you} must discard ${_private.count} card(s) for Hand Limit ${limit}${warnInflation}'
+      '${you} can only keep ${_private.actualLimit} card(s) (discard ${_private.discardCount}) for Hand Limit ${limit}${warnInflation}'
     ),
     "type" => "multipleactiveplayer",
     "args" => "arg_enforceHandLimitForOthers",
     "action" => "st_enforceHandLimitForOthers",
-    "possibleactions" => ["discardHandCards"],
+    "possibleactions" => ["discardHandCardsExcept"],
     "transitions" => ["" => STATE_PLAY_CARD],
   ],
 
@@ -144,7 +144,7 @@ $machinestates = [
       'Some players must remove keeper(s) for Keeper Limit ${limit}${warnInflation}'
     ),
     "descriptionmyturn" => clienttranslate(
-      '${you} must remove ${_private.count} keeper(s) for Keeper Limit ${limit}${warnInflation}'
+      '${you} must remove ${_private.discardCount} keeper(s) for Keeper Limit ${limit}${warnInflation}'
     ),
     "type" => "multipleactiveplayer",
     "args" => "arg_enforceKeepersLimitForOthers",
@@ -159,12 +159,12 @@ $machinestates = [
       '${actplayer} must discard card(s) for Hand Limit ${limit}${warnInflation}'
     ),
     "descriptionmyturn" => clienttranslate(
-      '${you} must discard ${_private.count} card(s) for Hand Limit ${limit}${warnInflation}'
+      '${you} can only keep ${_private.actualLimit} card(s) (discard ${_private.discardCount}) for Hand Limit ${limit}${warnInflation}'
     ),
     "type" => "activeplayer",
     "args" => "arg_enforceHandLimitForSelf",
     "action" => "st_enforceHandLimitForSelf",
-    "possibleactions" => ["discardHandCards"],
+    "possibleactions" => ["discardHandCardsExcept"],
     "transitions" => ["" => STATE_ENFORCE_KEEPERS_LIMIT_SELF],
   ],
 
@@ -174,7 +174,7 @@ $machinestates = [
       '${actplayer} must remove keeper(s) for Keeper Limit ${limit}${warnInflation}'
     ),
     "descriptionmyturn" => clienttranslate(
-      '${you} must remove ${_private.count} keeper(s) for Keeper Limit ${limit}${warnInflation}'
+      '${you} must remove ${_private.discardCount} keeper(s) for Keeper Limit ${limit}${warnInflation}'
     ),
     "type" => "activeplayer",
     "args" => "arg_enforceKeepersLimitForSelf",
