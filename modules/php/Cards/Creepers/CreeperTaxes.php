@@ -111,6 +111,13 @@ class CreeperTaxes extends CreeperCard
 
   public function onTurnStart()
   {
+    $game = Utils::getGame();
+    // if Taxes already resolved once on turn start, nothing to do
+    $taxesCheckCount = $game->getGameStateValue("creeperTurnStartMoneyKept");
+    if ($taxesCheckCount >= 1) {
+      return null;
+    }
+
     return $this->checkResolveTaxesAndMoney(true);
   }
 
@@ -156,13 +163,15 @@ class CreeperTaxes extends CreeperCard
 
   public function resolvedBy($player_id, $args)
   {
+    $game = Utils::getGame();
     $payTaxesChoice = $args["value"];
 
     if ($payTaxesChoice != "pay") {
+      // player decided to keep their Money (and Taxes)
+      $game->incGameStateValue("creeperTurnStartMoneyKept", 1);
       return;
     }
-
-    $game = Utils::getGame();
+    
     $taxesAndMoney = $this->findPlayerWithTaxesAndMoney();
 
     if ($taxesAndMoney == null || $taxesAndMoney["player_id"] != $player_id) {

@@ -31,6 +31,7 @@ trait ResolveCreeperTrait
 
     // reset all turn-start creeper execution
     self::setGameStateValue("creeperTurnStartDeathExecuted", 0);
+    self::setGameStateValue("creeperTurnStartMoneyKept", 0);
 
     $this->gamestate->nextstate("finishedTurnStartCreepers");
   }
