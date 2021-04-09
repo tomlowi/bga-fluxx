@@ -208,12 +208,15 @@ class CreeperDeath extends CreeperCard
     // move this keeper/creeper to the discard
     $game->cards->playCard($card["id"]);
 
+    $players = $game->loadPlayersBasicInfos();
+    $player_name = $players[$origin_player_id]["player_name"];
+
     $game->notifyAllPlayers(
       "keepersDiscarded",
       clienttranslate('Death killed <b>${card_name}</b> from ${player_name}'),
       [
         "i18n" => ["card_name"],
-        "player_name" => $game->getActivePlayerName(),
+        "player_name" => $player_name,
         "card_name" => $card_definition->getName(),
         "cards" => [$card],
         "player_id" => $origin_player_id,

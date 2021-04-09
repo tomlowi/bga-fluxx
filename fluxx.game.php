@@ -93,6 +93,7 @@ class fluxx extends Table
       "tmpHand2Card" => 55,
       "tmpHand3ToPlay" => 56,
       "tmpHand3Card" => 57,
+      "creeperTurnStartMoneyKept" => 58,
       "rpsChallengerId" => 90,
       "rpsDefenderId" => 91,
       "rpsChallengerChoice" => 92,
@@ -205,6 +206,7 @@ class fluxx extends Table
     self::setGameStateInitialValue("creeperToResolveCardId", -1);
     self::setGameStateInitialValue("creeperToResolvePlayerId", -1);
     self::setGameStateInitialValue("creeperTurnStartDeathExecuted", 0);
+    self::setGameStateInitialValue("creeperTurnStartMoneyKept", 0);
 
     self::setGameStateInitialValue("tmpHand1ToPlay", 0);
     self::setGameStateInitialValue("tmpHand1Card", -1);
