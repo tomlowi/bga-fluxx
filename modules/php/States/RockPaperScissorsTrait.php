@@ -43,10 +43,15 @@ trait RockPaperScissorsTrait
     $defender_choice = self::getGameStateValue("rpsDefenderChoice");
 
     // determine the winner and loser
+    $challenger_id = self::getGameStateValue("rpsChallengerId");
+    $defender_id = self::getGameStateValue("rpsDefenderId");
+
     $winner_choice = $this->getWinnerChoice(
       $challenger_choice,
       $defender_choice
     );
+
+    $players = self::loadPlayersBasicInfos();    
 
     // need distinct player choices, otherwies tie
     if ($winner_choice == null) {
@@ -56,15 +61,18 @@ trait RockPaperScissorsTrait
         [
           "i18n" => ["choice"],
           "choice" => $options[$challenger_choice],
+          "challenger_player_id" => $challenger_id,
+          "challenger_player_name" => $players[$challenger_id]["player_name"],
+          "challenger_choice_id" => $challenger_choice,          
+          "defender_player_id" => $defender_id,
+          "defender_player_name" => $players[$defender_id]["player_name"],
+          "defender_choice_id" => $defender_choice
         ]
       );
 
       $this->gamestate->nextstate("continue");
       return;
     }
-
-    $challenger_id = self::getGameStateValue("rpsChallengerId");
-    $defender_id = self::getGameStateValue("rpsDefenderId");
 
     $resultMessage = null;
     if ($winner_choice == $challenger_choice) {
@@ -91,6 +99,12 @@ trait RockPaperScissorsTrait
         "challenger_choice" => $options[$challenger_choice],
         "defender_choice" => $options[$defender_choice],
         "result_msg" => $resultMessage,
+        "challenger_player_id" => $challenger_id,
+        "challenger_player_name" => $players[$challenger_id]["player_name"],
+        "challenger_choice_id" => $challenger_choice,          
+        "defender_player_id" => $defender_id,
+        "defender_player_name" => $players[$defender_id]["player_name"],
+        "defender_choice_id" => $defender_choice
       ]
     );
 
@@ -109,7 +123,7 @@ trait RockPaperScissorsTrait
 
     // We have a winner! give all hand cards of loser to winner
     self::notifyAllPlayers(
-      "resultRockPaperScissors",
+      "winRockPaperScissors",
       clienttranslate('${player_name} wins the Rock-Paper-Scissors showdown'),
       [
         "player_id" => $winner_id,
