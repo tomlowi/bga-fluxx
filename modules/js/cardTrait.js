@@ -339,6 +339,11 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         for (var card of this.discardStock.getAllItems()) {
           if (exceptionCardsType.indexOf(card.type) == -1) {
             this.discardStock.removeFromStockById(card.id, "deckCard", true);
+          } else {
+            // remaining card should become bottom of discard pile
+            this.discardStock.changeItemsWeight({
+              [card.type]: 999,
+            });
           }
         }
         this.discardStock.updateDisplay();
