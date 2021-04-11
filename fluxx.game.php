@@ -94,6 +94,8 @@ class fluxx extends Table
       "tmpHand3ToPlay" => 56,
       "tmpHand3Card" => 57,
       "creeperTurnStartMoneyKept" => 58,
+      "playerTurnLoggedPartyBonus" => 59,
+      "playerTurnLoggedRichBonus" => 60,
       "rpsChallengerId" => 90,
       "rpsDefenderId" => 91,
       "rpsChallengerChoice" => 92,
@@ -207,6 +209,8 @@ class fluxx extends Table
     self::setGameStateInitialValue("creeperToResolvePlayerId", -1);
     self::setGameStateInitialValue("creeperTurnStartDeathExecuted", 0);
     self::setGameStateInitialValue("creeperTurnStartMoneyKept", 0);
+    self::setGameStateInitialValue("playerTurnLoggedPartyBonus", 0);
+    self::setGameStateInitialValue("playerTurnLoggedRichBonus", 0);
 
     self::setGameStateInitialValue("tmpHand1ToPlay", 0);
     self::setGameStateInitialValue("tmpHand1Card", -1);
@@ -886,6 +890,8 @@ class fluxx extends Table
     self::setGameStateValue("playerTurnUsedGoalMill", 0);
     self::setGameStateValue("playerTurnUsedMysteryPlay", 0);
     self::setGameStateValue("playerTurnUsedRecycling", 0);
+    self::setGameStateValue("playerTurnLoggedPartyBonus", 0);
+    self::setGameStateValue("playerTurnLoggedRichBonus", 0);
 
     self::giveExtraTime($player_id);
     $this->gamestate->nextState("");

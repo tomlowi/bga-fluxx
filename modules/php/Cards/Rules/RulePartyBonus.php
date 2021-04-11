@@ -34,14 +34,25 @@ class RulePartyBonus extends RuleCard
 
   public static function notifyActiveFor($player_id, $onDraw)
   {
+    $game = Utils::getGame();
+
     $msg = $onDraw
       ? clienttranslate('Party Bonus draw for ${player_name}')
       : clienttranslate('Party Bonus play for ${player_name}');
 
-    $game = Utils::getGame();
+    // only log play once per turn, otherwise clutters log after each card played
+    $alreadyLogged = $game->getGameStateValue("playerTurnLoggedPartyBonus");
+    if (!$onDraw && $alreadyLogged != 0) {
+      return;
+    }
+
     $game->notifyAllPlayers("partyBonus", $msg, [
       "player_id" => $player_id,
       "player_name" => $game->getActivePlayerName(),
     ]);
+
+    if (!$onDraw) {
+      $game->setGameStateValue("playerTurnLoggedPartyBonus", 1);
+    }    
   }
 }

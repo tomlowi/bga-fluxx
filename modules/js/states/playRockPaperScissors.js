@@ -1,7 +1,7 @@
 define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
   return declare("fluxx.states.playRockPaperScissors", null, {
     constructor() {
-      this._notifications.push(["resultRockPaperScissors", null]);
+      this._notifications.push(["resultRockPaperScissors", 500]);
 
       this._listeners = [];
     },
@@ -53,8 +53,42 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
     },
 
     notif_resultRockPaperScissors: function (notif) {
-      var player_id = notif.args.player_id;
-      var cards = notif.args.cards;
+      var args = notif.args;
+
+      var divParent = "game_play_area";
+      var divFrom1 = "overall_player_board_" + args.challenger_player_id;
+      var divFrom2 = "overall_player_board_" + args.defender_player_id;
+      var divTo1 = "baseRuleDraw";
+      var divTo2 = "baseRulePlay";
+
+      var challengerBlock = this.format_block("jstpl_rockPaperScissors", {
+        type: "challenger",
+        choice: args.challenger_choice_id,
+        player_name: args.challenger_player_name,
+      });
+
+      var defenderBlock = this.format_block("jstpl_rockPaperScissors", {
+        type: "defender",
+        choice: args.defender_choice_id,
+        player_name: args.defender_player_name,
+      });
+
+      this.slideTemporaryObject(
+        challengerBlock,
+        divParent,
+        divFrom1,
+        divTo1,
+        3000,
+        0
+      );
+      this.slideTemporaryObject(
+        defenderBlock,
+        divParent,
+        divFrom2,
+        divTo2,
+        3200,
+        0
+      );
     },
   });
 });
