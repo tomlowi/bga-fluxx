@@ -31,6 +31,12 @@ class RuleRichBonus extends RuleCard
   public static function notifyActiveFor($player_id)
   {
     $game = Utils::getGame();
+    // only log once per turn, otherwise clutters log after each card played
+    $alreadyLogged = $game->getGameStateValue("playerTurnLoggedRichBonus");
+    if ($alreadyLogged != 0) {
+      return;
+    }
+
     $game->notifyAllPlayers(
       "richBonus",
       clienttranslate('Rich Bonus play for ${player_name}'),
@@ -39,5 +45,7 @@ class RuleRichBonus extends RuleCard
         "player_name" => $game->getActivePlayerName(),
       ]
     );
+
+    $game->setGameStateValue("playerTurnLoggedRichBonus", 1);
   }
 }
