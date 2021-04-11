@@ -55,6 +55,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
     notif_resultRockPaperScissors: function (notif) {
       var args = notif.args;
 
+      var divParent = "game_play_area";
       var divFrom1 = "overall_player_board_" + args.challenger_player_id;
       var divFrom2 = "overall_player_board_" + args.defender_player_id;
       var divTo1 = "baseRuleDraw";
@@ -74,7 +75,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
 
       this.slideTemporaryObject(
         challengerBlock,
-        "flxTable",
+        divParent,
         divFrom1,
         divTo1,
         3000,
@@ -82,7 +83,7 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       );
       this.slideTemporaryObject(
         defenderBlock,
-        "flxTable",
+        divParent,
         divFrom2,
         divTo2,
         3200,
