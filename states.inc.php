@@ -192,7 +192,11 @@ $machinestates = [
     "type" => "activeplayer",
     "action" => "st_goalCleaning",
     "possibleactions" => ["discardGoal"],
-    "transitions" => ["" => STATE_PLAY_CARD],
+    "transitions" => [
+      "continuePlay" => STATE_PLAY_CARD,
+      "endOfTurn" => STATE_ENFORCE_HAND_LIMIT_SELF,
+      "endGame" => STATE_GAME_END,
+    ],
   ],
 
   STATE_RESOLVE_ACTION => [
@@ -352,6 +356,7 @@ $machinestates = [
       "selectedCard" => STATE_PLAY_CARD,
       "zombiePass" => STATE_PLAY_CARD,
       "endOfTurn" => STATE_ENFORCE_HAND_LIMIT_SELF,
+      "endGame" => STATE_GAME_END,
     ],
   ],
 

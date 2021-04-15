@@ -800,7 +800,7 @@ class fluxx extends Table
     ]);
 
     self::setGameStateValue("lastGoalBeforeDoubleAgenda", -1);
-    $this->gamestate->nextstate("");
+    $this->gamestate->nextstate("continuePlay");
 
     // check win *after* decision which goals to keep
     $this->checkWinConditions();
@@ -839,7 +839,7 @@ class fluxx extends Table
 
     if ($existingGoalCount <= $expectedCount) {
       // We already have the proper number of goals, proceed to play
-      $this->gamestate->nextstate("");
+      $this->gamestate->nextstate("continuePlay");
       return;
     }
   }
