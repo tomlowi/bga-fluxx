@@ -258,7 +258,7 @@ $machinestates = [
     "updateGameProgression" => false,
     "transitions" => [
       "continue" => STATE_ROCKPAPERSCISSORS,
-      "done" => STATE_PLAY_CARD,
+      "handsExchangeOccured" => STATE_ENFORCE_HAND_LIMIT_OTHERS,
       "zombiePass" => STATE_PLAY_CARD,
     ],
   ],

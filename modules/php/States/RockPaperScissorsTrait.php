@@ -147,8 +147,8 @@ trait RockPaperScissorsTrait
 
     $game->sendHandCountNotifications();
 
-    // done, go back to normal play cards state
-    $this->gamestate->nextstate("done");
+    // done, go back to normal play cards state (after hand limit check for others)
+    $this->gamestate->nextstate("handsExchangeOccured");
   }
 
   public function st_playRockPaperScissors()
