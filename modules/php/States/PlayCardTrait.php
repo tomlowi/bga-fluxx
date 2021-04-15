@@ -331,6 +331,12 @@ trait PlayCardTrait
     // creepers go to table on same location as keepers
     $game->cards->moveCard($card["id"], "keepers", $player_id);
 
+    $forcedCard = $game->getCardDefinitionFor($card);
+    $game->notifyPlayer($player_id, "forcedCardNotification", "", [
+      "card_trigger" => clienttranslate("Creeper"),
+      "card_forced" => $forcedCard->getName(),
+    ]);
+
     // Notify all players about the creeper played
     $creeperCard = CreeperCardFactory::getCard($card["id"], $card["type_arg"]);
     $game->notifyAllPlayers(
