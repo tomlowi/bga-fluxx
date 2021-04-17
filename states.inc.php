@@ -166,7 +166,8 @@ $machinestates = [
     "action" => "st_enforceHandLimitForSelf",
     "possibleactions" => ["discardHandCardsExcept"],
     "transitions" => [
-      "" => STATE_ENFORCE_KEEPERS_LIMIT_SELF,
+      "handLimitChecked" => STATE_ENFORCE_KEEPERS_LIMIT_SELF,
+      "endGame" => STATE_GAME_END,
     ],
   ],
 
@@ -183,7 +184,8 @@ $machinestates = [
     "action" => "st_enforceKeepersLimitForSelf",
     "possibleactions" => ["discardKeepers"],
     "transitions" => [
-      "" => STATE_NEXT_PLAYER,
+      "keeperLimitChecked" => STATE_NEXT_PLAYER,
+      "endGame" => STATE_GAME_END,
     ],
   ],
 

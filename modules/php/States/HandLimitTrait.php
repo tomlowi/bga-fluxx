@@ -69,7 +69,7 @@ trait HandLimitTrait
 
     if (count($playersInfraction) == 0) {
       // Player is not in the infraction with the rule
-      $gamestate->nextstate("");
+      $gamestate->nextstate("handLimitChecked");
       return;
     }
   }
@@ -171,7 +171,7 @@ trait HandLimitTrait
       // Multiple active state: this player is done
       $game->gamestate->setPlayerNonMultiactive($player_id, "");
     } else {
-      $game->gamestate->nextstate("");
+      $game->gamestate->nextstate("handLimitChecked");
     }
   }
 }
