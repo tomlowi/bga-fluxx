@@ -37,7 +37,13 @@ trait PlayCardTrait
 
     // check if the first play random rule is active
     // if so, the first card is already played automatically
-    $this->checkFirstPlayRandom();
+    if ($this->checkFirstPlayRandom()) {
+      return;
+    }
+    // if first card random was played, we should never transition endOfTurn here!
+    // make sure anything that needs to be handled for this card is done via
+    // the normal state transitions (by default just come back here to check if more plays
+    // are still allowed)
 
     // If any "free action" rule can be played, we cannot end turn automatically
     // Player must finish its turn by explicitly deciding not to use any of the free rules
@@ -498,7 +504,7 @@ trait PlayCardTrait
 
     // Ignore this rule if the current Rule card allow you to play only one card
     if (!$firstPlayRandom || $playRule == 1 || $alreadyPlayed > 0) {
-      return;
+      return false;
     }
 
     // select random card from player hand (always something there, just drew cards)
@@ -532,5 +538,7 @@ trait PlayCardTrait
     // first card is a forced play, but in this case
     // it does count for the number of cards played
     $this->_action_playCard($card["id"], true);
+
+    return true;
   }
 }

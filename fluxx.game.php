@@ -175,9 +175,13 @@ class fluxx extends Table
 
     /************ Start the game initialization *****/
 
+    $startingDrawRule = 1;
+    $startingPlayRule = 1;
+    $startingHand = 3;
+
     // Init global values with their initial values
-    self::setGameStateInitialValue("drawRule", 1);
-    self::setGameStateInitialValue("playRule", 1);
+    self::setGameStateInitialValue("drawRule", $startingDrawRule);
+    self::setGameStateInitialValue("playRule", $startingPlayRule);
     self::setGameStateInitialValue("handLimit", -1);
     self::setGameStateInitialValue("keepersLimit", -1);
     self::setGameStateInitialValue("drawnCards", 0);
@@ -253,7 +257,7 @@ class fluxx extends Table
     // so we need activated players for that!
     foreach ($players as $player_id => $player) {
       $this->gamestate->changeActivePlayer($player_id);
-      $this->performDrawCards($player_id, 3);
+      $this->performDrawCards($player_id, $startingHand);
     }
 
     // reset to start with correct first active player

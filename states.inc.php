@@ -165,7 +165,9 @@ $machinestates = [
     "args" => "arg_enforceHandLimitForSelf",
     "action" => "st_enforceHandLimitForSelf",
     "possibleactions" => ["discardHandCardsExcept"],
-    "transitions" => ["" => STATE_ENFORCE_KEEPERS_LIMIT_SELF],
+    "transitions" => [
+      "" => STATE_ENFORCE_KEEPERS_LIMIT_SELF,
+    ],
   ],
 
   STATE_ENFORCE_KEEPERS_LIMIT_SELF => [
