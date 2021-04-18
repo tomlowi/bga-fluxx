@@ -417,19 +417,31 @@ class fluxx extends Table
     return self::getActivePlayerId();
   }
 
+  public function getPlayersInOrderForCurrentPlayer()
+  {
+    $player_id = self::getCurrentPlayerId();
+    return $this->getPlayersInOrder($player_id);
+  }
+
+  public function getPlayersInOrderForActivePlayer()
+  {
+    $player_id = self::getActivePlayerId();
+    return $this->getPlayersInOrder($player_id);
+  }
+
   /*
    * Return an array of players in natural turn order starting
    * with the current player. This can be used to build the player
    * tables in the same order as the player boards,
    * and for actions that need the players in order.
    */
-  public function getPlayersInOrder()
+  private function getPlayersInOrder($startPlayerId)
   {
     $result = [];
 
     $players = self::loadPlayersBasicInfos();
     $next_player = self::getNextPlayerTable();
-    $player_id = self::getCurrentPlayerId();
+    $player_id = $startPlayerId;
 
     // Check for spectator
     if (!key_exists($player_id, $players)) {

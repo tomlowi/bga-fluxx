@@ -64,7 +64,7 @@ class view_fluxx_fluxx extends game_view
 
     $this->page->begin_block($template, "keepers");
 
-    $players_in_order = $this->game->getPlayersInOrder();
+    $players_in_order = $this->game->getPlayersInOrderForCurrentPlayer();
 
     foreach ($players_in_order as $player_id) {
       if ($player_id != $current_player_id) {
