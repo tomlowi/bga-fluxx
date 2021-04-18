@@ -57,7 +57,11 @@ trait KeepersLimitTrait
     $gamestate = Utils::getGame()->gamestate;
 
     // Activate all players that need to remove keepers (if any)
-    $gamestate->setPlayersMultiactive(array_keys($playersInfraction), "", true);
+    if (empty($playersInfraction)) {
+      $gamestate->setAllPlayersNonMultiactive("");
+    } else {
+      $gamestate->setPlayersMultiactive(array_keys($playersInfraction), "", true);
+    }
   }
 
   public function st_enforceKeepersLimitForSelf()

@@ -57,7 +57,11 @@ trait HandLimitTrait
     $gamestate = Utils::getGame()->gamestate;
 
     // Activate all players that need to discard some cards (if any)
-    $gamestate->setPlayersMultiactive(array_keys($playersInfraction), "", true);
+    if (empty($playersInfraction)) {
+      $gamestate->setAllPlayersNonMultiactive("");
+    } else {
+      $gamestate->setPlayersMultiactive(array_keys($playersInfraction), "", true);
+    }    
   }
 
   public function st_enforceHandLimitForSelf()
