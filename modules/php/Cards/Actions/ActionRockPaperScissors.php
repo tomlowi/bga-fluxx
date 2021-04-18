@@ -39,6 +39,20 @@ class ActionRockPaperScissors extends ActionCard
     $game->setGameStateValue("rpsChallengerWins", 0);
     $game->setGameStateValue("rpsDefenderWins", 0);
 
+    $cardsInHandChallenger = $game->cards->countCardInLocation("hand", $player_id);
+    $cardsInHandDefender = $game->cards->countCardInLocation("hand", $selected_player_id);
+
+    if ($cardsInHandChallenger == 0 && $cardsInHandDefender == 0) {
+      // both player have no cards in hand, no need to showdown
+      $game->notifyAllPlayers(
+        "actionIgnored",
+        clienttranslate(
+          'Both players are empty-handed, no need for Rock-Paper-Scissors showdown'
+        ), ["player_id" => $player_id]
+      );
+      return "resolvedAction";
+    }    
+
     return "playRockPaperScissors";
   }
 }
