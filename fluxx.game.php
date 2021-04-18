@@ -908,6 +908,9 @@ class fluxx extends Table
     self::setGameStateValue("playerTurnUsedRecycling", 0);
     self::setGameStateValue("playerTurnLoggedPartyBonus", 0);
     self::setGameStateValue("playerTurnLoggedRichBonus", 0);
+    // also reset all turn-start creeper execution
+    self::setGameStateValue("creeperTurnStartDeathExecuted", 0);
+    self::setGameStateValue("creeperTurnStartMoneyKept", 0);
 
     self::giveExtraTime($player_id);
     $this->gamestate->nextState("");
