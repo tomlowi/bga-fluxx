@@ -341,6 +341,7 @@ $machinestates = [
       "resolvedCreeper" => STATE_NEXT_PLAYER_TURNSTART_CREEPERS,
       "zombiePass" => STATE_NEXT_PLAYER_TURNSTART_CREEPERS,
       "endOfTurn" => STATE_ENFORCE_HAND_LIMIT_SELF,
+      "endGame" => STATE_GAME_END,
     ],
   ],
 
