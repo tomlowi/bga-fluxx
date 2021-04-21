@@ -268,7 +268,7 @@ class fluxx extends Table
     // so we need activated players for that!
     foreach ($players as $player_id => $player) {
       $this->gamestate->changeActivePlayer($player_id);
-      $this->performDrawCards($player_id, $startingHand);
+      $this->performDrawCards($player_id, $startingHand, true);
     }
 
     // reset to start with correct first active player
