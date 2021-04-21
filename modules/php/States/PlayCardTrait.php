@@ -499,16 +499,24 @@ trait PlayCardTrait
   {
     $game = Utils::getGame();
     $firstPlayRandom = 0 != $game->getGameStateValue("activeFirstPlayRandom");
-    $playRule = $game->getGameStateValue("playRule");
     $alreadyPlayed = $game->getGameStateValue("playedCards");
 
-    // Ignore this rule if the current Rule card allow you to play only one card
-    if (!$firstPlayRandom || $playRule == 1 || $alreadyPlayed > 0) {
+    // Ignore this rule if not active or if not beginning of the turn
+    if (!$firstPlayRandom || $alreadyPlayed > 0) {
+      return false;
+    }
+    // Ignore this rule if current Play Rule only allows 1 play
+    // correction: also count Inflation or Bonus plays for player
+    // if they can play more than 1 card, the first card should be random
+
+    $player_id = $game->getActivePlayerId();
+
+    $leftToPlay = Utils::calculateCardsLeftToPlayFor($player_id);
+    if ($leftToPlay <= 1) {
       return false;
     }
 
-    // select random card from player hand (always something there, just drew cards)
-    $player_id = $game->getActivePlayerId();
+    // select random card from player hand (always something there, just drew cards)    
     $cardsInHand = $game->cards->getCardsInLocation("hand", $player_id);
 
     $i = bga_rand(0, count($cardsInHand) - 1);
