@@ -60,7 +60,7 @@ trait PlayCardTrait
   private function checkTempHandsForDiscard($player_id)
   {
     $game = Utils::getGame();
-    $tmpHandActive = Utils::getActiveTempHand();
+    $tmpHandActive = Utils::getActiveTempHandWithPlays();
     for ($i = 3; $i >= 1; $i--) {
       $tmpHandLocation = "tmpHand" . $i;
       $tmpHandCard = $game->getGameStateValue($tmpHandLocation . "Card");

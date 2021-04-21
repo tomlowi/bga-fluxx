@@ -132,6 +132,17 @@ class fluxx extends Table
     return "fluxx";
   }
 
+
+  // public function testForceCardDrawFor($cardType, $cardUniqueId, $player_id) {
+  //   $deckSearch = $this->cards->getCardsOfTypeInLocation($cardType, $cardUniqueId, "deck", null);
+  //   if (count($deckSearch) > 0) {
+  //     $card = array_shift($deckSearch);
+  //     $this->cards->moveCard($card["id"], "hand", $player_id);
+
+  //     return $card["id"];
+  //   }
+  // }
+
   /*
     setupNewGame:
 
