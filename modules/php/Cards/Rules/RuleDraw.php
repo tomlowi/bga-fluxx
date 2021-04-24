@@ -21,16 +21,18 @@ class RuleDraw extends RuleCard
 
   public function immediateEffectOnPlay($player)
   {
+    $game = Utils::getGame();
     // current Draw Rule is changed immediately
-    $oldValue = Utils::getGame()->getGameStateValue("drawRule");
+    // active player might draw extra if they drew less at their turn start
+    $oldValue = $game->getGameStateValue("drawnCards");
     // discard any other draw rules
-    Utils::getGame()->discardRuleCardsForType("drawRule");
+    $game->discardRuleCardsForType("drawRule");
     // set new draw rule
-    Utils::getGame()->setGameStateValue("drawRule", $this->drawCount);
+    $game->setGameStateValue("drawRule", $this->drawCount);
     // draw extra cards for the difference
     if ($this->drawCount - $oldValue > 0) {
-      Utils::getGame()->performDrawCards($player, $this->drawCount - $oldValue);
-      Utils::getGame()->setGameStateValue("drawnCards", $this->drawCount);
+      $game->performDrawCards($player, $this->drawCount - $oldValue);
+      $game->setGameStateValue("drawnCards", $this->drawCount);
     }
   }
 
