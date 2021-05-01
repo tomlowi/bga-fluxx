@@ -135,7 +135,7 @@ $machinestates = [
     "args" => "arg_enforceHandLimitForOthers",
     "action" => "st_enforceHandLimitForOthers",
     "possibleactions" => ["discardHandCardsExcept"],
-    "transitions" => ["" => STATE_PLAY_CARD],
+    "transitions" => ["" => STATE_ENFORCE_KEEPERS_LIMIT_OTHERS],
   ],
 
   STATE_ENFORCE_KEEPERS_LIMIT_OTHERS => [
@@ -197,7 +197,7 @@ $machinestates = [
     "action" => "st_goalCleaning",
     "possibleactions" => ["discardGoal"],
     "transitions" => [
-      "continuePlay" => STATE_PLAY_CARD,
+      "continuePlay" => STATE_ENFORCE_HAND_LIMIT_OTHERS,
       "endOfTurn" => STATE_ENFORCE_HAND_LIMIT_SELF,
       "endGame" => STATE_GAME_END,
     ],
