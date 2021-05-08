@@ -135,7 +135,10 @@ $machinestates = [
     "args" => "arg_enforceHandLimitForOthers",
     "action" => "st_enforceHandLimitForOthers",
     "possibleactions" => ["discardHandCardsExcept"],
-    "transitions" => ["" => STATE_ENFORCE_KEEPERS_LIMIT_OTHERS],
+    "transitions" => [
+      "handLimitChecked" => STATE_ENFORCE_KEEPERS_LIMIT_OTHERS,
+      "endGame" => STATE_GAME_END,
+    ],
   ],
 
   STATE_ENFORCE_KEEPERS_LIMIT_OTHERS => [
@@ -150,7 +153,10 @@ $machinestates = [
     "args" => "arg_enforceKeepersLimitForOthers",
     "action" => "st_enforceKeepersLimitForOthers",
     "possibleactions" => ["discardKeepers"],
-    "transitions" => ["" => STATE_PLAY_CARD],
+    "transitions" => [
+      "keeperLimitChecked" => STATE_PLAY_CARD,
+      "endGame" => STATE_GAME_END,
+    ],
   ],
 
   STATE_ENFORCE_HAND_LIMIT_SELF => [
@@ -375,6 +381,7 @@ $machinestates = [
       "resolveCreeper" => STATE_RESOLVE_CREEPER_TURNSTART,
       "finishedTurnStartCreepers" => STATE_DRAW_CARDS,
       "zombiePass" => STATE_DRAW_CARDS,
+      "endGame" => STATE_GAME_END,
     ],
   ],
 
