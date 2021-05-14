@@ -206,6 +206,7 @@ $machinestates = [
       "continuePlay" => STATE_ENFORCE_HAND_LIMIT_OTHERS,
       "endOfTurn" => STATE_ENFORCE_HAND_LIMIT_SELF,
       "endGame" => STATE_GAME_END,
+      "resolveCreeper" => STATE_RESOLVE_CREEPER_INPLAY,
     ],
   ],
 
@@ -348,6 +349,7 @@ $machinestates = [
       "zombiePass" => STATE_NEXT_PLAYER_TURNSTART_CREEPERS,
       "endOfTurn" => STATE_ENFORCE_HAND_LIMIT_SELF,
       "endGame" => STATE_GAME_END,
+      "resolveCreeper" => STATE_RESOLVE_CREEPER_INPLAY,
     ],
   ],
 
