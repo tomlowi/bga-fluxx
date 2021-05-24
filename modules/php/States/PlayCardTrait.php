@@ -35,6 +35,11 @@ trait PlayCardTrait
       return;
     }
 
+    // before we play anything new, check again if we have a winner at this point
+    if ($this->checkWinConditions()) {
+      return;
+    }
+
     // check if the first play random rule is active
     // if so, the first card is already played automatically
     if ($this->checkFirstPlayRandom()) {
