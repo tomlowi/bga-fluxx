@@ -11,12 +11,12 @@ trait HandLimitTrait
     return self::getGameStateValue("handLimit");
   }
 
-  private function getHandInfractions($players_id = null)
+  private function getHandInfractions($players_id = null, $includeAllArguments = false)
   {
     $handLimit = $this->getHandLimit();
 
     // no active Hand Limit, nothing to do
-    if ($handLimit < 0) {
+    if ($handLimit < 0 && !$includeAllArguments) {
       return [];
     }
 
@@ -35,7 +35,12 @@ trait HandLimitTrait
       if ($handCount > $handLimit) {
         $playersInfraction[$player_id] = [
           "discardCount" => $handCount - $handLimit,
-          "actualLimit" => $handLimit,          
+          "actualLimit" => $handLimit,      
+        ];
+      } else if ($includeAllArguments) {
+        $playersInfraction[$player_id] = [
+          "discardCount" => 0,
+          "actualLimit" => $handLimit,
         ];
       }
     }
@@ -85,7 +90,7 @@ trait HandLimitTrait
       ? clienttranslate('<span class="flx-warn-inflation">(+1 Inflation)</span>')
       : "";
 
-    $playerInfractions = $this->getHandInfractions();
+    $playerInfractions = $this->getHandInfractions(null, true);
     // make sure some arguments are here for the active player
     // normally they should never be in this state, but in some rare cases they
     // remain active very briefly and get error message:

@@ -96,6 +96,7 @@ class fluxx extends Table
       "creeperTurnStartMoneyKept" => 58,
       "playerTurnLoggedPartyBonus" => 59,
       "playerTurnLoggedRichBonus" => 60,
+      "creeperForcedRecheckNeeded" => 61,
       "rpsChallengerId" => 90,
       "rpsDefenderId" => 91,
       "rpsChallengerChoice" => 92,
@@ -224,6 +225,7 @@ class fluxx extends Table
     self::setGameStateInitialValue("creeperToResolvePlayerId", -1);
     self::setGameStateInitialValue("creeperTurnStartDeathExecuted", 0);
     self::setGameStateInitialValue("creeperTurnStartMoneyKept", 0);
+    self::setGameStateInitialValue("creeperForcedRecheckNeeded", 0);
     self::setGameStateInitialValue("playerTurnLoggedPartyBonus", 0);
     self::setGameStateInitialValue("playerTurnLoggedRichBonus", 0);
 
@@ -271,8 +273,8 @@ class fluxx extends Table
       $this->performDrawCards($player_id, $startingHand, true);
     }
 
-    // $this->testForceCardDrawFor("action", 305, $first_player_id);
-    // $this->testForceCardDrawFor("goal", 101, $first_player_id);
+    // $this->testForceCardDrawFor("rule", 220, $first_player_id);
+    // $this->testForceCardDrawFor("rule", 221, $first_player_id);
 
     // reset to start with correct first active player
     $this->gamestate->changeActivePlayer($first_player_id);
@@ -660,6 +662,7 @@ class fluxx extends Table
 
   public function checkCreeperResolveNeeded($lastPlayedCard)
   {
+    self::setGameStateValue("creeperForcedRecheckNeeded", 0);
     // Check for any Creeper abilities after keepers/creepers played or moved
     $stateTransition = CreeperCardFactory::onCheckResolveKeepersAndCreepers(
       $lastPlayedCard
@@ -872,6 +875,8 @@ class fluxx extends Table
       $this->gamestate->nextstate("continuePlay");
       return;
     }
+
+    self::setGameStateValue("creeperForcedRecheckNeeded", 1);
   }
 
   public function st_nextPlayer()
@@ -925,6 +930,7 @@ class fluxx extends Table
     // also reset all turn-start creeper execution
     self::setGameStateValue("creeperTurnStartDeathExecuted", 0);
     self::setGameStateValue("creeperTurnStartMoneyKept", 0);
+    self::setGameStateValue("creeperForcedRecheckNeeded", 0);
 
     self::giveExtraTime($player_id);
     $this->gamestate->nextState("");

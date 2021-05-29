@@ -430,6 +430,7 @@ define([
 
           case "playRockPaperScissors":
             this.onEnteringStatePlayRockPaperScissors(args);
+            break;
 
           case "actionResolve":
             this.onEnteringStateActionResolve(args);
@@ -448,7 +449,7 @@ define([
             this.onEnteringStateTempHandPlay(args);
             break;
 
-          case "dummmy":
+          case "dummy":
             break;
         }
       },
@@ -482,9 +483,11 @@ define([
 
           case "actionResolve":
             this.onLeavingStateActionResolve();
+            break;
 
           case "playRockPaperScissors":
             this.onLeavingStatePlayRockPaperScissors();
+            break;
 
           case "freeRuleResolve":
             this.onLeavingStateFreeRuleResolve();
@@ -499,7 +502,7 @@ define([
             this.onLeavingStateTempHandPlay();
             break;
 
-          case "dummmy":
+          case "dummy":
             break;
         }
       },
