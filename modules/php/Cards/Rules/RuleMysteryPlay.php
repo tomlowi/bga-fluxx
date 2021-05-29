@@ -37,7 +37,10 @@ class RuleMysteryPlay extends RuleCard
     $game->setGameStateValue("playerTurnUsedMysteryPlay", 1);
 
     // draw top card (this is moved to hand automatically)
-    $cardsDrawn = $game->performDrawCards($player_id, 1, true);
+    $cardsDrawn = $game->performDrawCards($player_id, 1, 
+      true, // $postponeCreeperResolve
+      true  // $temporaryDraw
+    );
 
     // if no more cards to draw, nothing happens
     if (count($cardsDrawn) == 0) {
