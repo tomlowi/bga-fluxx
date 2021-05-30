@@ -124,8 +124,8 @@ class CreeperTaxes extends CreeperCard
   public function onCheckResolveKeepersAndCreepers($lastPlayedCard)
   {
     $game = Utils::getGame();
-    // don't check Taxes again after resolving Taxes itself    
-    if ($lastPlayedCard != null && $lastPlayedCard["type_arg"] == $this->uniqueId) {
+    // don't check Taxes again after resolving Taxes itself, or if no specific card played
+    if ($lastPlayedCard == null || $lastPlayedCard["type_arg"] == $this->uniqueId) {
       return null;
     }
 

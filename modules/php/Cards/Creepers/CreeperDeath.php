@@ -75,8 +75,8 @@ class CreeperDeath extends CreeperCard
   {
     // Death can also be discarded any time it stands alone    
     $game = Utils::getGame();
-    // don't check Death again after resolving Death itself
-    if ($lastPlayedCard != null && $lastPlayedCard["type_arg"] == $this->uniqueId) {
+    // don't check Death again after resolving Death itself, or if no specific card played
+    if ($lastPlayedCard == null || $lastPlayedCard["type_arg"] == $this->uniqueId) {
       return null;
     }
 
