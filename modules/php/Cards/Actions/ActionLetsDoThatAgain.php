@@ -110,25 +110,30 @@ class ActionLetsDoThatAgain extends ActionCard
       );
     }
 
-    $game->notifyPlayer($player_id, "cardsDrawn", "", [
-      "cards" => [$card],
-    ]);
-    $game->notifyAllPlayers(
-      "actionDone",
-      clienttranslate(
-        '${player_name} took <b>${card_name}</b> from the discard pile (and must play it)'
-      ),
-      [
-        "i18n" => ["card_name"],
-        "card_name" => $card_definition->getName(),
-        "player_name" => $game->getActivePlayerName(),
-      ]
-    );
-
     // We move this card in the player's hand
     $game->cards->moveCard($card["id"], "hand", $player_id);
 
     // And we mark it as the next "forcedCard"
     $game->setGameStateValue("forcedCard", $card["id"]);
+
+    // Then we notify players and update the discard pile
+    $game->notifyAllPlayers(
+      "cardTakenFromDiscard",
+      clienttranslate(
+        '${player_name} took <b>${card_name}</b> from the discard pile (and must play it)'
+      ),
+      [
+        "i18n" => ["card_name"],
+        "card" => $card,
+        "card_name" => $card_definition->getName(),
+        "player_name" => $game->getActivePlayerName(),
+        "discardCount" => $game->cards->countCardInLocation("discard"),
+      ]
+    );
+
+    $game->notifyPlayer($player_id, "cardsDrawn", "", [
+      "cards" => [$card],
+    ]);
+
   }
 }

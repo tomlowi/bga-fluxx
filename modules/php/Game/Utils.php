@@ -229,6 +229,20 @@ class Utils
 
   public static function getActiveTempHand()
   {
+    if (Utils::getGame()->getGameStateValue("tmpHand3Card") > 0) {
+      return 3;
+    }
+    if (Utils::getGame()->getGameStateValue("tmpHand2Card") > 0) {
+      return 2;
+    }
+    if (Utils::getGame()->getGameStateValue("tmpHand1Card") > 0) {
+      return 1;
+    }
+    return 0;
+  }
+
+  public static function getActiveTempHandWithPlays()
+  {
     if (Utils::getGame()->getGameStateValue("tmpHand3ToPlay") > 0) {
       return 3;
     }

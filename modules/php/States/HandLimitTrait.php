@@ -11,12 +11,12 @@ trait HandLimitTrait
     return self::getGameStateValue("handLimit");
   }
 
-  private function getHandInfractions($players_id = null)
+  private function getHandInfractions($players_id = null, $includeAllArguments = false)
   {
     $handLimit = $this->getHandLimit();
 
     // no active Hand Limit, nothing to do
-    if ($handLimit < 0) {
+    if ($handLimit < 0 && !$includeAllArguments) {
       return [];
     }
 
@@ -35,7 +35,12 @@ trait HandLimitTrait
       if ($handCount > $handLimit) {
         $playersInfraction[$player_id] = [
           "discardCount" => $handCount - $handLimit,
-          "actualLimit" => $handLimit,          
+          "actualLimit" => $handLimit,      
+        ];
+      } else if ($includeAllArguments) {
+        $playersInfraction[$player_id] = [
+          "discardCount" => 0,
+          "actualLimit" => $handLimit,
         ];
       }
     }
@@ -57,7 +62,12 @@ trait HandLimitTrait
     $gamestate = Utils::getGame()->gamestate;
 
     // Activate all players that need to discard some cards (if any)
-    $gamestate->setPlayersMultiactive(array_keys($playersInfraction), "", true);
+    $stateTransition = "handLimitChecked";
+    if (empty($playersInfraction)) {
+      $gamestate->setAllPlayersNonMultiactive($stateTransition);
+    } else {
+      $gamestate->setPlayersMultiactive(array_keys($playersInfraction), $stateTransition, true);
+    }    
   }
 
   public function st_enforceHandLimitForSelf()
@@ -69,7 +79,7 @@ trait HandLimitTrait
 
     if (count($playersInfraction) == 0) {
       // Player is not in the infraction with the rule
-      $gamestate->nextstate("");
+      $gamestate->nextstate("handLimitChecked");
       return;
     }
   }
@@ -80,11 +90,23 @@ trait HandLimitTrait
       ? clienttranslate('<span class="flx-warn-inflation">(+1 Inflation)</span>')
       : "";
 
+    $playerInfractions = $this->getHandInfractions(null, true);
+    // make sure some arguments are here for the active player
+    // normally they should never be in this state, but in some rare cases they
+    // remain active very briefly and get error message:
+    // Invalid or missing substitution argument for log message:
+    // ${you} can only keep ${_private.actualLimit} card(s) (discard ${_private.discardCount}) for Hand Limit ${limit}${warnInflation}
+    $active_player_id = self::getActivePlayerId();
+    $playerInfractions[$active_player_id] = [
+      "discardCount" => 0,
+      "actualLimit" => -1,          
+    ];
+
     return [
       "i18n" => ["warnInflation"],
       "limit" => $this->getHandLimit(),
       "warnInflation" => $warnInflation,
-      "_private" => $this->getHandInfractions(),
+      "_private" => $playerInfractions,
     ];
   }
 
@@ -167,11 +189,12 @@ trait HandLimitTrait
 
     $state = $game->gamestate->state();
 
+    $stateTransition = "handLimitChecked";
     if ($state["type"] == "multipleactiveplayer") {
       // Multiple active state: this player is done
-      $game->gamestate->setPlayerNonMultiactive($player_id, "");
+      $game->gamestate->setPlayerNonMultiactive($player_id, $stateTransition);
     } else {
-      $game->gamestate->nextstate("");
+      $game->gamestate->nextstate($stateTransition);
     }
   }
 }

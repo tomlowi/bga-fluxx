@@ -29,7 +29,7 @@ class ActionEverybodyGets1 extends ActionCard
     $cardsPerPlayer = 1 + $addInflation;
 
     $game = Utils::getGame();
-    $players_ordered = $game->getPlayersInOrder();
+    $players_ordered = $game->getPlayersInOrderForActivePlayer();
 
     $tmpCards = $game->performDrawCards(
       $player_id,
@@ -53,7 +53,7 @@ class ActionEverybodyGets1 extends ActionCard
     $game = Utils::getGame();
     $tmpCards = $game->cards->getCardsInLocation("tmpSelectCards");
 
-    $players_ordered = $game->getPlayersInOrder();
+    $players_ordered = $game->getPlayersInOrderForActivePlayer();
     $playerCount = count($players_ordered);
     $remainingCardCount = count($tmpCards) / $cardsPerPlayer;
     // active player starts with selecting cards for themself, then around the table

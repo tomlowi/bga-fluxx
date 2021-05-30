@@ -20,7 +20,8 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         ["handCountUpdate", null],
         ["reshuffle", null],
         ["tmpHandDiscarded", 500],
-        ["forcedCardNotification", null]
+        ["forcedCardNotification", null],
+        ["cardTakenFromDiscard", null]
       );
     },
 
@@ -428,6 +429,12 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         _(card_trigger) + ": <b>" + _(card_forced) + "</b>"
       );
       setTimeout(() => this.hideNotificationBubble(), 3000);
+    },
+
+    notif_cardTakenFromDiscard: function (notif) {
+      var card = notif.args.card;
+      this.discardStock.removeFromStockById(card.id);
+      this.discardCounter.toValue(notif.args.discardCount);
     },
   });
 });

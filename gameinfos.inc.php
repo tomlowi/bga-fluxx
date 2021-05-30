@@ -15,11 +15,11 @@ $gameinfos = [
   "game_name" => "Fluxx",
 
   // Game designer (or game designers, separated by commas)
-  "designer" => "Andrew Looney, Kristin Looney",
+  "designer" => "Andrew Looney",
 
   // Game artist (or game artists, separated by commas)
   // Limited to 64 chars
-  "artist" => "R. Castellanos, M. Hays, N. Kageyama, A. Looney, B. Spelger",
+  "artist" => "Andrew Looney",
 
   // Year of FIRST publication of this game. Can be negative.
   "year" => 1997,

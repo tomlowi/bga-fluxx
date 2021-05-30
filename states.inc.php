@@ -135,7 +135,10 @@ $machinestates = [
     "args" => "arg_enforceHandLimitForOthers",
     "action" => "st_enforceHandLimitForOthers",
     "possibleactions" => ["discardHandCardsExcept"],
-    "transitions" => ["" => STATE_PLAY_CARD],
+    "transitions" => [
+      "handLimitChecked" => STATE_ENFORCE_KEEPERS_LIMIT_OTHERS,
+      "endGame" => STATE_GAME_END,
+    ],
   ],
 
   STATE_ENFORCE_KEEPERS_LIMIT_OTHERS => [
@@ -150,7 +153,10 @@ $machinestates = [
     "args" => "arg_enforceKeepersLimitForOthers",
     "action" => "st_enforceKeepersLimitForOthers",
     "possibleactions" => ["discardKeepers"],
-    "transitions" => ["" => STATE_PLAY_CARD],
+    "transitions" => [
+      "keeperLimitChecked" => STATE_PLAY_CARD,
+      "endGame" => STATE_GAME_END,
+    ],
   ],
 
   STATE_ENFORCE_HAND_LIMIT_SELF => [
@@ -165,7 +171,10 @@ $machinestates = [
     "args" => "arg_enforceHandLimitForSelf",
     "action" => "st_enforceHandLimitForSelf",
     "possibleactions" => ["discardHandCardsExcept"],
-    "transitions" => ["" => STATE_ENFORCE_KEEPERS_LIMIT_SELF],
+    "transitions" => [
+      "handLimitChecked" => STATE_ENFORCE_KEEPERS_LIMIT_SELF,
+      "endGame" => STATE_GAME_END,
+    ],
   ],
 
   STATE_ENFORCE_KEEPERS_LIMIT_SELF => [
@@ -181,7 +190,8 @@ $machinestates = [
     "action" => "st_enforceKeepersLimitForSelf",
     "possibleactions" => ["discardKeepers"],
     "transitions" => [
-      "" => STATE_NEXT_PLAYER,
+      "keeperLimitChecked" => STATE_NEXT_PLAYER,
+      "endGame" => STATE_GAME_END,
     ],
   ],
 
@@ -192,7 +202,12 @@ $machinestates = [
     "type" => "activeplayer",
     "action" => "st_goalCleaning",
     "possibleactions" => ["discardGoal"],
-    "transitions" => ["" => STATE_PLAY_CARD],
+    "transitions" => [
+      "continuePlay" => STATE_ENFORCE_HAND_LIMIT_OTHERS,
+      "endOfTurn" => STATE_ENFORCE_HAND_LIMIT_SELF,
+      "endGame" => STATE_GAME_END,
+      "resolveCreeper" => STATE_RESOLVE_CREEPER_INPLAY,
+    ],
   ],
 
   STATE_RESOLVE_ACTION => [
@@ -254,7 +269,7 @@ $machinestates = [
     "updateGameProgression" => false,
     "transitions" => [
       "continue" => STATE_ROCKPAPERSCISSORS,
-      "done" => STATE_PLAY_CARD,
+      "handsExchangeOccured" => STATE_ENFORCE_HAND_LIMIT_OTHERS,
       "zombiePass" => STATE_PLAY_CARD,
     ],
   ],
@@ -333,6 +348,8 @@ $machinestates = [
       "resolvedCreeper" => STATE_NEXT_PLAYER_TURNSTART_CREEPERS,
       "zombiePass" => STATE_NEXT_PLAYER_TURNSTART_CREEPERS,
       "endOfTurn" => STATE_ENFORCE_HAND_LIMIT_SELF,
+      "endGame" => STATE_GAME_END,
+      "resolveCreeper" => STATE_RESOLVE_CREEPER_INPLAY,
     ],
   ],
 
@@ -352,6 +369,7 @@ $machinestates = [
       "selectedCard" => STATE_PLAY_CARD,
       "zombiePass" => STATE_PLAY_CARD,
       "endOfTurn" => STATE_ENFORCE_HAND_LIMIT_SELF,
+      "endGame" => STATE_GAME_END,
     ],
   ],
 
@@ -365,6 +383,7 @@ $machinestates = [
       "resolveCreeper" => STATE_RESOLVE_CREEPER_TURNSTART,
       "finishedTurnStartCreepers" => STATE_DRAW_CARDS,
       "zombiePass" => STATE_DRAW_CARDS,
+      "endGame" => STATE_GAME_END,
     ],
   ],
 

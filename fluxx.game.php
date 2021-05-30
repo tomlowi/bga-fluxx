@@ -96,6 +96,7 @@ class fluxx extends Table
       "creeperTurnStartMoneyKept" => 58,
       "playerTurnLoggedPartyBonus" => 59,
       "playerTurnLoggedRichBonus" => 60,
+      "creeperForcedRecheckNeeded" => 61,
       "rpsChallengerId" => 90,
       "rpsDefenderId" => 91,
       "rpsChallengerChoice" => 92,
@@ -131,6 +132,17 @@ class fluxx extends Table
     // Used for translations and stuff. Please do not modify.
     return "fluxx";
   }
+
+
+  // public function testForceCardDrawFor($cardType, $cardUniqueId, $player_id) {
+  //   $deckSearch = $this->cards->getCardsOfTypeInLocation($cardType, $cardUniqueId, "deck", null);
+  //   if (count($deckSearch) > 0) {
+  //     $card = array_shift($deckSearch);
+  //     $this->cards->moveCard($card["id"], "hand", $player_id);
+
+  //     return $card["id"];
+  //   }
+  // }
 
   /*
     setupNewGame:
@@ -175,9 +187,13 @@ class fluxx extends Table
 
     /************ Start the game initialization *****/
 
+    $startingDrawRule = 1;
+    $startingPlayRule = 1;
+    $startingHand = 3;
+
     // Init global values with their initial values
-    self::setGameStateInitialValue("drawRule", 1);
-    self::setGameStateInitialValue("playRule", 1);
+    self::setGameStateInitialValue("drawRule", $startingDrawRule);
+    self::setGameStateInitialValue("playRule", $startingPlayRule);
     self::setGameStateInitialValue("handLimit", -1);
     self::setGameStateInitialValue("keepersLimit", -1);
     self::setGameStateInitialValue("drawnCards", 0);
@@ -209,6 +225,7 @@ class fluxx extends Table
     self::setGameStateInitialValue("creeperToResolvePlayerId", -1);
     self::setGameStateInitialValue("creeperTurnStartDeathExecuted", 0);
     self::setGameStateInitialValue("creeperTurnStartMoneyKept", 0);
+    self::setGameStateInitialValue("creeperForcedRecheckNeeded", 0);
     self::setGameStateInitialValue("playerTurnLoggedPartyBonus", 0);
     self::setGameStateInitialValue("playerTurnLoggedRichBonus", 0);
 
@@ -253,8 +270,11 @@ class fluxx extends Table
     // so we need activated players for that!
     foreach ($players as $player_id => $player) {
       $this->gamestate->changeActivePlayer($player_id);
-      $this->performDrawCards($player_id, 3);
+      $this->performDrawCards($player_id, $startingHand, true);
     }
+
+    // $this->testForceCardDrawFor("rule", 220, $first_player_id);
+    // $this->testForceCardDrawFor("rule", 221, $first_player_id);
 
     // reset to start with correct first active player
     $this->gamestate->changeActivePlayer($first_player_id);
@@ -413,19 +433,31 @@ class fluxx extends Table
     return self::getActivePlayerId();
   }
 
+  public function getPlayersInOrderForCurrentPlayer()
+  {
+    $player_id = self::getCurrentPlayerId();
+    return $this->getPlayersInOrder($player_id);
+  }
+
+  public function getPlayersInOrderForActivePlayer()
+  {
+    $player_id = self::getActivePlayerId();
+    return $this->getPlayersInOrder($player_id);
+  }
+
   /*
    * Return an array of players in natural turn order starting
    * with the current player. This can be used to build the player
    * tables in the same order as the player boards,
    * and for actions that need the players in order.
    */
-  public function getPlayersInOrder()
+  private function getPlayersInOrder($startPlayerId)
   {
     $result = [];
 
     $players = self::loadPlayersBasicInfos();
     $next_player = self::getNextPlayerTable();
-    $player_id = self::getCurrentPlayerId();
+    $player_id = $startPlayerId;
 
     // Check for spectator
     if (!key_exists($player_id, $players)) {
@@ -630,6 +662,7 @@ class fluxx extends Table
 
   public function checkCreeperResolveNeeded($lastPlayedCard)
   {
+    self::setGameStateValue("creeperForcedRecheckNeeded", 0);
     // Check for any Creeper abilities after keepers/creepers played or moved
     $stateTransition = CreeperCardFactory::onCheckResolveKeepersAndCreepers(
       $lastPlayedCard
@@ -800,7 +833,7 @@ class fluxx extends Table
     ]);
 
     self::setGameStateValue("lastGoalBeforeDoubleAgenda", -1);
-    $this->gamestate->nextstate("");
+    $this->gamestate->nextstate("continuePlay");
 
     // check win *after* decision which goals to keep
     $this->checkWinConditions();
@@ -839,9 +872,11 @@ class fluxx extends Table
 
     if ($existingGoalCount <= $expectedCount) {
       // We already have the proper number of goals, proceed to play
-      $this->gamestate->nextstate("");
+      $this->gamestate->nextstate("continuePlay");
       return;
     }
+
+    self::setGameStateValue("creeperForcedRecheckNeeded", 1);
   }
 
   public function st_nextPlayer()
@@ -859,7 +894,7 @@ class fluxx extends Table
         clienttranslate('${player_name} can take another turn!'),
         [
           "player_id" => $active_player,
-          "player_name" => self::getCurrentPlayerName(),
+          "player_name" => self::getActivePlayerName(),
         ]
       );
     } else {
@@ -892,6 +927,10 @@ class fluxx extends Table
     self::setGameStateValue("playerTurnUsedRecycling", 0);
     self::setGameStateValue("playerTurnLoggedPartyBonus", 0);
     self::setGameStateValue("playerTurnLoggedRichBonus", 0);
+    // also reset all turn-start creeper execution
+    self::setGameStateValue("creeperTurnStartDeathExecuted", 0);
+    self::setGameStateValue("creeperTurnStartMoneyKept", 0);
+    self::setGameStateValue("creeperForcedRecheckNeeded", 0);
 
     self::giveExtraTime($player_id);
     $this->gamestate->nextState("");

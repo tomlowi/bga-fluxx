@@ -75,9 +75,8 @@ class CreeperDeath extends CreeperCard
   {
     // Death can also be discarded any time it stands alone    
     $game = Utils::getGame();
-    // don't check Death again after resolving Death itself
-    $creeperResolving = $game->getGameStateValue("creeperToResolveCardId");
-    if ($lastPlayedCard != null && $lastPlayedCard["id"] == $creeperResolving) {
+    // don't check Death again after resolving Death itself, or if no specific card played
+    if ($lastPlayedCard == null || $lastPlayedCard["type_arg"] == $this->uniqueId) {
       return null;
     }
 
@@ -87,7 +86,6 @@ class CreeperDeath extends CreeperCard
     // keepers/creepers moved around
 
     $interestingCards = [
-      53 => "Death",
       // Actions that mess with Keepers
       301 => "",
       314 => "",
@@ -101,7 +99,7 @@ class CreeperDeath extends CreeperCard
     ];
 
     if (
-      $lastPlayedCard == null ||
+      $lastPlayedCard["type"] == "creeper" || 
       $lastPlayedCard["type"] == "goal" ||
       array_key_exists($lastPlayedCard["type_arg"], $interestingCards)
     ) {

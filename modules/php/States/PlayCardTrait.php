@@ -35,9 +35,32 @@ trait PlayCardTrait
       return;
     }
 
+    $forceRecheck = $game->getGameStateValue("creeperForcedRecheckNeeded");
+    $lastCardPlayed = null;
+    if ($forceRecheck) {
+      $lastCardPlayed = ["type" => "goal", "id" => 0, "type_arg" => 0];
+    }    
+    // check if any creepers should be checked again because of the cards just drawn
+    // (e.g. player had Peace on the table and has just drawn War,
+    //  or player kept Money+Taxes but might reconsider after what happened)
+    if ($game->checkCreeperResolveNeeded($lastCardPlayed)) {
+      return;
+    }    
+
+    // before we play anything new, check again if we have a winner at this point
+    if ($this->checkWinConditions()) {
+      return;
+    }
+
     // check if the first play random rule is active
     // if so, the first card is already played automatically
-    $this->checkFirstPlayRandom();
+    if ($this->checkFirstPlayRandom()) {
+      return;
+    }
+    // if first card random was played, we should never transition endOfTurn here!
+    // make sure anything that needs to be handled for this card is done via
+    // the normal state transitions (by default just come back here to check if more plays
+    // are still allowed)
 
     // If any "free action" rule can be played, we cannot end turn automatically
     // Player must finish its turn by explicitly deciding not to use any of the free rules
@@ -54,7 +77,7 @@ trait PlayCardTrait
   private function checkTempHandsForDiscard($player_id)
   {
     $game = Utils::getGame();
-    $tmpHandActive = Utils::getActiveTempHand();
+    $tmpHandActive = Utils::getActiveTempHandWithPlays();
     for ($i = 3; $i >= 1; $i--) {
       $tmpHandLocation = "tmpHand" . $i;
       $tmpHandCard = $game->getGameStateValue($tmpHandLocation . "Card");
@@ -331,6 +354,12 @@ trait PlayCardTrait
     // creepers go to table on same location as keepers
     $game->cards->moveCard($card["id"], "keepers", $player_id);
 
+    $forcedCard = $game->getCardDefinitionFor($card);
+    $game->notifyPlayer($player_id, "forcedCardNotification", "", [
+      "card_trigger" => clienttranslate("Creeper"),
+      "card_forced" => $forcedCard->getName(),
+    ]);
+
     // Notify all players about the creeper played
     $creeperCard = CreeperCardFactory::getCard($card["id"], $card["type_arg"]);
     $game->notifyAllPlayers(
@@ -487,16 +516,24 @@ trait PlayCardTrait
   {
     $game = Utils::getGame();
     $firstPlayRandom = 0 != $game->getGameStateValue("activeFirstPlayRandom");
-    $playRule = $game->getGameStateValue("playRule");
     $alreadyPlayed = $game->getGameStateValue("playedCards");
 
-    // Ignore this rule if the current Rule card allow you to play only one card
-    if (!$firstPlayRandom || $playRule == 1 || $alreadyPlayed > 0) {
-      return;
+    // Ignore this rule if not active or if not beginning of the turn
+    if (!$firstPlayRandom || $alreadyPlayed > 0) {
+      return false;
+    }
+    // Ignore this rule if current Play Rule only allows 1 play
+    // correction: also count Inflation or Bonus plays for player
+    // if they can play more than 1 card, the first card should be random
+
+    $player_id = $game->getActivePlayerId();
+
+    $leftToPlay = Utils::calculateCardsLeftToPlayFor($player_id);
+    if ($leftToPlay <= 1) {
+      return false;
     }
 
-    // select random card from player hand (always something there, just drew cards)
-    $player_id = $game->getActivePlayerId();
+    // select random card from player hand (always something there, just drew cards)    
     $cardsInHand = $game->cards->getCardsInLocation("hand", $player_id);
 
     $i = bga_rand(0, count($cardsInHand) - 1);
@@ -526,5 +563,7 @@ trait PlayCardTrait
     // first card is a forced play, but in this case
     // it does count for the number of cards played
     $this->_action_playCard($card["id"], true);
+
+    return true;
   }
 }

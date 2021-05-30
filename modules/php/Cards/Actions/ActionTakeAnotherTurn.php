@@ -17,6 +17,22 @@ class ActionTakeAnotherTurn extends ActionCard
 
   public function immediateEffectOnPlay($player)
   {
-    Utils::getGame()->incGameStateValue("anotherTurnMark", 1);
+    $game = Utils::getGame();
+    $checkUsed = $game->getGameStateValue("anotherTurnMark");
+    if ($checkUsed > 1) {
+
+      $game->notifyAllPlayers(
+        "takeAnotherTurnLimit",
+        clienttranslate('${card_name} can not be used again, maximum two turns in a row'),
+        [
+          "player_id" => $player,
+          "card_name" => $this->getName(),
+        ]
+      );
+
+      return;
+    }
+
+    $game->setGameStateValue("anotherTurnMark", 1);
   }
 }
