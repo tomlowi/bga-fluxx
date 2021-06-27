@@ -18,7 +18,8 @@ class RuleInflation extends RuleCard
 
   public function immediateEffectOnPlay($player_id)
   {
-    Utils::getGame()->setGameStateValue("activeInflation", 1);
+    $game = Utils::getGame();
+    $game->setGameStateValue("activeInflation", 1);
     // Draw rule is adapted immediately, so current player draws an extra card
     $extraDrawCount = 1;
     // If Poor Bonus is active, it should also get inflated
@@ -33,12 +34,23 @@ class RuleInflation extends RuleCard
       $extraDrawCount += 1;
     }
     // Draw extra cards for this player
-    Utils::getGame()->performDrawCards($player_id, $extraDrawCount);
+    $game->performDrawCards($player_id, $extraDrawCount);
+
+    // hide or show warning that some goals are affected by inflation
+    $game->notifyAllPlayers("goalWarningInflation", "", [
+      "alert" => Utils::checkInflationOnCurrentGoals(),
+    ]);
   }
 
   public function immediateEffectOnDiscard($player_id)
   {
-    Utils::getGame()->setGameStateValue("activeInflation", 0);
+    $game = Utils::getGame();
+    $game->setGameStateValue("activeInflation", 0);
+
+    // hide or show warning that some goals are affected by inflation
+    $game->notifyAllPlayers("goalWarningInflation", "", [
+      "alert" => Utils::checkInflationOnCurrentGoals(),
+    ]);
   }
 
   public static function notifyActiveFor($player_id)

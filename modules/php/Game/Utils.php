@@ -334,4 +334,30 @@ class Utils
 
     return $playRule;
   }
+
+  public static function checkInflationOnCurrentGoals()
+  {
+    if (!Utils::getActiveInflation())
+      return false;
+
+    // Inflation is active, check if any of the current goals is "inflatable"
+    // If so, we like to warn players about it because we get lots of invalid bug reports
+    // 
+    $game = Utils::getGame();
+
+    // 101 => "Goal10CardsInHand",
+    // 102 => "Goal5Keepers",
+    // 121 => "GoalPartySnacks",
+    $inflatableGoals = [101, 102, 121];
+
+    $goals = $game->cards->getCardsInLocation("goals");
+    foreach ($goals as $card_id => $card) {
+      $cardUniqueId = $card["type_arg"];
+      if (in_array($cardUniqueId, $inflatableGoals)) {
+        return true;
+      }
+    }
+    
+    return false;
+  }
 }

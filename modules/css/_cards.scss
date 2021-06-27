@@ -290,3 +290,16 @@ $color-flx-brown: #f6821f;
   margin-left: 2px;
   color: $color-rule;
 }
+
+.flx-warn-inflation-goal {
+  margin-left: 4px;
+  color: red;
+}
+
+.flx-warn-inflation-hidden {
+  display: none;
+}
+
+.flx-warn-inflation-visible {
+  display: inline;
+}

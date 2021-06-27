@@ -432,6 +432,11 @@ trait PlayCardTrait
       $game->setGameStateValue("lastGoalBeforeDoubleAgenda", $card["id"]);
       return "doubleAgendaRule";
     }
+
+    // hide or show warning that some goals are affected by inflation
+    $game->notifyAllPlayers("goalWarningInflation", "", [
+      "alert" => Utils::checkInflationOnCurrentGoals(),
+    ]);
   }
 
   public function playRuleCard($player_id, $card)

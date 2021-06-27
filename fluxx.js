@@ -195,6 +195,10 @@ define([
         this.goalsStock = this.createCardStock("goalsStock", ["goal"]);
         this.addCardsToStock(this.goalsStock, this.gamedatas.goals);
 
+        this.notif_goalWarningInflation({
+          args : { alert: this.gamedatas.inflationOnCurrentGoals }
+        });
+
         this.keepersStock = {};
         this.handCounter = {};
         this.keepersCounter = {};
@@ -738,6 +742,7 @@ define([
           this.scoreCtrl[player_id].toValue(notif.args.newScores[player_id]);
         }
       },
+
     }
   );
 });

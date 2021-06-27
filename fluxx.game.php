@@ -318,6 +318,7 @@ class fluxx extends Table
         "others" => $this->cards->getCardsInLocation("rules", RULE_OTHERS),
       ],
       "goals" => $this->cards->getCardsInLocation("goals"),
+      "inflationOnCurrentGoals" => Utils::checkInflationOnCurrentGoals(),
       "keepers" => [],
       "creepersCount" => [],
       "handsCount" => [],
@@ -834,6 +835,11 @@ class fluxx extends Table
 
     self::setGameStateValue("lastGoalBeforeDoubleAgenda", -1);
     $this->gamestate->nextstate("continuePlay");
+
+    // hide or show warning that some goals are affected by inflation
+    self::notifyAllPlayers("goalWarningInflation", "", [
+      "alert" => Utils::checkInflationOnCurrentGoals(),
+    ]);
 
     // check win *after* decision which goals to keep
     $this->checkWinConditions();

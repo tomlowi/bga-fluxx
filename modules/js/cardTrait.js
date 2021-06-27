@@ -21,7 +21,8 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
         ["reshuffle", null],
         ["tmpHandDiscarded", 500],
         ["forcedCardNotification", null],
-        ["cardTakenFromDiscard", null]
+        ["cardTakenFromDiscard", null],
+        ["goalWarningInflation", null]
       );
     },
 
@@ -435,6 +436,17 @@ define(["dojo", "dojo/_base/declare"], (dojo, declare) => {
       var card = notif.args.card;
       this.discardStock.removeFromStockById(card.id);
       this.discardCounter.toValue(notif.args.discardCount);
+    },
+
+    notif_goalWarningInflation: function (notif) {
+      const itemId = "goalsWarningInflation";
+      if (notif.args.alert) {
+        dojo.removeClass(itemId, "flx-warn-inflation-hidden");
+        dojo.addClass(itemId, "flx-warn-inflation-visible");
+      } else {
+        dojo.removeClass(itemId, "flx-warn-inflation-visible");
+        dojo.addClass(itemId, "flx-warn-inflation-hidden");
+      }        
     },
   });
 });
