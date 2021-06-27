@@ -33,7 +33,13 @@ class ActionDiscardAndDraw extends ActionCard
       "handCount" => $game->cards->countCardInLocation("hand", $player_id),
     ]);
 
+    // make sure we can't draw back this card itself (after reshuffle if deck would be empty)
+    $game->cards->moveCard($this->getCardId(), "side", $player_id);
+
     // draw equal nr of new cards
     $game->performDrawCards($player_id, count($cards));
+
+    // move this card itself back to the discard pile
+    $game->cards->playCard($this->getCardId());
   }
 }

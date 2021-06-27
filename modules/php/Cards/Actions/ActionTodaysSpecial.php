@@ -74,6 +74,10 @@ class ActionTodaysSpecial extends ActionCard
 
     $tmpHandLocation = "tmpHand" . $tmpHandNext;
     // Draw for temp hand
+
+    // make sure we can't draw back this card itself (after reshuffle if deck would be empty)
+    $game->cards->moveCard($this->getCardId(), "side", $player_id);
+
     $tmpCards = $game->performDrawCards(
       $player_id,
       $nrCardsToDraw + $addInflation,
@@ -90,6 +94,9 @@ class ActionTodaysSpecial extends ActionCard
 
     // move cards to temporary hand location
     $game->cards->moveCards($tmpCardIds, $tmpHandLocation, $player_id);
+
+    // move this card itself back to the discard pile
+    $game->cards->playCard($this->getCardId());
 
     // done: next play run will detect temp hand active
   }

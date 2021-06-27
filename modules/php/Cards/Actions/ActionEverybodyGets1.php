@@ -31,9 +31,28 @@ class ActionEverybodyGets1 extends ActionCard
     $game = Utils::getGame();
     $players_ordered = $game->getPlayersInOrderForActivePlayer();
 
+    $cardsToDraw = count($players_ordered) * $cardsPerPlayer;
+    // there must be enough available cards to draw, otherwise this action can't do anything
+    // and remember we can't redraw this card itself (as it is still being resolved)
+    $countAvailable = ($game->cards->countCardInLocation("discard") - 1)
+      + $game->cards->countCardInLocation("deck");
+    if ($countAvailable < $cardsToDraw) {
+      $game->notifyAllPlayers(
+        "actionIgnored",
+        clienttranslate(
+          'Not enough available cards to draw for <b>${card_name}</b>'
+        ), [
+          "i18n" => ["card_name"],
+          "player_id" => $player_id,
+          "card_name" => $this->getName(),
+          ]
+      );
+      return null;
+    }
+
     $tmpCards = $game->performDrawCards(
       $player_id,
-      count($players_ordered) * $cardsPerPlayer,
+      $cardsToDraw,
       true, // $postponeCreeperResolve
       true
     ); // $temporaryDraw
@@ -41,6 +60,9 @@ class ActionEverybodyGets1 extends ActionCard
 
     // move cards to temporary select location and let player choose who gets what
     $game->cards->moveCards($tmpCardIds, "tmpSelectCards", $player_id);
+
+    // move this card itself back to the discard pile
+    $game->cards->playCard($this->getCardId());
 
     return parent::immediateEffectOnPlay($player_id);
   }
