@@ -30,6 +30,34 @@ class ActionTodaysSpecial extends ActionCard
     ];
   }
 
+  public function immediateEffectOnPlay($player_id)
+  {
+    $game = Utils::getGame();
+    $addInflation = Utils::getActiveInflation() ? 1 : 0;
+
+    $cardsToDraw = 3 + $addInflation;
+    // there must be enough available cards to draw, otherwise this action can't do anything
+    // and remember we can't redraw this card itself (as it is still being resolved)
+    $countAvailable = ($game->cards->countCardInLocation("discard") - 1)
+      + $game->cards->countCardInLocation("deck");
+    if ($countAvailable < $cardsToDraw) {
+      $game->notifyAllPlayers(
+        "actionIgnored",
+        clienttranslate(
+          'Not enough available cards to draw for <b>${card_name}</b>'
+        ), [
+          "i18n" => ["card_name"],
+          "player_id" => $player_id,
+          "card_name" => $this->getName(),
+          ]
+      );
+      return null;
+    }
+
+    // else: go to normal resolve action phase
+    return parent::immediateEffectOnPlay($player_id);
+  }
+
   public function resolvedBy($player_id, $args)
   {
     $game = Utils::getGame();

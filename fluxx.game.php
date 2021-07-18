@@ -273,7 +273,7 @@ class fluxx extends Table
       $this->performDrawCards($player_id, $startingHand, true);
     }
 
-    // $this->testForceCardDrawFor("rule", 220, $first_player_id);
+    //$this->testForceCardDrawFor("rule", 209, $first_player_id);
     // $this->testForceCardDrawFor("rule", 221, $first_player_id);
 
     // reset to start with correct first active player
