@@ -50,6 +50,9 @@ class ActionEverybodyGets1 extends ActionCard
       return null;
     }
 
+    // make sure we can't draw back this card itself (after reshuffle if deck would be empty)
+    $game->cards->moveCard($this->getCardId(), "side", $player_id);
+
     $tmpCards = $game->performDrawCards(
       $player_id,
       $cardsToDraw,
