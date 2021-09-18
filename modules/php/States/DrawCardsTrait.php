@@ -35,8 +35,8 @@ trait DrawCardsTrait
 
     $cardsToDraw = $drawRule + $addInflation + $partyBonus + $poorBonus;
     // PlayAllBut1: If you started with no cards in your hand and only drew 1, draw an extra card.
-    // => don't apply inflation on this
-    if ($cardsInHand == 0 && $cardsToDraw == 1) {
+    // => don't apply inflation on this "extra"
+    if ($cardsInHand == 0 && $cardsToDraw <= 1 + $addInflation) {
       $playRule = $game->getGameStateValue("playRule");
       if ($playRule == -1) {
         $cardsToDraw += 1;
