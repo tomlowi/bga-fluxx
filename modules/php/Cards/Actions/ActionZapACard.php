@@ -57,6 +57,9 @@ class ActionZapACard extends ActionCard
       $card_definition->immediateEffectOnDiscard($player_id);
     }
 
+    // move this card to player hand
+    $game->cards->moveCard($card["id"], "hand", $player_id);
+
     // if keeper or creeper was zapped, set correct keeper/creeper count
     // for the origin player
     $creeperCountOrigin = 0;
@@ -64,9 +67,6 @@ class ActionZapACard extends ActionCard
       $origin_player_id = $card["location_arg"];
       $creeperCountOrigin = Utils::getPlayerCreeperCount($origin_player_id);
     }
-
-    // move this card to player hand
-    $game->cards->moveCard($card["id"], "hand", $player_id);
 
     $game->notifyAllPlayers(
       "cardFromTableToHand",
