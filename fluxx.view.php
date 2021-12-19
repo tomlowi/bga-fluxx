@@ -52,7 +52,7 @@ class view_fluxx_fluxx extends game_view
     $this->tpl["GOAL"] = self::_("Goal");
     $this->tpl["DECK"] = self::_("Discard pile");
     $this->tpl["SHOW_DISCARD"] = self::_("Show");
-    $this->tpl["WARN_INFLATION"] = self::_("(+1 Inflation)");
+    $this->tpl["WARN_INFLATE"] = self::_("(+1 Inflation)");
 
     // This will inflate players keepers block
     $player_color = "#000000";

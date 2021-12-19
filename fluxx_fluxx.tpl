@@ -41,7 +41,7 @@
     <div id="flxTable" class="whiteblock flx-table">
 
       <div class="flx-table-section flx-goal">
-        <h3>{GOAL}<span id="goalsWarningInflation" class="flx-warn-inflation-goal">{WARN_INFLATION}</span></h3>
+        <h3>{GOAL}<span id="goalsWarningInflation" class="flx-warn-inflation-goal">{WARN_INFLATE}</span></h3>
         <div id="goalsStock" class="flx-card-stock"></div>
       </div>
 
