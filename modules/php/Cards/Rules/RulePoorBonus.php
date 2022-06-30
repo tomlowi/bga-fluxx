@@ -18,7 +18,11 @@ class RulePoorBonus extends RuleCard
 
   public function immediateEffectOnPlay($player_id)
   {
-    Utils::getGame()->setGameStateValue("activePoorBonus", 1);
+    $game = Utils::getGame();
+    $game->setGameStateValue("activePoorBonus", 1);
+
+    // make sure this card that is "in play" doesn't count for goal "10 cards in hand"
+    $game->cards->moveCard($this->getCardId(), "side", $player_id);
 
     // if player is poor, immediately draw extra
     Utils::checkForPoorBonus($player_id);
