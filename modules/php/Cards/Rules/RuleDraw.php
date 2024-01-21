@@ -19,7 +19,7 @@ class RuleDraw extends RuleCard
 
   protected $drawCount;
 
-  public function immediateEffectOnPlay($player)
+  public function immediateEffectOnPlay($player_id)
   {
     $game = Utils::getGame();
     // current Draw Rule is changed immediately
@@ -29,14 +29,18 @@ class RuleDraw extends RuleCard
     $game->discardRuleCardsForType("drawRule");
     // set new draw rule
     $game->setGameStateValue("drawRule", $this->drawCount);
+
+    // make sure this card that is "in play" doesn't count for goal "10 cards in hand"
+    $game->cards->moveCard($this->getCardId(), "side", $player_id);
+
     // draw extra cards for the difference
     if ($this->drawCount - $oldValue > 0) {
-      $game->performDrawCards($player, $this->drawCount - $oldValue);
+      $game->performDrawCards($player_id, $this->drawCount - $oldValue);
       $game->setGameStateValue("drawnCards", $this->drawCount);
     }
   }
 
-  public function immediateEffectOnDiscard($player)
+  public function immediateEffectOnDiscard($player_id)
   {
     // reset to Basic Draw Rule
     Utils::getGame()->setGameStateValue("drawRule", 1);

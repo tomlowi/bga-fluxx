@@ -133,7 +133,7 @@ class fluxx extends Table
     return "fluxx";
   }
 
-
+  // // for testing purposes only
   // public function testForceCardDrawFor($cardType, $cardUniqueId, $player_id) {
   //   $deckSearch = $this->cards->getCardsOfTypeInLocation($cardType, $cardUniqueId, "deck", null);
   //   if (count($deckSearch) > 0) {
@@ -177,7 +177,7 @@ class fluxx extends Table
         addslashes($player["player_avatar"]) .
         "')";
     }
-    $sql .= implode($values, ",");
+    $sql .= implode(",", $values);
     self::DbQuery($sql);
     self::reattributeColorsBasedOnPreferences(
       $players,
@@ -265,16 +265,17 @@ class fluxx extends Table
     // Check who should be the first active player
     $this->activeNextPlayer();
     $first_player_id = $this->getActivePlayerId();
-
+    $other_player_id = $first_player_id;
     // If creepers are included, they must already be played when drawn:
     // so we need activated players for that!
     foreach ($players as $player_id => $player) {
       $this->gamestate->changeActivePlayer($player_id);
       $this->performDrawCards($player_id, $startingHand, true);
+      $other_player_id = $player_id;
     }
 
-    //$this->testForceCardDrawFor("rule", 209, $first_player_id);
-    // $this->testForceCardDrawFor("rule", 221, $first_player_id);
+    // $this->testForceCardDrawFor("rule", 208, $other_player_id);
+    // $this->testForceCardDrawFor("goal", 101, $first_player_id);
 
     // reset to start with correct first active player
     $this->gamestate->changeActivePlayer($first_player_id);
