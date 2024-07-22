@@ -124,7 +124,7 @@ class fluxx extends Table
   // Exposing protected method for translations in modules
   public static function totranslate($text)
   {
-    return self::_($text);
+    return self::$instance->_($text);
   }
 
   protected function getGameName()
